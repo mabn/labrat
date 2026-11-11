@@ -22,8 +22,7 @@ to a newer GitLab version.
 ## Quick start
 
 ```sh
-pnpm -C web install --frozen-lockfile && pnpm -C web build   # the web UI; optional, needs Node.js 20.19+ and pnpm
-cargo build --release
+cargo build --release   # also builds the web UI when pnpm (and Node.js 20.19+) is installed
 ./target/release/labrat --db :memory: --root-token glpat-test-token
 ```
 

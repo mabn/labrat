@@ -217,7 +217,7 @@ pub async fn handle(app: Arc<App>, method: Method, path: &str, _query: &str, hea
         None => (
             StatusCode::NOT_FOUND,
             [(header::CONTENT_TYPE, "text/plain; charset=utf-8")],
-            "The web UI was not built into this binary. Run `pnpm install && pnpm build` in `web/`, then rebuild labrat.\n",
+            "The web UI was not built into this binary. Install pnpm (and Node.js 20.19+), then rebuild labrat.\n",
         )
             .into_response(),
     }

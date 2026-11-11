@@ -7,12 +7,13 @@ so everything it shows or does is also available to any other client.
 ## Build
 
 ```sh
-pnpm install --frozen-lockfile
-pnpm build                      # type-checks and writes dist/
-cargo build                     # from the repository root: embeds dist/ into the labrat binary
+cargo build      # from the repository root
 ```
 
-`dist/` is not committed. A labrat built without it serves a page that says how to build the UI.
+`cargo build` runs `pnpm install --frozen-lockfile` and `pnpm build` (type-check, then write
+`dist/`) here whenever the UI's sources change, and embeds `dist/` into the labrat binary. Without
+pnpm on `PATH`, or with `LABRAT_SKIP_WEB_BUILD=1`, it embeds whatever `dist/` already holds.
+`dist/` is not committed; a labrat built without it serves a page that says how to build the UI.
 
 ## Develop
 
