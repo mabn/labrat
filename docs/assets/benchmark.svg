@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 322" width="760" height="322" role="img" aria-labelledby="t d">
+<title id="t">labrat compared with GitLab</title>
+<desc id="d">Run 20 merge requests from creation to merge: labrat 1.7 s, GitLab 189 s; Memory when idle: labrat 15 MB, GitLab 3.0 GB; Start from an empty data directory: labrat 0.03 s, GitLab 4 min</desc>
+<style>
+  .surface { fill: none; }
+  .title { font: 600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #0b0b0b; }
+  .note { font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #52514e; }
+  .name { font: 500 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #52514e; }
+  .value { font: 600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #0b0b0b; font-variant-numeric: tabular-nums; }
+  .track { stroke: #d9d8d3; stroke-width: 1; }
+  .labrat { fill: #2a78d6; }
+  .gitlab { fill: #eb6834; }
+  @media (prefers-color-scheme: dark) {
+    .title, .value { fill: #f0efec; }
+    .note, .name { fill: #c3c2b7; }
+    .track { stroke: #3a3936; }
+    .labrat { fill: #3987e5; }
+    .gitlab { fill: #d95926; }
+  }
+</style>
+<text class="title" x="0" y="18">Run 20 merge requests from creation to merge</text>
+<text class="note" x="760" y="18" text-anchor="end">114× faster</text>
+<line class="track" x1="112" y1="30" x2="112" y2="78"/>
+<text class="name" x="102" y="44" text-anchor="end">labrat</text>
+<path class="labrat" d="M112,30 H114.3 Q116.6,30 116.6,32.283597883597885 V45.716402116402115 Q116.6,48 114.3,48 H112 Z"/>
+<text class="value" x="124.6" y="44">1.7 s</text>
+<text class="name" x="102" y="74" text-anchor="end">GitLab</text>
+<path class="gitlab" d="M112,60 H628.0 Q632.0,60 632.0,64 V74 Q632.0,78 628.0,78 H112 Z"/>
+<text class="value" x="640.0" y="74">189 s</text>
+<text class="title" x="0" y="130">Memory when idle</text>
+<text class="note" x="760" y="130" text-anchor="end">200× less</text>
+<line class="track" x1="112" y1="142" x2="112" y2="190"/>
+<text class="name" x="102" y="156" text-anchor="end">labrat</text>
+<path class="labrat" d="M112,142 H113.5 Q115.0,142 115.0,143.5 V158.5 Q115.0,160 113.5,160 H112 Z"/>
+<text class="value" x="123.0" y="156">15 MB</text>
+<text class="name" x="102" y="186" text-anchor="end">GitLab</text>
+<path class="gitlab" d="M112,172 H628.0 Q632.0,172 632.0,176 V186 Q632.0,190 628.0,190 H112 Z"/>
+<text class="value" x="640.0" y="186">3.0 GB</text>
+<text class="title" x="0" y="242">Start from an empty data directory</text>
+<text class="note" x="760" y="242" text-anchor="end">seconds vs minutes</text>
+<line class="track" x1="112" y1="254" x2="112" y2="302"/>
+<text class="name" x="102" y="268" text-anchor="end">labrat</text>
+<path class="labrat" d="M112,254 H113.5 Q115.0,254 115.0,255.5 V270.5 Q115.0,272 113.5,272 H112 Z"/>
+<text class="value" x="123.0" y="268">0.03 s</text>
+<text class="name" x="102" y="298" text-anchor="end">GitLab</text>
+<path class="gitlab" d="M112,284 H628.0 Q632.0,284 632.0,288 V298 Q632.0,302 628.0,302 H112 Z"/>
+<text class="value" x="640.0" y="298">4 min</text>
+</svg>
