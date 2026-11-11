@@ -14,8 +14,8 @@ in one process. These numbers show what that costs when all a test needs is the 
 | Download | 1.83 GB (compressed image) | 8.7 MB (binary, gzipped) | 210× smaller |
 | Size on disk | 6.25 GB image | 22.5 MB binary (stripped) | 280× smaller |
 | Processes | 89 | 1 | |
-| Start from an empty data directory | 242 s until healthy (203 s until the sign-in page loads) | 27 ms until the API answers | |
-| Restart with existing data | 84 s | 27 ms | |
+| Install: first start from an empty data directory | 242 s until healthy (203 s until the sign-in page loads) | 0: nothing to install; the first start takes 27 ms | |
+| Start with existing data | 84 s | 27 ms | |
 | Reset to an empty state | No built-in way; recreate the instance | 7 ms (`POST /-/labrat/reset`) | |
 | Memory when idle | 3.03 GiB | 15 MB | 200× less |
 | Peak memory during the workload | 3.55 GiB | 80 MB | 45× less |
@@ -43,11 +43,24 @@ One more result: during the first GitLab run, one call failed. Gitaly took 10.9 
 repository, past GitLab's 10-second deadline, so `POST /projects` returned
 `400 Failed to create repository`. The two runs in the table came after it, on the same instance.
 
-## Building labrat
+Getting the software isn't compared: neither pulling GitLab's image nor building labrat counts.
+For reference, `cargo build --release` takes 3 min 31 s with an empty Cargo cache on this machine,
+including downloading 299 MB of crates.
 
-| | Time |
-|---|---|
-| `cargo build --release` with an empty Cargo cache (downloads 299 MB of crates and compiles everything) | 3 min 31 s |
+## Why GitLab takes minutes to start
+
+The Docker image contains GitLab's software, but the first start installs it into the data
+directory. The Omnibus package runs a Chef configuration run (`gitlab-ctl reconfigure`), which on
+this machine updated 403 of 1,097 resources in 3 min 14 s. The run:
+- writes the configuration for nine services (PostgreSQL, Redis, Gitaly, Puma, Sidekiq,
+  Workhorse, nginx, sshd and logrotate);
+- creates the PostgreSQL cluster and loads GitLab's schema of 1,426 tables;
+- seeds the database.
+
+Every later start repeats part of that work. The Chef run checks all 644 resources again (16 s, even
+with nothing to change), then Puma loads the Rails application, about 11,000 Ruby files plus their
+gems (60 s), and the other services start. labrat has none of these steps: its schema is created in
+SQLite on an empty database, and it starts serving right after.
 | `cargo build --release` with dependencies already downloaded | 3 min 27 s |
 
 ## Setup

@@ -35,8 +35,8 @@ a real GitLab, and your tests start in milliseconds instead of minutes.
 |---|---|---|
 | Download | 1.83 GB image | 8.7 MB binary (gzipped) |
 | Size on disk | 6.25 GB | 22.5 MB |
-| Install | Pull the image, then about 4 minutes for the first start | `cargo build --release`: 3.5 minutes from scratch |
-| Start | 4 minutes on first start, 84 s after that | 27 ms |
+| Install | 4 minutes: the first start sets GitLab up | 0: nothing to install |
+| Start | 84 s | 27 ms |
 | Reset to an empty state | Recreate the instance | 7 ms |
 | Memory when idle | 3.0 GB | 15 MB |
 | Peak memory during the workload | 3.5 GB | 80 MB |
