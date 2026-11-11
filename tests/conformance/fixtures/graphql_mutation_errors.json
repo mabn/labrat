@@ -1,0 +1,2942 @@
+{
+  "scenario": "graphql_mutation_errors",
+  "base": "http://localhost:8929",
+  "run": "re580fb",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/gme-<RUN>",
+        "name": "gme-<RUN>",
+        "path": "gme-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "gme-<RUN>",
+        "full_path": "gme-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "gme-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "gme-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/gme-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/gme-<RUN>/app.git",
+        "web_url": "<BASE>/gme-<RUN>/app",
+        "readme_url": "<BASE>/gme-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "gme-<RUN>",
+          "path": "gme-<RUN>",
+          "kind": "group",
+          "full_path": "gme-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/gme-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null
+      }
+    },
+    {
+      "label": "rep",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "rep-<RUN>",
+        "public_email": null,
+        "name": "rep",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/rep-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "rep-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "rep-<RUN>@example.com",
+        "preferred_language": "en",
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        }
+      }
+    },
+    {
+      "label": "rep token",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-09",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "rep member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "rep-<RUN>",
+        "public_email": null,
+        "name": "rep",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/rep-<RUN>",
+        "access_level": 20,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null
+      }
+    },
+    {
+      "label": "out",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "out-<RUN>",
+        "public_email": null,
+        "name": "out",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/out-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "out-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "out-<RUN>@example.com",
+        "preferred_language": "en",
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:3>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        }
+      }
+    },
+    {
+      "label": "out token",
+      "request": "POST /users/<user:3>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:2>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:3>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-09",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "commit",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "a",
+        "message": "a",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/gme-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 2,
+          "deletions": 0,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "commit",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "b",
+        "message": "b",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/gme-<RUN>/app/-/commit/<SHA3>",
+        "stats": {
+          "additions": 2,
+          "deletions": 0,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "commit",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA4>",
+        "short_id": "<SHA4:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "c",
+        "message": "c",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/gme-<RUN>/app/-/commit/<SHA4>",
+        "stats": {
+          "additions": 2,
+          "deletions": 0,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "MR a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "a",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA1>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "gme-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/gme-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:2>",
+        "iid": 2,
+        "project_id": "<project:1>",
+        "title": "MR b",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA3>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!2",
+        "references": {
+          "short": "!2",
+          "relative": "!2",
+          "full": "gme-<RUN>/app!2"
+        },
+        "web_url": "<BASE>/gme-<RUN>/app/-/merge_requests/2",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:3>",
+        "iid": 3,
+        "project_id": "<project:1>",
+        "title": "MR c",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "c",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!3",
+        "references": {
+          "short": "!3",
+          "relative": "!3",
+          "full": "gme-<RUN>/app!3"
+        },
+        "web_url": "<BASE>/gme-<RUN>/app/-/merge_requests/3",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "merge 2",
+      "request": "PUT /projects/<project:1>/merge_requests/2/merge",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:2>",
+        "iid": 2,
+        "project_id": "<project:1>",
+        "title": "MR b",
+        "description": null,
+        "state": "merged",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "merge_user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "merged_at": "<TIME>",
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "not_open",
+        "merge_after": null,
+        "sha": "<SHA3>",
+        "merge_commit_sha": "<SHA5>",
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!2",
+        "references": {
+          "short": "!2",
+          "relative": "!2",
+          "full": "gme-<RUN>/app!2"
+        },
+        "web_url": "<BASE>/gme-<RUN>/app/-/merge_requests/2",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA3>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "close 3",
+      "request": "PUT /projects/<project:1>/merge_requests/3",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:3>",
+        "iid": 3,
+        "project_id": "<project:1>",
+        "title": "MR c",
+        "description": null,
+        "state": "closed",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "closed_at": "<TIME>",
+        "target_branch": "main",
+        "source_branch": "c",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "not_open",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!3",
+        "references": {
+          "short": "!3",
+          "relative": "!3",
+          "full": "gme-<RUN>/app!3"
+        },
+        "web_url": "<BASE>/gme-<RUN>/app/-/merge_requests/3",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA4>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "admin note",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:1>",
+        "type": null,
+        "body": "By admin",
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "draft unknown iid",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 34
+              }
+            ],
+            "path": [
+              "mergeRequestSetDraft"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestSetDraft": null
+        }
+      }
+    },
+    {
+      "label": "update unknown project",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 34
+              }
+            ],
+            "path": [
+              "mergeRequestUpdate"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestUpdate": null
+        }
+      }
+    },
+    {
+      "label": "reporter update",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 34
+              }
+            ],
+            "path": [
+              "mergeRequestUpdate"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestUpdate": null
+        }
+      }
+    },
+    {
+      "label": "reporter assignees",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 34
+              }
+            ],
+            "path": [
+              "mergeRequestSetAssignees"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestSetAssignees": null
+        }
+      }
+    },
+    {
+      "label": "reporter accept",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 47
+              }
+            ],
+            "path": [
+              "mergeRequestAccept"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestAccept": null
+        }
+      }
+    },
+    {
+      "label": "reporter rereview",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 47
+              }
+            ],
+            "path": [
+              "mergeRequestReviewerRereview"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestReviewerRereview": null
+        }
+      }
+    },
+    {
+      "label": "reporter subscription",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetSubscription": {
+            "errors": [],
+            "mergeRequest": {
+              "subscribed": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "accept merged",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestAccept": {
+            "errors": [
+              "This branch cannot be merged"
+            ],
+            "mergeRequest": {
+              "state": "merged"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "accept closed",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestAccept": {
+            "errors": [
+              "This branch cannot be merged"
+            ],
+            "mergeRequest": {
+              "state": "closed"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "accept without sha",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Argument 'sha' on InputObject 'MergeRequestAcceptInput' is required. Expected type String!",
+            "locations": [
+              {
+                "line": 1,
+                "column": 60
+              }
+            ],
+            "path": [
+              "mutation",
+              "mergeRequestAccept",
+              "input",
+              "sha"
+            ],
+            "extensions": {
+              "code": "missingRequiredInputObjectAttribute",
+              "argumentName": "sha",
+              "argumentType": "String!",
+              "inputObjectType": "MergeRequestAcceptInput"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "reviewer outsider",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetReviewers": {
+            "errors": [
+              "Reviewers Cannot assign @out-<RUN> to !1"
+            ],
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "assignee outsider",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetAssignees": {
+            "errors": [
+              "Assignees Cannot assign @out-<RUN> to !1"
+            ],
+            "mergeRequest": {
+              "assignees": {
+                "nodes": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "reviewer unknown",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetReviewers": {
+            "errors": [],
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "request changes merged",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestRequestChanges": {
+            "errors": [
+              "Reviewer not found"
+            ],
+            "mergeRequest": {
+              "iid": "2"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "rereview project gid",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Variable $u of type UserID! was provided invalid value",
+            "locations": [
+              {
+                "line": 1,
+                "column": 32
+              }
+            ],
+            "extensions": {
+              "value": "gid://gitlab/Project/<project:1>",
+              "problems": [
+                {
+                  "path": [],
+                  "explanation": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of User",
+                  "message": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of User"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "rereview missing user",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "No object found for `userId: #<GlobalID:<ADDR> @uri=#<URI::GID gid://gitlab/User/<user:4>>>`",
+            "locations": [
+              {
+                "line": 1,
+                "column": 47
+              }
+            ],
+            "path": [
+              "mergeRequestReviewerRereview"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestReviewerRereview": null
+        }
+      }
+    },
+    {
+      "label": "update long title",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestUpdate": {
+            "errors": [
+              "Title is too long (maximum is 255 characters)"
+            ],
+            "mergeRequest": {
+              "title": "MR a",
+              "targetBranch": "main",
+              "state": "opened"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "update target is source",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestUpdate": {
+            "errors": [
+              "Branch conflict You can't use same project/branch for source and target"
+            ],
+            "mergeRequest": {
+              "title": "MR a",
+              "targetBranch": "main",
+              "state": "opened"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "update bad target name",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestUpdate": {
+            "errors": [
+              "Target branch is invalid"
+            ],
+            "mergeRequest": {
+              "title": "MR a",
+              "targetBranch": "main",
+              "state": "opened"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "update merged target",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestUpdate": {
+            "errors": [
+              "Branch conflict You can't use same project/branch for source and target"
+            ],
+            "mergeRequest": {
+              "title": "MR b",
+              "targetBranch": "main",
+              "state": "merged"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "close merged",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestUpdate": {
+            "errors": [
+              "State cannot transition via \"close\""
+            ],
+            "mergeRequest": {
+              "title": "MR b",
+              "targetBranch": "main",
+              "state": "merged"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "bad state enum",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Variable $st of type MergeRequestNewState was provided invalid value",
+            "locations": [
+              {
+                "line": 1,
+                "column": 57
+              }
+            ],
+            "extensions": {
+              "value": "MERGE",
+              "problems": [
+                {
+                  "path": [],
+                  "explanation": "Expected \"MERGE\" to be one of: OPEN, CLOSED"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "milestone missing",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "No object found for `milestoneId: #<GlobalID:<ADDR> @uri=#<URI::GID gid://gitlab/Milestone/<Milestone:1>>>`",
+            "locations": [
+              {
+                "line": 1,
+                "column": 51
+              }
+            ],
+            "path": [
+              "mergeRequestSetMilestone"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestSetMilestone": null
+        }
+      }
+    },
+    {
+      "label": "milestone wrong type",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Variable $m of type MilestoneID was provided invalid value",
+            "locations": [
+              {
+                "line": 1,
+                "column": 32
+              }
+            ],
+            "extensions": {
+              "value": "gid://gitlab/Project/<project:1>",
+              "problems": [
+                {
+                  "path": [],
+                  "explanation": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of Milestone",
+                  "message": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of Milestone"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "labels missing",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetLabels": {
+            "errors": [],
+            "mergeRequest": {
+              "labels": {
+                "nodes": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "labels wrong type",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Variable $l of type [LabelID!]! was provided invalid value for 0 (\"gid://gitlab/Project/<project:1>\" does not represent an instance of Label)",
+            "locations": [
+              {
+                "line": 1,
+                "column": 32
+              }
+            ],
+            "extensions": {
+              "value": [
+                "gid://gitlab/Project/<project:1>"
+              ],
+              "problems": [
+                {
+                  "path": [
+                    0
+                  ],
+                  "explanation": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of Label",
+                  "message": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of Label"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "create same branches",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestCreate": {
+            "errors": [
+              "Branch conflict You can't use same project/branch for source and target"
+            ],
+            "mergeRequest": null
+          }
+        }
+      }
+    },
+    {
+      "label": "create blank title",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestCreate": {
+            "errors": [
+              "Title can't be blank"
+            ],
+            "mergeRequest": null
+          }
+        }
+      }
+    },
+    {
+      "label": "create duplicate",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestCreate": {
+            "errors": [
+              "Validate branches Another open merge request already exists for this source branch: !1"
+            ],
+            "mergeRequest": null
+          }
+        }
+      }
+    },
+    {
+      "label": "create outsider",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 61
+              }
+            ],
+            "path": [
+              "mergeRequestCreate"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestCreate": null
+        }
+      }
+    },
+    {
+      "label": "create unknown project",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 61
+              }
+            ],
+            "path": [
+              "mergeRequestCreate"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestCreate": null
+        }
+      }
+    },
+    {
+      "label": "anonymous draft",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 34
+              }
+            ],
+            "path": [
+              "mergeRequestSetDraft"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestSetDraft": null
+        }
+      }
+    },
+    {
+      "label": "note blank",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [
+              "Note can't be blank"
+            ],
+            "note": null
+          }
+        }
+      }
+    },
+    {
+      "label": "note missing mr",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 60
+              }
+            ],
+            "path": [
+              "createNote"
+            ]
+          }
+        ],
+        "data": {
+          "createNote": null
+        }
+      }
+    },
+    {
+      "label": "note project gid",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Variable $n of type NoteableID! was provided invalid value",
+            "locations": [
+              {
+                "line": 1,
+                "column": 10
+              }
+            ],
+            "extensions": {
+              "value": "gid://gitlab/Project/<project:1>",
+              "problems": [
+                {
+                  "path": [],
+                  "explanation": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of Noteable",
+                  "message": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of Noteable"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "note missing discussion",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The discussion does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 60
+              }
+            ],
+            "path": [
+              "createNote"
+            ]
+          }
+        ],
+        "data": {
+          "createNote": null
+        }
+      }
+    },
+    {
+      "label": "note reply to system",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [
+              "Replies to system notes are not allowed"
+            ],
+            "note": null
+          }
+        }
+      }
+    },
+    {
+      "label": "note outsider",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 60
+              }
+            ],
+            "path": [
+              "createNote"
+            ]
+          }
+        ],
+        "data": {
+          "createNote": null
+        }
+      }
+    },
+    {
+      "label": "note only bad command",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [],
+            "note": null
+          }
+        }
+      }
+    },
+    {
+      "label": "diff note no line",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "position oldLine or newLine arguments are required",
+            "locations": [
+              {
+                "line": 1,
+                "column": 68
+              }
+            ],
+            "path": [
+              "createDiffNote"
+            ]
+          }
+        ],
+        "data": {
+          "createDiffNote": null
+        }
+      }
+    },
+    {
+      "label": "diff note unknown file",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createDiffNote": {
+            "errors": [
+              "Line code can't be blank",
+              "Line code must be a valid line code"
+            ],
+            "note": null
+          }
+        }
+      }
+    },
+    {
+      "label": "reporter updates admin note",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 38
+              }
+            ],
+            "path": [
+              "updateNote"
+            ]
+          }
+        ],
+        "data": {
+          "updateNote": null
+        }
+      }
+    },
+    {
+      "label": "update system note",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 38
+              }
+            ],
+            "path": [
+              "updateNote"
+            ]
+          }
+        ],
+        "data": {
+          "updateNote": null
+        }
+      }
+    },
+    {
+      "label": "update missing note",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 38
+              }
+            ],
+            "path": [
+              "updateNote"
+            ]
+          }
+        ],
+        "data": {
+          "updateNote": null
+        }
+      }
+    },
+    {
+      "label": "update blank body",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "updateNote": {
+            "errors": [
+              "Note can't be blank"
+            ],
+            "note": {
+              "body": "By admin"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "destroy system note",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 26
+              }
+            ],
+            "path": [
+              "destroyNote"
+            ]
+          }
+        ],
+        "data": {
+          "destroyNote": null
+        }
+      }
+    },
+    {
+      "label": "reporter destroys admin note",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 26
+              }
+            ],
+            "path": [
+              "destroyNote"
+            ]
+          }
+        ],
+        "data": {
+          "destroyNote": null
+        }
+      }
+    },
+    {
+      "label": "resolve system discussion",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 46
+              }
+            ],
+            "path": [
+              "discussionToggleResolve"
+            ]
+          }
+        ],
+        "data": {
+          "discussionToggleResolve": null
+        }
+      }
+    },
+    {
+      "label": "resolve missing discussion",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 46
+              }
+            ],
+            "path": [
+              "discussionToggleResolve"
+            ]
+          }
+        ],
+        "data": {
+          "discussionToggleResolve": null
+        }
+      }
+    },
+    {
+      "label": "convert by outsider",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 26
+              }
+            ],
+            "path": [
+              "noteConvertToThread"
+            ]
+          }
+        ],
+        "data": {
+          "noteConvertToThread": null
+        }
+      }
+    },
+    {
+      "label": "convert missing",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "No object found for `id: #<GlobalID:<ADDR> @uri=#<URI::GID gid://gitlab/Note/<note:2>>>`",
+            "locations": [
+              {
+                "line": 1,
+                "column": 26
+              }
+            ],
+            "path": [
+              "noteConvertToThread"
+            ]
+          }
+        ],
+        "data": {
+          "noteConvertToThread": null
+        }
+      }
+    },
+    {
+      "label": "convert system",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Note cannot be converted to a resolvable thread",
+            "locations": [
+              {
+                "line": 1,
+                "column": 26
+              }
+            ],
+            "path": [
+              "noteConvertToThread"
+            ]
+          }
+        ],
+        "data": {
+          "noteConvertToThread": null
+        }
+      }
+    },
+    {
+      "label": "award bad name",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "awardEmojiAdd": {
+            "errors": [
+              "Name is not a valid emoji name"
+            ],
+            "awardEmoji": null
+          }
+        }
+      }
+    },
+    {
+      "label": "award system note",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "You cannot add emoji reactions to this resource.",
+            "locations": [
+              {
+                "line": 1,
+                "column": 44
+              }
+            ],
+            "path": [
+              "awardEmojiAdd"
+            ]
+          }
+        ],
+        "data": {
+          "awardEmojiAdd": null
+        }
+      }
+    },
+    {
+      "label": "award outsider",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 44
+              }
+            ],
+            "path": [
+              "awardEmojiAdd"
+            ]
+          }
+        ],
+        "data": {
+          "awardEmojiAdd": null
+        }
+      }
+    },
+    {
+      "label": "award missing",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 44
+              }
+            ],
+            "path": [
+              "awardEmojiAdd"
+            ]
+          }
+        ],
+        "data": {
+          "awardEmojiAdd": null
+        }
+      }
+    },
+    {
+      "label": "award wrong type",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Variable $id of type AwardableID! was provided invalid value",
+            "locations": [
+              {
+                "line": 1,
+                "column": 10
+              }
+            ],
+            "extensions": {
+              "value": "gid://gitlab/Project/<project:1>",
+              "problems": [
+                {
+                  "path": [],
+                  "explanation": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of Awardable",
+                  "message": "\"gid://gitlab/Project/<project:1>\" does not represent an instance of Awardable"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "award plus one",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "awardEmojiAdd": {
+            "errors": [],
+            "awardEmoji": {
+              "name": "thumbsup"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "resolve too many",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Too many to-do items requested.",
+            "locations": [
+              {
+                "line": 1,
+                "column": 30
+              }
+            ],
+            "path": [
+              "todoResolveMany"
+            ]
+          }
+        ],
+        "data": {
+          "todoResolveMany": null
+        }
+      }
+    },
+    {
+      "label": "done missing todo",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 26
+              }
+            ],
+            "path": [
+              "todoMarkDone"
+            ]
+          }
+        ],
+        "data": {
+          "todoMarkDone": null
+        }
+      }
+    },
+    {
+      "label": "todo missing mr",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 29
+              }
+            ],
+            "path": [
+              "todoCreate"
+            ]
+          }
+        ],
+        "data": {
+          "todoCreate": null
+        }
+      }
+    },
+    {
+      "label": "todo unreadable mr",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 29
+              }
+            ],
+            "path": [
+              "todoCreate"
+            ]
+          }
+        ],
+        "data": {
+          "todoCreate": null
+        }
+      }
+    },
+    {
+      "label": "all done missing target",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Resource not available: gid://gitlab/MergeRequest/<mr:4>",
+            "locations": [
+              {
+                "line": 1,
+                "column": 28
+              }
+            ],
+            "path": [
+              "todosMarkAllDone"
+            ]
+          }
+        ],
+        "data": {
+          "todosMarkAllDone": null
+        }
+      }
+    },
+    {
+      "label": "mr 1 after",
+      "request": "GET /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "MR a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "a",
+        "user_notes_count": 1,
+        "upvotes": 1,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "checking",
+        "merge_after": null,
+        "sha": "<SHA1>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "gme-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/gme-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA1>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": false,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "mr 1 notes",
+      "request": "GET /projects/<project:1>/merge_requests/1/notes",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/notes?activity_filter=all_notes&id=<project:1>&noteable_id=1&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/notes?activity_filter=all_notes&id=<project:1>&noteable_id=1&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<note:1>",
+          "type": null,
+          "body": "By admin",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        }
+      ]
+    }
+  ],
+  "times": [
+    0,
+    203,
+    9308,
+    9954,
+    9995,
+    10114,
+    10759,
+    10804,
+    11155,
+    11530,
+    19462,
+    29368,
+    39552,
+    49617,
+    50177,
+    59563,
+    59675,
+    59720,
+    59756,
+    59854,
+    59929,
+    60005,
+    60065,
+    60126,
+    60190,
+    60247,
+    60280,
+    60364,
+    60438,
+    60492,
+    60565,
+    60590,
+    60621,
+    60712,
+    60808,
+    60892,
+    60973,
+    61049,
+    61075,
+    61115,
+    61146,
+    61295,
+    61327,
+    61401,
+    61458,
+    61515,
+    61593,
+    61627,
+    61655,
+    61721,
+    61761,
+    61790,
+    61843,
+    61944,
+    61995,
+    62050,
+    62083,
+    62186,
+    62253,
+    62299,
+    62338,
+    62406,
+    62442,
+    62515,
+    62547,
+    62580,
+    62635,
+    62674,
+    62744,
+    62806,
+    62896,
+    62955,
+    62985,
+    63018,
+    63090,
+    63134,
+    63167,
+    63199,
+    63243,
+    63275,
+    63389
+  ],
+  "done_times": [
+    203,
+    3387,
+    9954,
+    9995,
+    10114,
+    10759,
+    10803,
+    11155,
+    11530,
+    11875,
+    19627,
+    29508,
+    39698,
+    50177,
+    50369,
+    59675,
+    59720,
+    59756,
+    59854,
+    59929,
+    60005,
+    60065,
+    60125,
+    60190,
+    60247,
+    60280,
+    60364,
+    60438,
+    60492,
+    60565,
+    60590,
+    60621,
+    60711,
+    60808,
+    60892,
+    60973,
+    61049,
+    61075,
+    61115,
+    61146,
+    61295,
+    61327,
+    61401,
+    61458,
+    61515,
+    61593,
+    61627,
+    61655,
+    61721,
+    61761,
+    61790,
+    61843,
+    61944,
+    61995,
+    62050,
+    62083,
+    62186,
+    62252,
+    62299,
+    62338,
+    62406,
+    62442,
+    62515,
+    62547,
+    62580,
+    62635,
+    62674,
+    62744,
+    62806,
+    62896,
+    62955,
+    62985,
+    63018,
+    63090,
+    63134,
+    63167,
+    63199,
+    63243,
+    63275,
+    63389,
+    63474
+  ],
+  "started_at": 1794195194233
+}

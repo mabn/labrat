@@ -1,0 +1,33 @@
+[package]
+name = "labrat-api"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+async-graphql-parser = "7.2.1"
+async-graphql-value = "7.2.1"
+axum = "0.8.9"
+base64 = "0.23.1"
+bytes = "1.12.1"
+chrono = "0.4.45"
+comrak = "0.59.0"
+flate2 = "1.1.11"
+labrat-core = { version = "0.1.0", path = "../labrat-core" }
+labrat-git = { version = "0.1.0", path = "../labrat-git" }
+hex = "0.4.3"
+http = "1.5.0"
+maud = "0.27.0"
+parking_lot = "0.13.0"
+percent-encoding = "2.3.2"
+rand = "0.10.3"
+regex = "1.13.1"
+reqwest = { version = "0.13.5", default-features = false, features = ["json", "rustls"] }
+rusqlite = "0.41.1"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154", features = ["preserve_order"] }
+serde_urlencoded = "0.7.1"
+sha2 = "0.11.1"
+tokio = { version = "1.54.1", features = ["full"] }
+tower = "0.5.3"
+tracing = "0.1.44"
+url = "2.5.8"

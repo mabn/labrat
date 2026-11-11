@@ -1,0 +1,1232 @@
+{
+  "scenario": "graphql_static_validation",
+  "base": "http://localhost:8929",
+  "run": "r213740",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/gv-<RUN>",
+        "name": "gv-<RUN>",
+        "path": "gv-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "gv-<RUN>",
+        "full_path": "gv-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "gv-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "gv-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/gv-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/gv-<RUN>/app.git",
+        "web_url": "<BASE>/gv-<RUN>/app",
+        "readme_url": "<BASE>/gv-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "gv-<RUN>",
+          "path": "gv-<RUN>",
+          "kind": "group",
+          "full_path": "gv-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/gv-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null
+      }
+    },
+    {
+      "label": "undeclared variable",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Variable $p is used by anonymous query but not declared",
+            "locations": [
+              {
+                "line": 1,
+                "column": 21
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "fullPath"
+            ],
+            "extensions": {
+              "code": "variableNotDefined",
+              "variableName": "p"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "undeclared in named",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Variable $p is used by Q but not declared",
+            "locations": [
+              {
+                "line": 1,
+                "column": 29
+              }
+            ],
+            "path": [
+              "query Q",
+              "project",
+              "fullPath"
+            ],
+            "extensions": {
+              "code": "variableNotDefined",
+              "variableName": "p"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "field conflict",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'x' has a field conflict: name or path?",
+            "locations": [
+              {
+                "line": 1,
+                "column": 42
+              },
+              {
+                "line": 1,
+                "column": 50
+              }
+            ],
+            "path": [],
+            "extensions": {
+              "code": "fieldConflict",
+              "fieldName": "x",
+              "conflicts": "name or path"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "argument conflict",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'mergeRequests' has an argument conflict: {first:\"1\"} or {first:\"2\"}?",
+            "locations": [
+              {
+                "line": 1,
+                "column": 42
+              },
+              {
+                "line": 1,
+                "column": 76
+              }
+            ],
+            "path": [],
+            "extensions": {
+              "code": "fieldConflict",
+              "fieldName": "mergeRequests",
+              "conflicts": "{first:\"1\"} or {first:\"2\"}"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "unused fragment",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Fragment F was defined, but not used",
+            "locations": [
+              {
+                "line": 1,
+                "column": 51
+              }
+            ],
+            "path": [
+              "fragment F"
+            ],
+            "extensions": {
+              "code": "useAndDefineFragment",
+              "fragmentName": "F"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "impossible spread",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Fragment F on User can't be spread inside Project",
+            "locations": [
+              {
+                "line": 1,
+                "column": 42
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "... F"
+            ],
+            "extensions": {
+              "code": "cannotSpreadFragment",
+              "typeName": "User",
+              "fragmentName": " F",
+              "parentName": "Project"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "fragment cycle",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Fragment A contains an infinite loop",
+            "locations": [
+              {
+                "line": 1,
+                "column": 51
+              }
+            ],
+            "path": [
+              "fragment A"
+            ],
+            "extensions": {
+              "code": "infiniteLoop",
+              "fragmentName": "A"
+            }
+          },
+          {
+            "message": "Fragment B contains an infinite loop",
+            "locations": [
+              {
+                "line": 1,
+                "column": 82
+              }
+            ],
+            "path": [
+              "fragment B"
+            ],
+            "extensions": {
+              "code": "infiniteLoop",
+              "fragmentName": "B"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "fragment on scalar",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Selections can't be made on scalars (field 'name' returns String but has selections [\"F\"])",
+            "locations": [
+              {
+                "line": 1,
+                "column": 42
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "name"
+            ],
+            "extensions": {
+              "code": "selectionMismatch",
+              "nodeName": "field 'name'",
+              "typeName": "String"
+            }
+          },
+          {
+            "message": "Invalid fragment on type String (must be Union, Interface or Object)",
+            "locations": [
+              {
+                "line": 1,
+                "column": 60
+              }
+            ],
+            "path": [
+              "fragment F"
+            ],
+            "extensions": {
+              "code": "fragmentOnNonCompositeType",
+              "typeName": "String"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "unknown directive",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Directive @nope is not defined",
+            "locations": [
+              {
+                "line": 1,
+                "column": 47
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "name"
+            ],
+            "extensions": {
+              "code": "undefinedDirective",
+              "directiveName": "nope"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "misplaced directive",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "'@skip' can't be applied to queries (allowed: fields, fragment spreads, inline fragments)",
+            "locations": [
+              {
+                "line": 1,
+                "column": 16
+              }
+            ],
+            "path": [
+              "query"
+            ],
+            "extensions": {
+              "code": "directiveCannotBeApplied",
+              "targetName": "queries",
+              "name": "skip"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "duplicate directive",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The directive \"skip\" can only be used once at this location.",
+            "locations": [
+              {
+                "line": 1,
+                "column": 47
+              },
+              {
+                "line": 1,
+                "column": 64
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "name"
+            ],
+            "extensions": {
+              "code": "directiveNotUniqueForLocation",
+              "directiveName": "skip"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "directive missing arg",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Directive 'include' is missing required arguments: if",
+            "locations": [
+              {
+                "line": 1,
+                "column": 47
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "name"
+            ],
+            "extensions": {
+              "code": "missingRequiredArguments",
+              "className": "Directive",
+              "name": "include",
+              "arguments": "if"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "duplicate operation",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Operation name \"A\" must be unique",
+            "locations": [
+              {
+                "line": 1,
+                "column": 1
+              },
+              {
+                "line": 1,
+                "column": 38
+              }
+            ],
+            "path": [],
+            "extensions": {
+              "code": "uniquelyNamedOperations",
+              "operationName": "A"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "duplicate fragment",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Fragment name \"F\" must be unique",
+            "locations": [
+              {
+                "line": 1,
+                "column": 51
+              },
+              {
+                "line": 1,
+                "column": 82
+              }
+            ],
+            "path": [],
+            "extensions": {
+              "code": "fragmentNotUnique",
+              "fragmentName": "F"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "duplicate argument",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "There can be only one argument named \"fullPath\"",
+            "locations": [
+              {
+                "line": 1,
+                "column": 26
+              },
+              {
+                "line": 1,
+                "column": 40
+              }
+            ],
+            "path": [
+              "query",
+              "project"
+            ],
+            "extensions": {
+              "code": "argumentNotUnique",
+              "name": "fullPath"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "duplicate variable",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "There can only be one variable named \"p\"",
+            "locations": [
+              {
+                "line": 1,
+                "column": 7
+              },
+              {
+                "line": 1,
+                "column": 16
+              }
+            ],
+            "path": [
+              "query"
+            ],
+            "extensions": {
+              "code": "variableNotUnique",
+              "variableName": "p"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "output type variable",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Project isn't a valid input type (on $p)",
+            "locations": [
+              {
+                "line": 1,
+                "column": 7
+              }
+            ],
+            "path": [
+              "query"
+            ],
+            "extensions": {
+              "code": "variableRequiresValidType",
+              "typeName": "Project",
+              "variableName": "p"
+            }
+          },
+          {
+            "message": "Variable $p is declared by anonymous query but not used",
+            "locations": [
+              {
+                "line": 1,
+                "column": 1
+              }
+            ],
+            "path": [
+              "query"
+            ],
+            "extensions": {
+              "code": "variableNotUsed",
+              "variableName": "p"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "bad default",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Variable $p of type ID! was provided invalid value",
+            "locations": [
+              {
+                "line": 1,
+                "column": 7
+              }
+            ],
+            "extensions": {
+              "value": null,
+              "problems": [
+                {
+                  "path": [],
+                  "explanation": "Expected value to not be null"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "unknown input field literal",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "InputObject 'MergeRequestSetDraftInput' doesn't accept argument 'bogus'",
+            "locations": [
+              {
+                "line": 1,
+                "column": 82
+              }
+            ],
+            "path": [
+              "mutation",
+              "mergeRequestSetDraft",
+              "input",
+              "bogus"
+            ],
+            "extensions": {
+              "code": "argumentNotAccepted",
+              "name": "MergeRequestSetDraftInput",
+              "typeName": "InputObject",
+              "argumentName": "bogus"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "anonymous with others",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Operation name is required when multiple operations are present",
+            "locations": [
+              {
+                "line": 1,
+                "column": 1
+              }
+            ],
+            "path": [],
+            "extensions": {
+              "code": "uniquelyNamedOperations"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "subscription unknown",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'nope' doesn't exist on type 'Subscription'",
+            "locations": [
+              {
+                "line": 1,
+                "column": 16
+              }
+            ],
+            "path": [
+              "subscription",
+              "nope"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "Subscription",
+              "fieldName": "nope"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "two operations no name",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "An operation name is required"
+          }
+        ]
+      }
+    },
+    {
+      "label": "undefined mutation field",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'nopeMutation' doesn't exist on type 'Mutation'",
+            "locations": [
+              {
+                "line": 1,
+                "column": 12
+              }
+            ],
+            "path": [
+              "mutation",
+              "nopeMutation"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "Mutation",
+              "fieldName": "nopeMutation"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "undefined mutation field no args",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'nopeMutation' doesn't exist on type 'Mutation'",
+            "locations": [
+              {
+                "line": 1,
+                "column": 12
+              }
+            ],
+            "path": [
+              "mutation",
+              "nopeMutation"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "Mutation",
+              "fieldName": "nopeMutation"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "undefined mutation with vars",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'nopeMutation' doesn't exist on type 'Mutation'",
+            "locations": [
+              {
+                "line": 1,
+                "column": 21
+              }
+            ],
+            "path": [
+              "mutation",
+              "nopeMutation"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "Mutation",
+              "fieldName": "nopeMutation"
+            }
+          },
+          {
+            "message": "Variable $p is declared by anonymous mutation but not used",
+            "locations": [
+              {
+                "line": 1,
+                "column": 1
+              }
+            ],
+            "path": [
+              "mutation"
+            ],
+            "extensions": {
+              "code": "variableNotUsed",
+              "variableName": "p"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "undefined query field",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'nopeQuery' doesn't exist on type 'Query'",
+            "locations": [
+              {
+                "line": 1,
+                "column": 3
+              }
+            ],
+            "path": [
+              "query",
+              "nopeQuery"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "Query",
+              "fieldName": "nopeQuery"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "undefined query field with vars",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'nopeQuery' doesn't exist on type 'Query'",
+            "locations": [
+              {
+                "line": 1,
+                "column": 18
+              }
+            ],
+            "path": [
+              "query",
+              "nopeQuery"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "Query",
+              "fieldName": "nopeQuery"
+            }
+          },
+          {
+            "message": "Variable $p is declared by anonymous query but not used",
+            "locations": [
+              {
+                "line": 1,
+                "column": 1
+              }
+            ],
+            "path": [
+              "query"
+            ],
+            "extensions": {
+              "code": "variableNotUsed",
+              "variableName": "p"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "unknown operation name",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "No operation named \"B\""
+          }
+        ]
+      }
+    },
+    {
+      "label": "query at size limit",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "currentUser": {
+            "username": "claude"
+          }
+        }
+      }
+    },
+    {
+      "label": "query too large",
+      "request": "POST /api/graphql",
+      "status": 422,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Query too large"
+          }
+        ]
+      }
+    },
+    {
+      "label": "multiplex too large",
+      "request": "POST /api/graphql",
+      "status": 422,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Query too large"
+          }
+        ]
+      }
+    }
+  ],
+  "times": [
+    0,
+    142,
+    9067,
+    9099,
+    9127,
+    9155,
+    9188,
+    9215,
+    9245,
+    9274,
+    9303,
+    9329,
+    9354,
+    9381,
+    9410,
+    9437,
+    9467,
+    9502,
+    9536,
+    9563,
+    9596,
+    9620,
+    9654,
+    9685,
+    9714,
+    9765,
+    9796,
+    9842,
+    9877,
+    9911,
+    9933,
+    9968,
+    9993
+  ],
+  "done_times": [
+    142,
+    2703,
+    9099,
+    9127,
+    9155,
+    9188,
+    9215,
+    9245,
+    9274,
+    9303,
+    9329,
+    9354,
+    9381,
+    9410,
+    9437,
+    9467,
+    9502,
+    9536,
+    9563,
+    9596,
+    9620,
+    9654,
+    9685,
+    9714,
+    9765,
+    9796,
+    9842,
+    9877,
+    9911,
+    9933,
+    9968,
+    9993,
+    10020
+  ],
+  "started_at": 1794156737060
+}

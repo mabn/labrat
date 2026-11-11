@@ -1,0 +1,1191 @@
+{
+  "scenario": "repository_basics",
+  "base": "http://localhost:8929",
+  "run": "rb7a6db",
+  "steps": [
+    {
+      "label": "create group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/repo-<RUN>",
+        "name": "repo-<RUN>",
+        "path": "repo-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "repo-<RUN>",
+        "full_path": "repo-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false
+      }
+    },
+    {
+      "label": "create project with readme",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": "Demo code",
+        "name": "code",
+        "name_with_namespace": "repo-<RUN> / code",
+        "path": "code",
+        "path_with_namespace": "repo-<RUN>/code",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/repo-<RUN>/code.git",
+        "http_url_to_repo": "<BASE>/repo-<RUN>/code.git",
+        "web_url": "<BASE>/repo-<RUN>/code",
+        "readme_url": "<BASE>/repo-<RUN>/code/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "repo-<RUN>",
+          "path": "repo-<RUN>",
+          "kind": "group",
+          "full_path": "repo-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/repo-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "<p data-sourcepos=\"1:1-1:9\" dir=\"auto\">Demo code</p>",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null
+      }
+    },
+    {
+      "label": "branches",
+      "request": "GET /projects/<project:1>/repository/branches",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/repository/branches?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/repository/branches?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "name": "main",
+          "commit": {
+            "id": "<SHA1>",
+            "short_id": "<SHA1:short>",
+            "created_at": "<TIME>",
+            "parent_ids": [],
+            "title": "Initial commit",
+            "message": "Initial commit",
+            "author_name": "Claude",
+            "author_email": "claude@gitlab.unhood.org",
+            "authored_date": "<TIME>",
+            "committer_name": "Claude",
+            "committer_email": "claude@gitlab.unhood.org",
+            "committed_date": "<TIME>",
+            "trailers": {},
+            "extended_trailers": {},
+            "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA1>"
+          },
+          "merged": false,
+          "protected": true,
+          "developers_can_push": false,
+          "developers_can_merge": false,
+          "can_push": true,
+          "default": true,
+          "web_url": "<BASE>/repo-<RUN>/code/-/tree/main"
+        }
+      ]
+    },
+    {
+      "label": "protected branches",
+      "request": "GET /projects/<project:1>/protected_branches",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/protected_branches?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/protected_branches?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<pb:1>",
+          "name": "main",
+          "push_access_levels": [
+            {
+              "id": "<pb.push_access_levels:1>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "deploy_key_id": null
+            }
+          ],
+          "merge_access_levels": [
+            {
+              "id": "<pb.merge_access_levels:1>",
+              "access_level": 40,
+              "access_level_description": "Maintainers"
+            }
+          ],
+          "allow_force_push": false
+        }
+      ]
+    },
+    {
+      "label": "readme file",
+      "request": "GET /projects/<project:1>/repository/files/README.md",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "file_name": "README.md",
+        "file_path": "README.md",
+        "size": 6020,
+        "encoding": "base64",
+        "content_sha256": "892ac484742a44b3132b5f8070b5d1e87dc4538d17ae3235fd7400481785fb9f",
+        "ref": "main",
+        "blob_id": "<SHA2>",
+        "commit_id": "<SHA1>",
+        "last_commit_id": "<SHA1>",
+        "execute_filemode": false,
+        "content": "IyBjb2RlCgpEZW1vIGNvZGUKCiMjIEdldHRpbmcgc3RhcnRlZAoKVG8gbWFrZSBpdCBlYXN5IGZvciB5b3UgdG8gZ2V0IHN0YXJ0ZWQgd2l0aCBHaXRMYWIsIGhlcmUncyBhIGxpc3Qgb2YgcmVjb21tZW5kZWQgbmV4dCBzdGVwcy4KCkFscmVhZHkgYSBwcm8/IEp1c3QgZWRpdCB0aGlzIFJFQURNRS5tZCBhbmQgbWFrZSBpdCB5b3VyIG93bi4gV2FudCB0byBtYWtlIGl0IGVhc3k/IFtVc2UgdGhlIHRlbXBsYXRlIGF0IHRoZSBib3R0b21dKCNlZGl0aW5nLXRoaXMtcmVhZG1lKSEKCiMjIEFkZCB5b3VyIGZpbGVzCgoqIFtDcmVhdGVdKGh0dHBzOi8vZG9jcy5naXRsYWIuY29tL3VzZXIvcHJvamVjdC9yZXBvc2l0b3J5L3dlYl9lZGl0b3IvI2NyZWF0ZS1hLWZpbGUpIG9yIFt1cGxvYWRdKGh0dHBzOi8vZG9jcy5naXRsYWIuY29tL3VzZXIvcHJvamVjdC9yZXBvc2l0b3J5L3dlYl9lZGl0b3IvI3VwbG9hZC1hLWZpbGUpIGZpbGVzCiogW0FkZCBmaWxlcyB1c2luZyB0aGUgY29tbWFuZCBsaW5lXShodHRwczovL2RvY3MuZ2l0bGFiLmNvbS90b3BpY3MvZ2l0L2FkZF9maWxlcy8jYWRkLWZpbGVzLXRvLWEtZ2l0LXJlcG9zaXRvcnkpIG9yIHB1c2ggYW4gZXhpc3RpbmcgR2l0IHJlcG9zaXRvcnkgd2l0aCB0aGUgZm9sbG93aW5nIGNvbW1hbmQ6CgpgYGAKY2QgZXhpc3RpbmdfcmVwbwpnaXQgcmVtb3RlIGFkZCBvcmlnaW4gaHR0cDovL2xvY2FsaG9zdDo4OTI5L3JlcG8tcmI3YTZkYi9jb2RlLmdpdApnaXQgYnJhbmNoIC1NIG1haW4KZ2l0IHB1c2ggLXVmIG9yaWdpbiBtYWluCmBgYAoKIyMgSW50ZWdyYXRlIHdpdGggeW91ciB0b29scwoKKiBbU2V0IHVwIHByb2plY3QgaW50ZWdyYXRpb25zXShodHRwOi8vbG9jYWxob3N0Ojg5MjkvcmVwby1yYjdhNmRiL2NvZGUvLS9zZXR0aW5ncy9pbnRlZ3JhdGlvbnMpCgojIyBDb2xsYWJvcmF0ZSB3aXRoIHlvdXIgdGVhbQoKKiBbSW52aXRlIHRlYW0gbWVtYmVycyBhbmQgY29sbGFib3JhdG9yc10oaHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vdXNlci9wcm9qZWN0L21lbWJlcnMvKQoqIFtDcmVhdGUgYSBuZXcgbWVyZ2UgcmVxdWVzdF0oaHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vdXNlci9wcm9qZWN0L21lcmdlX3JlcXVlc3RzL2NyZWF0aW5nX21lcmdlX3JlcXVlc3RzLykKKiBbQXV0b21hdGljYWxseSBjbG9zZSBpc3N1ZXMgZnJvbSBtZXJnZSByZXF1ZXN0c10oaHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vdXNlci9wcm9qZWN0L2lzc3Vlcy9tYW5hZ2luZ19pc3N1ZXMvI2Nsb3NpbmctaXNzdWVzLWF1dG9tYXRpY2FsbHkpCiogW0VuYWJsZSBtZXJnZSByZXF1ZXN0IGFwcHJvdmFsc10oaHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vdXNlci9wcm9qZWN0L21lcmdlX3JlcXVlc3RzL2FwcHJvdmFscy8pCiogW1NldCBhdXRvLW1lcmdlXShodHRwczovL2RvY3MuZ2l0bGFiLmNvbS91c2VyL3Byb2plY3QvbWVyZ2VfcmVxdWVzdHMvYXV0b19tZXJnZS8pCgojIyBUZXN0IGFuZCBEZXBsb3kKClVzZSB0aGUgYnVpbHQtaW4gY29udGludW91cyBpbnRlZ3JhdGlvbiBpbiBHaXRMYWIuCgoqIFtHZXQgc3RhcnRlZCB3aXRoIEdpdExhYiBDSS9DRF0oaHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vY2kvcXVpY2tfc3RhcnQvKQoqIFtBbmFseXplIHlvdXIgY29kZSBmb3Iga25vd24gdnVsbmVyYWJpbGl0aWVzIHdpdGggU3RhdGljIEFwcGxpY2F0aW9uIFNlY3VyaXR5IFRlc3RpbmcgKFNBU1QpXShodHRwczovL2RvY3MuZ2l0bGFiLmNvbS91c2VyL2FwcGxpY2F0aW9uX3NlY3VyaXR5L3Nhc3QvKQoqIFtEZXBsb3kgdG8gS3ViZXJuZXRlcywgQW1hem9uIEVDMiwgb3IgQW1hem9uIEVDUyB1c2luZyBBdXRvIERlcGxveV0oaHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vdG9waWNzL2F1dG9kZXZvcHMvcmVxdWlyZW1lbnRzLykKKiBbVXNlIHB1bGwtYmFzZWQgZGVwbG95bWVudHMgZm9yIGltcHJvdmVkIEt1YmVybmV0ZXMgbWFuYWdlbWVudF0oaHR0cHM6Ly9kb2NzLmdpdGxhYi5jb20vdXNlci9jbHVzdGVycy9hZ2VudC8pCiogW1NldCB1cCBwcm90ZWN0ZWQgZW52aXJvbm1lbnRzXShodHRwczovL2RvY3MuZ2l0bGFiLmNvbS9jaS9lbnZpcm9ubWVudHMvcHJvdGVjdGVkX2Vudmlyb25tZW50cy8pCgoqKioKCiMgRWRpdGluZyB0aGlzIFJFQURNRQoKV2hlbiB5b3UncmUgcmVhZHkgdG8gbWFrZSB0aGlzIFJFQURNRSB5b3VyIG93biwganVzdCBlZGl0IHRoaXMgZmlsZSBhbmQgdXNlIHRoZSBoYW5keSB0ZW1wbGF0ZSBiZWxvdyAob3IgZmVlbCBmcmVlIHRvIHN0cnVjdHVyZSBpdCBob3dldmVyIHlvdSB3YW50IC0gdGhpcyBpcyBqdXN0IGEgc3RhcnRpbmcgcG9pbnQhKS4gVGhhbmtzIHRvIFttYWtlYXJlYWRtZS5jb21dKGh0dHBzOi8vd3d3Lm1ha2VhcmVhZG1lLmNvbS8pIGZvciB0aGlzIHRlbXBsYXRlLgoKIyMgU3VnZ2VzdGlvbnMgZm9yIGEgZ29vZCBSRUFETUUKCkV2ZXJ5IHByb2plY3QgaXMgZGlmZmVyZW50LCBzbyBjb25zaWRlciB3aGljaCBvZiB0aGVzZSBzZWN0aW9ucyBhcHBseSB0byB5b3Vycy4gVGhlIHNlY3Rpb25zIHVzZWQgaW4gdGhlIHRlbXBsYXRlIGFyZSBzdWdnZXN0aW9ucyBmb3IgbW9zdCBvcGVuIHNvdXJjZSBwcm9qZWN0cy4gQWxzbyBrZWVwIGluIG1pbmQgdGhhdCB3aGlsZSBhIFJFQURNRSBjYW4gYmUgdG9vIGxvbmcgYW5kIGRldGFpbGVkLCB0b28gbG9uZyBpcyBiZXR0ZXIgdGhhbiB0b28gc2hvcnQuIElmIHlvdSB0aGluayB5b3VyIFJFQURNRSBpcyB0b28gbG9uZywgY29uc2lkZXIgdXRpbGl6aW5nIGFub3RoZXIgZm9ybSBvZiBkb2N1bWVudGF0aW9uIHJhdGhlciB0aGFuIGN1dHRpbmcgb3V0IGluZm9ybWF0aW9uLgoKIyMgTmFtZQpDaG9vc2UgYSBzZWxmLWV4cGxhaW5pbmcgbmFtZSBmb3IgeW91ciBwcm9qZWN0LgoKIyMgRGVzY3JpcHRpb24KTGV0IHBlb3BsZSBrbm93IHdoYXQgeW91ciBwcm9qZWN0IGNhbiBkbyBzcGVjaWZpY2FsbHkuIFByb3ZpZGUgY29udGV4dCBhbmQgYWRkIGEgbGluayB0byBhbnkgcmVmZXJlbmNlIHZpc2l0b3JzIG1pZ2h0IGJlIHVuZmFtaWxpYXIgd2l0aC4gQSBsaXN0IG9mIEZlYXR1cmVzIG9yIGEgQmFja2dyb3VuZCBzdWJzZWN0aW9uIGNhbiBhbHNvIGJlIGFkZGVkIGhlcmUuIElmIHRoZXJlIGFyZSBhbHRlcm5hdGl2ZXMgdG8geW91ciBwcm9qZWN0LCB0aGlzIGlzIGEgZ29vZCBwbGFjZSB0byBsaXN0IGRpZmZlcmVudGlhdGluZyBmYWN0b3JzLgoKIyMgQmFkZ2VzCk9uIHNvbWUgUkVBRE1FcywgeW91IG1heSBzZWUgc21hbGwgaW1hZ2VzIHRoYXQgY29udmV5IG1ldGFkYXRhLCBzdWNoIGFzIHdoZXRoZXIgb3Igbm90IGFsbCB0aGUgdGVzdHMgYXJlIHBhc3NpbmcgZm9yIHRoZSBwcm9qZWN0LiBZb3UgY2FuIHVzZSBTaGllbGRzIHRvIGFkZCBzb21lIHRvIHlvdXIgUkVBRE1FLiBNYW55IHNlcnZpY2VzIGFsc28gaGF2ZSBpbnN0cnVjdGlvbnMgZm9yIGFkZGluZyBhIGJhZGdlLgoKIyMgVmlzdWFscwpEZXBlbmRpbmcgb24gd2hhdCB5b3UgYXJlIG1ha2luZywgaXQgY2FuIGJlIGEgZ29vZCBpZGVhIHRvIGluY2x1ZGUgc2NyZWVuc2hvdHMgb3IgZXZlbiBhIHZpZGVvICh5b3UnbGwgZnJlcXVlbnRseSBzZWUgR0lGcyByYXRoZXIgdGhhbiBhY3R1YWwgdmlkZW9zKS4gVG9vbHMgbGlrZSB0dHlnaWYgY2FuIGhlbHAsIGJ1dCBjaGVjayBvdXQgQXNjaWluZW1hIGZvciBhIG1vcmUgc29waGlzdGljYXRlZCBtZXRob2QuCgojIyBJbnN0YWxsYXRpb24KV2l0aGluIGEgcGFydGljdWxhciBlY29zeXN0ZW0sIHRoZXJlIG1heSBiZSBhIGNvbW1vbiB3YXkgb2YgaW5zdGFsbGluZyB0aGluZ3MsIHN1Y2ggYXMgdXNpbmcgWWFybiwgTnVHZXQsIG9yIEhvbWVicmV3LiBIb3dldmVyLCBjb25zaWRlciB0aGUgcG9zc2liaWxpdHkgdGhhdCB3aG9ldmVyIGlzIHJlYWRpbmcgeW91ciBSRUFETUUgaXMgYSBub3ZpY2UgYW5kIHdvdWxkIGxpa2UgbW9yZSBndWlkYW5jZS4gTGlzdGluZyBzcGVjaWZpYyBzdGVwcyBoZWxwcyByZW1vdmUgYW1iaWd1aXR5IGFuZCBnZXRzIHBlb3BsZSB0byB1c2luZyB5b3VyIHByb2plY3QgYXMgcXVpY2tseSBhcyBwb3NzaWJsZS4gSWYgaXQgb25seSBydW5zIGluIGEgc3BlY2lmaWMgY29udGV4dCBsaWtlIGEgcGFydGljdWxhciBwcm9ncmFtbWluZyBsYW5ndWFnZSB2ZXJzaW9uIG9yIG9wZXJhdGluZyBzeXN0ZW0gb3IgaGFzIGRlcGVuZGVuY2llcyB0aGF0IGhhdmUgdG8gYmUgaW5zdGFsbGVkIG1hbnVhbGx5LCBhbHNvIGFkZCBhIFJlcXVpcmVtZW50cyBzdWJzZWN0aW9uLgoKIyMgVXNhZ2UKVXNlIGV4YW1wbGVzIGxpYmVyYWxseSwgYW5kIHNob3cgdGhlIGV4cGVjdGVkIG91dHB1dCBpZiB5b3UgY2FuLiBJdCdzIGhlbHBmdWwgdG8gaGF2ZSBpbmxpbmUgdGhlIHNtYWxsZXN0IGV4YW1wbGUgb2YgdXNhZ2UgdGhhdCB5b3UgY2FuIGRlbW9uc3RyYXRlLCB3aGlsZSBwcm92aWRpbmcgbGlua3MgdG8gbW9yZSBzb3BoaXN0aWNhdGVkIGV4YW1wbGVzIGlmIHRoZXkgYXJlIHRvbyBsb25nIHRvIHJlYXNvbmFibHkgaW5jbHVkZSBpbiB0aGUgUkVBRE1FLgoKIyMgU3VwcG9ydApUZWxsIHBlb3BsZSB3aGVyZSB0aGV5IGNhbiBnbyB0byBmb3IgaGVscC4gSXQgY2FuIGJlIGFueSBjb21iaW5hdGlvbiBvZiBhbiBpc3N1ZSB0cmFja2VyLCBhIGNoYXQgcm9vbSwgYW4gZW1haWwgYWRkcmVzcywgZXRjLgoKIyMgUm9hZG1hcApJZiB5b3UgaGF2ZSBpZGVhcyBmb3IgcmVsZWFzZXMgaW4gdGhlIGZ1dHVyZSwgaXQgaXMgYSBnb29kIGlkZWEgdG8gbGlzdCB0aGVtIGluIHRoZSBSRUFETUUuCgojIyBDb250cmlidXRpbmcKU3RhdGUgaWYgeW91IGFyZSBvcGVuIHRvIGNvbnRyaWJ1dGlvbnMgYW5kIHdoYXQgeW91ciByZXF1aXJlbWVudHMgYXJlIGZvciBhY2NlcHRpbmcgdGhlbS4KCkZvciBwZW9wbGUgd2hvIHdhbnQgdG8gbWFrZSBjaGFuZ2VzIHRvIHlvdXIgcHJvamVjdCwgaXQncyBoZWxwZnVsIHRvIGhhdmUgc29tZSBkb2N1bWVudGF0aW9uIG9uIGhvdyB0byBnZXQgc3RhcnRlZC4gUGVyaGFwcyB0aGVyZSBpcyBhIHNjcmlwdCB0aGF0IHRoZXkgc2hvdWxkIHJ1biBvciBzb21lIGVudmlyb25tZW50IHZhcmlhYmxlcyB0aGF0IHRoZXkgbmVlZCB0byBzZXQuIE1ha2UgdGhlc2Ugc3RlcHMgZXhwbGljaXQuIFRoZXNlIGluc3RydWN0aW9ucyBjb3VsZCBhbHNvIGJlIHVzZWZ1bCB0byB5b3VyIGZ1dHVyZSBzZWxmLgoKWW91IGNhbiBhbHNvIGRvY3VtZW50IGNvbW1hbmRzIHRvIGxpbnQgdGhlIGNvZGUgb3IgcnVuIHRlc3RzLiBUaGVzZSBzdGVwcyBoZWxwIHRvIGVuc3VyZSBoaWdoIGNvZGUgcXVhbGl0eSBhbmQgcmVkdWNlIHRoZSBsaWtlbGlob29kIHRoYXQgdGhlIGNoYW5nZXMgaW5hZHZlcnRlbnRseSBicmVhayBzb21ldGhpbmcuIEhhdmluZyBpbnN0cnVjdGlvbnMgZm9yIHJ1bm5pbmcgdGVzdHMgaXMgZXNwZWNpYWxseSBoZWxwZnVsIGlmIGl0IHJlcXVpcmVzIGV4dGVybmFsIHNldHVwLCBzdWNoIGFzIHN0YXJ0aW5nIGEgU2VsZW5pdW0gc2VydmVyIGZvciB0ZXN0aW5nIGluIGEgYnJvd3Nlci4KCiMjIEF1dGhvcnMgYW5kIGFja25vd2xlZGdtZW50ClNob3cgeW91ciBhcHByZWNpYXRpb24gdG8gdGhvc2Ugd2hvIGhhdmUgY29udHJpYnV0ZWQgdG8gdGhlIHByb2plY3QuCgojIyBMaWNlbnNlCkZvciBvcGVuIHNvdXJjZSBwcm9qZWN0cywgc2F5IGhvdyBpdCBpcyBsaWNlbnNlZC4KCiMjIFByb2plY3Qgc3RhdHVzCklmIHlvdSBoYXZlIHJ1biBvdXQgb2YgZW5lcmd5IG9yIHRpbWUgZm9yIHlvdXIgcHJvamVjdCwgcHV0IGEgbm90ZSBhdCB0aGUgdG9wIG9mIHRoZSBSRUFETUUgc2F5aW5nIHRoYXQgZGV2ZWxvcG1lbnQgaGFzIHNsb3dlZCBkb3duIG9yIHN0b3BwZWQgY29tcGxldGVseS4gU29tZW9uZSBtYXkgY2hvb3NlIHRvIGZvcmsgeW91ciBwcm9qZWN0IG9yIHZvbHVudGVlciB0byBzdGVwIGluIGFzIGEgbWFpbnRhaW5lciBvciBvd25lciwgYWxsb3dpbmcgeW91ciBwcm9qZWN0IHRvIGtlZXAgZ29pbmcuIFlvdSBjYW4gYWxzbyBtYWtlIGFuIGV4cGxpY2l0IHJlcXVlc3QgZm9yIG1haW50YWluZXJzLgo="
+      }
+    },
+    {
+      "label": "commit with actions",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA1>"
+        ],
+        "title": "Add library",
+        "message": "Add library\n\nWith a body.",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA3>",
+        "stats": {
+          "additions": 8,
+          "deletions": 91,
+          "total": 99
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "second commit",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA4>",
+        "short_id": "<SHA4:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA3>"
+        ],
+        "title": "Change calc",
+        "message": "Change calc",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA4>",
+        "stats": {
+          "additions": 5,
+          "deletions": 1,
+          "total": 6
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "bad action",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "A file with this name already exists"
+      }
+    },
+    {
+      "label": "missing actions",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "400 Bad request - Provide at least one action, or set allow_empty to true"
+      }
+    },
+    {
+      "label": "branch list",
+      "request": "GET /projects/<project:1>/repository/branches",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/repository/branches?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/repository/branches?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "name": "main",
+          "commit": {
+            "id": "<SHA1>",
+            "short_id": "<SHA1:short>",
+            "created_at": "<TIME>",
+            "parent_ids": [],
+            "title": "Initial commit",
+            "message": "Initial commit",
+            "author_name": "Claude",
+            "author_email": "claude@gitlab.unhood.org",
+            "authored_date": "<TIME>",
+            "committer_name": "Claude",
+            "committer_email": "claude@gitlab.unhood.org",
+            "committed_date": "<TIME>",
+            "trailers": {},
+            "extended_trailers": {},
+            "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA1>"
+          },
+          "merged": false,
+          "protected": true,
+          "developers_can_push": false,
+          "developers_can_merge": false,
+          "can_push": true,
+          "default": true,
+          "web_url": "<BASE>/repo-<RUN>/code/-/tree/main"
+        }
+      ]
+    },
+    {
+      "label": "branch single",
+      "request": "GET /projects/<project:1>/repository/branches/feature%2Fone",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "name": "feature/one",
+        "commit": {
+          "id": "<SHA4>",
+          "short_id": "<SHA4:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA3>"
+          ],
+          "title": "Change calc",
+          "message": "Change calc",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA4>"
+        },
+        "merged": false,
+        "protected": false,
+        "developers_can_push": false,
+        "developers_can_merge": false,
+        "can_push": true,
+        "default": false,
+        "web_url": "<BASE>/repo-<RUN>/code/-/tree/feature/one"
+      }
+    },
+    {
+      "label": "missing branch",
+      "request": "GET /projects/<project:1>/repository/branches/nope",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Branch Not Found"
+      }
+    },
+    {
+      "label": "commits on feature",
+      "request": "GET /projects/<project:1>/repository/commits",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/repository/commits?id=<project:1>&order=default&page=1&per_page=20&ref_name=feature%2Fone&trailers=false>; rel=\"first\""
+      },
+      "body": [
+        {
+          "id": "<SHA4>",
+          "short_id": "<SHA4:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA3>"
+          ],
+          "title": "Change calc",
+          "message": "Change calc",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA4>"
+        },
+        {
+          "id": "<SHA3>",
+          "short_id": "<SHA3:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA1>"
+          ],
+          "title": "Add library",
+          "message": "Add library\n\nWith a body.",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA3>"
+        },
+        {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [],
+          "title": "Initial commit",
+          "message": "Initial commit",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA1>"
+        }
+      ]
+    },
+    {
+      "label": "commit detail",
+      "request": "GET /projects/<project:1>/repository/commits/feature%2Fone",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA4>",
+        "short_id": "<SHA4:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA3>"
+        ],
+        "title": "Change calc",
+        "message": "Change calc",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA4>",
+        "stats": {
+          "additions": 5,
+          "deletions": 1,
+          "total": 6
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "commit diff",
+      "request": "GET /projects/<project:1>/repository/commits/feature%2Fone/diff",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/repository/commits/feature%2Fone/diff?id=<project:1>&page=1&per_page=20&sha=feature%2Fone&unidiff=false>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/repository/commits/feature%2Fone/diff?id=<project:1>&page=1&per_page=20&sha=feature%2Fone&unidiff=false>; rel=\"last\""
+      },
+      "body": [
+        {
+          "diff": "",
+          "collapsed": false,
+          "too_large": false,
+          "new_path": "docs/NOTES.md",
+          "old_path": "docs/notes.txt",
+          "a_mode": "100644",
+          "b_mode": "100644",
+          "new_file": false,
+          "renamed_file": true,
+          "deleted_file": false,
+          "generated_file": null
+        },
+        {
+          "diff": "@@ -3,4 +3,8 @@ def add(a, b):\n \n \n def sub(a, b):\n-    return a - b\n+    return b - a\n+\n+\n+def mul(a, b):\n+    return a * b\n",
+          "collapsed": false,
+          "too_large": false,
+          "new_path": "lib/calc.py",
+          "old_path": "lib/calc.py",
+          "a_mode": "100644",
+          "b_mode": "100755",
+          "new_file": false,
+          "renamed_file": false,
+          "deleted_file": false,
+          "generated_file": null
+        }
+      ]
+    },
+    {
+      "label": "compare",
+      "request": "GET /projects/<project:1>/repository/compare",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "commit": {
+          "id": "<SHA4>",
+          "short_id": "<SHA4:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA3>"
+          ],
+          "title": "Change calc",
+          "message": "Change calc",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA4>"
+        },
+        "commits": [
+          {
+            "id": "<SHA3>",
+            "short_id": "<SHA3:short>",
+            "created_at": "<TIME>",
+            "parent_ids": [
+              "<SHA1>"
+            ],
+            "title": "Add library",
+            "message": "Add library\n\nWith a body.",
+            "author_name": "Claude",
+            "author_email": "claude@gitlab.unhood.org",
+            "authored_date": "<TIME>",
+            "committer_name": "Claude",
+            "committer_email": "claude@gitlab.unhood.org",
+            "committed_date": "<TIME>",
+            "trailers": {},
+            "extended_trailers": {},
+            "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA3>"
+          },
+          {
+            "id": "<SHA4>",
+            "short_id": "<SHA4:short>",
+            "created_at": "<TIME>",
+            "parent_ids": [
+              "<SHA3>"
+            ],
+            "title": "Change calc",
+            "message": "Change calc",
+            "author_name": "Claude",
+            "author_email": "claude@gitlab.unhood.org",
+            "authored_date": "<TIME>",
+            "committer_name": "Claude",
+            "committer_email": "claude@gitlab.unhood.org",
+            "committed_date": "<TIME>",
+            "trailers": {},
+            "extended_trailers": {},
+            "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA4>"
+          }
+        ],
+        "diffs": [
+          {
+            "diff": "@@ -1,93 +1,3 @@\n # code\n \n-Demo code\n-\n-## Getting started\n-\n-To make it easy for you to get started with GitLab, here's a list of recommended next steps.\n-\n-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!\n-\n-## Add your files\n-\n-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files\n-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:\n-\n-```\n-cd existing_repo\n-git remote add origin <BASE>/repo-<RUN>/code.git\n-git branch -M main\n-git push -uf origin main\n-```\n-\n-## Integrate with your tools\n-\n-* [Set up project integrations](<BASE>/repo-<RUN>/code/-/settings/integrations)\n-\n-## Collaborate with your team\n-\n-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)\n-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)\n-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)\n-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)\n-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)\n-\n-## Test and Deploy\n-\n-Use the built-in continuous integration in GitLab.\n-\n-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)\n-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)\n-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)\n-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)\n-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)\n-\n-***\n-\n-# Editing this README\n-\n-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.\n-\n-## Suggestions for a good README\n-\n-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.\n-\n-## Name\n-Choose a self-explaining name for your project.\n-\n-## Description\n-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.\n-\n-## Badges\n-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.\n-\n-## Visuals\n-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.\n-\n-## Installation\n-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.\n-\n-## Usage\n-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.\n-\n-## Support\n-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.\n-\n-## Roadmap\n-If you have ideas for releases in the future, it is a good idea to list them in the README.\n-\n-## Contributing\n-State if you are open to contributions and what your requirements are for accepting them.\n-\n-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.\n-\n-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.\n-\n-## Authors and acknowledgment\n-Show your appreciation to those who have contributed to the project.\n-\n-## License\n-For open source projects, say how it is licensed.\n-\n-## Project status\n-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.\n+Short readme.\n",
+            "collapsed": false,
+            "too_large": false,
+            "new_path": "README.md",
+            "old_path": "README.md",
+            "a_mode": "100644",
+            "b_mode": "100644",
+            "new_file": false,
+            "renamed_file": false,
+            "deleted_file": false,
+            "generated_file": null
+          },
+          {
+            "diff": "@@ -0,0 +1 @@\n+notes\n",
+            "collapsed": false,
+            "too_large": false,
+            "new_path": "docs/NOTES.md",
+            "old_path": "docs/NOTES.md",
+            "a_mode": "0",
+            "b_mode": "100644",
+            "new_file": true,
+            "renamed_file": false,
+            "deleted_file": false,
+            "generated_file": null
+          },
+          {
+            "diff": "@@ -0,0 +1,10 @@\n+def add(a, b):\n+    return a + b\n+\n+\n+def sub(a, b):\n+    return b - a\n+\n+\n+def mul(a, b):\n+    return a * b\n",
+            "collapsed": false,
+            "too_large": false,
+            "new_path": "lib/calc.py",
+            "old_path": "lib/calc.py",
+            "a_mode": "0",
+            "b_mode": "100755",
+            "new_file": true,
+            "renamed_file": false,
+            "deleted_file": false,
+            "generated_file": null
+          }
+        ],
+        "compare_timeout": false,
+        "compare_same_ref": false,
+        "web_url": "<BASE>/repo-<RUN>/code/-/compare/<SHA1>...<SHA4>"
+      }
+    },
+    {
+      "label": "tree",
+      "request": "GET /projects/<project:1>/repository/tree",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "5",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/repository/tree?id=<project:1>&page=1&pagination=legacy&per_page=20&recursive=true&ref=feature%2Fone>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/repository/tree?id=<project:1>&page=1&pagination=legacy&per_page=20&recursive=true&ref=feature%2Fone>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<SHA5>",
+          "name": "docs",
+          "type": "tree",
+          "path": "docs",
+          "mode": "040000"
+        },
+        {
+          "id": "<SHA6>",
+          "name": "lib",
+          "type": "tree",
+          "path": "lib",
+          "mode": "040000"
+        },
+        {
+          "id": "<SHA7>",
+          "name": "README.md",
+          "type": "blob",
+          "path": "README.md",
+          "mode": "100644"
+        },
+        {
+          "id": "<SHA8>",
+          "name": "NOTES.md",
+          "type": "blob",
+          "path": "docs/NOTES.md",
+          "mode": "100644"
+        },
+        {
+          "id": "<SHA9>",
+          "name": "calc.py",
+          "type": "blob",
+          "path": "lib/calc.py",
+          "mode": "100755"
+        }
+      ]
+    },
+    {
+      "label": "file raw meta",
+      "request": "GET /projects/<project:1>/repository/files/lib%2Fcalc.py",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "file_name": "calc.py",
+        "file_path": "lib/calc.py",
+        "size": 100,
+        "encoding": "base64",
+        "content_sha256": "750a57cf7acdf03406d8fdeaf95bfe97b483da409c7e14f3a3a704cc81212b51",
+        "ref": "feature/one",
+        "blob_id": "<SHA9>",
+        "commit_id": "<SHA4>",
+        "last_commit_id": "<SHA4>",
+        "execute_filemode": true,
+        "content": "ZGVmIGFkZChhLCBiKToKICAgIHJldHVybiBhICsgYgoKCmRlZiBzdWIoYSwgYik6CiAgICByZXR1cm4gYiAtIGEKCgpkZWYgbXVsKGEsIGIpOgogICAgcmV0dXJuIGEgKiBiCg=="
+      }
+    },
+    {
+      "label": "create branch",
+      "request": "POST /projects/<project:1>/repository/branches",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "name": "other",
+        "commit": {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [],
+          "title": "Initial commit",
+          "message": "Initial commit",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA1>"
+        },
+        "merged": false,
+        "protected": false,
+        "developers_can_push": false,
+        "developers_can_merge": false,
+        "can_push": true,
+        "default": false,
+        "web_url": "<BASE>/repo-<RUN>/code/-/tree/other"
+      }
+    },
+    {
+      "label": "create branch dup",
+      "request": "POST /projects/<project:1>/repository/branches",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "Branch already exists"
+      }
+    },
+    {
+      "label": "create branch bad ref",
+      "request": "POST /projects/<project:1>/repository/branches",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "Failed to create branch 'x': invalid reference name 'nope'"
+      }
+    },
+    {
+      "label": "create file",
+      "request": "POST /projects/<project:1>/repository/files/new%2Ffile.txt",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "file_path": "new/file.txt",
+        "branch": "other"
+      }
+    },
+    {
+      "label": "create file again",
+      "request": "POST /projects/<project:1>/repository/files/new%2Ffile.txt",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "A file with this name already exists"
+      }
+    },
+    {
+      "label": "update file",
+      "request": "PUT /projects/<project:1>/repository/files/new%2Ffile.txt",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "file_path": "new/file.txt",
+        "branch": "other"
+      }
+    },
+    {
+      "label": "tag",
+      "request": "POST /projects/<project:1>/repository/tags",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "name": "v1.0",
+        "message": "Release 1",
+        "target": "<SHA10>",
+        "commit": {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [],
+          "title": "Initial commit",
+          "message": "Initial commit",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA1>"
+        },
+        "protected": false,
+        "created_at": null
+      }
+    },
+    {
+      "label": "light tag",
+      "request": "POST /projects/<project:1>/repository/tags",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "name": "v1.1",
+        "message": "",
+        "target": "<SHA11>",
+        "commit": {
+          "id": "<SHA11>",
+          "short_id": "<SHA11:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA12>"
+          ],
+          "title": "Update file",
+          "message": "Update file",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA11>"
+        },
+        "protected": false,
+        "created_at": null
+      }
+    },
+    {
+      "label": "tags",
+      "request": "GET /projects/<project:1>/repository/tags",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/repository/tags?id=<project:1>&order_by=updated&page=1&per_page=20&sort=desc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/repository/tags?id=<project:1>&order_by=updated&page=1&per_page=20&sort=desc>; rel=\"last\""
+      },
+      "body": [
+        {
+          "name": "v1.0",
+          "message": "Release 1",
+          "target": "<SHA10>",
+          "commit": {
+            "id": "<SHA1>",
+            "short_id": "<SHA1:short>",
+            "created_at": "<TIME>",
+            "parent_ids": [],
+            "title": "Initial commit",
+            "message": "Initial commit",
+            "author_name": "Claude",
+            "author_email": "claude@gitlab.unhood.org",
+            "authored_date": "<TIME>",
+            "committer_name": "Claude",
+            "committer_email": "claude@gitlab.unhood.org",
+            "committed_date": "<TIME>",
+            "trailers": {},
+            "extended_trailers": {},
+            "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA1>"
+          },
+          "release": null,
+          "protected": false,
+          "created_at": "<TIME>"
+        },
+        {
+          "name": "v1.1",
+          "message": "",
+          "target": "<SHA11>",
+          "commit": {
+            "id": "<SHA11>",
+            "short_id": "<SHA11:short>",
+            "created_at": "<TIME>",
+            "parent_ids": [
+              "<SHA12>"
+            ],
+            "title": "Update file",
+            "message": "Update file",
+            "author_name": "Claude",
+            "author_email": "claude@gitlab.unhood.org",
+            "authored_date": "<TIME>",
+            "committer_name": "Claude",
+            "committer_email": "claude@gitlab.unhood.org",
+            "committed_date": "<TIME>",
+            "trailers": {},
+            "extended_trailers": {},
+            "web_url": "<BASE>/repo-<RUN>/code/-/commit/<SHA11>"
+          },
+          "release": null,
+          "protected": false,
+          "created_at": null
+        }
+      ]
+    },
+    {
+      "label": "delete default branch",
+      "request": "DELETE /projects/<project:1>/repository/branches/main",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "7:deletion denied by access checks: running pre-receive hooks: GitLab: The default branch of a project cannot be deleted.."
+      }
+    },
+    {
+      "label": "delete branch",
+      "request": "DELETE /projects/<project:1>/repository/branches/other",
+      "status": 204,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": null
+    },
+    {
+      "label": "protect wildcard",
+      "request": "POST /projects/<project:1>/protected_branches",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<pb:2>",
+        "name": "release/*",
+        "push_access_levels": [
+          {
+            "id": "<pb.push_access_levels:2>",
+            "access_level": 30,
+            "access_level_description": "Developers + Maintainers",
+            "deploy_key_id": null
+          }
+        ],
+        "merge_access_levels": [
+          {
+            "id": "<pb.merge_access_levels:2>",
+            "access_level": 40,
+            "access_level_description": "Maintainers"
+          }
+        ],
+        "allow_force_push": false
+      }
+    },
+    {
+      "label": "delete group",
+      "request": "DELETE /groups/<namespace:1>",
+      "status": 202,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "202 Accepted"
+      }
+    }
+  ],
+  "times": [
+    0,
+    235,
+    9298,
+    9423,
+    9465,
+    9526,
+    10003,
+    10409,
+    10587,
+    10665,
+    10698,
+    10775,
+    10820,
+    10881,
+    10925,
+    10979,
+    11097,
+    11172,
+    11219,
+    11480,
+    11526,
+    11582,
+    11912,
+    12047,
+    12356,
+    12593,
+    12801,
+    12869,
+    12992,
+    13228,
+    13296
+  ],
+  "done_times": [
+    235,
+    2791,
+    9423,
+    9465,
+    9526,
+    10002,
+    10409,
+    10587,
+    10665,
+    10698,
+    10775,
+    10820,
+    10881,
+    10925,
+    10978,
+    11097,
+    11171,
+    11219,
+    11480,
+    11526,
+    11581,
+    11911,
+    12047,
+    12356,
+    12593,
+    12801,
+    12869,
+    12992,
+    13228,
+    13296,
+    13409
+  ],
+  "started_at": 1794190392434
+}
