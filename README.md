@@ -26,7 +26,8 @@ cargo build --release   # also builds the web UI when pnpm (and Node.js 20.19+) 
 ./target/release/labrat --db :memory: --root-token glpat-test-token
 ```
 
-labrat listens on `127.0.0.1:8080`. Use it as you would use GitLab:
+labrat listens on `127.0.0.1:8080`. `scripts/seed-demo.sh` resets it and fills it with demo users, a
+project and a merge request under review, to look at in the web UI. Use it as you would use GitLab:
 
 ```sh
 curl -H "PRIVATE-TOKEN: glpat-test-token" -X POST localhost:8080/api/v4/projects \
