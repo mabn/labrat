@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Icon } from './Icon';
 import { renderMarkdown } from '../lib/markdown';
@@ -121,7 +121,24 @@ export function Dropdown({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [alignRight, setAlignRight] = useState(!!right);
   const ref = useRef<HTMLDivElement>(null);
+  const menu = useRef<HTMLDivElement>(null);
+  // Open on the preferred side, but flip when the menu would leave the window.
+  const flipped = useRef(false);
+  useLayoutEffect(() => {
+    if (!open) {
+      flipped.current = false;
+      setAlignRight(!!right);
+      return;
+    }
+    const r = menu.current?.getBoundingClientRect();
+    if (!r || flipped.current) return;
+    if (r.left < 0 || r.right > window.innerWidth) {
+      flipped.current = true;
+      setAlignRight(r.left < 0 ? false : true);
+    }
+  }, [open, right]);
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
@@ -133,7 +150,11 @@ export function Dropdown({
   return (
     <div className={`dropdown ${className ?? ''}`} ref={ref}>
       {button(open, () => setOpen((o) => !o))}
-      {open && <div className={`dropdown-menu${right ? ' right' : ''}`}>{children(() => setOpen(false))}</div>}
+      {open && (
+        <div ref={menu} className={`dropdown-menu${alignRight ? ' right' : ''}`}>
+          {children(() => setOpen(false))}
+        </div>
+      )}
     </div>
   );
 }

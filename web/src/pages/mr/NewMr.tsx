@@ -57,7 +57,8 @@ export function NewMr() {
           <div className="card grow">
             <div className="card-head">Target branch</div>
             <div className="card-body">
-              <select value={tgt} onChange={(e) => setTgt(e.target.value)}>
+              <select value={branches.some((b) => b.name === tgt) ? tgt : ''} onChange={(e) => setTgt(e.target.value)}>
+                <option value="">Select target branch</option>
                 {branches.map((b) => (
                   <option key={b.name} value={b.name}>
                     {b.name}
@@ -71,7 +72,8 @@ export function NewMr() {
         <button className="btn btn-confirm" style={{ marginTop: 16 }} disabled={!src || !tgt || src === tgt} onClick={() => setParams({ source_branch: src, target_branch: tgt })}>
           Compare branches and continue
         </button>
-        {branches.length <= 1 && (
+        {branches.length === 0 && <div className="alert alert-info" style={{ marginTop: 16 }}>This project’s repository is empty. Push a branch or add a file first.</div>}
+        {branches.length === 1 && (
           <p className="subtle" style={{ marginTop: 16 }}>
             Push a branch, or create one from the <Link to={`/${project.path_with_namespace}/-/branches`}>Branches</Link> page or by editing a file, to open a merge request.
           </p>
