@@ -1,0 +1,15 @@
+[package]
+name = "labrat"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.104"
+axum = "0.8.9"
+clap = { version = "4.6.7", features = ["derive", "env"] }
+labrat-api = { version = "0.1.0", path = "../labrat-api" }
+labrat-core = { version = "0.1.0", path = "../labrat-core" }
+tokio = { version = "1.54.1", features = ["full"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+url = "2.5.8"

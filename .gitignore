@@ -1,1 +1,6 @@
 /target
+/tests/conformance/target-actual
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+docs/gitlab-ref/graphql-introspection.json

@@ -1,0 +1,3483 @@
+{
+  "scenario": "random_walk_graphql_2",
+  "base": "http://localhost:8929",
+  "run": "r89ce04",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/rg-<RUN>",
+        "name": "rg-<RUN>",
+        "path": "rg-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "rg-<RUN>",
+        "full_path": "rg-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "rg-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "rg-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/rg-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/rg-<RUN>/app.git",
+        "web_url": "<BASE>/rg-<RUN>/app",
+        "readme_url": "<BASE>/rg-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "rg-<RUN>",
+          "path": "rg-<RUN>",
+          "kind": "group",
+          "full_path": "rg-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/rg-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null
+      }
+    },
+    {
+      "label": "bob",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "bob-<RUN>",
+        "public_email": null,
+        "name": "Bob",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/bob-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "bob-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "bob-<RUN>@example.com",
+        "preferred_language": "en",
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        }
+      }
+    },
+    {
+      "label": "bob token",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-08",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "bob developer",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "bob-<RUN>",
+        "public_email": null,
+        "name": "Bob",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/bob-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null
+      }
+    },
+    {
+      "label": "carol",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "carol-<RUN>",
+        "public_email": null,
+        "name": "Carol",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/carol-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "carol-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "carol-<RUN>@example.com",
+        "preferred_language": "en",
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:3>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        }
+      }
+    },
+    {
+      "label": "carol token",
+      "request": "POST /users/<user:3>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:2>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:3>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-08",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "carol reporter",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "carol-<RUN>",
+        "public_email": null,
+        "name": "Carol",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/carol-<RUN>",
+        "access_level": 20,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null
+      }
+    },
+    {
+      "label": "milestone",
+      "request": "POST /projects/<project:1>/milestones",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<milestone:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "v1",
+        "description": null,
+        "state": "active",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "due_date": null,
+        "start_date": null,
+        "expired": false,
+        "web_url": "<BASE>/rg-<RUN>/app/-/milestones/1"
+      }
+    },
+    {
+      "label": "commit",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Add a",
+        "message": "Add a",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rg-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 6,
+          "deletions": 0,
+          "total": 6
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:2>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "Bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA1>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rg-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rg-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "00 admin op6",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "awardEmojiAdd": {
+            "errors": [],
+            "awardEmoji": {
+              "name": "thumbsup"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "01 carol op6",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "awardEmojiAdd": {
+            "errors": [],
+            "awardEmoji": {
+              "name": "thumbsup"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "02 admin op4",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA1>"
+        ],
+        "title": "Rewrite 1",
+        "message": "Rewrite 1",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rg-<RUN>/app/-/commit/<SHA3>",
+        "stats": {
+          "additions": 6,
+          "deletions": 6,
+          "total": 12
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "03 admin op11",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestRequestChanges": {
+            "errors": [
+              "Reviewer not found"
+            ],
+            "mergeRequest": {
+              "approved": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "04 admin op8",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetMilestone": {
+            "errors": [],
+            "mergeRequest": {
+              "milestone": {
+                "title": "v1"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "05 carol op9",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetSubscription": {
+            "errors": [],
+            "mergeRequest": {
+              "subscribed": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "06 bob op11",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestRequestChanges": {
+            "errors": [],
+            "mergeRequest": {
+              "approved": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "07 bob op15",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA4>",
+        "short_id": "<SHA4:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA3>"
+        ],
+        "title": "Rewrite 2",
+        "message": "Rewrite 2",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rg-<RUN>/app/-/commit/<SHA4>",
+        "stats": {
+          "additions": 6,
+          "deletions": 6,
+          "total": 12
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "state 7 admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 7 bob",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 7 carol",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "08 carol op2",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createDiffNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/DiffNote/<note:1>",
+              "body": "Diff note 8",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA5>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "09 admin op11",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestRequestChanges": {
+            "errors": [
+              "Reviewer not found"
+            ],
+            "mergeRequest": {
+              "approved": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "10 admin op15",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA6>",
+        "short_id": "<SHA6:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA4>"
+        ],
+        "title": "Rewrite 3",
+        "message": "Rewrite 3",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rg-<RUN>/app/-/commit/<SHA6>",
+        "stats": {
+          "additions": 6,
+          "deletions": 6,
+          "total": 12
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "11 admin op1",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/DiffNote/<note:2>",
+              "body": "Reply 11",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA5>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "12 bob op3",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "discussionToggleResolve": {
+            "errors": [],
+            "discussion": {
+              "resolved": false,
+              "resolvedBy": null
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "13 bob op0",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/Note/<note:3>",
+              "body": "Note 13",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA7>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "14 admin op5",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "destroyNote": {
+            "errors": [],
+            "note": null
+          }
+        }
+      }
+    },
+    {
+      "label": "15 carol op15",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA8>",
+        "short_id": "<SHA8:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA6>"
+        ],
+        "title": "Rewrite 4",
+        "message": "Rewrite 4",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rg-<RUN>/app/-/commit/<SHA8>",
+        "stats": {
+          "additions": 6,
+          "deletions": 6,
+          "total": 12
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "state 15 admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 15 bob",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 15 carol",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "16 admin op11",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestRequestChanges": {
+            "errors": [
+              "Reviewer not found"
+            ],
+            "mergeRequest": {
+              "approved": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "17 admin op10",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestReviewerRereview": {
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "18 bob op13",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Note cannot be converted to a resolvable thread",
+            "locations": [
+              {
+                "line": 1,
+                "column": 26
+              }
+            ],
+            "path": [
+              "noteConvertToThread"
+            ]
+          }
+        ],
+        "data": {
+          "noteConvertToThread": null
+        }
+      }
+    },
+    {
+      "label": "19 bob op4",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "updateNote": {
+            "errors": [],
+            "note": {
+              "body": "Edited 19"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "20 admin op5",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA9>",
+        "short_id": "<SHA9:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA8>"
+        ],
+        "title": "Rewrite 5",
+        "message": "Rewrite 5",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rg-<RUN>/app/-/commit/<SHA9>",
+        "stats": {
+          "additions": 6,
+          "deletions": 6,
+          "total": 12
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "21 admin op2",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createDiffNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/DiffNote/<note:4>",
+              "body": "Diff note 21",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA10>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "22 carol op0",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/Note/<note:5>",
+              "body": "Note 22",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA11>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "23 bob op8",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetMilestone": {
+            "errors": [],
+            "mergeRequest": {
+              "milestone": {
+                "title": "v1"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "state 23 admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 23 bob",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 23 carol",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "24 carol op2",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createDiffNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/DiffNote/<note:6>",
+              "body": "Diff note 24",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA12>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "25 admin op11",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestRequestChanges": {
+            "errors": [
+              "Reviewer not found"
+            ],
+            "mergeRequest": {
+              "approved": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "26 carol op1",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/DiffNote/<note:7>",
+              "body": "Reply 26",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA10>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "27 carol op7",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "awardEmojiRemove": {
+            "errors": [
+              "User has not awarded emoji of type eyes on the awardable"
+            ],
+            "awardEmoji": null
+          }
+        }
+      }
+    },
+    {
+      "label": "28 carol op0",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/Note/<note:8>",
+              "body": "Note 28",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA13>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "29 admin op11",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestRequestChanges": {
+            "errors": [
+              "Reviewer not found"
+            ],
+            "mergeRequest": {
+              "approved": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "30 bob op10",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestReviewerRereview": {
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "31 admin op8",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetMilestone": {
+            "errors": [],
+            "mergeRequest": {
+              "milestone": null
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "state 31 admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 31 bob",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 31 carol",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "32 admin op1",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/DiscussionNote/<note:9>",
+              "body": "Reply 32",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA7>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "33 admin op6",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "awardEmojiAdd": {
+            "errors": [],
+            "awardEmoji": {
+              "name": "eyes"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "34 bob op14",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetLocked": {
+            "errors": [],
+            "mergeRequest": {
+              "discussionLocked": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "35 bob op9",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetSubscription": {
+            "errors": [],
+            "mergeRequest": {
+              "subscribed": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "36 bob op3",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 46
+              }
+            ],
+            "path": [
+              "discussionToggleResolve"
+            ]
+          }
+        ],
+        "data": {
+          "discussionToggleResolve": null
+        }
+      }
+    },
+    {
+      "label": "37 carol op4",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "updateNote": {
+            "errors": [],
+            "note": {
+              "body": "Edited 37"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "38 carol op11",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 21
+              }
+            ],
+            "path": [
+              "mergeRequestRequestChanges"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestRequestChanges": null
+        }
+      }
+    },
+    {
+      "label": "39 admin op2",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createDiffNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/DiffNote/<note:10>",
+              "body": "Diff note 39",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA14>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "state 39 admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 39 bob",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 39 carol",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "40 bob op5",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "destroyNote": {
+            "errors": [],
+            "note": null
+          }
+        }
+      }
+    },
+    {
+      "label": "41 carol op8",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 38
+              }
+            ],
+            "path": [
+              "mergeRequestSetMilestone"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestSetMilestone": null
+        }
+      }
+    },
+    {
+      "label": "42 bob op5",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA15>",
+        "short_id": "<SHA15:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA9>"
+        ],
+        "title": "Rewrite 6",
+        "message": "Rewrite 6",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rg-<RUN>/app/-/commit/<SHA15>",
+        "stats": {
+          "additions": 6,
+          "deletions": 6,
+          "total": 12
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "43 admin op0",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/Note/<note:11>",
+              "body": "Note 43",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA16>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "44 carol op14",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 35
+              }
+            ],
+            "path": [
+              "mergeRequestSetLocked"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestSetLocked": null
+        }
+      }
+    },
+    {
+      "label": "45 bob op0",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createNote": {
+            "errors": [],
+            "note": {
+              "id": "gid://gitlab/Note/<note:12>",
+              "body": "Note 45",
+              "discussion": {
+                "id": "gid://gitlab/Discussion/<SHA17>"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "46 bob op11",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestRequestChanges": {
+            "errors": [],
+            "mergeRequest": {
+              "approved": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "47 carol op3",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 46
+              }
+            ],
+            "path": [
+              "discussionToggleResolve"
+            ]
+          }
+        ],
+        "data": {
+          "discussionToggleResolve": null
+        }
+      }
+    },
+    {
+      "label": "state 47 admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 47 bob",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "state 47 carol",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Field 'resolveNote' doesn't exist on type 'MergeRequestPermissions'",
+            "locations": [
+              {
+                "line": 7,
+                "column": 30
+              }
+            ],
+            "path": [
+              "query",
+              "project",
+              "mergeRequest",
+              "userPermissions",
+              "resolveNote"
+            ],
+            "extensions": {
+              "code": "undefinedField",
+              "typeName": "MergeRequestPermissions",
+              "fieldName": "resolveNote"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "label": "final notes",
+      "request": "GET /projects/<project:1>/merge_requests/1/notes",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "31",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "100",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/notes?activity_filter=all_notes&id=<project:1>&noteable_id=1&order_by=created_at&page=1&per_page=100&sort=asc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/notes?activity_filter=all_notes&id=<project:1>&noteable_id=1&order_by=created_at&page=1&per_page=100&sort=asc>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<note:13>",
+          "type": null,
+          "body": "requested review from @bob-<RUN>",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:14>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA3:short> - Rewrite 1</li></ul>\n\n[Compare with previous version](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:1>&start_sha=<SHA1>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:15>",
+          "type": null,
+          "body": "requested changes",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:16>",
+          "type": null,
+          "body": "requested changes",
+          "author": {
+            "id": "<user:2>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "Bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:17>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA4:short> - Rewrite 2</li></ul>\n\n[Compare with previous version](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:2>&start_sha=<SHA3>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:1>",
+          "type": "DiffNote",
+          "body": "Diff note 8",
+          "author": {
+            "id": "<user:3>",
+            "username": "carol-<RUN>",
+            "public_email": null,
+            "name": "Carol",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/carol-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA2>",
+            "start_sha": "<SHA2>",
+            "head_sha": "<SHA4>",
+            "old_path": "a.txt",
+            "new_path": "a.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 3,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:18>",
+          "type": null,
+          "body": "requested changes",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:19>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 4 of the diff](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:3>&start_sha=<SHA4>#cfc7b4885384957ae445bc14914d4588f607651c_3_1)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA2>",
+            "start_sha": "<SHA2>",
+            "head_sha": "<SHA4>",
+            "old_path": "a.txt",
+            "new_path": "a.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 3,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:20>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA6:short> - Rewrite 3</li></ul>\n\n[Compare with previous version](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:3>&start_sha=<SHA4>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:21>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA8:short> - Rewrite 4</li></ul>\n\n[Compare with previous version](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:4>&start_sha=<SHA6>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:22>",
+          "type": null,
+          "body": "requested changes",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:23>",
+          "type": null,
+          "body": "requested review from @bob-<RUN>",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:24>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA9:short> - Rewrite 5</li></ul>\n\n[Compare with previous version](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:5>&start_sha=<SHA8>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:4>",
+          "type": "DiffNote",
+          "body": "Diff note 21",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA2>",
+            "start_sha": "<SHA2>",
+            "head_sha": "<SHA9>",
+            "old_path": "a.txt",
+            "new_path": "a.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 3,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:5>",
+          "type": null,
+          "body": "Note 22",
+          "author": {
+            "id": "<user:3>",
+            "username": "carol-<RUN>",
+            "public_email": null,
+            "name": "Carol",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/carol-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:6>",
+          "type": "DiffNote",
+          "body": "Diff note 24",
+          "author": {
+            "id": "<user:3>",
+            "username": "carol-<RUN>",
+            "public_email": null,
+            "name": "Carol",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/carol-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA2>",
+            "start_sha": "<SHA2>",
+            "head_sha": "<SHA9>",
+            "old_path": "a.txt",
+            "new_path": "a.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 5,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:25>",
+          "type": null,
+          "body": "requested changes",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:7>",
+          "type": "DiffNote",
+          "body": "Reply 26",
+          "author": {
+            "id": "<user:3>",
+            "username": "carol-<RUN>",
+            "public_email": null,
+            "name": "Carol",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/carol-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA2>",
+            "start_sha": "<SHA2>",
+            "head_sha": "<SHA9>",
+            "old_path": "a.txt",
+            "new_path": "a.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 3,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:8>",
+          "type": null,
+          "body": "Edited 37",
+          "author": {
+            "id": "<user:3>",
+            "username": "carol-<RUN>",
+            "public_email": null,
+            "name": "Carol",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/carol-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:26>",
+          "type": null,
+          "body": "requested changes",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:27>",
+          "type": null,
+          "body": "requested review from @bob-<RUN>",
+          "author": {
+            "id": "<user:2>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "Bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:9>",
+          "type": "DiscussionNote",
+          "body": "Reply 32",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:28>",
+          "type": null,
+          "body": "locked the discussion in this merge request",
+          "author": {
+            "id": "<user:2>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "Bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:10>",
+          "type": "DiffNote",
+          "body": "Diff note 39",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA2>",
+            "start_sha": "<SHA2>",
+            "head_sha": "<SHA9>",
+            "old_path": "a.txt",
+            "new_path": "a.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 4,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:29>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 7 of the diff](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:6>&start_sha=<SHA9>#cfc7b4885384957ae445bc14914d4588f607651c_3_1)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA2>",
+            "start_sha": "<SHA2>",
+            "head_sha": "<SHA9>",
+            "old_path": "a.txt",
+            "new_path": "a.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 3,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:30>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 7 of the diff](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:6>&start_sha=<SHA9>#cfc7b4885384957ae445bc14914d4588f607651c_5_1)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA2>",
+            "start_sha": "<SHA2>",
+            "head_sha": "<SHA9>",
+            "old_path": "a.txt",
+            "new_path": "a.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 5,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:31>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 7 of the diff](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:6>&start_sha=<SHA9>#cfc7b4885384957ae445bc14914d4588f607651c_4_1)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA2>",
+            "start_sha": "<SHA2>",
+            "head_sha": "<SHA9>",
+            "old_path": "a.txt",
+            "new_path": "a.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 4,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:32>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA15:short> - Rewrite 6</li></ul>\n\n[Compare with previous version](/rg-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:6>&start_sha=<SHA9>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:11>",
+          "type": null,
+          "body": "Note 43",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:12>",
+          "type": null,
+          "body": "Note 45",
+          "author": {
+            "id": "<user:2>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "Bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:33>",
+          "type": null,
+          "body": "requested changes",
+          "author": {
+            "id": "<user:2>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "Bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        }
+      ]
+    },
+    {
+      "label": "bob todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "0",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/todos?page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/todos?page=1&per_page=20>; rel=\"last\""
+      },
+      "body": []
+    }
+  ],
+  "times": [
+    0,
+    138,
+    13684,
+    14326,
+    14375,
+    14487,
+    15145,
+    15187,
+    15299,
+    15390,
+    23857,
+    43823,
+    63637,
+    83799,
+    105066,
+    123851,
+    153813,
+    169586,
+    180899,
+    213816,
+    213847,
+    213882,
+    219700,
+    233730,
+    253805,
+    284027,
+    304211,
+    324151,
+    344181,
+    364203,
+    404278,
+    404319,
+    404356,
+    410096,
+    424394,
+    444315,
+    455768,
+    470067,
+    510325,
+    524436,
+    544408,
+    564357,
+    564385,
+    564413,
+    574499,
+    594587,
+    618689,
+    634430,
+    645936,
+    660233,
+    674600,
+    690370,
+    704683,
+    704717,
+    704754,
+    714782,
+    730604,
+    744619,
+    760724,
+    774780,
+    790774,
+    814961,
+    830938,
+    845195,
+    845229,
+    845257,
+    851084,
+    870689,
+    884955,
+    915125,
+    935109,
+    955335,
+    985144,
+    1005347,
+    1025513,
+    1025546,
+    1025581,
+    1025617,
+    1025927
+  ],
+  "done_times": [
+    138,
+    2754,
+    14325,
+    14375,
+    14487,
+    15145,
+    15187,
+    15299,
+    15390,
+    15729,
+    24084,
+    43894,
+    63745,
+    84116,
+    105170,
+    123992,
+    153878,
+    169702,
+    181191,
+    213847,
+    213882,
+    213908,
+    219938,
+    233829,
+    254148,
+    284305,
+    304288,
+    324254,
+    344253,
+    364543,
+    404319,
+    404356,
+    404393,
+    410192,
+    424534,
+    444371,
+    455913,
+    470447,
+    510564,
+    524562,
+    544555,
+    564385,
+    564413,
+    564447,
+    574741,
+    594677,
+    618891,
+    634507,
+    646070,
+    660336,
+    674757,
+    690525,
+    704717,
+    704754,
+    704804,
+    714940,
+    730677,
+    744812,
+    760811,
+    774816,
+    790921,
+    815031,
+    831204,
+    845229,
+    845257,
+    845290,
+    851182,
+    870749,
+    885391,
+    915238,
+    935181,
+    955451,
+    985299,
+    1005388,
+    1025546,
+    1025581,
+    1025617,
+    1025926,
+    1025964
+  ],
+  "started_at": 1794163970165
+}
