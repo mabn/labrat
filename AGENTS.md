@@ -42,6 +42,7 @@ is built yet; the project is at the planning stage.
 ## Commands
 
 - `cargo build`, `cargo test`: build labrat and run the conformance and client tests.
-- Web UI (`web/`, needs Node.js 20.19+): `npm ci`, then `npm run build` (type-checks and writes
-  `web/dist`, which the next `cargo build` embeds) or `npm run dev` (serves the UI on :5173 against a
-  labrat on :8080). The UI talks to labrat only through the GitLab APIs; see `web/README.md`.
+- Web UI (`web/`, needs Node.js 20.19+ and pnpm): `pnpm install --frozen-lockfile`, then
+  `pnpm build` (type-checks and writes `web/dist`, which the next `cargo build` embeds) or
+  `pnpm dev` (serves the UI on :5173 against a labrat on :8080). The UI talks to labrat only
+  through the GitLab APIs; see `web/README.md`.

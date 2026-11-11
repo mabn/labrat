@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// `npm run dev` serves the app on :5173 and forwards labrat's paths to a labrat running on
+// `pnpm dev` serves the app on :5173 and forwards labrat's paths to a labrat running on
 // :8080 (override with LABRAT_URL).
 const target = process.env.LABRAT_URL ?? 'http://127.0.0.1:8080';
 const backend = {

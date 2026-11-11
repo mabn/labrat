@@ -7,9 +7,9 @@ so everything it shows or does is also available to any other client.
 ## Build
 
 ```sh
-npm ci
-npm run build      # type-checks and writes dist/
-cargo build        # from the repository root: embeds dist/ into the labrat binary
+pnpm install --frozen-lockfile
+pnpm build                      # type-checks and writes dist/
+cargo build                     # from the repository root: embeds dist/ into the labrat binary
 ```
 
 `dist/` is not committed. A labrat built without it serves a page that says how to build the UI.
@@ -18,7 +18,7 @@ cargo build        # from the repository root: embeds dist/ into the labrat bina
 
 ```sh
 cargo run -- --db :memory: --root-token glpat-test-token   # labrat on :8080
-npm run dev                                                # the UI on http://localhost:5173
+pnpm dev                                                   # the UI on http://localhost:5173
 ```
 
 The dev server forwards `/api`, `/uploads`, the sign-in and sign-out form posts and the request log

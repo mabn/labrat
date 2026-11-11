@@ -22,7 +22,7 @@ to a newer GitLab version.
 ## Quick start
 
 ```sh
-npm --prefix web ci && npm --prefix web run build   # the web UI; optional, needs Node.js 20.19+
+pnpm -C web install --frozen-lockfile && pnpm -C web build   # the web UI; optional, needs Node.js 20.19+ and pnpm
 cargo build --release
 ./target/release/labrat --db :memory: --root-token glpat-test-token
 ```
