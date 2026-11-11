@@ -1,0 +1,622 @@
+{
+  "scenario": "users_and_tokens",
+  "base": "http://localhost:8929",
+  "run": "r7a86a0",
+  "steps": [
+    {
+      "label": "current user (admin)",
+      "request": "GET /user",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:1>",
+        "username": "claude",
+        "public_email": null,
+        "name": "Claude",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/claude",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": "<TODAY>",
+        "email": "claude@gitlab.unhood.org",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "claude@gitlab.unhood.org",
+        "preferred_language": "en",
+        "is_admin": true,
+        "note": null,
+        "namespace_id": "<namespace:1>",
+        "created_by": {
+          "id": "<user:2>",
+          "username": "root",
+          "public_email": null,
+          "name": "Administrator",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/root"
+        }
+      }
+    },
+    {
+      "label": "create user alice",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "alice-<RUN>",
+        "public_email": null,
+        "name": "User alice",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/alice-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "alice-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "alice-<RUN>@example.com",
+        "preferred_language": "en",
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        }
+      }
+    },
+    {
+      "label": "token for alice",
+      "request": "POST /users/<user:3>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "test",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:3>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-10",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "duplicate username",
+      "request": "POST /users",
+      "status": 409,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "Username has already been taken"
+      }
+    },
+    {
+      "label": "duplicate email",
+      "request": "POST /users",
+      "status": 409,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "Email has already been taken"
+      }
+    },
+    {
+      "label": "missing params",
+      "request": "POST /users",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "error": "password, reset_password, force_random_password are missing, at least one parameter must be provided, name is missing, username is missing"
+      }
+    },
+    {
+      "label": "reserved username",
+      "request": "POST /users",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "username": [
+            "admin is a reserved name"
+          ]
+        }
+      }
+    },
+    {
+      "label": "get user (admin)",
+      "request": "GET /users/<user:3>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "alice-<RUN>",
+        "public_email": null,
+        "name": "User alice",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/alice-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "alice-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "alice-<RUN>@example.com",
+        "preferred_language": "en",
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "highest_role": 0,
+        "current_sign_in_ip": null,
+        "last_sign_in_ip": null,
+        "sign_in_count": 0
+      }
+    },
+    {
+      "label": "current user (alice)",
+      "request": "GET /user",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "alice-<RUN>",
+        "public_email": null,
+        "name": "User alice",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/alice-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": "<TODAY>",
+        "email": "alice-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "alice-<RUN>@example.com",
+        "preferred_language": "en"
+      }
+    },
+    {
+      "label": "get self (alice)",
+      "request": "GET /users/<user:3>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "alice-<RUN>",
+        "public_email": null,
+        "name": "User alice",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/alice-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "local_time": null
+      }
+    },
+    {
+      "label": "users by username (alice)",
+      "request": "GET /users",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/users?active=false&admins=false&blocked=false&exclude_active=false&exclude_external=false&exclude_humans=false&exclude_internal=false&external=false&humans=false&order_by=id&page=1&per_page=20&sort=desc&username=alice-<RUN>&with_custom_attributes=false&without_project_bots=false&without_projects=false>; rel=\"first\", <<BASE>/api/v4/users?active=false&admins=false&blocked=false&exclude_active=false&exclude_external=false&exclude_humans=false&exclude_internal=false&external=false&humans=false&order_by=id&page=1&per_page=20&sort=desc&username=alice-<RUN>&with_custom_attributes=false&without_project_bots=false&without_projects=false>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<user:3>",
+          "username": "alice-<RUN>",
+          "public_email": null,
+          "name": "User alice",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/alice-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "token self",
+      "request": "GET /personal_access_tokens/self",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "test",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:3>",
+        "last_used_at": "<TIME>",
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-10",
+        "last_used_ips": [
+          "<IP>"
+        ]
+      }
+    },
+    {
+      "label": "bad token",
+      "request": "GET /user",
+      "status": 401,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "401 Unauthorized"
+      }
+    },
+    {
+      "label": "anonymous user",
+      "request": "GET /user",
+      "status": 401,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "401 Unauthorized"
+      }
+    },
+    {
+      "label": "anonymous users list",
+      "request": "GET /users",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden - Not authorized to access /api/v4/users"
+      }
+    },
+    {
+      "label": "update bio",
+      "request": "PUT /users/<user:3>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "alice-<RUN>",
+        "public_email": null,
+        "name": "User alice",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/alice-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "Hello",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": "<TODAY>",
+        "email": "alice-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "alice-<RUN>@example.com",
+        "preferred_language": "en",
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        }
+      }
+    },
+    {
+      "label": "non-admin update",
+      "request": "PUT /users/<user:3>",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "block",
+      "request": "POST /users/<user:3>/block",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": true
+    },
+    {
+      "label": "blocked user request",
+      "request": "GET /user",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden - Your account has been blocked."
+      }
+    },
+    {
+      "label": "unblock",
+      "request": "POST /users/<user:3>/unblock",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": true
+    },
+    {
+      "label": "unknown user",
+      "request": "GET /users/<user:4>",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 User Not Found"
+      }
+    },
+    {
+      "label": "unknown route",
+      "request": "GET /no/such/route",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "error": "404 Not Found"
+      }
+    },
+    {
+      "label": "delete user",
+      "request": "DELETE /users/<user:3>",
+      "status": 204,
+      "headers": {},
+      "body": null
+    }
+  ],
+  "times": [
+    0,
+    125,
+    791,
+    844,
+    1435,
+    2033,
+    2056,
+    2674,
+    2727,
+    2784,
+    2820,
+    2866,
+    2895,
+    2911,
+    2926,
+    2946,
+    3014,
+    3041,
+    3101,
+    3129,
+    3179,
+    3204,
+    3218
+  ],
+  "done_times": [
+    125,
+    791,
+    844,
+    1435,
+    2033,
+    2056,
+    2674,
+    2727,
+    2784,
+    2820,
+    2866,
+    2895,
+    2911,
+    2926,
+    2946,
+    3014,
+    3041,
+    3101,
+    3129,
+    3179,
+    3204,
+    3218,
+    3253
+  ],
+  "started_at": 1794281902240
+}

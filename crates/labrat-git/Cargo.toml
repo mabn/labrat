@@ -1,0 +1,12 @@
+[package]
+name = "labrat-git"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[dependencies]
+flate2 = "1.1.11"
+hex = "0.4.3"
+rusqlite = { version = "0.41.1", features = ["bundled"] }
+sha1 = "0.11.0"
+thiserror = "2.0.21"

@@ -1,0 +1,30 @@
+//! One module per area; each public function is one user action, as in GitLab's service objects.
+
+pub mod access_tokens;
+pub mod protected_tags;
+pub mod user_counts;
+pub mod ci;
+pub mod comments;
+pub mod cross_refs;
+pub mod discussions;
+pub mod emoji;
+pub mod events;
+pub mod groups;
+pub mod hooks;
+pub mod labels;
+pub mod members;
+pub mod mentions;
+pub mod merge_requests;
+pub mod notes;
+pub mod paths;
+pub mod positions;
+pub mod projects;
+pub mod push;
+pub mod push_options;
+pub mod quick_actions;
+pub mod reviews;
+pub mod subscriptions;
+pub mod suggestions;
+pub mod todos;
+pub mod tokens;
+pub mod users;
