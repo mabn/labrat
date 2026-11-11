@@ -16,7 +16,8 @@
 3. **Fast and disposable.** One binary and one SQLite file, or memory only. It starts quickly and
    resets or snapshots between tests.
 4. **Enough Git to get data in and out with the stock `git` client.**
-5. **A plain web UI** to see state, click through the main flows and change settings.
+5. **A web UI that looks and feels like GitLab's** to see state, click through the main flows and
+   change settings. It uses only the GitLab APIs labrat serves, so it covers what labrat covers.
 
 Non-goals:
 - durability, availability, scaling and upgrades;
@@ -107,8 +108,15 @@ the fixtures and fixing the differences.
   (3,742 types and 610 mutations). Introspection and code generators therefore see the real schema.
   Resolvers exist only for the in-scope subset; any other field returns a GraphQL error saying it
   isn't implemented in labrat.
-- **UI:** server-rendered HTML (askama templates and htmx). Assets are embedded in the binary, so
-  there is no JavaScript build step.
+- **UI:** a single-page app (React, Vite and TypeScript) in `web/`. It talks to labrat only through
+  `/api/v4` and `/api/graphql`, like any other client, so it needs no UI-specific endpoints and
+  exercises the same services. Signing in is a form post to `/users/sign_in` that starts a cookie
+  session; the API accepts that session the way GitLab's accepts its own frontend's, with a CSRF
+  token required on writes (`labrat-api/src/web.rs`). The built app (`web/dist`) is embedded in the
+  binary by a build script, so `cargo build` needs no Node.js; without a build the binary serves a
+  page explaining how to make one. Every non-API path serves the app, so GitLab's URL paths and
+  `web_url`s open the right page. The app's own API calls carry `X-Labrat-UI` and stay out of the
+  request log.
 - **Webhooks:** delivered with reqwest. Every delivery's request and response is stored for
   inspection.
 
@@ -418,22 +426,28 @@ that the conformance suite catches.
 - Global IDs (`gid://gitlab/MergeRequest/42`), cursor-paginated connections and GitLab's error
   format.
 
-**Web UI** (plain; it doesn't copy GitLab's UI)
-- Login, groups and projects.
-- Repository: branches, commits and a file browser.
-- MR list and MR page:
-  - description and activity with threads;
-  - commits;
-  - changes, with inline comments;
-  - reactions, approving and submitting a review;
-  - merge, rebase and close.
+**Web UI** (GitLab's look and layout, limited to what labrat implements)
+- Sign-in with a password or a personal access token; dashboards for projects, groups, merge
+  requests and to-dos.
+- Groups and projects: create, overview with README, members, labels, milestones.
+- Repository: file browser, file view, editing and creating files (committing to a new branch can
+  open a merge request), branches, tags and commits.
+- MR list (state tabs, search, author, reviewer and label filters, sorting) and a new-MR flow that
+  compares branches first.
+- MR page:
+  - description, reactions and the activity timeline with threads, replies and resolving;
+  - the merge widget: approvals, mergeability, merge options, auto-merge, rebase, mark as ready;
+  - the sidebar: assignees, reviewers with their review state, labels, milestone, time tracking,
+    lock, notifications and to-dos;
+  - commits, pipelines (from commit statuses) and changes with versions, inline comments and
+    suggestions;
+  - draft comments and review submission (with an optional summary and approval).
 - Settings:
-  - project general and merge request settings;
-  - members and protected branches;
-  - webhooks with delivery history;
+  - project general, repository (default branch, protected branches) and merge request settings;
+  - webhooks with delivery history, test deliveries and resends;
+  - project access tokens and personal access tokens;
   - group settings;
-  - personal tokens;
-  - admin area: users, impersonation and instance settings.
+  - admin area: users, system hooks and network settings.
 - The same URL paths as GitLab, so `web_url` in an API response opens the right page.
 
 **labrat-only test tooling** (under `/-/labrat/`, which can't collide with GitLab routes)
@@ -500,7 +514,8 @@ Items marked **done** are implemented and covered by conformance scenarios.
   - upgrades: a new labrat version may need a fresh database;
   - rate limiting, monitoring and housekeeping.
 - **AI:** GitLab Duo features.
-- **Exact rendering:** byte-identical Markdown rendering, and GitLab's web UI and its look.
+- **Exact rendering:** byte-identical Markdown rendering, and a pixel-for-pixel copy of GitLab's web
+  UI. labrat's UI follows GitLab's layout and look but renders Markdown in the browser.
 
 ## Roadmap
 
@@ -528,8 +543,8 @@ crates/
   labrat/        binary: CLI, config, wiring
   labrat-git/    SQLite object store, pack reading and writing, smart HTTP, diff, merge, rebase
   labrat-core/   domain model, permissions, services, background jobs, webhook payloads
-  labrat-api/    REST v4 routes and entities, GraphQL
-  labrat-web/    UI templates and handlers
+  labrat-api/    REST v4 routes and entities, GraphQL, the UI's sign-in and static files
+web/             the web UI (React + Vite + TypeScript), embedded from web/dist
 tests/conformance/   scenarios and recorded GitLab responses
 tests/client/        a few end-to-end flows through the `gitlab` crate
 ```
