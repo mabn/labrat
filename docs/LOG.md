@@ -15,6 +15,9 @@ current state.
 **Done since the last entry:**
 - The project is renamed labrat and has its own repository. Crates, the binary, `LABRAT_*`
   environment variables and the `/-/labrat/` test endpoints use the new name.
+- [MAINTAINING.md](MAINTAINING.md) explains how to set up a reference instance, record fixtures,
+  write scenarios and move to a newer GitLab version. `scripts/reference/` holds the scripts it
+  uses; `update-data.sh` reproduces the current schema and emoji files exactly.
 
 ## 2026-11-10 UTC
 

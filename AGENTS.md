@@ -23,7 +23,8 @@ is built yet; the project is at the planning stage.
   in `docs/discrepancies.md` (the format is in `docs/PLAN.md` under "Reference version").
 - **Check against the reference instance.** It is a GitLab CE 18.11 instance, locally at
   `http://localhost:8929` and set up in `~/dev/gitlab-run-ce`. The exact Rails source is in its
-  container at `/opt/gitlab/embedded/service/gitlab-rails`.
+  container at `/opt/gitlab/embedded/service/gitlab-rails`. `docs/MAINTAINING.md` explains how
+  to set up an instance, record fixtures and move to a newer GitLab version.
 - **Use only GitLab CE as the reference:** its source and a CE instance.
 - **Stay in scope.** Check the scope lists in `docs/PLAN.md` before adding a feature, and ask before
   building anything listed as out of scope.
