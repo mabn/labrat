@@ -16,6 +16,8 @@ copy GitLab's.
 **Status:** the merge request and review feature set is implemented and checked against a real
 GitLab 18.11 instance (see [Fidelity](#fidelity)). [docs/PLAN.md](docs/PLAN.md) covers the
 architecture and scope; [docs/LOG.md](docs/LOG.md) is the work log.
+[docs/MAINTAINING.md](docs/MAINTAINING.md) explains how to record fixtures, write scenarios and move
+to a newer GitLab version.
 
 ## Quick start
 
