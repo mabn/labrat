@@ -188,6 +188,8 @@ async fn start_labrat(external_url: &str, ssh_port: u16) -> Target {
     per_kind.insert("mr_check_mergeability".to_string(), 300);
     per_kind.insert("mr_check_mergeability_closed".to_string(), 1500);
     per_kind.insert("approval_events".to_string(), 200);
+    // EE: approvals re-sync after a push or a draft becoming ready.
+    per_kind.insert("approvals_sync".to_string(), 750);
     per_kind.insert("note_event".to_string(), 300);
     // `PostReceive` -> `ProcessCommitWorker`: two Sidekiq hops before "mentioned in commit".
     per_kind.insert("commit_cross_references".to_string(), 750);

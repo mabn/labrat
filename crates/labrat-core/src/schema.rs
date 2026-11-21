@@ -194,6 +194,9 @@ CREATE TABLE merge_requests (
     squash INTEGER NOT NULL DEFAULT 0,
     -- EE: the deprecated per-MR approval count given on create.
     approvals_before_merge INTEGER,
+    -- EE: approvals are being re-synced after a push or a draft becoming ready
+    -- (`approvals_syncing`); a job clears it.
+    approvals_syncing INTEGER NOT NULL DEFAULT 0,
     merge_params TEXT NOT NULL DEFAULT '{}',
     merge_when_pipeline_succeeds INTEGER NOT NULL DEFAULT 0,
     merge_user_id INTEGER,

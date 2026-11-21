@@ -125,6 +125,7 @@ pub fn run(c: &Connection, config: &Config, job: &Job) -> Result<()> {
         ),
         "commit_cross_references" => crate::services::cross_refs::process_commits(c, config, &p),
         "update_merge_requests" => crate::services::merge_requests::refresh::refresh_job(c, config, &p),
+        "approvals_sync" => crate::services::approvals::finish_sync(c, id("merge_request_id")),
         "mr_check_mergeability" | "mr_check_mergeability_closed" => {
             crate::services::merge_requests::mergeability::check(c, config, id("merge_request_id"))
         }

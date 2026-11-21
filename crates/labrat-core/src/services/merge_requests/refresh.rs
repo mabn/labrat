@@ -228,6 +228,7 @@ pub fn refresh(
                 )?;
                 auto_draft_from_commits(c, p, &mr, user, &pushed)?;
                 crate::services::approvals::reset_on_push(c, config, p, &mr, user)?;
+                crate::services::approvals::start_sync(c, config, &mr)?;
             }
             let mr = mr.reload(c)?;
             if reloaded {

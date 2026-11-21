@@ -149,7 +149,7 @@ impl MergeRequest {
     }
 
     pub fn assignee_ids(&self, c: &Connection) -> Result<Vec<i64>> {
-        let mut st = c.prepare("SELECT user_id FROM merge_request_assignees WHERE merge_request_id = ?1 ORDER BY created_at, user_id")?;
+        let mut st = c.prepare("SELECT user_id FROM merge_request_assignees WHERE merge_request_id = ?1 ORDER BY rowid")?;
         let v = st
             .query_map([self.id], |r| r.get(0))?
             .collect::<rusqlite::Result<Vec<i64>>>()?;
@@ -374,7 +374,7 @@ fn duplicate_open(
 }
 
 /// Users from `ids` who can read merge requests in `p`: CE keeps only the first; EE (multiple
-/// assignees and reviewers) keeps every one, in id order.
+/// assignees and reviewers) keeps every one, in the order given.
 /// `Some(vec![])` clears; `None` means "no change".
 fn filter_users(c: &Connection, config: &Config, p: &Project, ids: &[i64]) -> Result<Option<Vec<i64>>> {
     if ids.is_empty() || ids == [0] {
@@ -393,7 +393,6 @@ fn filter_users(c: &Connection, config: &Config, p: &Project, ids: &[i64]) -> Re
         if keep.is_empty() {
             return Ok(None);
         }
-        keep.sort();
         return Ok(Some(keep));
     }
     let first = ids[0];
@@ -427,15 +426,22 @@ fn set_assignees(c: &Connection, mr_id: i64, ids: &[i64]) -> Result<()> {
     if old.iter().collect::<std::collections::BTreeSet<_>>() != ids.iter().collect() {
         crate::services::user_counts::invalidate(c, &affected)?;
     }
-    c.execute(
-        "DELETE FROM merge_request_assignees WHERE merge_request_id = ?1",
-        [mr_id],
-    )?;
-    for id in ids {
-        c.execute(
-            "INSERT INTO merge_request_assignees (merge_request_id, user_id, created_at) VALUES (?1, ?2, ?3)",
-            params![mr_id, id, time::now()],
-        )?;
+    // Assignees who stay keep their row; new ones are added in user id order (`User.where(id:)`),
+    // and the list follows the rows.
+    for id in &old {
+        if !ids.contains(id) {
+            c.execute("DELETE FROM merge_request_assignees WHERE merge_request_id = ?1 AND user_id = ?2", params![mr_id, id])?;
+        }
+    }
+    let mut new: Vec<i64> = ids.to_vec();
+    new.sort();
+    for id in &new {
+        if !old.contains(id) {
+            c.execute(
+                "INSERT INTO merge_request_assignees (merge_request_id, user_id, created_at) VALUES (?1, ?2, ?3)",
+                params![mr_id, id, time::now()],
+            )?;
+        }
     }
     Ok(())
 }
@@ -697,8 +703,9 @@ pub fn create(
         }
     let mr = MergeRequest::get(c, id)?;
     if _config.is_ee() {
-        // EE copies the project's approval rules onto the new MR.
+        // EE copies the project's approval rules onto the new MR, then syncs its approvals.
         crate::services::approvals::copy_project_rules(c, p, &mr)?;
+        crate::services::approvals::start_sync(c, _config, &mr)?;
     }
     if milestone.is_some() {
         milestone_event(c, &mr, user, None, milestone)?;
@@ -1381,6 +1388,10 @@ pub fn reopen(
         diffs::create_version(c, p, &mr)?;
     }
     mergeability::mark_as_unchecked(c, mr.id)?;
+    // EE drops the approvals of a reopened MR (no system note; recorded on EE 18.11).
+    if config.is_ee() {
+        c.execute("DELETE FROM approvals WHERE merge_request_id = ?1", [mr.id])?;
+    }
     crate::services::ci::update_head_pipeline(c, p, &mr)?;
     crate::services::user_counts::invalidate_all(c, &mr.reload(c)?)?;
     Ok(true)

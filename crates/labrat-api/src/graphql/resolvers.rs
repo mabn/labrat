@@ -475,7 +475,8 @@ impl Object for UserObj {
                 // Only administrators may read custom attributes.
                 if cx.user().is_some_and(|me| me.admin) { Out::List(vec![]) } else { Out::Null }
             }
-            "ide" => Out::obj(JsonObj::new("Ide", json!({"codeSuggestionsEnabled": false}))),
+            // EE (with Duo available) reports code suggestions as enabled.
+            "ide" => Out::obj(JsonObj::new("Ide", json!({"codeSuggestionsEnabled": cx.req.app.config.is_ee()}))),
             "userPreferences" => Out::obj(JsonObj::new(
                 "UserPreferences",
                 json!({"issuesSort": null, "mergeRequestDashboardListType": "ACTION_BASED", "mergeRequestDashboardShowDrafts": true,
@@ -940,7 +941,8 @@ impl Object for ProjectObj {
             "mergeRequestsFfOnlyEnabled" => Out::val(p.merge_method == "ff"),
             "allowMergeOnSkippedPipeline" => Out::val(p.allow_merge_on_skipped_pipeline),
             // One assignee and one reviewer.
-            "allowsMultipleMergeRequestAssignees" | "allowsMultipleMergeRequestReviewers" | "serviceDeskEnabled" => Out::val(false),
+            "allowsMultipleMergeRequestAssignees" | "allowsMultipleMergeRequestReviewers" => Out::val(cx.req.app.config.is_ee()),
+            "serviceDeskEnabled" => Out::val(false),
             "avatarUrl" => Out::Null,
             "autocloseReferencedIssues" | "lfsEnabled" | "sharedRunnersEnabled" => Out::val(true),
             "ciConfigPathOrDefault" => Out::val(p.setting("ci_config_path").and_then(|v| v.as_str().map(str::to_string)).filter(|v| !v.is_empty()).unwrap_or(".gitlab-ci.yml".into())),
@@ -1318,7 +1320,8 @@ impl Object for MrObj {
             "name" => Out::val(mr.title.clone()),
             "sourceBranchProtected" => Out::val(repo::is_protected(c, p, &mr.source_branch)?),
             "targetBranchPath" => Out::val(format!("/{}/-/commits/{}", p.full_path, mr.target_branch)),
-            "allowsMultipleAssignees" | "allowsMultipleReviewers" | "supportsLockOnMerge" => Out::val(false),
+            "allowsMultipleAssignees" | "allowsMultipleReviewers" => Out::val(cx.req.app.config.is_ee()),
+            "supportsLockOnMerge" => Out::val(false),
             "pipelineCreationRequests" => Out::List(vec![]),
             // Relations without an order are paginated by id, newest first.
             "commenters" => {

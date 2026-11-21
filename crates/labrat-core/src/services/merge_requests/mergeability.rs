@@ -214,6 +214,9 @@ pub fn detailed_status(c: &Connection, config: &Config, p: &Project, mr: &MergeR
         "unchecked" => return Ok("unchecked".into()),
         _ => {}
     }
+    if config.is_ee() && crate::services::approvals::syncing(c, mr)? {
+        return Ok("approvals_syncing".into());
+    }
     if let Some(failed) = first_failed_check(c, config, p, mr, true)? {
         return Ok(failed);
     }
@@ -276,7 +279,7 @@ pub fn first_failed_check(
     }
     // EE checks the approval rules after the commits and before the rebase (EE 18.11's
     // `mergeabilityChecks` order).
-    if config.is_ee() && !crate::services::approvals::state(c, p, mr)?.approved() {
+    if config.is_ee() && (crate::services::approvals::syncing(c, mr)? || !crate::services::approvals::state(c, p, mr)?.approved()) {
         return Ok(Some("not_approved".into()));
     }
     if should_be_rebased(c, p, mr)? {

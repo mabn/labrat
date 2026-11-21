@@ -755,6 +755,26 @@ pub fn eligibility(c: &Connection, p: &Project, mr: &MergeRequest, user: &User) 
     Ok(Eligibility::Yes)
 }
 
+/// EE treats an MR as temporarily unapproved while its approvals are synced after it is created
+/// or pushed to: `detailed_merge_status` is `approvals_syncing` and merging is refused until a
+/// background job finishes.
+pub fn start_sync(c: &Connection, config: &crate::Config, mr: &MergeRequest) -> Result<()> {
+    if !config.is_ee() {
+        return Ok(());
+    }
+    c.execute("UPDATE merge_requests SET approvals_syncing = 1 WHERE id = ?1", [mr.id])?;
+    crate::jobs::enqueue(c, "approvals_sync", json!({"merge_request_id": mr.id}))
+}
+
+pub fn finish_sync(c: &Connection, mr_id: i64) -> Result<()> {
+    c.execute("UPDATE merge_requests SET approvals_syncing = 0 WHERE id = ?1", [mr_id])?;
+    Ok(())
+}
+
+pub fn syncing(c: &Connection, mr: &MergeRequest) -> Result<bool> {
+    Ok(c.query_row("SELECT approvals_syncing FROM merge_requests WHERE id = ?1", [mr.id], |r| r.get::<_, i64>(0))? != 0)
+}
+
 /// Ruby's `Array#to_sentence`.
 fn to_sentence(items: &[String]) -> String {
     match items.len() {
