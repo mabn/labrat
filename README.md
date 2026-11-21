@@ -28,6 +28,8 @@ a real GitLab, and your tests start in milliseconds instead of minutes.
   done, and to move the clock. A request log shows every call your code made.
 - **Works with real clients:** it is tested with the Rust `gitlab` crate, `curl` and
   `git clone`/`git push`. Other GitLab clients use the same API.
+- **Simple web UI:** a GitLab-style web UI to browse projects, review merge requests and change
+  settings while you develop or debug.
 
 ## labrat and GitLab at a glance
 
@@ -74,6 +76,10 @@ The web UI is at <http://localhost:8080/>. Sign in as `root` with the root passw
 (`labrat-root-password` unless set), or with a personal access token. The UI is a React app in
 [`web/`](web/README.md) that `cargo build` embeds from `web/dist`; a binary built without it serves
 a page that says how to build it.
+
+<p align="center">
+  <img src="docs/assets/web-ui-merge-request.png" alt="labrat's web UI showing an open merge request: the description, an approve and merge widget, a review thread with a suggested change, and a sidebar with reviewers and labels." width="760">
+</p>
 
 ### Using it in tests
 
