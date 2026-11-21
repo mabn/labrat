@@ -33,43 +33,45 @@ async fn merge_train_drops() {
     }
     for i in 1..=4 {
         s.step(&format!("add {i}"), POST, &format!("{trains}/merge_requests/{i}"), Some(&admin), json!({}), "car").await;
+        s.settle().await;
     }
-    s.settle().await;
     s.ci_pick(4).await;
 
-    // A push to car 2's branch takes it off; cars 3 and 4 restart.
+    // Each drop takes the last car, so no car behind it restarts while the MR gets its own new
+    // pipeline (the reference creates those in no fixed order). Restarts behind a car are
+    // covered by `merge_train_flow`.
+
+    // A push to car 4's branch takes it off.
     s.step(
-        "push two",
+        "push four",
         POST,
         &format!("/projects/{pid}/repository/commits"),
         Some(&admin),
-        json!({"branch": "two", "commit_message": "More two", "actions": [{"action": "update", "file_path": "two.txt", "content": "two\nmore\n"}]}),
+        json!({"branch": "four", "commit_message": "More four", "actions": [{"action": "update", "file_path": "four.txt", "content": "four\nmore\n"}]}),
         "commit",
     )
     .await;
     s.settle().await;
-    s.poll_mr(pid, 2).await;
+    s.poll_mr(pid, 4).await;
     s.step("list after push", GET, &trains, Some(&admin), json!(null), "car").await;
-    s.step("mr 2 after push", GET, &format!("{mrs}/2"), Some(&admin), json!(null), "mr").await;
-    s.step("mr 2 notes after push", GET, &format!("{mrs}/2/notes"), Some(&admin), json!({"sort": "asc"}), "note").await;
-    s.ci_pick(3).await;
+    s.step("mr 4 after push", GET, &format!("{mrs}/4"), Some(&admin), json!(null), "mr").await;
+    s.step("mr 4 notes after push", GET, &format!("{mrs}/4/notes"), Some(&admin), json!({"sort": "asc"}), "note").await;
+    s.ci_pick(1).await;
 
     // Marking car 3 as draft takes it off.
     s.step("draft 3", PUT, &format!("{mrs}/3"), Some(&admin), json!({"title": "Draft: Add three"}), "mr").await;
     s.settle().await;
     s.step("list after draft", GET, &trains, Some(&admin), json!(null), "car").await;
     s.step("mr 3 notes after draft", GET, &format!("{mrs}/3/notes"), Some(&admin), json!({"sort": "asc"}), "note").await;
-    s.ci_pick(1).await;
 
-    // Closing car 4 takes it off.
-    // The close response races with the train dropping the car (its pipeline can read as
-    // canceled and running at once), so the MR is read after things settle.
-    let r = s.send(PUT, &format!("{mrs}/4"), Some(&admin), json!({"state_event": "close"})).await;
+    // Closing car 2 takes it off. The close response races with the train dropping the car (its
+    // pipeline can read as canceled and running at once), so the MR is read after things settle.
+    let r = s.send(PUT, &format!("{mrs}/2"), Some(&admin), json!({"state_event": "close"})).await;
     assert_eq!(r.status, 200, "{}", r.body);
     s.settle().await;
-    s.step("mr 4 closed", GET, &format!("{mrs}/4"), Some(&admin), json!(null), "mr").await;
+    s.step("mr 2 closed", GET, &format!("{mrs}/2"), Some(&admin), json!(null), "mr").await;
     s.step("list after close", GET, &trains, Some(&admin), json!(null), "car").await;
-    s.step("mr 4 notes after close", GET, &format!("{mrs}/4/notes"), Some(&admin), json!({"sort": "asc"}), "note").await;
+    s.step("mr 2 notes after close", GET, &format!("{mrs}/2/notes"), Some(&admin), json!({"sort": "asc"}), "note").await;
     s.step("pipelines after drops", GET, &format!("/projects/{pid}/pipelines"), Some(&admin), json!({"per_page": 50}), "pipeline").await;
 
     // Merging MR 5 past the train (skip-train setting off): car 1 restarts on top of it.
@@ -81,7 +83,8 @@ async fn merge_train_drops() {
     s.step("mr 5 notes", GET, &format!("{mrs}/5/notes"), Some(&admin), json!({"sort": "asc"}), "note").await;
     s.ci_pick(1).await;
 
-    // With the setting on, MR 6 skips the train: car 1 keeps its pipeline.
+    // With the setting on, MR 6 skips the train: it is recorded as a `skip_merged` car, and car 1
+    // restarts too.
     s.step("allow skip train", PUT, &format!("/projects/{pid}"), Some(&admin), json!({"merge_trains_skip_train_allowed": true}), "project").await;
     s.settle().await;
     s.step("skip train 6", PUT, &format!("{mrs}/6/merge"), Some(&admin), json!({"skip_merge_train": true}), "mr").await;
@@ -89,6 +92,7 @@ async fn merge_train_drops() {
     s.step("list after skip", GET, &trains, Some(&admin), json!(null), "car").await;
     s.step("list complete after skip", GET, &trains, Some(&admin), json!({"scope": "complete"}), "car").await;
     s.step("mr 6 notes", GET, &format!("{mrs}/6/notes"), Some(&admin), json!({"sort": "asc"}), "note").await;
+    s.ci_pick(1).await;
 
     // Car 1 passes and merges.
     s.ci_finish("refs/merge-requests/1/train", "success").await;

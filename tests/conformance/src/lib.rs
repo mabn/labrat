@@ -426,7 +426,8 @@ impl Scenario {
 
     /// Fake CI: a runner picks up `count` pending jobs of the project, which start running.
     /// Recording waits until that many were picked (finishing other projects' jobs at once);
-    /// replaying picks every pending job and fails the scenario when the count differs.
+    /// replaying picks them at the recorded times and fails the scenario when the count
+    /// differs. Both wait for things to settle, so the pipelines read as running.
     pub async fn ci_pick(&mut self, count: usize) {
         let project = self.ci_project.expect("ci_enable first");
         if self.target.recording {
@@ -459,6 +460,8 @@ impl Scenario {
                 got += 1;
             }
             self.ci_times.push(first_at.unwrap_or(self.started.elapsed().as_millis() as i64));
+            // The pipelines move to `running` in the background: wait for that.
+            self.settle().await;
         } else if let Some(picks) = self.expected_ci_picks.clone() {
             // Each job starts when the recording's runner picked it.
             self.ci_done += 1;
@@ -484,6 +487,9 @@ impl Scenario {
             if got != count {
                 self.failures.push(format!("ci_pick: labrat had {got} pending jobs, the recording picked {count}"));
             }
+        }
+        if !self.target.recording {
+            self.settle().await;
         }
     }
 

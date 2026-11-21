@@ -54,11 +54,14 @@ async fn merge_train_flow() {
 
     // Four cars.
     s.step("add 1", POST, &format!("{trains}/merge_requests/1"), Some(&admin), json!({}), "car").await;
+    s.settle().await;
     s.step("add 1 again", POST, &format!("{trains}/merge_requests/1"), Some(&admin), json!({}), "car").await;
     // Developers can't merge into the protected default branch.
     s.step("add 2 as dev", POST, &format!("{trains}/merge_requests/2"), Some(&dev_t), json!({}), "car").await;
     s.step("add 2", POST, &format!("{trains}/merge_requests/2"), Some(&admin), json!({}), "car").await;
+    s.settle().await;
     s.step("add 3", POST, &format!("{trains}/merge_requests/3"), Some(&admin), json!({"squash": true}), "car").await;
+    s.settle().await;
     s.step("add 4", POST, &format!("{trains}/merge_requests/4"), Some(&admin), json!({"when_pipeline_succeeds": false}), "car").await;
     s.settle().await;
     s.ci_pick(4).await;

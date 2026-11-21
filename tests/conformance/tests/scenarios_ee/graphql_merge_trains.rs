@@ -72,9 +72,11 @@ async fn graphql_merge_trains() {
     // Three cars through mergeRequestAccept.
     s.graphql("accept bad sha", Some(&admin), ACCEPT, json!({"path": full, "iid": "1", "sha": "0000000000000000000000000000000000000000", "strategy": "MERGE_TRAIN"})).await;
     s.graphql("accept 1", Some(&admin), ACCEPT, accept(0, "MERGE_TRAIN")).await;
+    s.settle().await;
     // Developers can't merge into the protected default branch.
     s.graphql("accept 2 as dev", Some(&dev_t), ACCEPT, accept(1, "MERGE_TRAIN")).await;
     s.graphql("accept 2", Some(&admin), ACCEPT, accept(1, "MERGE_TRAIN")).await;
+    s.settle().await;
     s.graphql("accept 3", Some(&admin), ACCEPT, accept(2, "MERGE_TRAIN")).await;
     s.graphql("accept 3 again", Some(&admin), ACCEPT, accept(2, "MERGE_TRAIN")).await;
     s.settle().await;

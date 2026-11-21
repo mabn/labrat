@@ -487,6 +487,9 @@ impl Normalizer {
     }
 }
 
+/// How far apart (in seconds) a recorded and a replayed `duration` may be.
+const DURATION_SLACK_S: i64 = 5;
+
 /// Returns a description of the first difference, comparing key order too.
 pub fn diff(expected: &Value, actual: &Value, path: &str) -> Option<String> {
     match (expected, actual) {
@@ -534,6 +537,14 @@ pub fn diff(expected: &Value, actual: &Value, path: &str) -> Option<String> {
             None
         }
         (a, b) if a == b => None,
+        // Durations (pipelines, merge train cars) are differences of timestamps, which are
+        // compared as `<TIME>`: they follow the reference's background job timing, so they
+        // only need to be close.
+        (Value::Number(a), Value::Number(b))
+            if path.ends_with(".duration") && a.as_i64().zip(b.as_i64()).is_some_and(|(x, y)| (x - y).abs() <= DURATION_SLACK_S) =>
+        {
+            None
+        }
         (a, b) => Some(format!("{path}: expected {}, got {}", short(a), short(b))),
     }
 }
