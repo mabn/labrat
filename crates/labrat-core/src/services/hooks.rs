@@ -360,6 +360,9 @@ pub fn mr_attrs(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest)
     m.insert("total_time_spent".into(), json!(mr.total_time_spent));
     m.insert("url".into(), json!(mr.web_url(config, p)));
     m.insert("work_in_progress".into(), json!(mr.is_draft()));
+    if config.is_ee() {
+        m.insert("approval_rules".into(), Value::Array(crate::services::approvals::hook_rules(c, mr)?));
+    }
     Ok(m)
 }
 

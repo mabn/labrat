@@ -359,6 +359,10 @@ pub fn basic(
         "blocking_discussions_resolved".into(),
         json!(mergeability::blocking_discussions_resolved(c, p, mr)?),
     );
+    if config.is_ee() {
+        // EE adds the MR's own (deprecated) approval count.
+        m.insert("approvals_before_merge".into(), json!(labrat_core::services::approvals::mr_approvals_before_merge(c, mr)?));
+    }
     Ok(m)
 }
 

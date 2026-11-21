@@ -1,6 +1,6 @@
 //! Static validation with graphql-ruby's messages (the common rules integrations hit).
 
-use super::schema::{SCHEMA, Schema, TypeRef};
+use super::schema::{Schema, TypeRef};
 use async_graphql_parser::Positioned;
 use async_graphql_parser::types::{ExecutableDocument, OperationDefinition, OperationType, Selection, SelectionSet};
 use serde_json::{Map, Value, json};
@@ -770,7 +770,7 @@ impl V<'_> {
 
 /// Validates the chosen operation; `Some(errors)` if it must not run.
 pub fn validate(query: &str, doc: &ExecutableDocument, op: &Positioned<OperationDefinition>, variables: &Map<String, Value>) -> Option<Vec<Value>> {
-    let schema: &Schema = &SCHEMA;
+    let schema: &Schema = super::schema::schema();
     let vars = op
         .node
         .variable_definitions

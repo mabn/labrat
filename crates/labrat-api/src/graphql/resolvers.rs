@@ -414,7 +414,7 @@ impl Object for Query {
                 Ok(Out::obj(JsonObj::new("QueryComplexity", json!({"score": score, "limit": limit}))))
             }
             "metadata" => Ok(match cx.user() {
-                Some(_) => Out::obj(JsonObj::new("Metadata", json!({"version": labrat_core::GITLAB_VERSION, "revision": labrat_core::GITLAB_REVISION, "enterprise": false}))),
+                Some(_) => Out::obj(JsonObj::new("Metadata", json!({"version": cx.req.app.config.gitlab_version(), "revision": cx.req.app.config.gitlab_revision(), "enterprise": cx.req.app.config.is_ee()}))),
                 None => Out::Null,
             }),
             "group" | "namespace" => {

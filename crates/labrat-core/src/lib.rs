@@ -59,6 +59,15 @@ impl Config {
         self.edition.is_ee()
     }
 
+    /// The version string GitLab reports (`/version`, `User-Agent`): EE adds `-ee`.
+    pub fn gitlab_version(&self) -> String {
+        if self.is_ee() { format!("{GITLAB_VERSION}-ee") } else { GITLAB_VERSION.to_string() }
+    }
+
+    pub fn gitlab_revision(&self) -> &'static str {
+        if self.is_ee() { GITLAB_EE_REVISION } else { GITLAB_REVISION }
+    }
+
     pub fn url(&self, path: &str) -> String {
         format!("{}{}", self.external_url, path)
     }

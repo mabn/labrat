@@ -2,7 +2,7 @@
 //! `@skip`/`@include`, argument coercion, value completion with null propagation, and
 //! introspection answered from GitLab's own introspection data.
 
-use super::schema::{FieldDef, SCHEMA, Schema, TypeRef};
+use super::schema::{FieldDef, Schema, TypeRef};
 use crate::ctx::Req;
 use async_graphql_parser::Positioned;
 use async_graphql_parser::types::{ExecutableDocument, Field, OperationDefinition, Selection, SelectionSet};
@@ -404,7 +404,7 @@ pub fn run(
     variables: Map<String, Value>,
     root: &dyn Object,
 ) -> Value {
-    let schema: &'static Schema = &SCHEMA;
+    let schema: &'static Schema = super::schema::schema();
     let mut cx = Ctx { c, req, schema, doc, vars: Map::new(), errors: RefCell::new(vec![]) };
     let mut vars = Map::new();
     for vd in &op.node.variable_definitions {

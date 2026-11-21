@@ -3,7 +3,7 @@
 use crate::ctx::{ApiResult, Req, Resp};
 use axum::Router;
 use axum::routing::get;
-use labrat_core::{App, GITLAB_REVISION, GITLAB_VERSION};
+use labrat_core::App;
 use serde_json::json;
 use std::sync::Arc;
 
@@ -47,9 +47,9 @@ async fn markdown(req: Req) -> ApiResult {
 async fn version(req: Req) -> ApiResult {
     req.user()?;
     Ok(Resp::ok(json!({
-        "version": GITLAB_VERSION,
-        "revision": GITLAB_REVISION,
+        "version": req.app.config.gitlab_version(),
+        "revision": req.app.config.gitlab_revision(),
         "kas": {"enabled": false, "externalUrl": null, "externalK8sProxyUrl": null, "version": null},
-        "enterprise": false,
+        "enterprise": req.app.config.is_ee(),
     })))
 }

@@ -446,6 +446,16 @@ impl Normalizer {
                                 }
                                 continue;
                             }
+                    // EE groups: user ids alerted about excessive project downloads.
+                    if let Value::Array(a) = entry
+                        && k == "unique_project_download_limit_alertlist" {
+                            for item in a.iter_mut() {
+                                if let Some(i) = item.as_i64() {
+                                    *item = Value::String(self.id("user", i));
+                                }
+                            }
+                            continue;
+                        }
                     if let Value::Array(a) = entry
                         && k.ends_with("_ids") {
                             let idk = id_kind(&k[..k.len() - 1], kind).unwrap_or(k.clone());

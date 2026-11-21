@@ -688,6 +688,9 @@ impl Scenario {
             let names: Vec<String> = self.extra_headers.iter().map(|(k, _)| k.to_ascii_lowercase()).collect();
             strip_headers(&mut step["body"], &names);
         }
+        if self.target.recording && std::env::var("HOOK_PUBLIC_URL").is_ok() {
+            receiver_response_headers(&mut step["body"]);
+        }
         let idx = self.steps.len();
         let at = self.pending_at.take().unwrap_or_else(|| self.started.elapsed().as_millis() as i64);
         self.times.push(at);
@@ -714,6 +717,9 @@ impl Scenario {
             let data = json!({"scenario": self.name, "base": self.target.public_base, "ssh_port": self.ssh_port, "run": self.run, "steps": self.steps, "times": self.times, "done_times": self.done_times, "started_at": self.started_at});
             let text = serde_json::to_string_pretty(&data).unwrap() + "\n";
             let lower = text.to_ascii_lowercase();
+            for marker in ["CF_Authorization", "Cf-Ray", "cloudflareaccess"] {
+                assert!(!text.contains(marker), "not writing {}: it mentions {marker}", path.display());
+            }
             for (k, v) in &self.extra_headers {
                 assert!(
                     !text.contains(v.as_str()) && !lower.contains(&k.to_ascii_lowercase()),
@@ -939,6 +945,35 @@ async fn shared_receiver(port: u16) -> Arc<std::sync::Mutex<std::collections::Ha
         })
         .await
         .clone()
+}
+
+/// A hook delivery log (`response_headers`) recorded through the tunnel shows the tunnel's
+/// response headers (cookies, ray ids and so on), not the receiver's. Puts back exactly what the
+/// receiver sends, in the order GitLab logs it when it reaches the receiver directly.
+fn receiver_response_headers(v: &mut Value) {
+    match v {
+        Value::Object(m) => {
+            if let Some(Value::Object(h)) = m.get_mut("response_headers") {
+                let get = |name: &str| h.iter().find(|(k, _)| k.eq_ignore_ascii_case(name)).map(|(_, v)| v.clone());
+                if get("X-Receiver").is_some() {
+                    let mut out = Map::new();
+                    out.insert("Content-Type".into(), get("Content-Type").unwrap_or(json!("text/plain")));
+                    out.insert("X-Receiver".into(), json!("conformance"));
+                    out.insert("Content-Length".into(), get("Content-Length").unwrap_or(json!("8")));
+                    out.insert("Connection".into(), json!("close"));
+                    if let Some(d) = get("Date") {
+                        out.insert("Date".into(), d);
+                    }
+                    *h = out;
+                }
+            }
+            for x in m.values_mut() {
+                receiver_response_headers(x);
+            }
+        }
+        Value::Array(a) => a.iter_mut().for_each(receiver_response_headers),
+        _ => {}
+    }
 }
 
 /// Removes every mention of the headers `names` (lowercase) from a recorded body: object keys,

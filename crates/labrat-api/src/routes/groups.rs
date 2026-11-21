@@ -169,6 +169,11 @@ pub fn detail_value(
     with_projects: bool,
 ) -> Result<Value, ApiError> {
     let mut m = group_entity::detail(g, perms, &req.app.config, with_projects);
+    if req.app.config.is_ee() {
+        let mut st = c.prepare("SELECT user_id FROM members WHERE source_type = 'Namespace' AND source_id = ?1 AND access_level = 50 ORDER BY id")?;
+        let owners = st.query_map([g.id], |r| r.get::<_, i64>(0))?.collect::<rusqlite::Result<Vec<i64>>>()?;
+        group_entity::ee_detail(g, &mut m, &owners);
+    }
     if with_projects {
         let mut items = vec![];
         for p in Project::list_where(c, "p.namespace_id = ?1 ORDER BY p.id DESC", [g.id])? {

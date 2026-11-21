@@ -1,6 +1,7 @@
 //! One module per area; each public function is one user action, as in GitLab's service objects.
 
 pub mod access_tokens;
+pub mod approvals;
 pub mod protected_tags;
 pub mod user_counts;
 pub mod ci;

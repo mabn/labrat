@@ -102,7 +102,43 @@ pub fn group(g: &Namespace, config: &Config) -> Map<String, Value> {
     m.insert("shared_runners_setting".into(), json!("enabled"));
     m.insert("max_artifacts_size".into(), Value::Null);
     m.insert("marked_for_deletion_on".into(), Value::Null);
+    if config.is_ee() {
+        // The fields EE adds to groups, in the order the EE 18.11 reference returns them.
+        m.insert("ldap_cn".into(), Value::Null);
+        m.insert("ldap_access".into(), Value::Null);
+        m.insert("wiki_access_level".into(), json!("enabled"));
+        m.insert("repository_storage".into(), Value::Null);
+        m.insert("duo_core_features_enabled".into(), Value::Null);
+        m.insert("duo_features_enabled".into(), json!(true));
+        m.insert("lock_duo_features_enabled".into(), json!(false));
+        m.insert("duo_namespace_access_rules".into(), json!([]));
+    }
     m
+}
+
+/// The fields EE adds to a single group's details, after the CE fields. `owner_ids` are the ids of the
+/// group's direct owners, which EE lists as the default download-limit alert list.
+pub fn ee_detail(g: &Namespace, m: &mut Map<String, Value>, owner_ids: &[i64]) {
+    m.insert("shared_runners_minutes_limit".into(), Value::Null);
+    m.insert("extra_shared_runners_minutes_limit".into(), Value::Null);
+    m.insert("prevent_forking_outside_group".into(), json!(false));
+    m.insert("service_access_tokens_expiration_enforced".into(), json!(true));
+    m.insert("experiment_features_enabled".into(), json!(false));
+    m.insert("membership_lock".into(), json!(false));
+    m.insert("ip_restriction_ranges".into(), Value::Null);
+    m.insert("allowed_email_domains_list".into(), Value::Null);
+    for k in [
+        "only_allow_merge_if_pipeline_succeeds",
+        "allow_merge_on_skipped_pipeline",
+        "only_allow_merge_if_all_discussions_are_resolved",
+    ] {
+        m.insert(k.into(), json!(g.setting_bool(k, false)));
+    }
+    m.insert("unique_project_download_limit".into(), json!(0));
+    m.insert("unique_project_download_limit_interval_in_seconds".into(), json!(0));
+    m.insert("unique_project_download_limit_allowlist".into(), json!([]));
+    m.insert("unique_project_download_limit_alertlist".into(), json!(owner_ids));
+    m.insert("auto_ban_user_on_excessive_projects_download".into(), json!(false));
 }
 
 /// `GroupDetail`: the shape of `GET /groups/:id`. Projects are inserted by the caller.
