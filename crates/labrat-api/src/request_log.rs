@@ -66,7 +66,12 @@ fn token_user(app: &Arc<App>, headers: &axum::http::HeaderMap) -> Option<String>
 /// Middleware recording API calls.
 pub async fn record(State(app): State<Arc<App>>, req: Request, next: Next) -> Response {
     let path = req.uri().path().to_string();
-    if !(path.starts_with("/api/v4/") || path == "/api/graphql") {
+    // The web UI's own calls (marked by its header, or made with its session and no token) stay
+    // out of the log of test traffic.
+    let h = req.headers();
+    let ui_call = h.contains_key("x-labrat-ui")
+        || (crate::web::has_session_cookie(h) && !h.contains_key("private-token") && !h.contains_key("authorization"));
+    if !(path.starts_with("/api/v4/") || path == "/api/graphql") || ui_call {
         return next.run(req).await;
     }
     let start = std::time::Instant::now();

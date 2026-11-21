@@ -10,8 +10,8 @@ GitLab 18.11 does. Merge requests are the focus. That means the whole lifecycle 
 do in one: comments, threads, diff comments, reviews, approvals, reactions, suggestions and merging.
 
 It is not a GitLab replacement. It has no CI runners, no issues, no durability, no upgrade path and
-no high availability. Its UI is a plain one for looking at state and changing settings; it doesn't
-copy GitLab's.
+no high availability. Its web UI looks and works like GitLab's for what labrat implements, and talks
+to labrat only through the GitLab APIs.
 
 **Status:** the merge request and review feature set is implemented and checked against a real
 GitLab 18.11 instance (see [Fidelity](#fidelity)). [docs/PLAN.md](docs/PLAN.md) covers the
@@ -22,11 +22,12 @@ to a newer GitLab version.
 ## Quick start
 
 ```sh
-cargo build --release
+cargo build --release   # also builds the web UI when pnpm (and Node.js 20.19+) is installed
 ./target/release/labrat --db :memory: --root-token glpat-test-token
 ```
 
-labrat listens on `127.0.0.1:8080`. Use it as you would use GitLab:
+labrat listens on `127.0.0.1:8080`. `scripts/seed-demo.sh` resets it and fills it with demo users, a
+project and a merge request under review, to look at in the web UI. Use it as you would use GitLab:
 
 ```sh
 curl -H "PRIVATE-TOKEN: glpat-test-token" -X POST localhost:8080/api/v4/projects \
@@ -35,7 +36,9 @@ git clone http://root:glpat-test-token@localhost:8080/root/demo.git
 ```
 
 The web UI is at <http://localhost:8080/>. Sign in as `root` with the root password
-(`labrat-root-password` unless set).
+(`labrat-root-password` unless set), or with a personal access token. The UI is a React app in
+[`web/`](web/README.md) that `cargo build` embeds from `web/dist`; a binary built without it serves
+a page that says how to build it.
 
 | Option | Environment | Default | Meaning |
 |---|---|---|---|
@@ -90,8 +93,11 @@ it.
   `mergeabilityChecks`), notes, discussions, labels, emoji and to-dos.
 - **Search**: `/search`, `/groups/:id/search` and `/projects/:id/search` for merge requests,
   milestones, notes, commits, users and projects, as basic search answers them.
-- **Web UI**: projects, files, merge requests (activity, diffs with inline comments, approve, merge),
-  settings, webhooks and the request log.
+- **Web UI**: a GitLab-style single-page app over the REST and GraphQL APIs: projects, groups,
+  files (with editing and committing), branches, commits, merge requests (activity, threads, diffs
+  with inline comments, suggestions, reviews, approvals, merging and rebasing), project and merge
+  request settings, members, labels, milestones, webhooks, access tokens, users and the request
+  log.
 
 Out of scope: CI runners and jobs, issues, forks, and the rest listed in the
 plan.

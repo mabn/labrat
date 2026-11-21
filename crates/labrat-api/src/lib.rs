@@ -13,7 +13,7 @@ pub mod pagination;
 pub mod params;
 pub mod request_log;
 pub mod routes;
-pub mod ui;
+pub mod web;
 
 use axum::Router;
 use axum::http::StatusCode;
@@ -57,7 +57,7 @@ async fn api_not_found() -> impl IntoResponse {
     ctx::json_response(StatusCode::NOT_FOUND, &json!({"error": "404 Not Found"}))
 }
 
-/// Everything outside `/api/v4`: git over HTTP, then (later) the web UI.
+/// Everything outside `/api/v4`: git over HTTP, then the web UI.
 async fn fallback(
     axum::extract::State(app): axum::extract::State<Arc<App>>,
     req: axum::extract::Request,
@@ -71,7 +71,7 @@ async fn fallback(
     if git_http::split_git_path(&path).is_some() {
         return git_http::handle(app, parts.method, &path, &query, parts.headers, bytes).await;
     }
-    ui::handle(app, parts.method, &path, &query, parts.headers, &bytes).await
+    web::handle(app, parts.method, &path, &query, parts.headers, &bytes).await
 }
 
 pub fn router(app: Arc<App>) -> Router {

@@ -353,6 +353,9 @@ impl Req {
             if self.params.str("sudo").is_some() || self.headers.contains_key("sudo") {
                 return Err(Error::Unauthorized(None).into());
             }
+            // The web UI's session, as GitLab's API accepts its own web session (writes need
+            // the CSRF token; without it the request is anonymous).
+            self.user = crate::web::session_user(&self.app, &self.method, &self.headers);
             return Ok(());
         };
         let app = self.app.clone();
