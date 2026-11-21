@@ -601,10 +601,12 @@ pub fn approvals_json(c: &Connection, ctx: &Ctx, config: &Config, p: &Project, m
         }
         None => (false, false),
     };
+    // The any-approver rule is listed only while it asks for more than the other rules do.
+    let regular_left: i64 = st.rules.iter().filter(|w| !w.rule.is_any_approver()).map(|w| w.left()).sum();
     let left: Vec<Value> = st
         .rules
         .iter()
-        .filter(|w| !w.approved())
+        .filter(|w| !w.approved() && !(w.rule.is_any_approver() && w.left() <= regular_left))
         .map(|w| json!({"id": w.rule.id, "name": w.name(), "rule_type": w.rule.rule_type}))
         .collect();
     let mut m = Map::new();

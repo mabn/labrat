@@ -489,6 +489,9 @@ fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64], ee: bool) -> Result<()
             "INSERT OR IGNORE INTO merge_request_reviewers (merge_request_id, user_id, state, created_at)
              VALUES (?1, ?2, CASE
                  WHEN EXISTS (SELECT 1 FROM approvals WHERE merge_request_id = ?1 AND user_id = ?2) THEN 3
+                 -- EE: an outstanding change request comes back with the reviewer (only EE
+                 -- fills this table).
+                 WHEN EXISTS (SELECT 1 FROM merge_request_requested_changes WHERE merge_request_id = ?1 AND user_id = ?2) THEN 2
                  ELSE 0 END, ?3)",
             params![mr_id, id, time::now()],
         )?;
@@ -855,6 +858,10 @@ pub fn apply_state_event(
                 && duplicate_open(c, p, &mr.source_branch, &mr.target_branch, Some(mr.id))?.is_none()
             {
                 reopen(c, config, p, mr, user)?;
+            } else if config.is_ee() && can_reopen && mr.state == "opened" {
+                // EE drops the approvals on a reopen request even when the MR is already open
+                // (recorded on EE 18.11: `approval_persistence`, "bob reopen").
+                c.execute("DELETE FROM approvals WHERE merge_request_id = ?1", [mr.id])?;
             }
         }
         _ => {}
