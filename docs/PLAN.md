@@ -57,6 +57,18 @@ Behavior is ported from GitLab CE, which is MIT-licensed and is the only referen
 For now, labrat stays on CE 18.11. Moving to a newer version would mean re-recording
 the fixtures and fixing the differences.
 
+**Enterprise Edition.** labrat also imitates GitLab EE 18.11 (Ultimate license), and does so by
+default. `--noee` switches to exact CE behaviour.
+- **EE mode covers** everything in scope below, with EE's responses: extra JSON fields, EE
+  defaults and behaviour, and EE's GraphQL schema. It adds one EE feature, merge request
+  approval rules and settings (see "In scope").
+- **The EE reference** is an EE 18.11.14 instance reached only through its API. No EE source and
+  no EE container are used. `docs/MAINTAINING.md` explains how to record against it.
+- **Testing:** the `conformance_ee` test binary checks every shared scenario against EE
+  recordings (`tests/conformance/fixtures-ee/`), plus EE-only scenarios
+  (`tests/conformance/tests/scenarios_ee/`). The `conformance` binary checks the CE recordings
+  with labrat running as CE.
+
 ## Architecture
 
 ```
@@ -458,6 +470,30 @@ that the conformance suite catches.
   Architecture).
 - A request log in the UI with every API call, its request and its response.
 - A fixed root token from a CLI flag or environment variable, so tests can start immediately.
+
+**EE: merge request approvals** (EE mode only)
+- Project approval settings, through both `/projects/:id/approvals` and
+  `/projects/:id/merge_request_approval_setting`, and top-level group settings
+  (`/groups/:id/merge_request_approval_setting`) that lock project settings.
+- Project approval rules (`/projects/:id/approval_rules`): users, groups, protected branch
+  scoping and any-approver rules.
+- MR approval rules (`/merge_requests/:iid/approval_rules`): copied from the project on creation,
+  with per-MR overrides unless the project prevents them.
+- Approval state: `/approvals` (EE body), `/approval_state`, `/approval_settings` and
+  `POST /approvals`.
+- Approval behaviour:
+  - eligibility, including author approval;
+  - the `not_approved` and `approvals_syncing` merge statuses;
+  - the `approval`/`approved`/`unapproved`/`unapproval` hook actions;
+  - approval resets on push and on reopen.
+- GraphQL: `approvalState`, `approvalsRequired`, `approvalsLeft`, branch-rule approval rules,
+  and the `mergeRequestUpdateApprovalRule`, `branchRuleApprovalProjectRuleCreate`,
+  `approvalProjectRuleUpdate` and `approvalProjectRuleDelete` mutations.
+- Not covered:
+  - group approval rules, which stay behind a feature flag that is off in 18.11;
+  - code owners;
+  - re-authentication to approve;
+  - approval policies, which are security policies and depend on CI scans.
 
 ### Later (candidates, by demand)
 

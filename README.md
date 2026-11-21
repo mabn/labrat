@@ -176,6 +176,13 @@ a newer GitLab version.
 | `--ssh-port` | `LABRAT_SSH_PORT` | `22` | Port shown in `ssh_url_to_repo` (git over SSH isn't served) |
 | `--job-delay-ms` | `LABRAT_JOB_DELAY_MS` | `0` | Delay every background job, to expose intermediate states |
 | `--job-jitter-ms` | `LABRAT_JOB_JITTER_MS` | `0` | Random extra delay per job |
+| `--noee` | `LABRAT_NOEE` | off | Behave like GitLab Community Edition instead of Enterprise Edition |
+
+**Editions.** By default labrat answers like GitLab Enterprise Edition 18.11 with a license that
+includes approval rules. That covers EE's extra JSON fields, its defaults (authors can't approve
+their own merge requests, approvals reset on push), its GraphQL schema, and merge request
+approval rules and settings. With `--noee` it answers exactly like the Community Edition:
+EE-only endpoints and fields don't exist.
 
 The database schema version is checked on start. After an upgrade that changes it, delete the
 database file.
