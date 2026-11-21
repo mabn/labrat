@@ -329,7 +329,7 @@ pub fn mr_attrs(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest)
     m.insert("prepared_at".into(), opt_ar_time(mr.prepared_at));
     m.insert("assignee_ids".into(), json!(assignees));
     m.insert("blocking_discussions_resolved".into(), json!(mergeability::blocking_discussions_resolved(c, p, mr)?));
-    m.insert("detailed_merge_status".into(), json!(mergeability::detailed_status(c, p, mr)?));
+    m.insert("detailed_merge_status".into(), json!(mergeability::detailed_status(c, config, p, mr)?));
     let first = if mr.state == "merged" {
         mr.first_contribution
     } else {
@@ -360,6 +360,9 @@ pub fn mr_attrs(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest)
     m.insert("total_time_spent".into(), json!(mr.total_time_spent));
     m.insert("url".into(), json!(mr.web_url(config, p)));
     m.insert("work_in_progress".into(), json!(mr.is_draft()));
+    if config.is_ee() {
+        m.insert("approval_rules".into(), Value::Array(crate::services::approvals::hook_rules(c, mr)?));
+    }
     Ok(m)
 }
 
@@ -557,6 +560,34 @@ pub fn merge_request_event(
         return Ok(());
     }
     let data = mr_payload(c, config, p, &mr.reload(c)?, user, action, before, None)?;
+    fire(c, p, "merge_requests_events", "merge_request_hooks", &data, None)
+}
+
+/// An MR event raised by the system rather than the user (EE: `approvals_reset_on_push`):
+/// `system` is true, `system_action` follows `actioned_at`, and `merge_status` is the one the
+/// MR had when the event was raised.
+pub fn merge_request_system_event(
+    c: &Connection,
+    config: &Config,
+    p: &Project,
+    mr: &MergeRequest,
+    user: Option<&User>,
+    action: &str,
+    system_action: &str,
+    merge_status: &str,
+) -> Result<()> {
+    if !has_hooks(c, p, "merge_requests_events")? {
+        return Ok(());
+    }
+    let mut data = mr_payload(c, config, p, &mr.reload(c)?, user, action, None, None)?;
+    let mut then = mr.reload(c)?;
+    then.merge_status = merge_status.to_string();
+    let detailed = crate::services::merge_requests::mergeability::detailed_status(c, config, p, &then)?;
+    let attrs = &mut data["object_attributes"];
+    attrs["merge_status"] = json!(merge_status);
+    attrs["detailed_merge_status"] = json!(detailed);
+    attrs["system"] = json!(true);
+    attrs["system_action"] = json!(system_action);
     fire(c, p, "merge_requests_events", "merge_request_hooks", &data, None)
 }
 
@@ -775,7 +806,7 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
             "id": m.id, "iid": m.iid, "title": m.title, "source_branch": m.source_branch, "source_project_id": m.source_project_id,
             "target_branch": m.target_branch, "target_project_id": m.target_project_id, "state": m.state,
             "merge_status": crate::services::merge_requests::mergeability::public_status(&m.merge_status),
-            "detailed_merge_status": mergeability::detailed_status(c, p, m)?,
+            "detailed_merge_status": mergeability::detailed_status(c, config, p, m)?,
             "url": config.url(&format!("/{}/-/merge_requests/{}", p.full_path, m.iid)),
         }),
         None => Value::Null,

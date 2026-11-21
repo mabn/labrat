@@ -1,0 +1,4630 @@
+{
+  "scenario": "approval_rules_project",
+  "base": "http://localhost:8929",
+  "ssh_port": 2224,
+  "run": "r3780c1",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/arp-<RUN>",
+        "name": "arp-<RUN>",
+        "path": "arp-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "arp-<RUN>",
+        "full_path": "arp-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "arp-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "arp-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/arp-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/arp-<RUN>/app.git",
+        "web_url": "<BASE>/arp-<RUN>/app",
+        "readme_url": "<BASE>/arp-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "arp-<RUN>",
+          "path": "arp-<RUN>",
+          "kind": "group",
+          "full_path": "arp-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/arp-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null,
+        "approvals_before_merge": 0,
+        "mirror": false,
+        "external_authorization_classification_label": null,
+        "requirements_enabled": true,
+        "requirements_access_level": "enabled",
+        "security_and_compliance_enabled": true,
+        "secret_push_protection_enabled": false,
+        "pre_receive_secret_detection_enabled": false,
+        "compliance_frameworks": [],
+        "issues_template": null,
+        "merge_requests_template": null,
+        "ci_restrict_pipeline_cancellation_role": "developer",
+        "merge_pipelines_enabled": false,
+        "merge_trains_enabled": false,
+        "merge_trains_skip_train_allowed": false,
+        "only_allow_merge_if_all_status_checks_passed": false,
+        "allow_pipeline_trigger_approve_deployment": false,
+        "prevent_merge_without_jira_issue": false,
+        "duo_remote_flows_enabled": true,
+        "duo_foundational_flows_enabled": true,
+        "duo_sast_fp_detection_enabled": false,
+        "duo_secret_detection_fp_enabled": false,
+        "duo_sast_vr_workflow_enabled": false,
+        "spp_repository_pipeline_access": true,
+        "security_policy_pipeline_must_succeed": false,
+        "merge_request_title_regex": null,
+        "merge_request_title_regex_description": null
+      }
+    },
+    {
+      "label": "user dev",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "dev-<RUN>",
+        "public_email": null,
+        "name": "dev",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/dev-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "dev-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "dev-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token dev",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "user maint",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "maint-<RUN>",
+        "public_email": null,
+        "name": "maint",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/maint-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "maint-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "maint-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:3>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token maint",
+      "request": "POST /users/<user:3>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:2>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:3>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "user reporter",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:4>",
+        "username": "reporter-<RUN>",
+        "public_email": null,
+        "name": "reporter",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/reporter-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "reporter-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "reporter-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:4>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token reporter",
+      "request": "POST /users/<user:4>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:3>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:4>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "user outsider",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:5>",
+        "username": "outsider-<RUN>",
+        "public_email": null,
+        "name": "outsider",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/outsider-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "outsider-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "outsider-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:5>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token outsider",
+      "request": "POST /users/<user:5>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:4>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:5>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "dev member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "dev-<RUN>",
+        "public_email": null,
+        "name": "dev",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/dev-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "dev-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "maint member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "maint-<RUN>",
+        "public_email": null,
+        "name": "maint",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/maint-<RUN>",
+        "access_level": 40,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "maint-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "reporter member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:4>",
+        "username": "reporter-<RUN>",
+        "public_email": null,
+        "name": "reporter",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/reporter-<RUN>",
+        "access_level": 20,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "reporter-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "approver group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:6>",
+        "web_url": "<BASE>/groups/approvers-<RUN>",
+        "name": "approvers-<RUN>",
+        "path": "approvers-<RUN>",
+        "description": null,
+        "visibility": "public",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "approvers-<RUN>",
+        "full_path": "approvers-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "approver group member",
+      "request": "POST /groups/<namespace:6>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "dev-<RUN>",
+        "public_email": null,
+        "name": "dev",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/dev-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "dev-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "private group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:7>",
+        "web_url": "<BASE>/groups/private-<RUN>",
+        "name": "private-<RUN>",
+        "path": "private-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "private-<RUN>",
+        "full_path": "private-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "branch",
+      "request": "POST /projects/<project:1>/repository/branches",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "name": "release",
+        "commit": {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [],
+          "title": "Initial commit",
+          "message": "Initial commit",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/arp-<RUN>/app/-/commit/<SHA1>"
+        },
+        "merged": false,
+        "protected": false,
+        "developers_can_push": false,
+        "developers_can_merge": false,
+        "can_push": true,
+        "default": false,
+        "web_url": "<BASE>/arp-<RUN>/app/-/tree/release"
+      }
+    },
+    {
+      "label": "protect release",
+      "request": "POST /projects/<project:1>/protected_branches",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<branch:1>",
+        "name": "release",
+        "push_access_levels": [
+          {
+            "id": "<branch.push_access_levels:1>",
+            "access_level": 40,
+            "access_level_description": "Maintainers",
+            "deploy_key_id": null,
+            "user_id": null,
+            "group_id": null
+          }
+        ],
+        "merge_access_levels": [
+          {
+            "id": "<branch.merge_access_levels:1>",
+            "access_level": 40,
+            "access_level_description": "Maintainers",
+            "user_id": null,
+            "group_id": null
+          }
+        ],
+        "allow_force_push": false,
+        "unprotect_access_levels": [
+          {
+            "id": "<branch.unprotect_access_levels:1>",
+            "access_level": 40,
+            "access_level_description": "Maintainers",
+            "user_id": null,
+            "group_id": null
+          }
+        ],
+        "code_owner_approval_required": false,
+        "inherited": false
+      }
+    },
+    {
+      "label": "protected branches",
+      "request": "GET /projects/<project:1>/protected_branches",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/protected_branches?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/protected_branches?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<branch:2>",
+          "name": "main",
+          "push_access_levels": [
+            {
+              "id": "<branch.push_access_levels:2>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "deploy_key_id": null,
+              "user_id": null,
+              "group_id": null
+            }
+          ],
+          "merge_access_levels": [
+            {
+              "id": "<branch.merge_access_levels:2>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "user_id": null,
+              "group_id": null
+            }
+          ],
+          "allow_force_push": false,
+          "unprotect_access_levels": [],
+          "code_owner_approval_required": false,
+          "inherited": false
+        },
+        {
+          "id": "<branch:1>",
+          "name": "release",
+          "push_access_levels": [
+            {
+              "id": "<branch.push_access_levels:1>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "deploy_key_id": null,
+              "user_id": null,
+              "group_id": null
+            }
+          ],
+          "merge_access_levels": [
+            {
+              "id": "<branch.merge_access_levels:1>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "user_id": null,
+              "group_id": null
+            }
+          ],
+          "allow_force_push": false,
+          "unprotect_access_levels": [
+            {
+              "id": "<branch.unprotect_access_levels:1>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "user_id": null,
+              "group_id": null
+            }
+          ],
+          "code_owner_approval_required": false,
+          "inherited": false
+        }
+      ]
+    },
+    {
+      "label": "list empty",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "0",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": []
+    },
+    {
+      "label": "list dev",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "0",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": []
+    },
+    {
+      "label": "list outsider",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Project Not Found"
+      }
+    },
+    {
+      "label": "list anonymous",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 401,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "401 Unauthorized"
+      }
+    },
+    {
+      "label": "missing params",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "error": "name is missing, approvals_required is missing"
+      }
+    },
+    {
+      "label": "missing count",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "error": "approvals_required is missing"
+      }
+    },
+    {
+      "label": "negative count",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "approvals_required": [
+            "must be greater than or equal to 0"
+          ]
+        }
+      }
+    },
+    {
+      "label": "count over 100",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "approvals_required": [
+            "must be less than or equal to 100"
+          ]
+        }
+      }
+    },
+    {
+      "label": "blank name",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "name": [
+            "can't be blank"
+          ]
+        }
+      }
+    },
+    {
+      "label": "long name",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "name": [
+            "is too long (maximum is 1024 characters)"
+          ]
+        }
+      }
+    },
+    {
+      "label": "bad rule type",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 500,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "500 Internal Server Error"
+      }
+    },
+    {
+      "label": "report approver",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "report_type": [
+            "can't be blank"
+          ]
+        }
+      }
+    },
+    {
+      "label": "create as dev",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "create as outsider",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Project Not Found"
+      }
+    },
+    {
+      "label": "create users",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:1>",
+        "name": "Backend",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:2>",
+            "username": "dev-<RUN>",
+            "public_email": null,
+            "name": "dev",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dev-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "reporter-<RUN>",
+            "public_email": null,
+            "name": "reporter",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/reporter-<RUN>"
+          }
+        ],
+        "approvals_required": 2,
+        "users": [
+          {
+            "id": "<user:2>",
+            "username": "dev-<RUN>",
+            "public_email": null,
+            "name": "dev",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dev-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "reporter-<RUN>",
+            "public_email": null,
+            "name": "reporter",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/reporter-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "duplicate name",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:2>",
+        "name": "Backend",
+        "rule_type": "any_approver",
+        "eligible_approvers": [],
+        "approvals_required": 1,
+        "users": [],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "create groups",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:3>",
+        "name": "Groups",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          {
+            "id": "<user:2>",
+            "username": "dev-<RUN>",
+            "public_email": null,
+            "name": "dev",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dev-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [
+          {
+            "id": "<namespace:6>",
+            "web_url": "<BASE>/groups/approvers-<RUN>",
+            "name": "approvers-<RUN>",
+            "path": "approvers-<RUN>",
+            "description": null,
+            "visibility": "public",
+            "share_with_group_lock": false,
+            "require_two_factor_authentication": false,
+            "two_factor_grace_period": 48,
+            "project_creation_level": "developer",
+            "auto_devops_enabled": null,
+            "subgroup_creation_level": "maintainer",
+            "emails_disabled": false,
+            "emails_enabled": true,
+            "show_diff_preview_in_email": true,
+            "mentions_disabled": null,
+            "lfs_enabled": true,
+            "archived": false,
+            "math_rendering_limits_enabled": true,
+            "lock_math_rendering_limits_enabled": false,
+            "default_branch": null,
+            "default_branch_protection": 2,
+            "default_branch_protection_defaults": {
+              "allowed_to_push": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "allow_force_push": false,
+              "allowed_to_merge": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "developer_can_initial_push": false
+            },
+            "avatar_url": null,
+            "request_access_enabled": true,
+            "full_name": "approvers-<RUN>",
+            "full_path": "approvers-<RUN>",
+            "created_at": "<TIME>",
+            "parent_id": null,
+            "organization_id": "<other:organization_id:1>",
+            "shared_runners_setting": "enabled",
+            "max_artifacts_size": null,
+            "marked_for_deletion_on": null,
+            "ldap_cn": null,
+            "ldap_access": null,
+            "wiki_access_level": "enabled",
+            "repository_storage": null,
+            "duo_core_features_enabled": null,
+            "duo_features_enabled": true,
+            "lock_duo_features_enabled": false,
+            "duo_namespace_access_rules": []
+          },
+          {
+            "id": "<namespace:7>",
+            "web_url": "<BASE>/groups/private-<RUN>",
+            "name": "private-<RUN>",
+            "path": "private-<RUN>",
+            "description": null,
+            "visibility": "private",
+            "share_with_group_lock": false,
+            "require_two_factor_authentication": false,
+            "two_factor_grace_period": 48,
+            "project_creation_level": "developer",
+            "auto_devops_enabled": null,
+            "subgroup_creation_level": "maintainer",
+            "emails_disabled": false,
+            "emails_enabled": true,
+            "show_diff_preview_in_email": true,
+            "mentions_disabled": null,
+            "lfs_enabled": true,
+            "archived": false,
+            "math_rendering_limits_enabled": true,
+            "lock_math_rendering_limits_enabled": false,
+            "default_branch": null,
+            "default_branch_protection": 2,
+            "default_branch_protection_defaults": {
+              "allowed_to_push": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "allow_force_push": false,
+              "allowed_to_merge": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "developer_can_initial_push": false
+            },
+            "avatar_url": null,
+            "request_access_enabled": true,
+            "full_name": "private-<RUN>",
+            "full_path": "private-<RUN>",
+            "created_at": "<TIME>",
+            "parent_id": null,
+            "organization_id": "<other:organization_id:1>",
+            "shared_runners_setting": "enabled",
+            "max_artifacts_size": null,
+            "marked_for_deletion_on": null,
+            "ldap_cn": null,
+            "ldap_access": null,
+            "wiki_access_level": "enabled",
+            "repository_storage": null,
+            "duo_core_features_enabled": null,
+            "duo_features_enabled": true,
+            "lock_duo_features_enabled": false,
+            "duo_namespace_access_rules": []
+          }
+        ],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "create branch rule",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:4>",
+        "name": "Release",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [
+          {
+            "id": "<branch:2>",
+            "name": "main",
+            "push_access_levels": [
+              {
+                "id": "<branch.push_access_levels:2>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "deploy_key_id": null,
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "merge_access_levels": [
+              {
+                "id": "<branch.merge_access_levels:2>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "allow_force_push": false,
+            "unprotect_access_levels": [],
+            "code_owner_approval_required": false,
+            "inherited": false
+          },
+          {
+            "id": "<branch:1>",
+            "name": "release",
+            "push_access_levels": [
+              {
+                "id": "<branch.push_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "deploy_key_id": null,
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "merge_access_levels": [
+              {
+                "id": "<branch.merge_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "allow_force_push": false,
+            "unprotect_access_levels": [
+              {
+                "id": "<branch.unprotect_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "code_owner_approval_required": false,
+            "inherited": false
+          }
+        ],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "create all protected",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "rule_type": [
+            "any-approver for the project already exists"
+          ]
+        }
+      }
+    },
+    {
+      "label": "bad branch",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "rule_type": [
+            "any-approver for the project already exists"
+          ]
+        }
+      }
+    },
+    {
+      "label": "missing user",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:5>",
+        "name": "Ghost",
+        "rule_type": "regular",
+        "eligible_approvers": [],
+        "approvals_required": 1,
+        "users": [],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "missing group",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:6>",
+        "name": "Ghost group",
+        "rule_type": "regular",
+        "eligible_approvers": [],
+        "approvals_required": 1,
+        "users": [],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "any approver",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "rule_type": [
+            "any-approver for the project already exists"
+          ]
+        }
+      }
+    },
+    {
+      "label": "second any approver",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "rule_type": [
+            "any-approver for the project already exists"
+          ]
+        }
+      }
+    },
+    {
+      "label": "regular with no approvers",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "rule_type": [
+            "any-approver for the project already exists"
+          ]
+        }
+      }
+    },
+    {
+      "label": "list",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "6",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<rule:2>",
+          "name": "Backend",
+          "rule_type": "any_approver",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:1>",
+          "name": "Backend",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            },
+            {
+              "id": "<user:4>",
+              "username": "reporter-<RUN>",
+              "public_email": null,
+              "name": "reporter",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/reporter-<RUN>"
+            }
+          ],
+          "approvals_required": 2,
+          "users": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            },
+            {
+              "id": "<user:4>",
+              "username": "reporter-<RUN>",
+              "public_email": null,
+              "name": "reporter",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/reporter-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:5>",
+          "name": "Ghost",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:6>",
+          "name": "Ghost group",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:3>",
+          "name": "Groups",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "groups": [
+            {
+              "id": "<namespace:6>",
+              "web_url": "<BASE>/groups/approvers-<RUN>",
+              "name": "approvers-<RUN>",
+              "path": "approvers-<RUN>",
+              "description": null,
+              "visibility": "public",
+              "share_with_group_lock": false,
+              "require_two_factor_authentication": false,
+              "two_factor_grace_period": 48,
+              "project_creation_level": "developer",
+              "auto_devops_enabled": null,
+              "subgroup_creation_level": "maintainer",
+              "emails_disabled": false,
+              "emails_enabled": true,
+              "show_diff_preview_in_email": true,
+              "mentions_disabled": null,
+              "lfs_enabled": true,
+              "archived": false,
+              "math_rendering_limits_enabled": true,
+              "lock_math_rendering_limits_enabled": false,
+              "default_branch": null,
+              "default_branch_protection": 2,
+              "default_branch_protection_defaults": {
+                "allowed_to_push": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "allow_force_push": false,
+                "allowed_to_merge": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "developer_can_initial_push": false
+              },
+              "avatar_url": null,
+              "request_access_enabled": true,
+              "full_name": "approvers-<RUN>",
+              "full_path": "approvers-<RUN>",
+              "created_at": "<TIME>",
+              "parent_id": null,
+              "organization_id": "<other:organization_id:1>",
+              "shared_runners_setting": "enabled",
+              "max_artifacts_size": null,
+              "marked_for_deletion_on": null,
+              "ldap_cn": null,
+              "ldap_access": null,
+              "wiki_access_level": "enabled",
+              "repository_storage": null,
+              "duo_core_features_enabled": null,
+              "duo_features_enabled": true,
+              "lock_duo_features_enabled": false,
+              "duo_namespace_access_rules": []
+            },
+            {
+              "id": "<namespace:7>",
+              "web_url": "<BASE>/groups/private-<RUN>",
+              "name": "private-<RUN>",
+              "path": "private-<RUN>",
+              "description": null,
+              "visibility": "private",
+              "share_with_group_lock": false,
+              "require_two_factor_authentication": false,
+              "two_factor_grace_period": 48,
+              "project_creation_level": "developer",
+              "auto_devops_enabled": null,
+              "subgroup_creation_level": "maintainer",
+              "emails_disabled": false,
+              "emails_enabled": true,
+              "show_diff_preview_in_email": true,
+              "mentions_disabled": null,
+              "lfs_enabled": true,
+              "archived": false,
+              "math_rendering_limits_enabled": true,
+              "lock_math_rendering_limits_enabled": false,
+              "default_branch": null,
+              "default_branch_protection": 2,
+              "default_branch_protection_defaults": {
+                "allowed_to_push": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "allow_force_push": false,
+                "allowed_to_merge": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "developer_can_initial_push": false
+              },
+              "avatar_url": null,
+              "request_access_enabled": true,
+              "full_name": "private-<RUN>",
+              "full_path": "private-<RUN>",
+              "created_at": "<TIME>",
+              "parent_id": null,
+              "organization_id": "<other:organization_id:1>",
+              "shared_runners_setting": "enabled",
+              "max_artifacts_size": null,
+              "marked_for_deletion_on": null,
+              "ldap_cn": null,
+              "ldap_access": null,
+              "wiki_access_level": "enabled",
+              "repository_storage": null,
+              "duo_core_features_enabled": null,
+              "duo_features_enabled": true,
+              "lock_duo_features_enabled": false,
+              "duo_namespace_access_rules": []
+            }
+          ],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:4>",
+          "name": "Release",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [
+            {
+              "id": "<branch:2>",
+              "name": "main",
+              "push_access_levels": [
+                {
+                  "id": "<branch.push_access_levels:2>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "deploy_key_id": null,
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "merge_access_levels": [
+                {
+                  "id": "<branch.merge_access_levels:2>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "allow_force_push": false,
+              "unprotect_access_levels": [],
+              "code_owner_approval_required": false,
+              "inherited": false
+            },
+            {
+              "id": "<branch:1>",
+              "name": "release",
+              "push_access_levels": [
+                {
+                  "id": "<branch.push_access_levels:1>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "deploy_key_id": null,
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "merge_access_levels": [
+                {
+                  "id": "<branch.merge_access_levels:1>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "allow_force_push": false,
+              "unprotect_access_levels": [
+                {
+                  "id": "<branch.unprotect_access_levels:1>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "code_owner_approval_required": false,
+              "inherited": false
+            }
+          ],
+          "applies_to_all_protected_branches": false
+        }
+      ]
+    },
+    {
+      "label": "list page",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "6",
+        "x-total-pages": "3",
+        "x-page": "2",
+        "x-per-page": "2",
+        "x-next-page": "3",
+        "x-prev-page": "1",
+        "link": "<<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=2>; rel=\"prev\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=3&per_page=2>; rel=\"next\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=2>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=3&per_page=2>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<rule:3>",
+          "name": "Groups",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "groups": [
+            {
+              "id": "<namespace:6>",
+              "web_url": "<BASE>/groups/approvers-<RUN>",
+              "name": "approvers-<RUN>",
+              "path": "approvers-<RUN>",
+              "description": null,
+              "visibility": "public",
+              "share_with_group_lock": false,
+              "require_two_factor_authentication": false,
+              "two_factor_grace_period": 48,
+              "project_creation_level": "developer",
+              "auto_devops_enabled": null,
+              "subgroup_creation_level": "maintainer",
+              "emails_disabled": false,
+              "emails_enabled": true,
+              "show_diff_preview_in_email": true,
+              "mentions_disabled": null,
+              "lfs_enabled": true,
+              "archived": false,
+              "math_rendering_limits_enabled": true,
+              "lock_math_rendering_limits_enabled": false,
+              "default_branch": null,
+              "default_branch_protection": 2,
+              "default_branch_protection_defaults": {
+                "allowed_to_push": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "allow_force_push": false,
+                "allowed_to_merge": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "developer_can_initial_push": false
+              },
+              "avatar_url": null,
+              "request_access_enabled": true,
+              "full_name": "approvers-<RUN>",
+              "full_path": "approvers-<RUN>",
+              "created_at": "<TIME>",
+              "parent_id": null,
+              "organization_id": "<other:organization_id:1>",
+              "shared_runners_setting": "enabled",
+              "max_artifacts_size": null,
+              "marked_for_deletion_on": null,
+              "ldap_cn": null,
+              "ldap_access": null,
+              "wiki_access_level": "enabled",
+              "repository_storage": null,
+              "duo_core_features_enabled": null,
+              "duo_features_enabled": true,
+              "lock_duo_features_enabled": false,
+              "duo_namespace_access_rules": []
+            },
+            {
+              "id": "<namespace:7>",
+              "web_url": "<BASE>/groups/private-<RUN>",
+              "name": "private-<RUN>",
+              "path": "private-<RUN>",
+              "description": null,
+              "visibility": "private",
+              "share_with_group_lock": false,
+              "require_two_factor_authentication": false,
+              "two_factor_grace_period": 48,
+              "project_creation_level": "developer",
+              "auto_devops_enabled": null,
+              "subgroup_creation_level": "maintainer",
+              "emails_disabled": false,
+              "emails_enabled": true,
+              "show_diff_preview_in_email": true,
+              "mentions_disabled": null,
+              "lfs_enabled": true,
+              "archived": false,
+              "math_rendering_limits_enabled": true,
+              "lock_math_rendering_limits_enabled": false,
+              "default_branch": null,
+              "default_branch_protection": 2,
+              "default_branch_protection_defaults": {
+                "allowed_to_push": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "allow_force_push": false,
+                "allowed_to_merge": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "developer_can_initial_push": false
+              },
+              "avatar_url": null,
+              "request_access_enabled": true,
+              "full_name": "private-<RUN>",
+              "full_path": "private-<RUN>",
+              "created_at": "<TIME>",
+              "parent_id": null,
+              "organization_id": "<other:organization_id:1>",
+              "shared_runners_setting": "enabled",
+              "max_artifacts_size": null,
+              "marked_for_deletion_on": null,
+              "ldap_cn": null,
+              "ldap_access": null,
+              "wiki_access_level": "enabled",
+              "repository_storage": null,
+              "duo_core_features_enabled": null,
+              "duo_features_enabled": true,
+              "lock_duo_features_enabled": false,
+              "duo_namespace_access_rules": []
+            }
+          ],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:4>",
+          "name": "Release",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [
+            {
+              "id": "<branch:2>",
+              "name": "main",
+              "push_access_levels": [
+                {
+                  "id": "<branch.push_access_levels:2>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "deploy_key_id": null,
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "merge_access_levels": [
+                {
+                  "id": "<branch.merge_access_levels:2>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "allow_force_push": false,
+              "unprotect_access_levels": [],
+              "code_owner_approval_required": false,
+              "inherited": false
+            },
+            {
+              "id": "<branch:1>",
+              "name": "release",
+              "push_access_levels": [
+                {
+                  "id": "<branch.push_access_levels:1>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "deploy_key_id": null,
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "merge_access_levels": [
+                {
+                  "id": "<branch.merge_access_levels:1>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "allow_force_push": false,
+              "unprotect_access_levels": [
+                {
+                  "id": "<branch.unprotect_access_levels:1>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "code_owner_approval_required": false,
+              "inherited": false
+            }
+          ],
+          "applies_to_all_protected_branches": false
+        }
+      ]
+    },
+    {
+      "label": "list as dev",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "6",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<rule:2>",
+          "name": "Backend",
+          "rule_type": "any_approver",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:1>",
+          "name": "Backend",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            },
+            {
+              "id": "<user:4>",
+              "username": "reporter-<RUN>",
+              "public_email": null,
+              "name": "reporter",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/reporter-<RUN>"
+            }
+          ],
+          "approvals_required": 2,
+          "users": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            },
+            {
+              "id": "<user:4>",
+              "username": "reporter-<RUN>",
+              "public_email": null,
+              "name": "reporter",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/reporter-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:5>",
+          "name": "Ghost",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:6>",
+          "name": "Ghost group",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:3>",
+          "name": "Groups",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "groups": [
+            {
+              "id": "<namespace:6>",
+              "web_url": "<BASE>/groups/approvers-<RUN>",
+              "name": "approvers-<RUN>",
+              "path": "approvers-<RUN>",
+              "description": null,
+              "visibility": "public",
+              "share_with_group_lock": false,
+              "require_two_factor_authentication": false,
+              "two_factor_grace_period": 48,
+              "project_creation_level": "developer",
+              "auto_devops_enabled": null,
+              "subgroup_creation_level": "maintainer",
+              "emails_disabled": false,
+              "emails_enabled": true,
+              "show_diff_preview_in_email": true,
+              "mentions_disabled": null,
+              "lfs_enabled": true,
+              "archived": false,
+              "math_rendering_limits_enabled": true,
+              "lock_math_rendering_limits_enabled": false,
+              "default_branch": null,
+              "default_branch_protection": 2,
+              "default_branch_protection_defaults": {
+                "allowed_to_push": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "allow_force_push": false,
+                "allowed_to_merge": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "developer_can_initial_push": false
+              },
+              "avatar_url": null,
+              "request_access_enabled": true,
+              "full_name": "approvers-<RUN>",
+              "full_path": "approvers-<RUN>",
+              "created_at": "<TIME>",
+              "parent_id": null,
+              "organization_id": "<other:organization_id:1>",
+              "shared_runners_setting": "enabled",
+              "max_artifacts_size": null,
+              "marked_for_deletion_on": null,
+              "ldap_cn": null,
+              "ldap_access": null,
+              "wiki_access_level": "enabled"
+            }
+          ],
+          "contains_hidden_groups": true,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:4>",
+          "name": "Release",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [
+            {
+              "id": "<branch:2>",
+              "name": "main",
+              "push_access_levels": [
+                {
+                  "id": "<branch.push_access_levels:2>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "deploy_key_id": null,
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "merge_access_levels": [
+                {
+                  "id": "<branch.merge_access_levels:2>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "allow_force_push": false,
+              "unprotect_access_levels": [],
+              "code_owner_approval_required": false,
+              "inherited": false
+            },
+            {
+              "id": "<branch:1>",
+              "name": "release",
+              "push_access_levels": [
+                {
+                  "id": "<branch.push_access_levels:1>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "deploy_key_id": null,
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "merge_access_levels": [
+                {
+                  "id": "<branch.merge_access_levels:1>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "allow_force_push": false,
+              "unprotect_access_levels": [
+                {
+                  "id": "<branch.unprotect_access_levels:1>",
+                  "access_level": 40,
+                  "access_level_description": "Maintainers",
+                  "user_id": null,
+                  "group_id": null
+                }
+              ],
+              "code_owner_approval_required": false,
+              "inherited": false
+            }
+          ],
+          "applies_to_all_protected_branches": false
+        }
+      ]
+    },
+    {
+      "label": "show",
+      "request": "GET /projects/<project:1>/approval_rules/<rule:3>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:3>",
+        "name": "Groups",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          {
+            "id": "<user:2>",
+            "username": "dev-<RUN>",
+            "public_email": null,
+            "name": "dev",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dev-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [
+          {
+            "id": "<namespace:6>",
+            "web_url": "<BASE>/groups/approvers-<RUN>",
+            "name": "approvers-<RUN>",
+            "path": "approvers-<RUN>",
+            "description": null,
+            "visibility": "public",
+            "share_with_group_lock": false,
+            "require_two_factor_authentication": false,
+            "two_factor_grace_period": 48,
+            "project_creation_level": "developer",
+            "auto_devops_enabled": null,
+            "subgroup_creation_level": "maintainer",
+            "emails_disabled": false,
+            "emails_enabled": true,
+            "show_diff_preview_in_email": true,
+            "mentions_disabled": null,
+            "lfs_enabled": true,
+            "archived": false,
+            "math_rendering_limits_enabled": true,
+            "lock_math_rendering_limits_enabled": false,
+            "default_branch": null,
+            "default_branch_protection": 2,
+            "default_branch_protection_defaults": {
+              "allowed_to_push": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "allow_force_push": false,
+              "allowed_to_merge": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "developer_can_initial_push": false
+            },
+            "avatar_url": null,
+            "request_access_enabled": true,
+            "full_name": "approvers-<RUN>",
+            "full_path": "approvers-<RUN>",
+            "created_at": "<TIME>",
+            "parent_id": null,
+            "organization_id": "<other:organization_id:1>",
+            "shared_runners_setting": "enabled",
+            "max_artifacts_size": null,
+            "marked_for_deletion_on": null,
+            "ldap_cn": null,
+            "ldap_access": null,
+            "wiki_access_level": "enabled",
+            "repository_storage": null,
+            "duo_core_features_enabled": null,
+            "duo_features_enabled": true,
+            "lock_duo_features_enabled": false,
+            "duo_namespace_access_rules": []
+          },
+          {
+            "id": "<namespace:7>",
+            "web_url": "<BASE>/groups/private-<RUN>",
+            "name": "private-<RUN>",
+            "path": "private-<RUN>",
+            "description": null,
+            "visibility": "private",
+            "share_with_group_lock": false,
+            "require_two_factor_authentication": false,
+            "two_factor_grace_period": 48,
+            "project_creation_level": "developer",
+            "auto_devops_enabled": null,
+            "subgroup_creation_level": "maintainer",
+            "emails_disabled": false,
+            "emails_enabled": true,
+            "show_diff_preview_in_email": true,
+            "mentions_disabled": null,
+            "lfs_enabled": true,
+            "archived": false,
+            "math_rendering_limits_enabled": true,
+            "lock_math_rendering_limits_enabled": false,
+            "default_branch": null,
+            "default_branch_protection": 2,
+            "default_branch_protection_defaults": {
+              "allowed_to_push": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "allow_force_push": false,
+              "allowed_to_merge": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "developer_can_initial_push": false
+            },
+            "avatar_url": null,
+            "request_access_enabled": true,
+            "full_name": "private-<RUN>",
+            "full_path": "private-<RUN>",
+            "created_at": "<TIME>",
+            "parent_id": null,
+            "organization_id": "<other:organization_id:1>",
+            "shared_runners_setting": "enabled",
+            "max_artifacts_size": null,
+            "marked_for_deletion_on": null,
+            "ldap_cn": null,
+            "ldap_access": null,
+            "wiki_access_level": "enabled",
+            "repository_storage": null,
+            "duo_core_features_enabled": null,
+            "duo_features_enabled": true,
+            "lock_duo_features_enabled": false,
+            "duo_namespace_access_rules": []
+          }
+        ],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "show as dev",
+      "request": "GET /projects/<project:1>/approval_rules/<rule:3>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:3>",
+        "name": "Groups",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          {
+            "id": "<user:2>",
+            "username": "dev-<RUN>",
+            "public_email": null,
+            "name": "dev",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dev-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [
+          {
+            "id": "<namespace:6>",
+            "web_url": "<BASE>/groups/approvers-<RUN>",
+            "name": "approvers-<RUN>",
+            "path": "approvers-<RUN>",
+            "description": null,
+            "visibility": "public",
+            "share_with_group_lock": false,
+            "require_two_factor_authentication": false,
+            "two_factor_grace_period": 48,
+            "project_creation_level": "developer",
+            "auto_devops_enabled": null,
+            "subgroup_creation_level": "maintainer",
+            "emails_disabled": false,
+            "emails_enabled": true,
+            "show_diff_preview_in_email": true,
+            "mentions_disabled": null,
+            "lfs_enabled": true,
+            "archived": false,
+            "math_rendering_limits_enabled": true,
+            "lock_math_rendering_limits_enabled": false,
+            "default_branch": null,
+            "default_branch_protection": 2,
+            "default_branch_protection_defaults": {
+              "allowed_to_push": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "allow_force_push": false,
+              "allowed_to_merge": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "developer_can_initial_push": false
+            },
+            "avatar_url": null,
+            "request_access_enabled": true,
+            "full_name": "approvers-<RUN>",
+            "full_path": "approvers-<RUN>",
+            "created_at": "<TIME>",
+            "parent_id": null,
+            "organization_id": "<other:organization_id:1>",
+            "shared_runners_setting": "enabled",
+            "max_artifacts_size": null,
+            "marked_for_deletion_on": null,
+            "ldap_cn": null,
+            "ldap_access": null,
+            "wiki_access_level": "enabled"
+          }
+        ],
+        "contains_hidden_groups": true,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "show missing",
+      "request": "GET /projects/<project:1>/approval_rules/<rule:7>",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not found"
+      }
+    },
+    {
+      "label": "show outsider",
+      "request": "GET /projects/<project:1>/approval_rules/<rule:3>",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Project Not Found"
+      }
+    },
+    {
+      "label": "update name",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:1>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:1>",
+        "name": "Backend team",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:2>",
+            "username": "dev-<RUN>",
+            "public_email": null,
+            "name": "dev",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dev-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "reporter-<RUN>",
+            "public_email": null,
+            "name": "reporter",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/reporter-<RUN>"
+          }
+        ],
+        "approvals_required": 2,
+        "users": [
+          {
+            "id": "<user:2>",
+            "username": "dev-<RUN>",
+            "public_email": null,
+            "name": "dev",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dev-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "reporter-<RUN>",
+            "public_email": null,
+            "name": "reporter",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/reporter-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "update users",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:1>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:1>",
+        "name": "Backend team",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "update usernames",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:1>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:1>",
+        "name": "Backend team",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:2>",
+            "username": "dev-<RUN>",
+            "public_email": null,
+            "name": "dev",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dev-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:2>",
+            "username": "dev-<RUN>",
+            "public_email": null,
+            "name": "dev",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dev-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "update clear groups",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:3>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:3>",
+        "name": "Groups",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "update hidden groups",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:3>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:3>",
+        "name": "Groups",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [
+          {
+            "id": "<namespace:7>",
+            "web_url": "<BASE>/groups/private-<RUN>",
+            "name": "private-<RUN>",
+            "path": "private-<RUN>",
+            "description": null,
+            "visibility": "private",
+            "share_with_group_lock": false,
+            "require_two_factor_authentication": false,
+            "two_factor_grace_period": 48,
+            "project_creation_level": "developer",
+            "auto_devops_enabled": null,
+            "subgroup_creation_level": "maintainer",
+            "emails_disabled": false,
+            "emails_enabled": true,
+            "show_diff_preview_in_email": true,
+            "mentions_disabled": null,
+            "lfs_enabled": true,
+            "archived": false,
+            "math_rendering_limits_enabled": true,
+            "lock_math_rendering_limits_enabled": false,
+            "default_branch": null,
+            "default_branch_protection": 2,
+            "default_branch_protection_defaults": {
+              "allowed_to_push": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "allow_force_push": false,
+              "allowed_to_merge": [
+                {
+                  "access_level": 40
+                }
+              ],
+              "developer_can_initial_push": false
+            },
+            "avatar_url": null,
+            "request_access_enabled": true,
+            "full_name": "private-<RUN>",
+            "full_path": "private-<RUN>",
+            "created_at": "<TIME>",
+            "parent_id": null,
+            "organization_id": "<other:organization_id:1>",
+            "shared_runners_setting": "enabled",
+            "max_artifacts_size": null,
+            "marked_for_deletion_on": null,
+            "ldap_cn": null,
+            "ldap_access": null,
+            "wiki_access_level": "enabled",
+            "repository_storage": null,
+            "duo_core_features_enabled": null,
+            "duo_features_enabled": true,
+            "lock_duo_features_enabled": false,
+            "duo_namespace_access_rules": []
+          }
+        ],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "update branches",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:4>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:4>",
+        "name": "Release",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [
+          {
+            "id": "<branch:1>",
+            "name": "release",
+            "push_access_levels": [
+              {
+                "id": "<branch.push_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "deploy_key_id": null,
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "merge_access_levels": [
+              {
+                "id": "<branch.merge_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "allow_force_push": false,
+            "unprotect_access_levels": [
+              {
+                "id": "<branch.unprotect_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "code_owner_approval_required": false,
+            "inherited": false
+          }
+        ],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "update all protected",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:4>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:4>",
+        "name": "Release",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [
+          {
+            "id": "<branch:2>",
+            "name": "main",
+            "push_access_levels": [
+              {
+                "id": "<branch.push_access_levels:2>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "deploy_key_id": null,
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "merge_access_levels": [
+              {
+                "id": "<branch.merge_access_levels:2>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "allow_force_push": false,
+            "unprotect_access_levels": [],
+            "code_owner_approval_required": false,
+            "inherited": false
+          },
+          {
+            "id": "<branch:1>",
+            "name": "release",
+            "push_access_levels": [
+              {
+                "id": "<branch.push_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "deploy_key_id": null,
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "merge_access_levels": [
+              {
+                "id": "<branch.merge_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "allow_force_push": false,
+            "unprotect_access_levels": [
+              {
+                "id": "<branch.unprotect_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "code_owner_approval_required": false,
+            "inherited": false
+          }
+        ],
+        "applies_to_all_protected_branches": true
+      }
+    },
+    {
+      "label": "update bad count",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:4>",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "approvals_required": [
+            "must be greater than or equal to 0"
+          ]
+        }
+      }
+    },
+    {
+      "label": "update duplicate",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:4>",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "name": [
+            "has already been taken"
+          ]
+        }
+      }
+    },
+    {
+      "label": "update nothing",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:4>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:4>",
+        "name": "Release",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "maint-<RUN>",
+            "public_email": null,
+            "name": "maint",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/maint-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [
+          {
+            "id": "<branch:2>",
+            "name": "main",
+            "push_access_levels": [
+              {
+                "id": "<branch.push_access_levels:2>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "deploy_key_id": null,
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "merge_access_levels": [
+              {
+                "id": "<branch.merge_access_levels:2>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "allow_force_push": false,
+            "unprotect_access_levels": [],
+            "code_owner_approval_required": false,
+            "inherited": false
+          },
+          {
+            "id": "<branch:1>",
+            "name": "release",
+            "push_access_levels": [
+              {
+                "id": "<branch.push_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "deploy_key_id": null,
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "merge_access_levels": [
+              {
+                "id": "<branch.merge_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "allow_force_push": false,
+            "unprotect_access_levels": [
+              {
+                "id": "<branch.unprotect_access_levels:1>",
+                "access_level": 40,
+                "access_level_description": "Maintainers",
+                "user_id": null,
+                "group_id": null
+              }
+            ],
+            "code_owner_approval_required": false,
+            "inherited": false
+          }
+        ],
+        "applies_to_all_protected_branches": true
+      }
+    },
+    {
+      "label": "update as dev",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:4>",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "update missing",
+      "request": "PUT /projects/<project:1>/approval_rules/<rule:7>",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not found"
+      }
+    },
+    {
+      "label": "delete as dev",
+      "request": "DELETE /projects/<project:1>/approval_rules/<rule:4>",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "delete",
+      "request": "DELETE /projects/<project:1>/approval_rules/<rule:4>",
+      "status": 204,
+      "headers": {},
+      "body": null
+    },
+    {
+      "label": "delete again",
+      "request": "DELETE /projects/<project:1>/approval_rules/<rule:4>",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not found"
+      }
+    },
+    {
+      "label": "list after",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "5",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<rule:2>",
+          "name": "Backend",
+          "rule_type": "any_approver",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:1>",
+          "name": "Backend team",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:5>",
+          "name": "Ghost",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:6>",
+          "name": "Ghost group",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:3>",
+          "name": "Groups",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "groups": [
+            {
+              "id": "<namespace:7>",
+              "web_url": "<BASE>/groups/private-<RUN>",
+              "name": "private-<RUN>",
+              "path": "private-<RUN>",
+              "description": null,
+              "visibility": "private",
+              "share_with_group_lock": false,
+              "require_two_factor_authentication": false,
+              "two_factor_grace_period": 48,
+              "project_creation_level": "developer",
+              "auto_devops_enabled": null,
+              "subgroup_creation_level": "maintainer",
+              "emails_disabled": false,
+              "emails_enabled": true,
+              "show_diff_preview_in_email": true,
+              "mentions_disabled": null,
+              "lfs_enabled": true,
+              "archived": false,
+              "math_rendering_limits_enabled": true,
+              "lock_math_rendering_limits_enabled": false,
+              "default_branch": null,
+              "default_branch_protection": 2,
+              "default_branch_protection_defaults": {
+                "allowed_to_push": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "allow_force_push": false,
+                "allowed_to_merge": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "developer_can_initial_push": false
+              },
+              "avatar_url": null,
+              "request_access_enabled": true,
+              "full_name": "private-<RUN>",
+              "full_path": "private-<RUN>",
+              "created_at": "<TIME>",
+              "parent_id": null,
+              "organization_id": "<other:organization_id:1>",
+              "shared_runners_setting": "enabled",
+              "max_artifacts_size": null,
+              "marked_for_deletion_on": null,
+              "ldap_cn": null,
+              "ldap_access": null,
+              "wiki_access_level": "enabled",
+              "repository_storage": null,
+              "duo_core_features_enabled": null,
+              "duo_features_enabled": true,
+              "lock_duo_features_enabled": false,
+              "duo_namespace_access_rules": []
+            }
+          ],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        }
+      ]
+    },
+    {
+      "label": "approvals",
+      "request": "GET /projects/<project:1>/approvals",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "approvers": [],
+        "approver_groups": [],
+        "approvals_before_merge": 0,
+        "reset_approvals_on_push": true,
+        "selective_code_owner_removals": false,
+        "disable_overriding_approvers_per_merge_request": false,
+        "merge_requests_author_approval": false,
+        "merge_requests_disable_committers_approval": false,
+        "require_password_to_approve": false,
+        "require_reauthentication_to_approve": false
+      }
+    },
+    {
+      "label": "protected after",
+      "request": "GET /projects/<project:1>/protected_branches/release",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<branch:1>",
+        "name": "release",
+        "push_access_levels": [
+          {
+            "id": "<branch.push_access_levels:1>",
+            "access_level": 40,
+            "access_level_description": "Maintainers",
+            "deploy_key_id": null,
+            "user_id": null,
+            "group_id": null
+          }
+        ],
+        "merge_access_levels": [
+          {
+            "id": "<branch.merge_access_levels:1>",
+            "access_level": 40,
+            "access_level_description": "Maintainers",
+            "user_id": null,
+            "group_id": null
+          }
+        ],
+        "allow_force_push": false,
+        "unprotect_access_levels": [
+          {
+            "id": "<branch.unprotect_access_levels:1>",
+            "access_level": 40,
+            "access_level_description": "Maintainers",
+            "user_id": null,
+            "group_id": null
+          }
+        ],
+        "code_owner_approval_required": false,
+        "inherited": false
+      }
+    },
+    {
+      "label": "unprotect release",
+      "request": "DELETE /projects/<project:1>/protected_branches/release",
+      "status": 204,
+      "headers": {},
+      "body": null
+    },
+    {
+      "label": "list after unprotect",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "5",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<rule:2>",
+          "name": "Backend",
+          "rule_type": "any_approver",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:1>",
+          "name": "Backend team",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:5>",
+          "name": "Ghost",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:6>",
+          "name": "Ghost group",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:3>",
+          "name": "Groups",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "groups": [
+            {
+              "id": "<namespace:7>",
+              "web_url": "<BASE>/groups/private-<RUN>",
+              "name": "private-<RUN>",
+              "path": "private-<RUN>",
+              "description": null,
+              "visibility": "private",
+              "share_with_group_lock": false,
+              "require_two_factor_authentication": false,
+              "two_factor_grace_period": 48,
+              "project_creation_level": "developer",
+              "auto_devops_enabled": null,
+              "subgroup_creation_level": "maintainer",
+              "emails_disabled": false,
+              "emails_enabled": true,
+              "show_diff_preview_in_email": true,
+              "mentions_disabled": null,
+              "lfs_enabled": true,
+              "archived": false,
+              "math_rendering_limits_enabled": true,
+              "lock_math_rendering_limits_enabled": false,
+              "default_branch": null,
+              "default_branch_protection": 2,
+              "default_branch_protection_defaults": {
+                "allowed_to_push": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "allow_force_push": false,
+                "allowed_to_merge": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "developer_can_initial_push": false
+              },
+              "avatar_url": null,
+              "request_access_enabled": true,
+              "full_name": "private-<RUN>",
+              "full_path": "private-<RUN>",
+              "created_at": "<TIME>",
+              "parent_id": null,
+              "organization_id": "<other:organization_id:1>",
+              "shared_runners_setting": "enabled",
+              "max_artifacts_size": null,
+              "marked_for_deletion_on": null,
+              "ldap_cn": null,
+              "ldap_access": null,
+              "wiki_access_level": "enabled",
+              "repository_storage": null,
+              "duo_core_features_enabled": null,
+              "duo_features_enabled": true,
+              "lock_duo_features_enabled": false,
+              "duo_namespace_access_rules": []
+            }
+          ],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        }
+      ]
+    },
+    {
+      "label": "remove member",
+      "request": "DELETE /projects/<project:1>/members/<user:4>",
+      "status": 204,
+      "headers": {},
+      "body": null
+    },
+    {
+      "label": "list after member removal",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "5",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<rule:2>",
+          "name": "Backend",
+          "rule_type": "any_approver",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:1>",
+          "name": "Backend team",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:2>",
+              "username": "dev-<RUN>",
+              "public_email": null,
+              "name": "dev",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dev-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:5>",
+          "name": "Ghost",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:6>",
+          "name": "Ghost group",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 1,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:3>",
+          "name": "Groups",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "maint-<RUN>",
+              "public_email": null,
+              "name": "maint",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/maint-<RUN>"
+            }
+          ],
+          "groups": [
+            {
+              "id": "<namespace:7>",
+              "web_url": "<BASE>/groups/private-<RUN>",
+              "name": "private-<RUN>",
+              "path": "private-<RUN>",
+              "description": null,
+              "visibility": "private",
+              "share_with_group_lock": false,
+              "require_two_factor_authentication": false,
+              "two_factor_grace_period": 48,
+              "project_creation_level": "developer",
+              "auto_devops_enabled": null,
+              "subgroup_creation_level": "maintainer",
+              "emails_disabled": false,
+              "emails_enabled": true,
+              "show_diff_preview_in_email": true,
+              "mentions_disabled": null,
+              "lfs_enabled": true,
+              "archived": false,
+              "math_rendering_limits_enabled": true,
+              "lock_math_rendering_limits_enabled": false,
+              "default_branch": null,
+              "default_branch_protection": 2,
+              "default_branch_protection_defaults": {
+                "allowed_to_push": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "allow_force_push": false,
+                "allowed_to_merge": [
+                  {
+                    "access_level": 40
+                  }
+                ],
+                "developer_can_initial_push": false
+              },
+              "avatar_url": null,
+              "request_access_enabled": true,
+              "full_name": "private-<RUN>",
+              "full_path": "private-<RUN>",
+              "created_at": "<TIME>",
+              "parent_id": null,
+              "organization_id": "<other:organization_id:1>",
+              "shared_runners_setting": "enabled",
+              "max_artifacts_size": null,
+              "marked_for_deletion_on": null,
+              "ldap_cn": null,
+              "ldap_access": null,
+              "wiki_access_level": "enabled",
+              "repository_storage": null,
+              "duo_core_features_enabled": null,
+              "duo_features_enabled": true,
+              "lock_duo_features_enabled": false,
+              "duo_namespace_access_rules": []
+            }
+          ],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        }
+      ]
+    }
+  ],
+  "times": [
+    0,
+    195,
+    59023,
+    59715,
+    59774,
+    60405,
+    60469,
+    61099,
+    61156,
+    61795,
+    61846,
+    61931,
+    62029,
+    62122,
+    62262,
+    62355,
+    70007,
+    70374,
+    70498,
+    70583,
+    70641,
+    70717,
+    70765,
+    70797,
+    70843,
+    70878,
+    70949,
+    71026,
+    71080,
+    71145,
+    71200,
+    71246,
+    71313,
+    71368,
+    71508,
+    71573,
+    71709,
+    71808,
+    71854,
+    71899,
+    71960,
+    72021,
+    72067,
+    72113,
+    72157,
+    72280,
+    72390,
+    72514,
+    72591,
+    72689,
+    72733,
+    72775,
+    72851,
+    72977,
+    73052,
+    73142,
+    73237,
+    73302,
+    73377,
+    73425,
+    73472,
+    73536,
+    73585,
+    73629,
+    73681,
+    73743,
+    73785,
+    73891,
+    73938,
+    73981,
+    74053,
+    74157,
+    74265
+  ],
+  "done_times": [
+    194,
+    848,
+    59713,
+    59772,
+    60404,
+    60468,
+    61098,
+    61155,
+    61794,
+    61845,
+    61930,
+    62028,
+    62121,
+    62261,
+    62353,
+    62459,
+    70373,
+    70497,
+    70583,
+    70641,
+    70717,
+    70765,
+    70797,
+    70843,
+    70878,
+    70949,
+    71026,
+    71080,
+    71145,
+    71200,
+    71246,
+    71313,
+    71368,
+    71507,
+    71572,
+    71708,
+    71807,
+    71854,
+    71899,
+    71959,
+    72020,
+    72067,
+    72113,
+    72157,
+    72280,
+    72390,
+    72514,
+    72591,
+    72689,
+    72733,
+    72775,
+    72850,
+    72975,
+    73051,
+    73141,
+    73236,
+    73300,
+    73375,
+    73425,
+    73472,
+    73534,
+    73585,
+    73629,
+    73681,
+    73743,
+    73785,
+    73891,
+    73938,
+    73981,
+    74053,
+    74156,
+    74265,
+    74365
+  ],
+  "started_at": 1795247802014
+}

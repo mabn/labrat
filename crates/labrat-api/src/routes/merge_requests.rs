@@ -82,7 +82,7 @@ pub fn load(c: &Connection, req: &Req) -> Result<(Project, ProjectPerms, MergeRe
 
 fn ectx<'a>(req: &'a Req) -> Ctx<'a> {
     Ctx {
-        base_url: &req.app.config.external_url,
+        base_url: &req.app.config.external_url, ee: req.app.config.is_ee(),
         current_user: req.user.as_ref(),
     }
 }
@@ -898,11 +898,11 @@ fn mr_params(req: &Req) -> Result<MrParams, ApiError> {
 }
 
 /// Quick actions in a description are run, and removed from the stored text.
-pub(crate) fn take_quick_actions(prm: &mut MrParams) -> Vec<(String, String)> {
+pub(crate) fn take_quick_actions(prm: &mut MrParams, ee: bool) -> Vec<(String, String)> {
     let Some(Some(d)) = &prm.description else { return vec![] };
     // `merge_quick_actions_into_params!`: the extractor's text (no `\r`, trailing whitespace
     // stripped) replaces the description whenever it differs, commands or not.
-    let ex = labrat_core::services::quick_actions::extract(d);
+    let ex = labrat_core::services::quick_actions::extract(d, ee);
     if ex.text != *d {
         prm.description = Some(Some(ex.text));
     }
@@ -914,7 +914,8 @@ async fn create(req: Req) -> ApiResult {
     req.params
         .require(&["title", "source_branch", "target_branch"])?;
     let mut prm = mr_params(&req)?;
-    let cmds = take_quick_actions(&mut prm);
+    let cmds = take_quick_actions(&mut prm, req.app.config.is_ee());
+    let approvals_before_merge = if req.app.config.is_ee() { req.params.int("approvals_before_merge")? } else { None };
     let app = req.app.clone();
     let body = app.db.tx(|c| {
         let (p, perms) = find::project(c, &req, req.path_param("id"))?;
@@ -936,14 +937,37 @@ async fn create(req: Req) -> ApiResult {
             return Err(Error::Api(422, json!(["Source project is not a fork of the target project"])).into());
         }
         let mr = mrs::create(c, &req.app.config, &p, &me, prm)?;
+        // EE: `approvals_before_merge` becomes the MR's "All Members" rule. If the MR already
+        // has an `any_approver` rule from the project, EE fails after creating the MR: a 500.
+        let mut failed = false;
+        if req.app.config.is_ee()
+            && let Some(n) = approvals_before_merge {
+                c.execute("UPDATE merge_requests SET approvals_before_merge = ?1 WHERE id = ?2", rusqlite::params![n, mr.id])?;
+                if labrat_core::services::approvals::mr_rules(c, &mr)?.iter().any(|r| r.is_any_approver()) {
+                    failed = true;
+                    // The error comes before `AfterCreateService`: the MR is never prepared
+                    // (no diff, no open hook) and reads as `cannot_be_merged`.
+                    c.execute("UPDATE merge_requests SET creation_failed = 1, merge_status = 'cannot_be_merged' WHERE id = ?1", [mr.id])?;
+                    c.execute(
+                        "DELETE FROM jobs WHERE kind = 'mr_after_create' AND json_extract(payload, '$.merge_request_id') = ?1",
+                        [mr.id],
+                    )?;
+                } else {
+                    labrat_core::services::approvals::set_required(c, &mr, n)?;
+                }
+            }
         if !cmds.is_empty() {
             let ctx = labrat_core::services::comments::CreateParams { new_record: true, ..Default::default() };
             labrat_core::services::quick_actions::execute(c, &req.app.config, &p, &mr, &me, &cmds, &ctx)?;
         }
         let mr = mr.reload(c)?;
-        single(c, &req, &p, &mr, Opts::default())
+        Ok::<_, ApiError>((single(c, &req, &p, &mr, Opts::default())?, failed))
     })?;
     crate::jobs::kick(&req.app);
+    let (body, failed) = body;
+    if failed {
+        return Err(Error::Api(500, json!("500 Internal Server Error")).into());
+    }
     Ok(Resp::created(body))
 }
 
@@ -994,7 +1018,7 @@ async fn update(req: Req) -> ApiResult {
         }
     }
     let mut prm = mr_params(&req)?;
-    let cmds = take_quick_actions(&mut prm);
+    let cmds = take_quick_actions(&mut prm, req.app.config.is_ee());
     let state_event = prm.state_event.clone();
     let app = req.app.clone();
     let result = app.db.tx(|c| {

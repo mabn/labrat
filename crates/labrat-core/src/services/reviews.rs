@@ -44,6 +44,12 @@ pub fn can_approve(c: &Connection, p: &Project, mr: &MergeRequest, user: &User) 
     Ok(perms.level >= access::GUEST && can_update)
 }
 
+/// EE: someone has requested changes and not approved since.
+pub fn changes_requested(c: &Connection, mr: &MergeRequest) -> Result<bool> {
+    let n: i64 = c.query_row("SELECT count(*) FROM merge_request_requested_changes WHERE merge_request_id = ?1", [mr.id], |r| r.get(0))?;
+    Ok(n > 0)
+}
+
 pub fn has_approved(c: &Connection, mr: &MergeRequest, user: &User) -> Result<bool> {
     let n: i64 = c.query_row(
         "SELECT count(*) FROM approvals WHERE merge_request_id = ?1 AND user_id = ?2",
@@ -75,7 +81,12 @@ pub fn approve(
     if mr.state == "merged" || has_approved(c, mr, user)? || !can_approve(c, p, mr, user)? {
         return Ok(false);
     }
+    if config.is_ee() && crate::services::approvals::eligibility(c, p, mr, user)? != crate::services::approvals::Eligibility::Yes {
+        return Ok(false);
+    }
     let now = time::now();
+    // EE: approving withdraws the user's requested changes.
+    c.execute("DELETE FROM merge_request_requested_changes WHERE merge_request_id = ?1 AND user_id = ?2", params![mr.id, user.id])?;
     c.execute(
         "INSERT INTO approvals (merge_request_id, user_id, created_at, updated_at) VALUES (?1, ?2, ?3, ?3)",
         params![mr.id, user.id, now],
@@ -87,8 +98,6 @@ pub fn approve(
         "approval_events",
         json!({"merge_request_id": mr.id, "user_id": user.id}),
     )?;
-    let _ = config;
-    let _ = p;
     Ok(true)
 }
 
@@ -114,7 +123,9 @@ pub fn approval_events_job(
         "approved",
     )?;
     crate::services::todos::resolve_for_target(c, &mr, Some(user.id))?;
-    crate::services::hooks::merge_request_event(c, config, &p, &mr, Some(&user), "approved", None)
+    // EE reports a partial approval as `approval` and the final one as `approved`.
+    let action = if config.is_ee() && !crate::services::approvals::state(c, &p, &mr)?.approved() { "approval" } else { "approved" };
+    crate::services::hooks::merge_request_event(c, config, &p, &mr, Some(&user), action, None)
 }
 
 /// `MergeRequests::RemoveApprovalService`. Returns false when there was nothing to remove.
@@ -128,10 +139,14 @@ pub fn unapprove(
     if mr.state == "merged" || !has_approved(c, mr, user)? {
         return Ok(false);
     }
+    // EE: `unapproved` when this takes the MR from approved to not approved, `unapproval`
+    // otherwise (always, without rules).
+    let was_approved = config.is_ee() && crate::services::approvals::state(c, p, mr)?.approved();
     c.execute(
         "DELETE FROM approvals WHERE merge_request_id = ?1 AND user_id = ?2",
         params![mr.id, user.id],
     )?;
+    let action = if !config.is_ee() || (was_approved && !crate::services::approvals::state(c, p, mr)?.approved()) { "unapproved" } else { "unapproval" };
     set_reviewer_state(c, mr, user, state::UNAPPROVED)?;
     // The synchronous system note's (throttled) touch is the only change the hook reports.
     let before = crate::services::merge_requests::snapshot(c, mr)?;
@@ -144,7 +159,7 @@ pub fn unapprove(
         "unapproved",
     )?;
     let mr = mr.reload(c)?;
-    crate::services::hooks::merge_request_event(c, config, p, &mr, Some(user), "unapproved", Some(&before))?;
+    crate::services::hooks::merge_request_event(c, config, p, &mr, Some(user), action, Some(&before))?;
     Ok(true)
 }
 
@@ -161,7 +176,7 @@ fn reviewer_row(c: &Connection, mr: &MergeRequest, user: &User) -> Result<Option
 }
 
 /// Sets a reviewer's state if the user is a reviewer (errors are ignored as in GitLab).
-fn set_reviewer_state(
+pub(crate) fn set_reviewer_state(
     c: &Connection,
     mr: &MergeRequest,
     user: &User,
@@ -195,12 +210,14 @@ pub fn update_reviewer_state(
     user: &User,
     name: &str,
 ) -> Result<Option<String>> {
-    let _ = config;
     let Some(new_state) = state::parse(name) else {
         return Ok(None);
     };
     if new_state == state::REQUESTED_CHANGES {
         notes::system_note(c, mr.id, p.id, user, "requested changes", "requested_changes")?;
+        if config.is_ee() {
+            c.execute("INSERT OR IGNORE INTO merge_request_requested_changes (merge_request_id, user_id) VALUES (?1, ?2)", params![mr.id, user.id])?;
+        }
     } else if new_state == state::REVIEWED {
         notes::system_note(c, mr.id, p.id, user, "left review comments", "reviewed")?;
     }

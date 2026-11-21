@@ -64,7 +64,9 @@ async fn webhooks_flow() {
     // Hook management
     let hooks = format!("/projects/{pid}/hooks");
     allow_local(&mut s, false).await;
-    s.step("local url blocked", POST, &hooks, Some(&admin), json!({"url": format!("{}/hook", rx.url)}), "hook").await;
+    // A private address rather than the receiver's: when recording through a tunnel the
+    // receiver's URL is public.
+    s.step("local url blocked", POST, &hooks, Some(&admin), json!({"url": "http://10.0.0.1/hook"}), "hook").await;
     allow_local(&mut s, true).await;
     s.step("developer cannot list hooks", GET, &hooks, Some(&bob_t), json!(null), "hook").await;
     s.step("missing url", POST, &hooks, Some(&admin), json!({"push_events": true}), "hook").await;

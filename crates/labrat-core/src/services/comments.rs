@@ -240,7 +240,7 @@ fn create_note(
     }
 
     // Quick actions run before saving; the remaining text is the note.
-    let qa = quick_actions::extract(&prm.body);
+    let qa = quick_actions::extract(&prm.body, config.is_ee());
     let has_commands = !qa.commands.is_empty();
     let body = qa.text.clone();
     if has_commands && body.trim().is_empty() {
@@ -423,7 +423,7 @@ pub fn update(
     note: &Note,
     body: &str,
 ) -> Result<Outcome> {
-    let qa = quick_actions::extract(body);
+    let qa = quick_actions::extract(body, config.is_ee());
     if !qa.commands.is_empty() && qa.text.trim().is_empty() {
         let (changes, messages) = quick_actions::execute(
             c,

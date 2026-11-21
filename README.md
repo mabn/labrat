@@ -176,6 +176,23 @@ a newer GitLab version.
 | `--ssh-port` | `LABRAT_SSH_PORT` | `22` | Port shown in `ssh_url_to_repo` (git over SSH isn't served) |
 | `--job-delay-ms` | `LABRAT_JOB_DELAY_MS` | `0` | Delay every background job, to expose intermediate states |
 | `--job-jitter-ms` | `LABRAT_JOB_JITTER_MS` | `0` | Random extra delay per job |
+| `--noee` | `LABRAT_NOEE` | off | Behave like GitLab Community Edition instead of Enterprise Edition |
+
+**Editions.** By default labrat answers like GitLab Enterprise Edition 18.11. EE support covers
+the features labrat supports on CE, plus merge request approval rules. Nothing else from EE is
+included.
+
+- **CE features:** these answer as EE answers them. That means EE's extra JSON fields, its GraphQL
+  schema, and its defaults where they differ (for example, authors can't approve their own merge
+  requests, and approvals reset on push).
+- **Approval rules:** project and merge request approval rules, approval settings and approval
+  state, over REST and GraphQL.
+- **Other EE-only features:** their endpoints and fields don't exist, as on an instance without
+  the feature. That includes code owners, approval policies, epics, and security and compliance
+  features.
+
+With `--noee` labrat answers exactly like the Community Edition, and the approval endpoints don't
+exist.
 
 The database schema version is checked on start. After an upgrade that changes it, delete the
 database file.

@@ -5,23 +5,58 @@ use std::collections::HashMap;
 use std::io::Read;
 use std::sync::LazyLock;
 
+/// CE's runtime schema (`scripts/reference/dump-graphql-schema.rb` on the CE instance). labrat
+/// validates and executes queries against it when running as CE.
 static INTROSPECTION_GZ: &[u8] = include_bytes!("../../data/graphql-introspection.json.gz");
+/// The static introspection file GitLab 18.11 serves, fetched through the API. It is the same
+/// file on CE and EE, byte for byte, and describes EE's schema, which labrat uses as EE.
+static STATIC_INTROSPECTION_GZ: &[u8] = include_bytes!("../../data/graphql-introspection-ee.json.gz");
 
-static RAW: LazyLock<Vec<u8>> = LazyLock::new(|| {
+fn gunzip(data: &[u8]) -> Vec<u8> {
     let mut b = vec![];
-    flate2::read::GzDecoder::new(INTROSPECTION_GZ).read_to_end(&mut b).expect("introspection data");
+    flate2::read::GzDecoder::new(data).read_to_end(&mut b).expect("introspection data");
     b
-});
-
-/// GitLab's introspection result, byte for byte.
-pub fn introspection_bytes() -> &'static [u8] {
-    &RAW
 }
 
-pub static SCHEMA: LazyLock<Schema> = LazyLock::new(|| {
+static RAW: LazyLock<Vec<u8>> = LazyLock::new(|| gunzip(INTROSPECTION_GZ));
+static STATIC_RAW: LazyLock<Vec<u8>> = LazyLock::new(|| gunzip(STATIC_INTROSPECTION_GZ));
+
+/// The answer to an introspection query: GitLab serves its static file, whatever was asked.
+pub fn introspection_bytes() -> &'static [u8] {
+    if current_edition().is_ee() { &STATIC_RAW } else { &RAW }
+}
+
+static SCHEMA_CE: LazyLock<Schema> = LazyLock::new(|| {
     let v: Value = serde_json::from_slice(&RAW).expect("introspection json");
     Schema::from_introspection(v)
 });
+
+static SCHEMA_EE: LazyLock<Schema> = LazyLock::new(|| {
+    let v: Value = serde_json::from_slice(&STATIC_RAW).expect("introspection json");
+    Schema::from_introspection(v)
+});
+
+thread_local! {
+    static EDITION: std::cell::Cell<labrat_core::Edition> = const { std::cell::Cell::new(labrat_core::Edition::Ce) };
+}
+
+/// Runs `f` with `edition`'s schema as the current one. GraphQL requests run synchronously on
+/// one thread, so the schema in force is a thread-local.
+pub fn with_edition<T>(edition: labrat_core::Edition, f: impl FnOnce() -> T) -> T {
+    let prev = EDITION.with(|e| e.replace(edition));
+    let out = f();
+    EDITION.with(|e| e.set(prev));
+    out
+}
+
+fn current_edition() -> labrat_core::Edition {
+    EDITION.with(|e| e.get())
+}
+
+/// The schema of the edition in force (see `with_edition`).
+pub fn schema() -> &'static Schema {
+    if current_edition().is_ee() { &SCHEMA_EE } else { &SCHEMA_CE }
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TypeRef {

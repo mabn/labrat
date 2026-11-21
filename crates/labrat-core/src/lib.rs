@@ -17,6 +17,27 @@ pub use error::{Error, Result};
 /// The GitLab version labrat reports and imitates.
 pub const GITLAB_VERSION: &str = "18.11.14";
 pub const GITLAB_REVISION: &str = "c2489ed0b24";
+/// The revision GitLab EE 18.11.14 reports (`GET /version` on the EE reference instance).
+pub const GITLAB_EE_REVISION: &str = "36cf8f5e8ce";
+
+/// Which GitLab edition labrat imitates.
+///
+/// - `Ee`, the default, matches GitLab Enterprise Edition with a license that unlocks approval
+///   rules.
+/// - `Ce` matches the Community Edition exactly (`--noee`): EE-only routes and fields don't
+///   exist.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Edition {
+    Ce,
+    #[default]
+    Ee,
+}
+
+impl Edition {
+    pub fn is_ee(self) -> bool {
+        self == Edition::Ee
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct Config {
@@ -29,9 +50,24 @@ pub struct Config {
     pub root_password: String,
     /// If set, `root` gets a personal access token with this exact value.
     pub root_token: Option<String>,
+    /// The edition to imitate.
+    pub edition: Edition,
 }
 
 impl Config {
+    pub fn is_ee(&self) -> bool {
+        self.edition.is_ee()
+    }
+
+    /// The version string GitLab reports (`/version`, `User-Agent`): EE adds `-ee`.
+    pub fn gitlab_version(&self) -> String {
+        if self.is_ee() { format!("{GITLAB_VERSION}-ee") } else { GITLAB_VERSION.to_string() }
+    }
+
+    pub fn gitlab_revision(&self) -> &'static str {
+        if self.is_ee() { GITLAB_EE_REVISION } else { GITLAB_REVISION }
+    }
+
     pub fn url(&self, path: &str) -> String {
         format!("{}{}", self.external_url, path)
     }

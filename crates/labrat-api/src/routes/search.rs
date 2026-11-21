@@ -36,8 +36,18 @@ const GLOBAL_SCOPES: &[&str] = &["projects", "issues", "work_items", "merge_requ
 const GROUP_SCOPES: &[&str] = &["projects", "issues", "work_items", "merge_requests", "milestones", "users"];
 const PROJECT_SCOPES: &[&str] = &["issues", "work_items", "merge_requests", "milestones", "notes", "wiki_blobs", "commits", "blobs", "users"];
 
+/// EE also declares the advanced search scopes for instance and group search, and refuses
+/// them without advanced search (Elasticsearch).
+const EE_ADVANCED_SCOPES: &[&str] = &["blobs", "commits", "notes", "wiki_blobs"];
+
 /// Grape's validation of `search` and `scope`, in declaration order.
 fn validate(req: &Req, scopes: &[&str]) -> Result<(String, String), ApiError> {
+    let ee_advanced = req.app.config.is_ee() && !std::ptr::eq(scopes, PROJECT_SCOPES);
+    let mut all: Vec<&str> = scopes.to_vec();
+    if ee_advanced {
+        all.extend(EE_ADVANCED_SCOPES);
+    }
+    let scopes = &all[..];
     let p = &req.params;
     let mut errors = vec![];
     let search = p.str("search");
@@ -57,6 +67,9 @@ fn validate(req: &Req, scopes: &[&str]) -> Result<(String, String), ApiError> {
     }
     if !errors.is_empty() {
         return Err(Error::Param(errors.join(", ")).into());
+    }
+    if ee_advanced && scope.as_deref().is_some_and(|s| EE_ADVANCED_SCOPES.contains(&s)) {
+        return Err(Error::Api(400, json!("Scope supported only with advanced search")).into());
     }
     Ok((search.unwrap_or_default(), scope.unwrap_or_default()))
 }
@@ -221,7 +234,7 @@ fn users(c: &Connection, req: &Req, ids: Option<Vec<i64>>, term: &str, defaults:
         let rank = |u: &User| if u.username.to_lowercase() == lq { 0 } else if u.name.to_lowercase() == lq { 1 } else { 2 };
         rank(a).cmp(&rank(b)).then(a.name.cmp(&b.name)).then(a.id.cmp(&b.id))
     });
-    let ctx = Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() };
+    let ctx = Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() };
     if counted {
         paginate(req, found, defaults, |u| Ok(user_ent::basic_value(u, &ctx)))
     } else {
@@ -332,7 +345,7 @@ async fn project(req: Req) -> ApiResult {
                         found.push(n);
                     }
                 }
-                let ctx = Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() };
+                let ctx = Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() };
                 paginate(&req, found, &[], |n| {
                     Ok(if n.noteable_type == "Commit" {
                         note_ent::commit_note(c, &ctx, n)?

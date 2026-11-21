@@ -58,7 +58,7 @@ pub fn todo_value_with(c: &Connection, req: &Req, id: i64, include_subscribed: b
         return Err(Error::not_found("Todo").into());
     };
     let ctx = Ctx {
-        base_url: &req.app.config.external_url,
+        base_url: &req.app.config.external_url, ee: req.app.config.is_ee(),
         current_user: req.user.as_ref(),
     };
     let project = match project_id {

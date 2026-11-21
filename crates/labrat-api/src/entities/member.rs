@@ -20,5 +20,12 @@ pub fn member(
             out.insert("created_by".into(), user::basic_value(cb, ctx));
         }
     out.insert("expires_at".into(), json!(m.expires_at));
+    if ctx.ee {
+        // EE adds the email (for admins) and the seat state, as the EE reference answers.
+        if ctx.current_user.is_some_and(|c| c.admin) {
+            out.insert("email".into(), json!(u.email));
+        }
+        out.insert("membership_state".into(), json!("active"));
+    }
     Value::Object(out)
 }

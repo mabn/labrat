@@ -373,14 +373,14 @@ pub fn tag(
     Ok(Value::Object(m))
 }
 
-pub fn protected_branch(pb: &ProtectedBranch) -> Value {
-    let level = |l: &repo::AccessLevel, with_deploy_key: bool| {
+pub fn protected_branch(pb: &ProtectedBranch, ee: bool) -> Value {
+    let level = |id: i64, access_level: i64, with_deploy_key: bool| {
         let mut m = Map::new();
-        m.insert("id".into(), json!(l.id));
-        m.insert("access_level".into(), json!(l.access_level));
+        m.insert("id".into(), json!(id));
+        m.insert("access_level".into(), json!(access_level));
         m.insert(
             "access_level_description".into(),
-            json!(match l.access_level {
+            json!(match access_level {
                 0 => "No one",
                 30 => "Developers + Maintainers",
                 60 => "Instance admins",
@@ -390,13 +390,25 @@ pub fn protected_branch(pb: &ProtectedBranch) -> Value {
         if with_deploy_key {
             m.insert("deploy_key_id".into(), Value::Null);
         }
+        if ee {
+            // EE allows specific users and groups; labrat has only role levels.
+            m.insert("user_id".into(), Value::Null);
+            m.insert("group_id".into(), Value::Null);
+        }
         Value::Object(m)
     };
-    json!({
-        "id": pb.id,
-        "name": pb.name,
-        "push_access_levels": pb.push.iter().map(|l| level(l, true)).collect::<Vec<_>>(),
-        "merge_access_levels": pb.merge.iter().map(|l| level(l, false)).collect::<Vec<_>>(),
-        "allow_force_push": pb.allow_force_push,
-    })
+    let mut m = Map::new();
+    m.insert("id".into(), json!(pb.id));
+    m.insert("name".into(), json!(pb.name));
+    m.insert("push_access_levels".into(), json!(pb.push.iter().map(|l| level(l.id, l.access_level, true)).collect::<Vec<_>>()));
+    m.insert("merge_access_levels".into(), json!(pb.merge.iter().map(|l| level(l.id, l.access_level, false)).collect::<Vec<_>>()));
+    m.insert("allow_force_push".into(), json!(pb.allow_force_push));
+    if ee {
+        // EE's "allowed to unprotect" level; it borrows the branch's id.
+        let unprotect: Vec<Value> = pb.unprotect_access_level.map(|l| level(pb.id, l, false)).into_iter().collect();
+        m.insert("unprotect_access_levels".into(), json!(unprotect));
+        m.insert("code_owner_approval_required".into(), json!(pb.code_owner_approval_required));
+        m.insert("inherited".into(), json!(false));
+    }
+    Value::Object(m)
 }

@@ -1,6 +1,7 @@
 //! `POST/GET /api/graphql`.
 
 mod analysis;
+pub mod approvals;
 mod did_you_mean;
 pub mod exec;
 pub mod mr_filters;
@@ -114,6 +115,11 @@ const EXTENDED_QUERY_SIZE_ALLOWLIST: &[&str] = &[
 ];
 
 async fn handle(req: Req) -> axum::response::Response {
+    let edition = req.app.config.edition;
+    schema::with_edition(edition, || handle_sync(req))
+}
+
+fn handle_sync(req: Req) -> axum::response::Response {
     // GET carries the request in the query string; POST in the JSON body (or form params).
     let raw = req.params.raw_all();
     if req.maybe_user().is_err() {

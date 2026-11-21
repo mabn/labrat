@@ -58,7 +58,7 @@ async fn project_users(req: Req) -> ApiResult {
             let skip: Vec<i64> = skip.split(',').filter_map(|x| x.trim().parse().ok()).collect();
             users.retain(|u| !skip.contains(&u.id));
         }
-        let ctx = Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() };
+        let ctx = Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() };
         paginate(&req, users, &[], |u| Ok(crate::entities::user::basic_value(u, &ctx)))
     })
 }
@@ -114,7 +114,7 @@ fn render(c: &Connection, req: &Req, m: &Member) -> Result<Value, ApiError> {
         None => None,
     };
     let ctx = Ctx {
-        base_url: &req.app.config.external_url,
+        base_url: &req.app.config.external_url, ee: req.app.config.is_ee(),
         current_user: req.user.as_ref(),
     };
     Ok(member_entity::member(

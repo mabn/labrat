@@ -134,8 +134,8 @@ async fn list(req: Req) -> ApiResult {
     let app = req.app.clone();
     app.db.read(|c| {
         let groups = visible_groups(c, &req, None, false)?;
-        paginate(&req, groups, LIST_DEFAULTS, |(g, _)| {
-            Ok(Value::Object(group_entity::group(g, &req.app.config)))
+        paginate(&req, groups, LIST_DEFAULTS, |(g, perms)| {
+            Ok(Value::Object(group_entity::group_with(g, &req.app.config, perms.admin_group())))
         })
     })
 }
@@ -154,8 +154,8 @@ async fn nested(req: Req, all: bool) -> ApiResult {
     app.db.read(|c| {
         let (g, _) = find::group(c, &req, &id)?;
         let groups = visible_groups(c, &req, Some(&g), all)?;
-        paginate(&req, groups, LIST_DEFAULTS, |(g, _)| {
-            Ok(Value::Object(group_entity::group(g, &req.app.config)))
+        paginate(&req, groups, LIST_DEFAULTS, |(g, perms)| {
+            Ok(Value::Object(group_entity::group_with(g, &req.app.config, perms.admin_group())))
         })
     })
 }
@@ -182,6 +182,12 @@ pub fn detail_value(
         }
         m.insert("projects".into(), Value::Array(items));
         m.insert("shared_projects".into(), json!([]));
+    }
+    // On EE, the extra group detail fields follow the projects.
+    if req.app.config.is_ee() {
+        let mut st = c.prepare("SELECT user_id FROM members WHERE source_type = 'Namespace' AND source_id = ?1 AND access_level = 50 ORDER BY id")?;
+        let owners = st.query_map([g.id], |r| r.get::<_, i64>(0))?.collect::<rusqlite::Result<Vec<i64>>>()?;
+        group_entity::ee_detail(g, &mut m, &owners);
     }
     Ok(Value::Object(m))
 }
@@ -404,10 +410,7 @@ async fn projects(req: Req) -> ApiResult {
         };
         Ok::<_, ApiError>(ids)
     })?;
-    list_projects(
-        req,
-        Some(ns_ids),
-        &[
+    let mut defaults = vec![
             ("include_ancestor_groups", "false"),
             ("include_subgroups", "false"),
             ("order_by", "created_at"),
@@ -419,7 +422,16 @@ async fn projects(req: Req) -> ApiResult {
             ("with_issues_enabled", "false"),
             ("with_merge_requests_enabled", "false"),
             ("with_shared", "true"),
-        ],
+    ];
+    // EE declares `with_security_reports`, which its links carry.
+    if req.app.config.is_ee() {
+        defaults.push(("with_security_reports", "false"));
+        defaults.sort();
+    }
+    list_projects(
+        req,
+        Some(ns_ids),
+        &defaults,
     )
     .await
 }

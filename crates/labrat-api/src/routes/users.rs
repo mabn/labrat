@@ -206,7 +206,7 @@ async fn set_status_patch(req: Req) -> ApiResult {
 
 fn ectx<'a>(req: &'a Req) -> user_entity::Ctx<'a> {
     user_entity::Ctx {
-        base_url: &req.app.config.external_url,
+        base_url: &req.app.config.external_url, ee: req.app.config.is_ee(),
         current_user: req.user.as_ref(),
     }
 }
@@ -217,11 +217,13 @@ pub fn admin_view(c: &rusqlite::Connection, req: &Req, u: &User) -> labrat_core:
         Some(id) => User::find(c, id)?,
         None => None,
     };
-    Ok(Value::Object(user_entity::with_admin(
-        u,
-        &ectx(req),
-        created_by.as_ref(),
-    )))
+    let mut m = user_entity::with_admin(u, &ectx(req), created_by.as_ref());
+    if req.app.config.is_ee() {
+        // A license seat: an active human who is an admin or has a role above Guest somewhere.
+        let member: i64 = c.query_row("SELECT count(*) FROM members WHERE user_id = ?1 AND access_level > 10", [u.id], |r| r.get(0))?;
+        m.insert("using_license_seat".into(), Value::from(u.user_type == 0 && u.active() && (u.admin || member > 0)));
+    }
+    Ok(Value::Object(m))
 }
 
 async fn current_user(req: Req) -> ApiResult {
@@ -335,6 +337,13 @@ async fn list(req: Req) -> ApiResult {
         ("without_project_bots", "false"),
         ("without_projects", "false"),
     ];
+    // EE declares two more filters, which its links carry.
+    let mut defaults = defaults.to_vec();
+    if req.app.config.is_ee() {
+        defaults.extend([("auditors", "false"), ("skip_ldap", "false")]);
+        defaults.sort();
+    }
+    let defaults = &defaults[..];
     let app = req.app.clone();
     app.db.read(|c| {
         paginate(&req, users, defaults, |u| {
@@ -366,6 +375,10 @@ async fn show(req: Req) -> ApiResult {
             m.insert("current_sign_in_ip".into(), Value::Null);
             m.insert("last_sign_in_ip".into(), Value::Null);
             m.insert("sign_in_count".into(), Value::from(u.sign_in_count));
+            if req.app.config.is_ee() {
+                m.insert("plan".into(), Value::Null);
+                m.insert("trial".into(), Value::from(false));
+            }
             return Ok(v);
         }
         if !u.active() && me.is_none() {

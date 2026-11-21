@@ -2,7 +2,7 @@
 //! `@skip`/`@include`, argument coercion, value completion with null propagation, and
 //! introspection answered from GitLab's own introspection data.
 
-use super::schema::{FieldDef, SCHEMA, Schema, TypeRef};
+use super::schema::{FieldDef, Schema, TypeRef};
 use crate::ctx::Req;
 use async_graphql_parser::Positioned;
 use async_graphql_parser::types::{ExecutableDocument, Field, OperationDefinition, Selection, SelectionSet};
@@ -234,7 +234,15 @@ impl<'a> Ctx<'a> {
     fn error(&self, msg: &str, pos: async_graphql_parser::Pos, path: &[Value], extensions: Option<Value>) {
         let mut e = Map::new();
         e.insert("message".into(), json!(msg));
-        e.insert("locations".into(), json!([location(pos)]));
+        // graphql-ruby reports most execution errors (invalid nulls, for one) with a column
+        // counted from the start of the document; a resolver's `ResourceNotAvailable` gets the
+        // column within its line (recorded on EE 18.11 with multi-line mutations).
+        let loc = if msg == super::resolvers::RESOURCE_UNAVAILABLE {
+            json!({"line": pos.line, "column": pos.column})
+        } else {
+            location(pos)
+        };
+        e.insert("locations".into(), json!([loc]));
         e.insert("path".into(), Value::Array(path.to_vec()));
         if let Some(x) = extensions {
             e.insert("extensions".into(), x);
@@ -404,7 +412,7 @@ pub fn run(
     variables: Map<String, Value>,
     root: &dyn Object,
 ) -> Value {
-    let schema: &'static Schema = &SCHEMA;
+    let schema: &'static Schema = super::schema::schema();
     let mut cx = Ctx { c, req, schema, doc, vars: Map::new(), errors: RefCell::new(vec![]) };
     let mut vars = Map::new();
     for vd in &op.node.variable_definitions {

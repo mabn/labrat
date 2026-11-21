@@ -4,7 +4,6 @@
 //! docs/gitlab-ref/graphql-complexity.md). Calibrated against `queryComplexity` scores recorded
 //! in the `graphql_complexity` scenario.
 
-use super::schema::SCHEMA;
 use async_graphql_parser::Positioned;
 use async_graphql_parser::types::{ExecutableDocument, Field, OperationDefinition, OperationType, Selection, SelectionSet};
 use async_graphql_value::Value as GValue;
@@ -196,7 +195,7 @@ impl Ctx<'_> {
         if name == "__typename" {
             return "String".into();
         }
-        SCHEMA.get(parent).and_then(|t| t.field(name)).map(|f| f.ty.named().to_string()).unwrap_or_default()
+        super::schema::schema().get(parent).and_then(|t| t.field(name)).map(|f| f.ty.named().to_string()).unwrap_or_default()
     }
 
     fn complexity(&self, set: &SelectionSet, parent: &str) -> i64 {
@@ -318,8 +317,8 @@ impl Ctx<'_> {
 pub fn analyze(doc: &ExecutableDocument, op: &Positioned<OperationDefinition>, vars: &Map<String, Value>, user: Option<&labrat_core::model::User>) -> Option<Vec<Value>> {
     let cx = Ctx { doc, vars };
     let root = match op.node.ty {
-        OperationType::Mutation => SCHEMA.mutation_type.clone(),
-        _ => SCHEMA.query_type.clone(),
+        OperationType::Mutation => super::schema::schema().mutation_type.clone(),
+        _ => super::schema::schema().query_type.clone(),
     };
     let set = &op.node.selection_set.node;
     let mut errors = vec![];

@@ -178,6 +178,54 @@ The 18.11.14 instance on the original development machine predates these scripts
 credentials are in `~/dev/gitlab-run-ce/claude-gitlab.env`. That `run.sh` is equivalent to
 `gitlab.sh`.
 
+## The EE reference
+
+labrat also imitates GitLab EE (see "Reference version" in [PLAN.md](PLAN.md)). EE recordings
+live in `tests/conformance/fixtures-ee/`. The `conformance_ee` test binary checks them, with
+labrat running as EE. It runs every scenario in `tests/scenarios/` and the EE-only ones in
+`tests/scenarios_ee/`.
+
+- **Instance:** a GitLab EE instance of the same version as the CE reference, with a license
+  that includes approval rules (Premium or Ultimate).
+- **Source:** don't use EE's source or containers. The EE instance is studied through its API
+  only.
+- **Setup:** prepare the instance like the CE one (`claude`, its `claude-code` token and the
+  `rebase_on_merge_automatic` flag). Use the same API calls `setup.sh` makes, without the
+  `docker exec` step: get a root token some other way, for example an OAuth password grant.
+
+Recording settings, all read from the environment:
+
+| Variable | Meaning |
+|---|---|
+| `LABRAT_EDITION=ee` | Record into `fixtures-ee/` (the test binary name already implies it) |
+| `GITLAB_URL`, `GITLAB_TOKEN` | Where to send requests, and `claude`'s token |
+| `GITLAB_PUBLIC_URL` | The URL the instance puts into its responses, if it differs from `GITLAB_URL` |
+| `GITLAB_SSH_PORT` | The port in its `ssh_url_to_repo` (default 2424) |
+| `GITLAB_EXTRA_HEADERS` | `Name: value; Name: value`: headers an access proxy in front of the instance needs |
+| `HOOK_PUBLIC_URL`, `HOOK_LISTEN_PORT` | A tunnel URL that forwards to this local port, for webhook deliveries |
+
+How the proxy and the tunnel are handled:
+- **Proxy headers** go to every API call, to `git` (`http.extraHeader`), and to every webhook the
+  scenarios create, as custom headers.
+- **Fixtures never mention them.** They are removed from every recorded response. A fixture
+  that still mentions them, or the proxy's cookies, is not written.
+- **Tunnel deliveries:** the proxy's response headers in GitLab's hook logs are replaced by what
+  the receiver actually sent.
+
+Keep the proxy credentials outside the repository, in an env file like the CE one. Record
+with a copy of the test binary, so code changes made meanwhile don't rebuild it in the middle of
+a run:
+
+```sh
+cargo test -p labrat-conformance --test conformance_ee --no-run   # prints the binary's path
+cp target/debug/deps/conformance_ee-<hash> /tmp/conformance_ee-rec
+cd tests/conformance && set -a && . ~/path/to/ee-record.env && set +a
+LABRAT_RECORD=1 /tmp/conformance_ee-rec --test-threads=1 --skip random_walk
+```
+
+The CE rules apply: record one scenario at a time, and don't run other recordings at the same
+time. Load on the instance shows up as timing differences, such as a long `approvals_syncing`.
+
 ## Reading GitLab's source
 
 `update-data.sh` copies `app`, `lib`, `config`, `db` and `Gemfile.lock` from

@@ -2,7 +2,7 @@
 //! records each attempt in `web_hook_logs`.
 
 use labrat_core::services::hooks::{Hook, uuid};
-use labrat_core::{App, GITLAB_VERSION, time};
+use labrat_core::{App, time};
 use rusqlite::params;
 use serde_json::{Map, Value, json};
 use std::sync::{Arc, LazyLock};
@@ -131,7 +131,7 @@ pub async fn send(app: &Arc<App>, hook: &Hook, scope: &str, data: &Value, idempo
     let mut headers: Vec<(String, String)> = hook.custom_headers.clone();
     let mut built = vec![
         ("Content-Type".to_string(), "application/json".to_string()),
-        ("User-Agent".to_string(), format!("GitLab/{GITLAB_VERSION}")),
+        ("User-Agent".to_string(), format!("GitLab/{}", app.config.gitlab_version())),
         ("Idempotency-Key".to_string(), idempotency_key.to_string()),
         ("X-Gitlab-Event".to_string(), event_header(hook, scope)),
         ("X-Gitlab-Webhook-UUID".to_string(), uuid()),

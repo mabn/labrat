@@ -1,5 +1,5 @@
 use clap::Parser;
-use labrat_core::{App, Config, Db};
+use labrat_core::{App, Config, Db, Edition};
 use std::sync::Arc;
 
 /// A GitLab API simulator for testing integrations.
@@ -34,6 +34,10 @@ struct Args {
     /// Random extra delay of up to this many milliseconds per job.
     #[arg(long, env = "LABRAT_JOB_JITTER_MS", default_value_t = 0)]
     job_jitter_ms: u64,
+    /// Behave like GitLab Community Edition: EE-only endpoints and fields (approval rules and
+    /// settings, among others) answer exactly as on CE. The default is Enterprise Edition.
+    #[arg(long, alias = "no-ee", env = "LABRAT_NOEE")]
+    noee: bool,
 }
 
 #[tokio::main]
@@ -58,6 +62,7 @@ async fn main() -> anyhow::Result<()> {
         ssh_port: args.ssh_port,
         root_password: args.root_password,
         root_token: args.root_token,
+        edition: if args.noee { Edition::Ce } else { Edition::Ee },
     };
     let app = Arc::new(App {
         db: Db::open(&args.db)?,

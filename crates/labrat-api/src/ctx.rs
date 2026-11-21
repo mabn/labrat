@@ -284,6 +284,11 @@ impl FromRequest<Arc<App>> for Req {
                     .collect(),
                 Err(_) => vec![],
             };
+        // Grape's path params never match an empty segment (`/discussions//notes`): the
+        // request falls through to the catch-all route.
+        if path_params.iter().any(|(_, v)| v.is_empty()) {
+            return Err(Error::Body(404, serde_json::json!({"error": "404 Not Found"})).into());
+        }
         let query = parts.uri.query().unwrap_or("").to_string();
         let mut map = Map::new();
         parse_query(&query, &mut map);
@@ -364,6 +369,9 @@ impl Req {
                 return Ok::<_, Error>((None, None));
             };
             let mut user = User::find(c, token.user_id)?;
+            // Expiry is judged here, on the database's clock (tests move it), not after the
+            // transaction on the bare system clock.
+            let expired = token.expired();
             if token.active() {
                 tokens::touch(c, &token)?;
                 if let Some(u) = &user
@@ -372,9 +380,9 @@ impl Req {
                         user = User::find(c, u.id)?;
                     }
             }
-            Ok((user, Some(token)))
+            Ok((user, Some((token, expired))))
         })?;
-        let (Some(user), Some(token)) = (user, token) else {
+        let (Some(user), Some((token, expired))) = (user, token) else {
             return Err(Error::Unauthorized(None).into());
         };
         if token.revoked {
@@ -384,7 +392,7 @@ impl Req {
                 "Token was revoked. You have to re-authorize from the user.",
             ));
         }
-        if token.expired() {
+        if expired {
             return Err(oauth_error(
                 401,
                 "invalid_token",

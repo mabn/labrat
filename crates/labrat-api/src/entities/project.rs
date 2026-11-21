@@ -171,7 +171,7 @@ pub fn project(
                 crate::entities::user::basic_value(
                     o,
                     &crate::entities::user::Ctx {
-                        base_url: &ctx.config.external_url,
+                        base_url: &ctx.config.external_url, ee: ctx.config.is_ee(),
                         current_user: ctx.user,
                     },
                 ),
@@ -432,7 +432,59 @@ pub fn project(
         "max_artifacts_size".into(),
         setting(p, "max_artifacts_size", Value::Null),
     );
+    if ctx.config.is_ee() {
+        ee_fields(c, p, perms, &mut m)?;
+    }
     Ok(m)
+}
+
+/// The fields EE adds to projects, after the CE fields, in the order the EE 18.11 reference
+/// returns them.
+fn ee_fields(c: &Connection, p: &Project, perms: &ProjectPerms, m: &mut Map<String, Value>) -> labrat_core::Result<()> {
+    m.insert(
+        "approvals_before_merge".into(),
+        json!(labrat_core::services::approvals::project_approvals_before_merge(c, p)?),
+    );
+    m.insert("mirror".into(), json!(false));
+    m.insert("external_authorization_classification_label".into(), Value::Null);
+    m.insert("requirements_enabled".into(), json!(true));
+    m.insert("requirements_access_level".into(), json!("enabled"));
+    m.insert("security_and_compliance_enabled".into(), json!(true));
+    m.insert("secret_push_protection_enabled".into(), json!(false));
+    m.insert("pre_receive_secret_detection_enabled".into(), json!(false));
+    m.insert("compliance_frameworks".into(), json!([]));
+    // Each template shows only while its feature is available to the viewer.
+    if perms.feature(p, "issues", labrat_core::model::access::GUEST) {
+        m.insert("issues_template".into(), setting(p, "issues_template", Value::Null));
+    }
+    if perms.feature(p, "merge_requests", labrat_core::model::access::GUEST) {
+        m.insert("merge_requests_template".into(), setting(p, "merge_requests_template", Value::Null));
+    }
+    if perms.admin_project() {
+        m.insert("ci_restrict_pipeline_cancellation_role".into(), json!("developer"));
+    }
+    m.insert("merge_pipelines_enabled".into(), setting_bool(p, "merge_pipelines_enabled", false));
+    m.insert("merge_trains_enabled".into(), setting_bool(p, "merge_trains_enabled", false));
+    m.insert("merge_trains_skip_train_allowed".into(), setting_bool(p, "merge_trains_skip_train_allowed", false));
+    m.insert(
+        "only_allow_merge_if_all_status_checks_passed".into(),
+        setting_bool(p, "only_allow_merge_if_all_status_checks_passed", false),
+    );
+    m.insert("allow_pipeline_trigger_approve_deployment".into(), json!(false));
+    m.insert("prevent_merge_without_jira_issue".into(), json!(false));
+    m.insert("duo_remote_flows_enabled".into(), json!(true));
+    m.insert("duo_foundational_flows_enabled".into(), json!(true));
+    m.insert("duo_sast_fp_detection_enabled".into(), json!(false));
+    m.insert("duo_secret_detection_fp_enabled".into(), json!(false));
+    m.insert("duo_sast_vr_workflow_enabled".into(), json!(false));
+    m.insert("spp_repository_pipeline_access".into(), json!(true));
+    m.insert("security_policy_pipeline_must_succeed".into(), json!(false));
+    m.insert("merge_request_title_regex".into(), setting(p, "merge_request_title_regex", Value::Null));
+    m.insert(
+        "merge_request_title_regex_description".into(),
+        setting(p, "merge_request_title_regex_description", Value::Null),
+    );
+    Ok(())
 }
 
 fn read_code_value(perms: &ProjectPerms, p: &Project) -> bool {

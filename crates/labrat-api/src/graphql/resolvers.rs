@@ -43,7 +43,7 @@ fn opt_time(ms: Option<i64>) -> Value {
     ms.map(gtime).unwrap_or(Value::Null)
 }
 
-const RESOURCE_UNAVAILABLE: &str =
+pub const RESOURCE_UNAVAILABLE: &str =
     "The resource that you are attempting to access does not exist or you don't have permission to perform this action";
 
 pub fn unavailable() -> FieldError {
@@ -414,7 +414,7 @@ impl Object for Query {
                 Ok(Out::obj(JsonObj::new("QueryComplexity", json!({"score": score, "limit": limit}))))
             }
             "metadata" => Ok(match cx.user() {
-                Some(_) => Out::obj(JsonObj::new("Metadata", json!({"version": labrat_core::GITLAB_VERSION, "revision": labrat_core::GITLAB_REVISION, "enterprise": false}))),
+                Some(_) => Out::obj(JsonObj::new("Metadata", json!({"version": cx.req.app.config.gitlab_version(), "revision": cx.req.app.config.gitlab_revision(), "enterprise": cx.req.app.config.is_ee()}))),
                 None => Out::Null,
             }),
             "group" | "namespace" => {
@@ -475,7 +475,8 @@ impl Object for UserObj {
                 // Only administrators may read custom attributes.
                 if cx.user().is_some_and(|me| me.admin) { Out::List(vec![]) } else { Out::Null }
             }
-            "ide" => Out::obj(JsonObj::new("Ide", json!({"codeSuggestionsEnabled": false}))),
+            // EE (with Duo available) reports code suggestions as enabled.
+            "ide" => Out::obj(JsonObj::new("Ide", json!({"codeSuggestionsEnabled": cx.req.app.config.is_ee()}))),
             "userPreferences" => Out::obj(JsonObj::new(
                 "UserPreferences",
                 json!({"issuesSort": null, "mergeRequestDashboardListType": "ACTION_BASED", "mergeRequestDashboardShowDrafts": true,
@@ -721,6 +722,12 @@ pub struct NamespaceObj {
     n: Namespace,
 }
 
+impl NamespaceObj {
+    pub fn group(n: Namespace) -> NamespaceObj {
+        NamespaceObj { ty: "Group", n }
+    }
+}
+
 impl Object for NamespaceObj {
     fn typename(&self) -> String {
         self.ty.into()
@@ -927,11 +934,15 @@ impl Object for ProjectObj {
             "mergeRequestsEnabled" => Out::val(self.perms.read_merge_request(p)),
             "removeSourceBranchAfterMerge" => Out::val(p.remove_source_branch_after_merge),
             "onlyAllowMergeIfAllDiscussionsAreResolved" => Out::val(p.only_allow_merge_if_all_discussions_are_resolved),
+            "mergeRequestsDisableCommittersApproval" if cx.req.app.config.is_ee() => {
+                Out::val(!labrat_core::services::approvals::effective(cx.c, p)?.allow_committer_approval.value)
+            }
             "onlyAllowMergeIfPipelineSucceeds" => Out::val(p.only_allow_merge_if_pipeline_succeeds),
             "mergeRequestsFfOnlyEnabled" => Out::val(p.merge_method == "ff"),
             "allowMergeOnSkippedPipeline" => Out::val(p.allow_merge_on_skipped_pipeline),
             // One assignee and one reviewer.
-            "allowsMultipleMergeRequestAssignees" | "allowsMultipleMergeRequestReviewers" | "serviceDeskEnabled" => Out::val(false),
+            "allowsMultipleMergeRequestAssignees" | "allowsMultipleMergeRequestReviewers" => Out::val(cx.req.app.config.is_ee()),
+            "serviceDeskEnabled" => Out::val(false),
             "avatarUrl" => Out::Null,
             "autocloseReferencedIssues" | "lfsEnabled" | "sharedRunnersEnabled" => Out::val(true),
             "ciConfigPathOrDefault" => Out::val(p.setting("ci_config_path").and_then(|v| v.as_str().map(str::to_string)).filter(|v| !v.is_empty()).unwrap_or(".gitlab-ci.yml".into())),
@@ -1062,13 +1073,10 @@ impl Object for ProjectObj {
             "branchRules" => {
                 let r = repo::repo(cx.c, p);
                 let branches: Vec<String> = r.branches()?.into_iter().map(|(n, _)| n).collect();
-                let mut items = vec![Shared(Rc::new(JsonObj::new(
-                    "BranchRule",
-                    json!({"name": "All branches", "isDefault": false, "isProtected": false, "matchingBranchesCount": branches.len(), "branchProtection": null}),
-                )))];
+                let mut items = vec![Shared(Rc::new(AllBranchesObj { p: p.clone(), count: branches.len() }))];
                 for pb in labrat_core::repo::protected_branches(cx.c, p.id)? {
                     let count = branches.iter().filter(|b| labrat_core::repo::ref_matches(&pb.name, b)).count();
-                    items.push(Shared(Rc::new(BranchRuleObj { pb, count, default: p.default_branch.clone() })));
+                    items.push(Shared(Rc::new(BranchRuleObj { pb, count, default: p.default_branch.clone(), p: p.clone() })));
                 }
                 Out::obj(Conn::new("BranchRuleConnection", positions(items), args)?)
             }
@@ -1262,7 +1270,7 @@ fn user_list(cx: &Ctx, ids: &[i64], ty: &'static str, ctx_mr: Option<(&Project, 
     Ok(out)
 }
 
-fn user_conn(cx: &Ctx, ids: &[i64], conn_ty: &str, node_ty: &'static str, ctx_mr: Option<(&Project, &MergeRequest)>, args: &Args) -> FResult<Out> {
+pub(crate) fn user_conn(cx: &Ctx, ids: &[i64], conn_ty: &str, node_ty: &'static str, ctx_mr: Option<(&Project, &MergeRequest)>, args: &Args) -> FResult<Out> {
     let list = user_list(cx, ids, node_ty, ctx_mr)?;
     let items = ids.iter().map(|i| id_cursor(*i)).zip(list).collect();
     Ok(Out::obj(Conn::new(conn_ty, items, args)?))
@@ -1312,7 +1320,8 @@ impl Object for MrObj {
             "name" => Out::val(mr.title.clone()),
             "sourceBranchProtected" => Out::val(repo::is_protected(c, p, &mr.source_branch)?),
             "targetBranchPath" => Out::val(format!("/{}/-/commits/{}", p.full_path, mr.target_branch)),
-            "allowsMultipleAssignees" | "allowsMultipleReviewers" | "supportsLockOnMerge" => Out::val(false),
+            "allowsMultipleAssignees" | "allowsMultipleReviewers" => Out::val(cx.req.app.config.is_ee()),
+            "supportsLockOnMerge" => Out::val(false),
             "pipelineCreationRequests" => Out::List(vec![]),
             // Relations without an order are paginated by id, newest first.
             "commenters" => {
@@ -1376,11 +1385,16 @@ impl Object for MrObj {
             // `public_merge_status`: preparing and rechecking show as checking.
             "mergeStatus" => Out::val(mergeability::public_status(&mr.merge_status)),
             "mergeStatusEnum" => Out::val(mergeability::public_status(&mr.merge_status).to_uppercase()),
-            "detailedMergeStatus" => Out::val(mergeability::detailed_status(c, p, mr)?.to_uppercase()),
+            "detailedMergeStatus" => Out::val(mergeability::detailed_status(c, &cx.req.app.config, p, mr)?.to_uppercase()),
             "mergeable" => Out::val(mergeability::mergeable(c, &cx.req.app.config, p, mr)?),
             "conflicts" => Out::val(mr.merge_status == "cannot_be_merged"),
             "mergeableDiscussionsState" => Out::val(mergeability::blocking_discussions_resolved(c, p, mr)?),
-            "approved" => Out::val(!reviews::approvals(c, mr)?.is_empty()),
+            // EE: the approval rules are satisfied (true with no rules); CE: someone approved.
+            "approved" => Out::val(if cx.req.app.config.is_ee() {
+                labrat_core::services::approvals::state(c, p, mr)?.approved()
+            } else {
+                !reviews::approvals(c, mr)?.is_empty()
+            }),
             // `approved_by_users`: a users relation, paginated by id, newest first.
             "approvedBy" => {
                 let mut ids: Vec<i64> = reviews::approvals(c, mr)?.into_iter().map(|(u, _)| u).collect();
@@ -1583,6 +1597,9 @@ impl Object for MrObj {
                 Out::obj(Conn::new("DiscussionConnection", objs, args)?)
             }
             "userPermissions" => Out::obj(MrPermissions { p: p.clone(), mr: mr.clone() }),
+            "approvalState" if cx.req.app.config.is_ee() => Out::obj(super::approvals::ApprovalStateObj { p: p.clone(), mr: mr.clone() }),
+            "approvalsRequired" if cx.req.app.config.is_ee() => Out::val(labrat_core::services::approvals::state(c, p, mr)?.approvals_required()),
+            "approvalsLeft" if cx.req.app.config.is_ee() => Out::val(labrat_core::services::approvals::state(c, p, mr)?.approvals_left()),
             // `MergeRequest#mergeability_checks`: every check in GitLab's order with its status.
             "mergeabilityChecks" => {
                 let ci_active = mr.merge_when_pipeline_succeeds || p.only_allow_merge_if_pipeline_succeeds;
@@ -1626,6 +1643,37 @@ impl Object for MrObj {
                     }
                 };
                 let pass = |b: bool| if b { "SUCCESS" } else { "FAILED" };
+                if cx.req.app.config.is_ee() {
+                    // EE 18.11's list, with the EE checks labrat has no feature for inactive.
+                    let requested = reviews::changes_requested(c, mr)?;
+                    let approved = labrat_core::services::approvals::state(c, p, mr)?.approved();
+                    let checks = [
+                        ("NOT_OPEN", pass(mr.is_open())),
+                        ("DRAFT_STATUS", pass(!mr.is_draft())),
+                        ("STATUS_CHECKS_MUST_PASS", "INACTIVE"),
+                        ("JIRA_ASSOCIATION_MISSING", "INACTIVE"),
+                        ("MERGE_TIME", merge_time),
+                        ("MERGE_REQUEST_BLOCKED", "SUCCESS"),
+                        ("REQUESTED_CHANGES", pass(!requested)),
+                        ("TITLE_REGEX", "INACTIVE"),
+                        ("SECURITY_POLICY_VIOLATIONS", "INACTIVE"),
+                        ("LOCKED_LFS_FILES", if labrat_core::repo::lfs_enabled(p) { "SUCCESS" } else { "INACTIVE" }),
+                        ("DISCUSSIONS_NOT_RESOLVED", discussions),
+                        ("CI_MUST_PASS", ci),
+                        ("COMMITS_STATUS", pass(!mergeability::broken(c, p, mr)?)),
+                        ("LOCKED_PATHS", "SUCCESS"),
+                        ("NOT_APPROVED", pass(approved)),
+                        ("SECURITY_POLICY_PIPELINE_CHECK", "INACTIVE"),
+                        ("NEED_REBASE", rebase),
+                        ("CONFLICT", conflict),
+                    ];
+                    return Ok(Out::List(
+                        checks
+                            .iter()
+                            .map(|(id, st)| Out::obj(JsonObj::new("MergeRequestMergeabilityCheck", json!({"identifier": id, "status": st}))))
+                            .collect(),
+                    ));
+                }
                 let checks = [
                     ("NOT_OPEN", pass(mr.is_open())),
                     ("DRAFT_STATUS", pass(!mr.is_draft())),
@@ -2218,7 +2266,14 @@ impl Object for MrPermissions {
             }
             "cherryPickOnCurrentMergeRequest" | "revertOnCurrentMergeRequest" => perms.developer() && mr.state == "merged",
             "canMerge" => mrs::can_be_merged_by(c, p, mr, u)?,
-            "canApprove" => !p.archived && reviews::can_approve(c, p, mr, u)? && !reviews::has_approved(c, mr, u)?,
+            "canApprove" => {
+                !p.archived
+                    && if cx.req.app.config.is_ee() {
+                        labrat_core::services::approvals::eligibility(c, p, mr, u)? == labrat_core::services::approvals::Eligibility::Yes
+                    } else {
+                        reviews::can_approve(c, p, mr, u)? && !reviews::has_approved(c, mr, u)?
+                    }
+            }
             _ => return Err(not_implemented("MergeRequestPermissions", field)),
         }))
     }
@@ -2551,6 +2606,8 @@ struct Payload {
     commit: Option<(Project, labrat_git::Oid)>,
     content: Option<Vec<Option<String>>>,
     pipeline_path: Option<String>,
+    /// EE approval rule mutations.
+    approval_rule: Option<labrat_core::services::approvals::Rule>,
 }
 
 use serde_json::Map;
@@ -2574,6 +2631,10 @@ impl Object for Payload {
                 None => Out::Null,
             },
             "commitPipelinePath" => Out::val(self.pipeline_path.clone()),
+            "approvalRule" => match &self.approval_rule {
+                Some(r) => Out::obj(super::approvals::ApprovalProjectRuleObj { rule: r.clone() }),
+                None => Out::Null,
+            },
             "errors" if self.errors_null => Out::Null,
             "errors" => Out::List(self.errors.iter().map(|e| Out::val(e.clone())).collect()),
             "label" => match &self.label {
@@ -2614,7 +2675,10 @@ impl Object for Payload {
                 None => Out::Null,
             },
             "branchRule" => match &self.branch_rule {
-                Some((pb, count, default)) => Out::obj(BranchRuleObj { pb: pb.clone(), count: *count, default: default.clone() }),
+                Some((pb, count, default)) => match Project::find(cx.c, pb.project_id)? {
+                    Some(p) => Out::obj(BranchRuleObj { pb: pb.clone(), count: *count, default: default.clone(), p }),
+                    None => Out::Null,
+                },
                 None => Out::Null,
             },
             // `PipelineCreatePayload.pipeline`: never created here (no CI configuration).
@@ -2784,7 +2848,7 @@ impl Mutation {
                 ..Default::default()
             };
             let mut prm = prm;
-            let cmds = crate::routes::merge_requests::take_quick_actions(&mut prm);
+            let cmds = crate::routes::merge_requests::take_quick_actions(&mut prm, config.is_ee());
             match mrs::create(c, config, &p, &user, prm) {
                 Ok(mr) => {
                     if !cmds.is_empty() {
@@ -2843,7 +2907,7 @@ impl Mutation {
                     ..Default::default()
                 };
                 let mut prm = prm;
-                let cmds = crate::routes::merge_requests::take_quick_actions(&mut prm);
+                let cmds = crate::routes::merge_requests::take_quick_actions(&mut prm, config.is_ee());
                 if !cmds.is_empty() {
                     // One update with the description's commands merged in (`handle_quick_actions`).
                     let ctx = labrat_core::services::comments::CreateParams { return_update: true, ..Default::default() };
@@ -3061,7 +3125,7 @@ impl Mutation {
         let c = cx.c;
         let mut pl = Payload { ty: payload_type(field), client_id: input.str("clientMutationId"), ..Default::default() };
         if let Some(body) = input.str("body") {
-            pl.command_names = labrat_core::services::quick_actions::extract(&body).commands.into_iter().map(|(n, _)| n).collect();
+            pl.command_names = labrat_core::services::quick_actions::extract(&body, cx.req.app.config.is_ee()).commands.into_iter().map(|(n, _)| n).collect();
         }
         let outcome = |pl: &mut Payload, p: &Project, mr: &MergeRequest, r: labrat_core::Result<Outcome>| -> FResult<()> {
             match r {
@@ -3212,6 +3276,15 @@ impl Object for Mutation {
     fn resolve(&self, cx: &Ctx, field: &str, args: &Args) -> FResult<Out> {
         let input = Args(args.get("input").and_then(Value::as_object).cloned().unwrap_or_default());
         let pl = match field {
+            "mergeRequestUpdateApprovalRule" | "branchRuleApprovalProjectRuleCreate" | "approvalProjectRuleUpdate" | "approvalProjectRuleDelete" => {
+                // EE names these payload types after the mutation, lowercase first letter included.
+                let ty = if field.starts_with("mergeRequest") { payload_type(field) } else { format!("{field}Payload") };
+                let mut pl = Payload { ty, client_id: input.str("clientMutationId"), ..Default::default() };
+                let (errors, rule) = super::approvals::mutation(cx, field, &input)?;
+                pl.errors = errors;
+                pl.approval_rule = rule;
+                pl
+            }
             f if f.starts_with("mergeRequest") => self.mr_mutation(cx, field, args, &input)?,
             "commitCreate" => commit_create(cx, &input)?,
             "labelUpdate" => {
@@ -3775,14 +3848,43 @@ struct BranchRuleObj {
     pb: labrat_core::repo::ProtectedBranch,
     count: usize,
     default: Option<String>,
+    p: Project,
+}
+
+/// The "All branches" branch rule.
+struct AllBranchesObj {
+    p: Project,
+    count: usize,
+}
+
+impl Object for AllBranchesObj {
+    fn typename(&self) -> String {
+        "BranchRule".into()
+    }
+    fn resolve(&self, cx: &Ctx, field: &str, args: &Args) -> FResult<Out> {
+        Ok(match field {
+            "id" => Out::val(gid("Projects::AllBranchesRule", self.p.id)),
+            "name" => Out::val("All branches"),
+            "isDefault" | "isProtected" => Out::val(false),
+            "matchingBranchesCount" => Out::val(self.count),
+            "branchProtection" => Out::Null,
+            "approvalRules" if cx.req.app.config.is_ee() => super::approvals::branch_rule_approval_rules(cx, &self.p, None, args)?,
+            _ => return Err(not_implemented("BranchRule", field)),
+        })
+    }
 }
 
 impl Object for BranchRuleObj {
     fn typename(&self) -> String {
         "BranchRule".into()
     }
-    fn resolve(&self, _cx: &Ctx, field: &str, _args: &Args) -> FResult<Out> {
+    fn resolve(&self, cx: &Ctx, field: &str, args: &Args) -> FResult<Out> {
         Ok(match field {
+            "approvalRules" if cx.req.app.config.is_ee() => super::approvals::branch_rule_approval_rules(cx, &self.p, Some(self.pb.id), args)?,
+            "branchProtection" if cx.req.app.config.is_ee() => Out::obj(JsonObj::new(
+                "BranchProtection",
+                json!({"allowForcePush": self.pb.allow_force_push, "codeOwnerApprovalRequired": self.pb.code_owner_approval_required}),
+            )),
             "id" => Out::val(gid("Projects::BranchRule", self.pb.id)),
             "name" => Out::val(self.pb.name.clone()),
             "isDefault" => Out::val(self.default.as_deref() == Some(self.pb.name.as_str())),

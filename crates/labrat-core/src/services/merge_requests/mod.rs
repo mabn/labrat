@@ -149,7 +149,7 @@ impl MergeRequest {
     }
 
     pub fn assignee_ids(&self, c: &Connection) -> Result<Vec<i64>> {
-        let mut st = c.prepare("SELECT user_id FROM merge_request_assignees WHERE merge_request_id = ?1 ORDER BY created_at, user_id")?;
+        let mut st = c.prepare("SELECT user_id FROM merge_request_assignees WHERE merge_request_id = ?1 ORDER BY rowid")?;
         let v = st
             .query_map([self.id], |r| r.get(0))?
             .collect::<rusqlite::Result<Vec<i64>>>()?;
@@ -373,11 +373,27 @@ fn duplicate_open(
     Ok(iid)
 }
 
-/// Users from `ids` who can read merge requests in `p`, keeping only the first.
+/// Users from `ids` who can read merge requests in `p`: CE keeps only the first; EE (multiple
+/// assignees and reviewers) keeps every one, in the order given.
 /// `Some(vec![])` clears; `None` means "no change".
-fn filter_users(c: &Connection, p: &Project, ids: &[i64]) -> Result<Option<Vec<i64>>> {
+fn filter_users(c: &Connection, config: &Config, p: &Project, ids: &[i64]) -> Result<Option<Vec<i64>>> {
     if ids.is_empty() || ids == [0] {
         return Ok(Some(vec![]));
+    }
+    if config.is_ee() {
+        let mut keep = vec![];
+        for id in ids {
+            if let Some(u) = User::find(c, *id)?
+                && ProjectPerms::load(c, Some(&u), p)?.read_merge_request(p)
+                && !keep.contains(&u.id)
+            {
+                keep.push(u.id);
+            }
+        }
+        if keep.is_empty() {
+            return Ok(None);
+        }
+        return Ok(Some(keep));
     }
     let first = ids[0];
     if first == 0 {
@@ -410,20 +426,27 @@ fn set_assignees(c: &Connection, mr_id: i64, ids: &[i64]) -> Result<()> {
     if old.iter().collect::<std::collections::BTreeSet<_>>() != ids.iter().collect() {
         crate::services::user_counts::invalidate(c, &affected)?;
     }
-    c.execute(
-        "DELETE FROM merge_request_assignees WHERE merge_request_id = ?1",
-        [mr_id],
-    )?;
-    for id in ids {
-        c.execute(
-            "INSERT INTO merge_request_assignees (merge_request_id, user_id, created_at) VALUES (?1, ?2, ?3)",
-            params![mr_id, id, time::now()],
-        )?;
+    // Assignees who stay keep their row; new ones are added in user id order (`User.where(id:)`),
+    // and the list follows the rows.
+    for id in &old {
+        if !ids.contains(id) {
+            c.execute("DELETE FROM merge_request_assignees WHERE merge_request_id = ?1 AND user_id = ?2", params![mr_id, id])?;
+        }
+    }
+    let mut new: Vec<i64> = ids.to_vec();
+    new.sort();
+    for id in &new {
+        if !old.contains(id) {
+            c.execute(
+                "INSERT INTO merge_request_assignees (merge_request_id, user_id, created_at) VALUES (?1, ?2, ?3)",
+                params![mr_id, id, time::now()],
+            )?;
+        }
     }
     Ok(())
 }
 
-fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64]) -> Result<()> {
+fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64], ee: bool) -> Result<()> {
     let old: Vec<i64> = {
         let mut st = c.prepare("SELECT user_id FROM merge_request_reviewers WHERE merge_request_id = ?1")?;
         st.query_map([mr_id], |r| r.get(0))?.collect::<rusqlite::Result<_>>()?
@@ -445,12 +468,30 @@ fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64]) -> Result<()> {
             .join(",")
     };
     c.execute(&format!("DELETE FROM merge_request_reviewers WHERE merge_request_id = ?1 AND user_id NOT IN ({list})"), [mr_id])?;
+    // EE (several reviewers): the list takes the order given. The rows are recreated in that
+    // order, keeping each reviewer's state.
+    if ee && ids.len() > 1 {
+        let mut st = c.prepare("SELECT user_id, state, created_at FROM merge_request_reviewers WHERE merge_request_id = ?1")?;
+        let kept: Vec<(i64, i64, i64)> = st.query_map([mr_id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<rusqlite::Result<_>>()?;
+        c.execute("DELETE FROM merge_request_reviewers WHERE merge_request_id = ?1", [mr_id])?;
+        for id in ids {
+            if let Some((_, state, at)) = kept.iter().find(|(u, _, _)| u == id) {
+                c.execute(
+                    "INSERT INTO merge_request_reviewers (merge_request_id, user_id, state, created_at) VALUES (?1, ?2, ?3, ?4)",
+                    params![mr_id, id, state, at],
+                )?;
+            }
+        }
+    }
     for id in ids {
         c.execute(
             // `set_reviewers_approved`: a reviewer who already approved comes back `approved`.
             "INSERT OR IGNORE INTO merge_request_reviewers (merge_request_id, user_id, state, created_at)
              VALUES (?1, ?2, CASE
                  WHEN EXISTS (SELECT 1 FROM approvals WHERE merge_request_id = ?1 AND user_id = ?2) THEN 3
+                 -- EE: an outstanding change request comes back with the reviewer (only EE
+                 -- fills this table).
+                 WHEN EXISTS (SELECT 1 FROM merge_request_requested_changes WHERE merge_request_id = ?1 AND user_id = ?2) THEN 2
                  ELSE 0 END, ?3)",
             params![mr_id, id, time::now()],
         )?;
@@ -664,12 +705,12 @@ pub fn create(
     }
     if admin {
         if let Some(ids) = &prm.assignee_ids
-            && let Some(list) = filter_users(c, p, ids)? {
+            && let Some(list) = filter_users(c, _config, p, ids)? {
                 set_assignees(c, id, &list)?;
             }
         if let Some(ids) = &prm.reviewer_ids
-            && let Some(list) = filter_users(c, p, ids)? {
-                set_reviewers(c, id, &list)?;
+            && let Some(list) = filter_users(c, _config, p, ids)? {
+                set_reviewers(c, id, &list, _config.is_ee())?;
             }
     }
     let can_create_labels = ProjectPerms::load(c, Some(user), p)?.reporter();
@@ -679,6 +720,11 @@ pub fn create(
             label_events(c, id, user, &[], &set)?;
         }
     let mr = MergeRequest::get(c, id)?;
+    if _config.is_ee() {
+        // EE copies the project's approval rules onto the new MR, then syncs its approvals.
+        crate::services::approvals::copy_project_rules(c, p, &mr)?;
+        crate::services::approvals::start_sync(c, _config, &mr)?;
+    }
     if milestone.is_some() {
         milestone_event(c, &mr, user, None, milestone)?;
     }
@@ -744,7 +790,12 @@ pub fn after_create(c: &Connection, config: &Config, mr_id: i64, user_id: i64) -
         // `AfterCreateService`: `create_cross_references!`.
         crate::services::cross_refs::mr_mentions(c, config, &p, u, &mr, &crate::services::todos::mentionable_text(&mr), None)?;
     }
-    crate::services::hooks::merge_request_event(c, config, &p, &mr, user.as_ref(), "open", Some(&before))?;
+    // EE: an MR whose creation failed after it was saved (`approvals_before_merge` clashing
+    // with a copied any-approver rule) gets no open hook.
+    let failed: bool = c.query_row("SELECT creation_failed FROM merge_requests WHERE id = ?1", [mr.id], |r| r.get::<_, i64>(0))? != 0;
+    if !failed {
+        crate::services::hooks::merge_request_event(c, config, &p, &mr, user.as_ref(), "open", Some(&before))?;
+    }
     // The pipeline's own hook is delivered after the open hook.
     if let Some(data) = mr_pipeline {
         crate::services::hooks::fire_pipeline_event(c, &p, &data)?;
@@ -812,6 +863,10 @@ pub fn apply_state_event(
                 && duplicate_open(c, p, &mr.source_branch, &mr.target_branch, Some(mr.id))?.is_none()
             {
                 reopen(c, config, p, mr, user)?;
+            } else if config.is_ee() && can_reopen && mr.state == "opened" {
+                // EE drops the approvals on a reopen request even when the MR is already open
+                // (recorded on EE 18.11: `approval_persistence`, "bob reopen").
+                c.execute("DELETE FROM approvals WHERE merge_request_id = ?1", [mr.id])?;
             }
         }
         _ => {}
@@ -1017,7 +1072,7 @@ pub fn update(
     let mut new_assignees = None;
     if admin
         && let Some(ids) = &prm.assignee_ids
-            && let Some(list) = filter_users(c, p, ids)?
+            && let Some(list) = filter_users(c, config, p, ids)?
                 && list != before.assignees {
                     // `MergeRequestAssignee` touches the MR (throttled).
                     notes::touch_noteable(c, "MergeRequest", mr.id, now)?;
@@ -1027,9 +1082,9 @@ pub fn update(
     let mut new_reviewers = None;
     if admin
         && let Some(ids) = &prm.reviewer_ids
-            && let Some(list) = filter_users(c, p, ids)?
+            && let Some(list) = filter_users(c, config, p, ids)?
                 && list != before.reviewers {
-                    set_reviewers(c, mr.id, &list)?;
+                    set_reviewers(c, mr.id, &list, config.is_ee())?;
                     new_reviewers = Some(list);
                 }
     // `update_timestamp?` is true unless only `relative_position` changed, so every save
@@ -1360,6 +1415,10 @@ pub fn reopen(
         diffs::create_version(c, p, &mr)?;
     }
     mergeability::mark_as_unchecked(c, mr.id)?;
+    // EE drops the approvals of a reopened MR (no system note; recorded on EE 18.11).
+    if config.is_ee() {
+        c.execute("DELETE FROM approvals WHERE merge_request_id = ?1", [mr.id])?;
+    }
     crate::services::ci::update_head_pipeline(c, p, &mr)?;
     crate::services::user_counts::invalidate_all(c, &mr.reload(c)?)?;
     Ok(true)

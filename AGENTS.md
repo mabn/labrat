@@ -26,6 +26,16 @@ is built yet; the project is at the planning stage.
   container at `/opt/gitlab/embedded/service/gitlab-rails`. `docs/MAINTAINING.md` explains how
   to set up an instance, record fixtures and move to a newer GitLab version.
 - **Use only GitLab CE as the reference:** its source and a CE instance.
+- **GitLab EE only through its API.** EE mode (the default; `--noee` gives CE) is checked against
+  an EE instance, set up as `docs/MAINTAINING.md` ("The EE reference") describes.
+  - Interact with it only through its API: REST, GraphQL, git and webhooks.
+  - Never look at GitLab EE source code: not the `ee/` directory, not EE packages or containers.
+  - Don't reference EE code either, even code you recall from training. That rules out EE Ruby
+    class and module names (`EE::API::Entities::...`, EE services and workers), `ee/` file
+    paths and EE-only method names, in code, comments, docs and commit messages.
+  - Base EE behaviour on GitLab's public documentation and on what the EE instance's API
+    returns (the `fixtures-ee` recordings). Names the API itself exposes are fine, such as
+    GraphQL types and global IDs.
 - **Stay in scope.** Check the scope lists in `docs/PLAN.md` before adding a feature, and ask before
   building anything listed as out of scope.
 - **Test at the HTTP level.** Most tests compare HTTP responses precisely against recorded GitLab
