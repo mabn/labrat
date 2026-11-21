@@ -629,22 +629,23 @@ pub fn execute(
                 }
             }
             "unassign_reviewer" | "remove_reviewer" if admin => {
-                let current = mr_now.reviewer_ids(c)?;
-                // Only one reviewer is allowed, so `parse_params` ignores the users given
-                // (`extract_users ... if allows_multiple_reviewers?`): every reviewer is removed.
-                let names: Vec<String> = vec![];
-                let _ = args;
-                let remove: Vec<i64> = if names.is_empty() {
-                    current.clone()
-                } else {
-                    names
-                        .iter()
-                        .filter_map(|n| User::find_by_username(c, n).ok().flatten())
-                        .map(|u| u.id)
-                        .filter(|id| current.contains(id))
-                        .collect()
+                // Earlier reviewer commands of the same note count.
+                let current = match &upd.reviewer_ids {
+                    Some(v) if v != &vec![0] => v.clone(),
+                    Some(_) => vec![],
+                    None => mr_now.reviewer_ids(c)?,
                 };
-                if !remove.is_empty() {
+                // CE allows one reviewer, so the users given are ignored and every reviewer is
+                // removed. EE (several reviewers) removes the users named, or all without names.
+                let named: Vec<i64> = if config.is_ee() {
+                    resolve_users(c, user, args)?.unwrap_or_default().iter().map(|u| u.id).collect()
+                } else {
+                    vec![]
+                };
+                // EE names the users given in its message even when they aren't reviewers, and
+                // still updates the MR.
+                let remove: Vec<i64> = if named.is_empty() { current.clone() } else { named };
+                if !current.is_empty() {
                     let keep: Vec<i64> = current
                         .iter()
                         .filter(|id| !remove.contains(id))
@@ -661,7 +662,8 @@ pub fn execute(
                         keep.clone()
                     });
                     changes.insert("reviewer_ids".into(), json!(keep));
-                    messages.push(format!("Removed reviewer {}.", refs.join(" and ")));
+                    let noun = if config.is_ee() && refs.len() > 1 { "reviewers" } else { "reviewer" };
+                    messages.push(format!("Removed {noun} {}.", refs.join(" and ")));
                 } else {
                     // `reviewers_to_remove?` fails the command's condition.
                     messages.push("Could not apply unassign_reviewer command.".into());
