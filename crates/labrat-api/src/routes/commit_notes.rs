@@ -36,7 +36,7 @@ fn entity(c: &rusqlite::Connection, req: &Req, row: &Row) -> Result<Value, ApiEr
         let path = if info["new_path"].is_null() { info["old_path"].clone() } else { info["new_path"].clone() };
         info = json!({"path": path, "line": line, "line_type": kind});
     }
-    let ctx = Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() };
+    let ctx = Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() };
     let author = User::find(c, *author_id)?.map(|u| user_ent::basic_value(&u, &ctx)).unwrap_or(Value::Null);
     let mut m = Map::new();
     m.insert("note".into(), json!(note));
@@ -203,7 +203,7 @@ fn discussion(c: &rusqlite::Connection, p: &Project, oid: &Oid, id: &str, what: 
 }
 
 fn ctx(req: &Req) -> Ctx<'_> {
-    Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() }
+    Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() }
 }
 
 async fn list_discussions(mut req: Req) -> ApiResult {

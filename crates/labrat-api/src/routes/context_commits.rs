@@ -65,7 +65,7 @@ fn commit_with_link(c: &Connection, req: &Req, p: &Project, oid: &Oid) -> Result
     let mut m = repo_ent::commit(config, p, oid, &cm);
     m.insert("parent_ids".into(), Value::Null);
     m.insert("extended_trailers".into(), Value::Null);
-    let ctx = Ctx { base_url: &config.external_url, current_user: req.user.as_ref() };
+    let ctx = Ctx { base_url: &config.external_url, ee: config.is_ee(), current_user: req.user.as_ref() };
     let author: Option<User> = c
         .query_row("SELECT id FROM users WHERE lower(email) = lower(?1)", [&cm.author.email], |r| r.get::<_, i64>(0))
         .ok()

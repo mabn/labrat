@@ -206,7 +206,7 @@ async fn set_status_patch(req: Req) -> ApiResult {
 
 fn ectx<'a>(req: &'a Req) -> user_entity::Ctx<'a> {
     user_entity::Ctx {
-        base_url: &req.app.config.external_url,
+        base_url: &req.app.config.external_url, ee: req.app.config.is_ee(),
         current_user: req.user.as_ref(),
     }
 }

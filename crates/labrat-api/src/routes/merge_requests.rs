@@ -82,7 +82,7 @@ pub fn load(c: &Connection, req: &Req) -> Result<(Project, ProjectPerms, MergeRe
 
 fn ectx<'a>(req: &'a Req) -> Ctx<'a> {
     Ctx {
-        base_url: &req.app.config.external_url,
+        base_url: &req.app.config.external_url, ee: req.app.config.is_ee(),
         current_user: req.user.as_ref(),
     }
 }

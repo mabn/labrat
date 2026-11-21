@@ -221,7 +221,7 @@ fn users(c: &Connection, req: &Req, ids: Option<Vec<i64>>, term: &str, defaults:
         let rank = |u: &User| if u.username.to_lowercase() == lq { 0 } else if u.name.to_lowercase() == lq { 1 } else { 2 };
         rank(a).cmp(&rank(b)).then(a.name.cmp(&b.name)).then(a.id.cmp(&b.id))
     });
-    let ctx = Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() };
+    let ctx = Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() };
     if counted {
         paginate(req, found, defaults, |u| Ok(user_ent::basic_value(u, &ctx)))
     } else {
@@ -332,7 +332,7 @@ async fn project(req: Req) -> ApiResult {
                         found.push(n);
                     }
                 }
-                let ctx = Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() };
+                let ctx = Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() };
                 paginate(&req, found, &[], |n| {
                     Ok(if n.noteable_type == "Commit" {
                         note_ent::commit_note(c, &ctx, n)?

@@ -7,6 +7,8 @@ use sha2::{Digest, Sha256};
 
 pub struct Ctx<'a> {
     pub base_url: &'a str,
+    /// Running as EE: users carry EE's extra fields.
+    pub ee: bool,
     pub current_user: Option<&'a User>,
 }
 
@@ -114,6 +116,12 @@ pub fn public(u: &User, ctx: &Ctx) -> Map<String, Value> {
         json!(u.commit_email.clone().unwrap_or(u.email.clone())),
     );
     m.insert("preferred_language".into(), json!(u.preferred_language));
+    if ctx.ee {
+        // The fields EE adds for the user themselves.
+        m.insert("shared_runners_minutes_limit".into(), Value::Null);
+        m.insert("extra_shared_runners_minutes_limit".into(), Value::Null);
+        m.insert("scim_identities".into(), json!([]));
+    }
     m
 }
 
@@ -129,5 +137,13 @@ pub fn with_admin(u: &User, ctx: &Ctx, created_by: Option<&User>) -> Map<String,
             .map(|c| basic_value(c, ctx))
             .unwrap_or(Value::Null),
     );
+    if ctx.ee {
+        // The fields EE adds for admins.
+        m.insert("using_license_seat".into(), json!(false));
+        m.insert("is_auditor".into(), json!(false));
+        m.insert("provisioned_by_group_id".into(), Value::Null);
+        m.insert("enterprise_group_id".into(), Value::Null);
+        m.insert("enterprise_group_associated_at".into(), Value::Null);
+    }
     m
 }

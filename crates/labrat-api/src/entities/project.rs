@@ -171,7 +171,7 @@ pub fn project(
                 crate::entities::user::basic_value(
                     o,
                     &crate::entities::user::Ctx {
-                        base_url: &ctx.config.external_url,
+                        base_url: &ctx.config.external_url, ee: ctx.config.is_ee(),
                         current_user: ctx.user,
                     },
                 ),
@@ -433,14 +433,14 @@ pub fn project(
         setting(p, "max_artifacts_size", Value::Null),
     );
     if ctx.config.is_ee() {
-        ee_fields(c, p, &mut m)?;
+        ee_fields(c, p, perms, &mut m)?;
     }
     Ok(m)
 }
 
 /// The fields EE adds to projects, after the CE fields, in the order the EE 18.11 reference
 /// returns them.
-fn ee_fields(c: &Connection, p: &Project, m: &mut Map<String, Value>) -> labrat_core::Result<()> {
+fn ee_fields(c: &Connection, p: &Project, perms: &ProjectPerms, m: &mut Map<String, Value>) -> labrat_core::Result<()> {
     m.insert(
         "approvals_before_merge".into(),
         json!(labrat_core::services::approvals::project_approvals_before_merge(c, p)?),
@@ -453,8 +453,13 @@ fn ee_fields(c: &Connection, p: &Project, m: &mut Map<String, Value>) -> labrat_
     m.insert("secret_push_protection_enabled".into(), json!(false));
     m.insert("pre_receive_secret_detection_enabled".into(), json!(false));
     m.insert("compliance_frameworks".into(), json!([]));
-    m.insert("issues_template".into(), setting(p, "issues_template", Value::Null));
-    m.insert("merge_requests_template".into(), setting(p, "merge_requests_template", Value::Null));
+    // Each template shows only while its feature is available to the viewer.
+    if perms.feature(p, "issues", labrat_core::model::access::GUEST) {
+        m.insert("issues_template".into(), setting(p, "issues_template", Value::Null));
+    }
+    if perms.feature(p, "merge_requests", labrat_core::model::access::GUEST) {
+        m.insert("merge_requests_template".into(), setting(p, "merge_requests_template", Value::Null));
+    }
     m.insert("ci_restrict_pipeline_cancellation_role".into(), json!("developer"));
     m.insert("merge_pipelines_enabled".into(), setting_bool(p, "merge_pipelines_enabled", false));
     m.insert("merge_trains_enabled".into(), setting_bool(p, "merge_trains_enabled", false));

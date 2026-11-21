@@ -178,7 +178,7 @@ pub fn basic(
     o: &Opts,
 ) -> Result<Map<String, Value>> {
     let ctx = Ctx {
-        base_url: &config.external_url,
+        base_url: &config.external_url, ee: config.is_ee(),
         current_user: current,
     };
     let mut m = Map::new();

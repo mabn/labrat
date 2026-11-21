@@ -42,6 +42,7 @@ pub struct ProtectedBranch {
     pub project_id: i64,
     pub name: String,
     pub allow_force_push: bool,
+    pub code_owner_approval_required: bool,
     pub push: Vec<AccessLevel>,
     pub merge: Vec<AccessLevel>,
     pub created_at: i64,
@@ -50,7 +51,7 @@ pub struct ProtectedBranch {
 
 pub fn protected_branches(c: &Connection, project_id: i64) -> Result<Vec<ProtectedBranch>> {
     let mut st = c.prepare(
-        "SELECT id, project_id, name, allow_force_push, created_at, updated_at FROM protected_branches
+        "SELECT id, project_id, name, allow_force_push, created_at, updated_at, code_owner_approval_required FROM protected_branches
          WHERE project_id = ?1 ORDER BY id",
     )?;
     let rows = st
@@ -60,6 +61,7 @@ pub fn protected_branches(c: &Connection, project_id: i64) -> Result<Vec<Protect
                 project_id: r.get(1)?,
                 name: r.get(2)?,
                 allow_force_push: r.get(3)?,
+                code_owner_approval_required: r.get(6)?,
                 push: vec![],
                 merge: vec![],
                 created_at: r.get(4)?,

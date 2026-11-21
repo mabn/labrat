@@ -1605,7 +1605,7 @@ async fn list_protected(req: Req) -> ApiResult {
             let s = s.to_lowercase();
             list.retain(|pb| pb.name.to_lowercase().contains(&s));
         }
-        paginate(&req, list, &[], |pb| Ok(ent::protected_branch(pb)))
+        paginate(&req, list, &[], |pb| Ok(ent::protected_branch(pb, req.app.config.is_ee())))
     })
 }
 
@@ -1625,7 +1625,7 @@ async fn show_protected(req: Req) -> ApiResult {
     let app = req.app.clone();
     let body = app.db.read(|c| {
         let (p, _) = code_project(c, &req)?;
-        Ok::<_, ApiError>(ent::protected_branch(&find_protected(c, &p, &name)?))
+        Ok::<_, ApiError>(ent::protected_branch(&find_protected(c, &p, &name)?, req.app.config.is_ee()))
     })?;
     Ok(Resp::ok(body))
 }
@@ -1663,7 +1663,10 @@ async fn create_protected(req: Req) -> ApiResult {
             return Err(Error::Api(422, json!(["Name can't be blank"])).into());
         }
         repo::create_protected_branch(c, &p, &name, push, merge, force)?;
-        Ok::<_, ApiError>(ent::protected_branch(&find_protected(c, &p, &name)?))
+        if req.app.config.is_ee() && req.params.bool_or("code_owner_approval_required", false)? {
+            c.execute("UPDATE protected_branches SET code_owner_approval_required = 1 WHERE project_id = ?1 AND name = ?2", rusqlite::params![p.id, name])?;
+        }
+        Ok::<_, ApiError>(ent::protected_branch(&find_protected(c, &p, &name)?, req.app.config.is_ee()))
     })?;
     Ok(Resp::created(body))
 }
@@ -1682,7 +1685,11 @@ async fn update_protected(req: Req) -> ApiResult {
         if let Some(f) = force {
             c.execute("UPDATE protected_branches SET allow_force_push = ?1, updated_at = ?2 WHERE id = ?3", rusqlite::params![f, time::now(), pb.id])?;
         }
-        Ok::<_, ApiError>(ent::protected_branch(&find_protected(c, &p, &name)?))
+        if req.app.config.is_ee()
+            && let Some(v) = req.params.bool("code_owner_approval_required")? {
+                c.execute("UPDATE protected_branches SET code_owner_approval_required = ?1, updated_at = ?2 WHERE id = ?3", rusqlite::params![v, time::now(), pb.id])?;
+            }
+        Ok::<_, ApiError>(ent::protected_branch(&find_protected(c, &p, &name)?, req.app.config.is_ee()))
     })?;
     Ok(Resp::ok(body))
 }

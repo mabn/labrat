@@ -33,7 +33,7 @@ pub fn routes() -> Router<Arc<App>> {
 }
 
 fn user_basic(c: &Connection, req: &Req, id: Option<i64>) -> Result<Value, ApiError> {
-    let ctx = Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() };
+    let ctx = Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() };
     Ok(match id.map(|i| User::find(c, i)).transpose()?.flatten() {
         Some(u) => user_ent::basic_value(&u, &ctx),
         None => Value::Null,
@@ -133,7 +133,7 @@ pub fn pipeline_detailed_for(
     m.insert("before_sha".into(), json!(pl.before_sha.clone().unwrap_or_else(|| "0000000000000000000000000000000000000000".into())));
     m.insert("tag".into(), json!(pl.tag));
     m.insert("yaml_errors".into(), Value::Null);
-    let ctx = Ctx { base_url: &config.external_url, current_user: current };
+    let ctx = Ctx { base_url: &config.external_url, ee: config.is_ee(), current_user: current };
     let user = match pl.user_id.map(|i| User::find(c, i)).transpose()?.flatten() {
         Some(u) => user_ent::basic_value(&u, &ctx),
         None => Value::Null,

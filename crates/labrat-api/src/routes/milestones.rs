@@ -254,7 +254,7 @@ fn eventable(c: &Connection, req: &Req) -> Result<(Project, MergeRequest), ApiEr
 }
 
 fn user_value(c: &Connection, req: &Req, id: Option<i64>) -> Result<Value, ApiError> {
-    let ctx = Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() };
+    let ctx = Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() };
     Ok(match id.map(|i| User::find(c, i)).transpose()?.flatten() {
         Some(u) => user_ent::basic_value(&u, &ctx),
         None => Value::Null,

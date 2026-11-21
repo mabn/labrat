@@ -89,7 +89,7 @@ pub fn routes() -> Router<Arc<App>> {
 
 pub fn ectx(req: &Req) -> Ctx<'_> {
     Ctx {
-        base_url: &req.app.config.external_url,
+        base_url: &req.app.config.external_url, ee: req.app.config.is_ee(),
         current_user: req.user.as_ref(),
     }
 }

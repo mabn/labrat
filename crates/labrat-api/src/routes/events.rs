@@ -101,7 +101,7 @@ fn filter(c: &Connection, req: &Req, rows: Vec<Row>) -> Result<Vec<Row>, ApiErro
 }
 
 fn entity(c: &Connection, req: &Req, r: &Row, with_note: bool) -> Result<Value, ApiError> {
-    let ctx = Ctx { base_url: &req.app.config.external_url, current_user: req.user.as_ref() };
+    let ctx = Ctx { base_url: &req.app.config.external_url, ee: req.app.config.is_ee(), current_user: req.user.as_ref() };
     let author = User::find(c, r.author_id)?;
     let push: Option<Value> = r.push_data.as_deref().and_then(|s| serde_json::from_str(s).ok());
     let tt = r.target_type.clone();
