@@ -771,9 +771,12 @@ pub fn finish_sync(c: &Connection, mr_id: i64) -> Result<()> {
     Ok(())
 }
 
-/// A pipeline of the MR started running: a sync waiting for it begins.
+/// A pipeline of the MR started running: a sync waiting for it begins, and ends a moment
+/// later, as without CI.
 pub fn pipeline_running(c: &Connection, mr_id: i64) -> Result<()> {
-    c.execute("UPDATE merge_requests SET approvals_syncing = 1 WHERE id = ?1 AND approvals_syncing = 2", [mr_id])?;
+    if c.execute("UPDATE merge_requests SET approvals_syncing = 1 WHERE id = ?1 AND approvals_syncing = 2", [mr_id])? > 0 {
+        crate::jobs::enqueue(c, "approvals_sync", json!({"merge_request_id": mr_id}))?;
+    }
     Ok(())
 }
 

@@ -399,6 +399,12 @@ impl Normalizer {
                         }
                     }
                 }
+                // EE merge train cars: a merged car's `duration` is its `merged_at` minus its
+                // `created_at`, both compared as `<TIME>`. It follows the reference's background
+                // job timing (merging takes 4 to 15 seconds after the pipeline passes).
+                if m.contains_key("merge_request") && m.contains_key("target_branch") && m.contains_key("merged_at") && m.get("duration").is_some_and(Value::is_number) {
+                    m.insert("duration".to_string(), json!("<DURATION>"));
+                }
                 let keys: Vec<String> = m.keys().cloned().collect();
                 for k in keys {
                     let entry = m.get_mut(&k).unwrap();

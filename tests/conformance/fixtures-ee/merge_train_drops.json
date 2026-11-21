@@ -2,7 +2,7 @@
   "scenario": "merge_train_drops",
   "base": "http://localhost:8929",
   "ssh_port": 2224,
-  "run": "rcd5f8b",
+  "run": "r31b21e",
   "steps": [
     {
       "label": "group",
@@ -1343,11 +1343,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:1>",
+            "iid": 7,
+            "project_id": "<project:1>",
+            "sha": "<SHA9>",
+            "ref": "refs/merge-requests/1/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:1>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -1422,11 +1433,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:1>",
+            "iid": 7,
+            "project_id": "<project:1>",
+            "sha": "<SHA9>",
+            "ref": "refs/merge-requests/1/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:1>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -1453,11 +1475,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:2>",
+            "iid": 8,
+            "project_id": "<project:1>",
+            "sha": "<SHA10>",
+            "ref": "refs/merge-requests/2/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:2>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -1532,11 +1565,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:1>",
+            "iid": 7,
+            "project_id": "<project:1>",
+            "sha": "<SHA9>",
+            "ref": "refs/merge-requests/1/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:1>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -1563,11 +1607,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:2>",
+            "iid": 8,
+            "project_id": "<project:1>",
+            "sha": "<SHA10>",
+            "ref": "refs/merge-requests/2/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:2>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -1594,11 +1649,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:3>",
+            "iid": 9,
+            "project_id": "<project:1>",
+            "sha": "<SHA11>",
+            "ref": "refs/merge-requests/3/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:3>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -1636,21 +1702,21 @@
       ]
     },
     {
-      "label": "push two",
+      "label": "push four",
       "request": "POST /projects/<project:1>/repository/commits",
       "status": 201,
       "headers": {
         "content-type": "application/json"
       },
       "body": {
-        "id": "<SHA9>",
-        "short_id": "<SHA9:short>",
+        "id": "<SHA12>",
+        "short_id": "<SHA12:short>",
         "created_at": "<TIME>",
         "parent_ids": [
-          "<SHA4>"
+          "<SHA6>"
         ],
-        "title": "More two",
-        "message": "More two",
+        "title": "More four",
+        "message": "More four",
         "author_name": "Claude",
         "author_email": "claude@gitlab.unhood.org",
         "authored_date": "<TIME>",
@@ -1659,7 +1725,7 @@
         "committed_date": "<TIME>",
         "trailers": {},
         "extended_trailers": {},
-        "web_url": "<BASE>/mtd-<RUN>/app/-/commit/<SHA9>",
+        "web_url": "<BASE>/mtd-<RUN>/app/-/commit/<SHA12>",
         "stats": {
           "additions": 1,
           "deletions": 0,
@@ -1686,48 +1752,6 @@
       },
       "body": [
         {
-          "id": "<car:4>",
-          "merge_request": {
-            "id": "<mr:4>",
-            "iid": 4,
-            "project_id": "<project:1>",
-            "title": "Add four",
-            "description": null,
-            "state": "opened",
-            "created_at": "<TIME>",
-            "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/merge_requests/4"
-          },
-          "user": {
-            "id": "<user:1>",
-            "username": "claude",
-            "public_email": null,
-            "name": "Claude",
-            "state": "active",
-            "locked": false,
-            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
-            "web_url": "<BASE>/claude"
-          },
-          "pipeline": {
-            "id": "<car.pipeline:1>",
-            "iid": 12,
-            "project_id": "<project:1>",
-            "sha": "<SHA10>",
-            "ref": "refs/merge-requests/4/train",
-            "status": "pending",
-            "source": "merge_request_event",
-            "created_at": "<TIME>",
-            "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:1>"
-          },
-          "created_at": "<TIME>",
-          "updated_at": "<TIME>",
-          "target_branch": "main",
-          "status": "fresh",
-          "merged_at": null,
-          "duration": null
-        },
-        {
           "id": "<car:3>",
           "merge_request": {
             "id": "<mr:3>",
@@ -1751,12 +1775,54 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:2>",
-            "iid": 11,
+            "id": "<car.pipeline:3>",
+            "iid": 9,
             "project_id": "<project:1>",
             "sha": "<SHA11>",
             "ref": "refs/merge-requests/3/train",
-            "status": "pending",
+            "status": "running",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:3>"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "target_branch": "main",
+          "status": "fresh",
+          "merged_at": null,
+          "duration": null
+        },
+        {
+          "id": "<car:2>",
+          "merge_request": {
+            "id": "<mr:2>",
+            "iid": 2,
+            "project_id": "<project:1>",
+            "title": "Add two",
+            "description": null,
+            "state": "opened",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtd-<RUN>/app/-/merge_requests/2"
+          },
+          "user": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "pipeline": {
+            "id": "<car.pipeline:2>",
+            "iid": 8,
+            "project_id": "<project:1>",
+            "sha": "<SHA10>",
+            "ref": "refs/merge-requests/2/train",
+            "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
@@ -1793,16 +1859,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:3>",
+            "id": "<car.pipeline:1>",
             "iid": 7,
             "project_id": "<project:1>",
-            "sha": "<SHA12>",
+            "sha": "<SHA9>",
             "ref": "refs/merge-requests/1/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:3>"
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:1>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -1814,17 +1880,17 @@
       ]
     },
     {
-      "label": "mr 2 after push",
-      "request": "GET /projects/<project:1>/merge_requests/2",
+      "label": "mr 4 after push",
+      "request": "GET /projects/<project:1>/merge_requests/4",
       "status": 200,
       "headers": {
         "content-type": "application/json"
       },
       "body": {
-        "id": "<mr:2>",
-        "iid": 2,
+        "id": "<mr:4>",
+        "iid": 4,
         "project_id": "<project:1>",
-        "title": "Add two",
+        "title": "Add four",
         "description": null,
         "state": "opened",
         "created_at": "<TIME>",
@@ -1835,7 +1901,7 @@
         "closed_by": null,
         "closed_at": null,
         "target_branch": "main",
-        "source_branch": "two",
+        "source_branch": "four",
         "user_notes_count": 0,
         "upvotes": 0,
         "downvotes": 0,
@@ -1864,20 +1930,20 @@
         "merge_status": "can_be_merged",
         "detailed_merge_status": "mergeable",
         "merge_after": null,
-        "sha": "<SHA9>",
+        "sha": "<SHA12>",
         "merge_commit_sha": null,
         "squash_commit_sha": null,
         "discussion_locked": null,
         "should_remove_source_branch": null,
         "force_remove_source_branch": true,
         "prepared_at": "<TIME>",
-        "reference": "!2",
+        "reference": "!4",
         "references": {
-          "short": "!2",
-          "relative": "!2",
-          "full": "mtd-<RUN>/app!2"
+          "short": "!4",
+          "relative": "!4",
+          "full": "mtd-<RUN>/app!4"
         },
-        "web_url": "<BASE>/mtd-<RUN>/app/-/merge_requests/2",
+        "web_url": "<BASE>/mtd-<RUN>/app/-/merge_requests/4",
         "time_stats": {
           "time_estimate": 0,
           "total_time_spent": 0,
@@ -1900,10 +1966,10 @@
         "first_deployed_to_production_at": null,
         "pipeline": {
           "id": "<mr.pipeline:1>",
-          "iid": 8,
+          "iid": 10,
           "project_id": "<project:1>",
           "sha": "<SHA13>",
-          "ref": "refs/merge-requests/2/train",
+          "ref": "refs/merge-requests/4/train",
           "status": "canceling",
           "source": "merge_request_event",
           "created_at": "<TIME>",
@@ -1912,10 +1978,10 @@
         },
         "head_pipeline": {
           "id": "<mr.head_pipeline:1>",
-          "iid": 13,
+          "iid": 11,
           "project_id": "<project:1>",
           "sha": "<SHA14>",
-          "ref": "refs/merge-requests/2/merge",
+          "ref": "refs/merge-requests/4/merge",
           "status": "pending",
           "source": "merge_request_event",
           "created_at": "<TIME>",
@@ -1955,7 +2021,7 @@
         },
         "diff_refs": {
           "base_sha": "<SHA1>",
-          "head_sha": "<SHA9>",
+          "head_sha": "<SHA12>",
           "start_sha": "<SHA1>"
         },
         "merge_error": null,
@@ -1966,8 +2032,8 @@
       }
     },
     {
-      "label": "mr 2 notes after push",
-      "request": "GET /projects/<project:1>/merge_requests/2/notes",
+      "label": "mr 4 notes after push",
+      "request": "GET /projects/<project:1>/merge_requests/4/notes",
       "status": 200,
       "headers": {
         "content-type": "application/json",
@@ -1977,13 +2043,13 @@
         "x-per-page": "20",
         "x-next-page": "",
         "x-prev-page": "",
-        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/2/notes?activity_filter=all_notes&id=<project:1>&noteable_id=2&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/2/notes?activity_filter=all_notes&id=<project:1>&noteable_id=2&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"last\""
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/4/notes?activity_filter=all_notes&id=<project:1>&noteable_id=4&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/4/notes?activity_filter=all_notes&id=<project:1>&noteable_id=4&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"last\""
       },
       "body": [
         {
           "id": "<note:1>",
           "type": null,
-          "body": "added this merge request to the [merge train](<BASE>/mtd-<RUN>/app/-/merge_trains) at position 2",
+          "body": "added this merge request to the [merge train](<BASE>/mtd-<RUN>/app/-/merge_trains) at position 4",
           "author": {
             "id": "<user:1>",
             "username": "claude",
@@ -2005,7 +2071,7 @@
           "internal": false,
           "imported": false,
           "imported_from": "none",
-          "noteable_iid": 2,
+          "noteable_iid": 4,
           "commands_changes": {}
         },
         {
@@ -2033,13 +2099,13 @@
           "internal": false,
           "imported": false,
           "imported_from": "none",
-          "noteable_iid": 2,
+          "noteable_iid": 4,
           "commands_changes": {}
         },
         {
           "id": "<note:3>",
           "type": null,
-          "body": "added 1 commit\n\n<ul><li><SHA9:short> - More two</li></ul>\n\n[Compare with previous version](/mtd-<RUN>/app/-/merge_requests/2/diffs?diff_id=<diff:1>&start_sha=<SHA4>)",
+          "body": "added 1 commit\n\n<ul><li><SHA12:short> - More four</li></ul>\n\n[Compare with previous version](/mtd-<RUN>/app/-/merge_requests/4/diffs?diff_id=<diff:1>&start_sha=<SHA6>)",
           "author": {
             "id": "<user:1>",
             "username": "claude",
@@ -2061,7 +2127,7 @@
           "internal": false,
           "imported": false,
           "imported_from": "none",
-          "noteable_iid": 2,
+          "noteable_iid": 4,
           "commands_changes": {}
         }
       ]
@@ -2162,7 +2228,7 @@
         "first_deployed_to_production_at": null,
         "pipeline": {
           "id": "<mr.pipeline:2>",
-          "iid": 11,
+          "iid": 9,
           "project_id": "<project:1>",
           "sha": "<SHA11>",
           "ref": "refs/merge-requests/3/train",
@@ -2170,11 +2236,11 @@
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:2>"
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:3>"
         },
         "head_pipeline": {
           "id": "<mr.head_pipeline:2>",
-          "iid": 11,
+          "iid": 9,
           "project_id": "<project:1>",
           "sha": "<SHA11>",
           "ref": "refs/merge-requests/3/train",
@@ -2182,7 +2248,7 @@
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:2>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:3>",
           "before_sha": "<SHA11>",
           "tag": false,
           "yaml_errors": null,
@@ -2209,7 +2275,7 @@
             "group": "running",
             "tooltip": "running",
             "has_details": true,
-            "details_path": "/mtd-<RUN>/app/-/pipelines/<pipeline:2>",
+            "details_path": "/mtd-<RUN>/app/-/pipelines/<pipeline:3>",
             "illustration": null,
             "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png"
           },
@@ -2242,17 +2308,17 @@
       },
       "body": [
         {
-          "id": "<car:4>",
+          "id": "<car:2>",
           "merge_request": {
-            "id": "<mr:4>",
-            "iid": 4,
+            "id": "<mr:2>",
+            "iid": 2,
             "project_id": "<project:1>",
-            "title": "Add four",
+            "title": "Add two",
             "description": null,
             "state": "opened",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/merge_requests/4"
+            "web_url": "<BASE>/mtd-<RUN>/app/-/merge_requests/2"
           },
           "user": {
             "id": "<user:1>",
@@ -2265,16 +2331,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:4>",
-            "iid": 14,
+            "id": "<car.pipeline:2>",
+            "iid": 8,
             "project_id": "<project:1>",
-            "sha": "<SHA15>",
-            "ref": "refs/merge-requests/4/train",
-            "status": "pending",
+            "sha": "<SHA10>",
+            "ref": "refs/merge-requests/2/train",
+            "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:6>"
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:2>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -2307,16 +2373,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:3>",
+            "id": "<car.pipeline:1>",
             "iid": 7,
             "project_id": "<project:1>",
-            "sha": "<SHA12>",
+            "sha": "<SHA9>",
             "ref": "refs/merge-requests/1/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:3>"
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:1>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -2429,17 +2495,17 @@
       ]
     },
     {
-      "label": "mr 4 closed",
-      "request": "GET /projects/<project:1>/merge_requests/4",
+      "label": "mr 2 closed",
+      "request": "GET /projects/<project:1>/merge_requests/2",
       "status": 200,
       "headers": {
         "content-type": "application/json"
       },
       "body": {
-        "id": "<mr:4>",
-        "iid": 4,
+        "id": "<mr:2>",
+        "iid": 2,
         "project_id": "<project:1>",
-        "title": "Add four",
+        "title": "Add two",
         "description": null,
         "state": "closed",
         "created_at": "<TIME>",
@@ -2459,7 +2525,7 @@
         },
         "closed_at": "<TIME>",
         "target_branch": "main",
-        "source_branch": "four",
+        "source_branch": "two",
         "user_notes_count": 0,
         "upvotes": 0,
         "downvotes": 0,
@@ -2488,20 +2554,20 @@
         "merge_status": "can_be_merged",
         "detailed_merge_status": "not_open",
         "merge_after": null,
-        "sha": "<SHA6>",
+        "sha": "<SHA4>",
         "merge_commit_sha": null,
         "squash_commit_sha": null,
         "discussion_locked": null,
         "should_remove_source_branch": null,
         "force_remove_source_branch": true,
         "prepared_at": "<TIME>",
-        "reference": "!4",
+        "reference": "!2",
         "references": {
-          "short": "!4",
-          "relative": "!4",
-          "full": "mtd-<RUN>/app!4"
+          "short": "!2",
+          "relative": "!2",
+          "full": "mtd-<RUN>/app!2"
         },
-        "web_url": "<BASE>/mtd-<RUN>/app/-/merge_requests/4",
+        "web_url": "<BASE>/mtd-<RUN>/app/-/merge_requests/2",
         "time_stats": {
           "time_estimate": 0,
           "total_time_spent": 0,
@@ -2524,28 +2590,28 @@
         "first_deployed_to_production_at": null,
         "pipeline": {
           "id": "<mr.pipeline:3>",
-          "iid": 14,
+          "iid": 8,
           "project_id": "<project:1>",
-          "sha": "<SHA15>",
-          "ref": "refs/merge-requests/4/train",
+          "sha": "<SHA10>",
+          "ref": "refs/merge-requests/2/train",
           "status": "canceling",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:6>"
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:2>"
         },
         "head_pipeline": {
           "id": "<mr.head_pipeline:3>",
-          "iid": 14,
+          "iid": 8,
           "project_id": "<project:1>",
-          "sha": "<SHA15>",
-          "ref": "refs/merge-requests/4/train",
+          "sha": "<SHA10>",
+          "ref": "refs/merge-requests/2/train",
           "status": "canceling",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:6>",
-          "before_sha": "<SHA15>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:2>",
+          "before_sha": "<SHA10>",
           "tag": false,
           "yaml_errors": null,
           "user": {
@@ -2571,7 +2637,7 @@
             "group": "canceling",
             "tooltip": "canceling",
             "has_details": true,
-            "details_path": "/mtd-<RUN>/app/-/pipelines/<pipeline:6>",
+            "details_path": "/mtd-<RUN>/app/-/pipelines/<pipeline:2>",
             "illustration": null,
             "favicon": "/assets/ci_favicons/favicon_status_canceled-ca35321a6cda9943ebdf6631c8057ffd54064f3ba20cfe0ebc4b0b992041c430.png"
           },
@@ -2579,7 +2645,7 @@
         },
         "diff_refs": {
           "base_sha": "<SHA1>",
-          "head_sha": "<SHA6>",
+          "head_sha": "<SHA4>",
           "start_sha": "<SHA1>"
         },
         "merge_error": null,
@@ -2628,16 +2694,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:3>",
+            "id": "<car.pipeline:1>",
             "iid": 7,
             "project_id": "<project:1>",
-            "sha": "<SHA12>",
+            "sha": "<SHA9>",
             "ref": "refs/merge-requests/1/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:3>"
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:1>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -2649,8 +2715,8 @@
       ]
     },
     {
-      "label": "mr 4 notes after close",
-      "request": "GET /projects/<project:1>/merge_requests/4/notes",
+      "label": "mr 2 notes after close",
+      "request": "GET /projects/<project:1>/merge_requests/2/notes",
       "status": 200,
       "headers": {
         "content-type": "application/json",
@@ -2660,13 +2726,13 @@
         "x-per-page": "20",
         "x-next-page": "",
         "x-prev-page": "",
-        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/4/notes?activity_filter=all_notes&id=<project:1>&noteable_id=4&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/4/notes?activity_filter=all_notes&id=<project:1>&noteable_id=4&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"last\""
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/2/notes?activity_filter=all_notes&id=<project:1>&noteable_id=2&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/2/notes?activity_filter=all_notes&id=<project:1>&noteable_id=2&order_by=created_at&page=1&per_page=20&sort=asc>; rel=\"last\""
       },
       "body": [
         {
           "id": "<note:7>",
           "type": null,
-          "body": "added this merge request to the [merge train](<BASE>/mtd-<RUN>/app/-/merge_trains) at position 4",
+          "body": "added this merge request to the [merge train](<BASE>/mtd-<RUN>/app/-/merge_trains) at position 2",
           "author": {
             "id": "<user:1>",
             "username": "claude",
@@ -2688,7 +2754,7 @@
           "internal": false,
           "imported": false,
           "imported_from": "none",
-          "noteable_iid": 4,
+          "noteable_iid": 2,
           "commands_changes": {}
         },
         {
@@ -2716,7 +2782,7 @@
           "internal": false,
           "imported": false,
           "imported_from": "none",
-          "noteable_iid": 4,
+          "noteable_iid": 2,
           "commands_changes": {}
         }
       ]
@@ -2727,7 +2793,7 @@
       "status": 200,
       "headers": {
         "content-type": "application/json",
-        "x-total": "14",
+        "x-total": "11",
         "x-total-pages": "1",
         "x-page": "1",
         "x-per-page": "50",
@@ -2737,24 +2803,11 @@
       },
       "body": [
         {
-          "id": "<pipeline:6>",
-          "iid": 14,
-          "project_id": "<project:1>",
-          "sha": "<SHA15>",
-          "ref": "refs/merge-requests/4/train",
-          "status": "canceling",
-          "source": "merge_request_event",
-          "created_at": "<TIME>",
-          "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:6>",
-          "name": null
-        },
-        {
           "id": "<pipeline:5>",
-          "iid": 13,
+          "iid": 11,
           "project_id": "<project:1>",
           "sha": "<SHA14>",
-          "ref": "refs/merge-requests/2/merge",
+          "ref": "refs/merge-requests/4/merge",
           "status": "running",
           "source": "merge_request_event",
           "created_at": "<TIME>",
@@ -2763,63 +2816,11 @@
           "name": null
         },
         {
-          "id": "<pipeline:1>",
-          "iid": 12,
-          "project_id": "<project:1>",
-          "sha": "<SHA10>",
-          "ref": "refs/merge-requests/4/train",
-          "status": "canceling",
-          "source": "merge_request_event",
-          "created_at": "<TIME>",
-          "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:1>",
-          "name": null
-        },
-        {
-          "id": "<pipeline:2>",
-          "iid": 11,
-          "project_id": "<project:1>",
-          "sha": "<SHA11>",
-          "ref": "refs/merge-requests/3/train",
-          "status": "canceling",
-          "source": "merge_request_event",
-          "created_at": "<TIME>",
-          "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:2>",
-          "name": null
-        },
-        {
-          "id": "<pipeline:7>",
+          "id": "<pipeline:4>",
           "iid": 10,
           "project_id": "<project:1>",
-          "sha": "<SHA16>",
-          "ref": "refs/merge-requests/4/train",
-          "status": "canceling",
-          "source": "merge_request_event",
-          "created_at": "<TIME>",
-          "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:7>",
-          "name": null
-        },
-        {
-          "id": "<pipeline:8>",
-          "iid": 9,
-          "project_id": "<project:1>",
-          "sha": "<SHA17>",
-          "ref": "refs/merge-requests/3/train",
-          "status": "canceling",
-          "source": "merge_request_event",
-          "created_at": "<TIME>",
-          "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:8>",
-          "name": null
-        },
-        {
-          "id": "<pipeline:4>",
-          "iid": 8,
-          "project_id": "<project:1>",
           "sha": "<SHA13>",
-          "ref": "refs/merge-requests/2/train",
+          "ref": "refs/merge-requests/4/train",
           "status": "canceling",
           "source": "merge_request_event",
           "created_at": "<TIME>",
@@ -2829,11 +2830,11 @@
         },
         {
           "id": "<pipeline:3>",
-          "iid": 7,
+          "iid": 9,
           "project_id": "<project:1>",
-          "sha": "<SHA12>",
-          "ref": "refs/merge-requests/1/train",
-          "status": "running",
+          "sha": "<SHA11>",
+          "ref": "refs/merge-requests/3/train",
+          "status": "canceling",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -2841,11 +2842,76 @@
           "name": null
         },
         {
-          "id": "<pipeline:9>",
+          "id": "<pipeline:2>",
+          "iid": 8,
+          "project_id": "<project:1>",
+          "sha": "<SHA10>",
+          "ref": "refs/merge-requests/2/train",
+          "status": "canceling",
+          "source": "merge_request_event",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:2>",
+          "name": null
+        },
+        {
+          "id": "<pipeline:1>",
+          "iid": 7,
+          "project_id": "<project:1>",
+          "sha": "<SHA9>",
+          "ref": "refs/merge-requests/1/train",
+          "status": "running",
+          "source": "merge_request_event",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:1>",
+          "name": null
+        },
+        {
+          "id": "<pipeline:6>",
           "iid": 6,
           "project_id": "<project:1>",
-          "sha": "<SHA18>",
+          "sha": "<SHA15>",
           "ref": "refs/merge-requests/6/merge",
+          "status": "success",
+          "source": "merge_request_event",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:6>",
+          "name": null
+        },
+        {
+          "id": "<pipeline:7>",
+          "iid": 5,
+          "project_id": "<project:1>",
+          "sha": "<SHA16>",
+          "ref": "refs/merge-requests/5/merge",
+          "status": "success",
+          "source": "merge_request_event",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:7>",
+          "name": null
+        },
+        {
+          "id": "<pipeline:8>",
+          "iid": 4,
+          "project_id": "<project:1>",
+          "sha": "<SHA17>",
+          "ref": "refs/merge-requests/4/merge",
+          "status": "success",
+          "source": "merge_request_event",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:8>",
+          "name": null
+        },
+        {
+          "id": "<pipeline:9>",
+          "iid": 3,
+          "project_id": "<project:1>",
+          "sha": "<SHA18>",
+          "ref": "refs/merge-requests/3/merge",
           "status": "success",
           "source": "merge_request_event",
           "created_at": "<TIME>",
@@ -2855,10 +2921,10 @@
         },
         {
           "id": "<pipeline:10>",
-          "iid": 5,
+          "iid": 2,
           "project_id": "<project:1>",
           "sha": "<SHA19>",
-          "ref": "refs/merge-requests/5/merge",
+          "ref": "refs/merge-requests/2/merge",
           "status": "success",
           "source": "merge_request_event",
           "created_at": "<TIME>",
@@ -2868,54 +2934,15 @@
         },
         {
           "id": "<pipeline:11>",
-          "iid": 4,
-          "project_id": "<project:1>",
-          "sha": "<SHA20>",
-          "ref": "refs/merge-requests/4/merge",
-          "status": "success",
-          "source": "merge_request_event",
-          "created_at": "<TIME>",
-          "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:11>",
-          "name": null
-        },
-        {
-          "id": "<pipeline:12>",
-          "iid": 3,
-          "project_id": "<project:1>",
-          "sha": "<SHA21>",
-          "ref": "refs/merge-requests/3/merge",
-          "status": "success",
-          "source": "merge_request_event",
-          "created_at": "<TIME>",
-          "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:12>",
-          "name": null
-        },
-        {
-          "id": "<pipeline:13>",
-          "iid": 2,
-          "project_id": "<project:1>",
-          "sha": "<SHA22>",
-          "ref": "refs/merge-requests/2/merge",
-          "status": "success",
-          "source": "merge_request_event",
-          "created_at": "<TIME>",
-          "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:13>",
-          "name": null
-        },
-        {
-          "id": "<pipeline:14>",
           "iid": 1,
           "project_id": "<project:1>",
-          "sha": "<SHA23>",
+          "sha": "<SHA20>",
           "ref": "refs/merge-requests/1/merge",
           "status": "success",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:14>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:11>",
           "name": null
         }
       ]
@@ -2990,7 +3017,7 @@
         "detailed_merge_status": "not_open",
         "merge_after": null,
         "sha": "<SHA7>",
-        "merge_commit_sha": "<SHA24>",
+        "merge_commit_sha": "<SHA21>",
         "squash_commit_sha": null,
         "discussion_locked": null,
         "should_remove_source_branch": null,
@@ -3020,33 +3047,33 @@
         "approvals_before_merge": null,
         "subscribed": true,
         "changes_count": "1",
-        "latest_build_started_at": null,
+        "latest_build_started_at": "<TIME>",
         "latest_build_finished_at": "<TIME>",
         "first_deployed_to_production_at": null,
         "pipeline": {
           "id": "<mr.pipeline:4>",
           "iid": 5,
           "project_id": "<project:1>",
-          "sha": "<SHA19>",
+          "sha": "<SHA16>",
           "ref": "refs/merge-requests/5/merge",
           "status": "success",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:10>"
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:7>"
         },
         "head_pipeline": {
           "id": "<mr.head_pipeline:4>",
           "iid": 5,
           "project_id": "<project:1>",
-          "sha": "<SHA19>",
+          "sha": "<SHA16>",
           "ref": "refs/merge-requests/5/merge",
           "status": "success",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:10>",
-          "before_sha": "<SHA19>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:7>",
+          "before_sha": "<SHA16>",
           "tag": false,
           "yaml_errors": null,
           "user": {
@@ -3059,10 +3086,10 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "started_at": null,
+          "started_at": "<TIME>",
           "finished_at": "<TIME>",
           "committed_at": null,
-          "duration": null,
+          "duration": 8,
           "queued_duration": "<QUEUED>",
           "coverage": null,
           "detailed_status": {
@@ -3072,7 +3099,7 @@
             "group": "success",
             "tooltip": "passed",
             "has_details": true,
-            "details_path": "/mtd-<RUN>/app/-/pipelines/<pipeline:10>",
+            "details_path": "/mtd-<RUN>/app/-/pipelines/<pipeline:7>",
             "illustration": null,
             "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png"
           },
@@ -3139,16 +3166,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:5>",
-            "iid": 15,
+            "id": "<car.pipeline:4>",
+            "iid": 12,
             "project_id": "<project:1>",
-            "sha": "<SHA25>",
+            "sha": "<SHA22>",
             "ref": "refs/merge-requests/1/train",
             "status": "pending",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:15>"
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:12>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -3222,7 +3249,7 @@
         {
           "id": "<note:10>",
           "type": null,
-          "body": "mentioned in commit <SHA24>",
+          "body": "mentioned in commit <SHA21>",
           "author": {
             "id": "<user:1>",
             "username": "claude",
@@ -3499,7 +3526,7 @@
         "detailed_merge_status": "not_open",
         "merge_after": null,
         "sha": "<SHA8>",
-        "merge_commit_sha": "<SHA26>",
+        "merge_commit_sha": "<SHA23>",
         "squash_commit_sha": null,
         "discussion_locked": null,
         "should_remove_source_branch": null,
@@ -3529,33 +3556,33 @@
         "approvals_before_merge": null,
         "subscribed": true,
         "changes_count": "1",
-        "latest_build_started_at": null,
+        "latest_build_started_at": "<TIME>",
         "latest_build_finished_at": "<TIME>",
         "first_deployed_to_production_at": null,
         "pipeline": {
           "id": "<mr.pipeline:5>",
           "iid": 6,
           "project_id": "<project:1>",
-          "sha": "<SHA18>",
+          "sha": "<SHA15>",
           "ref": "refs/merge-requests/6/merge",
           "status": "success",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:9>"
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:6>"
         },
         "head_pipeline": {
           "id": "<mr.head_pipeline:5>",
           "iid": 6,
           "project_id": "<project:1>",
-          "sha": "<SHA18>",
+          "sha": "<SHA15>",
           "ref": "refs/merge-requests/6/merge",
           "status": "success",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:9>",
-          "before_sha": "<SHA18>",
+          "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:6>",
+          "before_sha": "<SHA15>",
           "tag": false,
           "yaml_errors": null,
           "user": {
@@ -3568,10 +3595,10 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "started_at": null,
+          "started_at": "<TIME>",
           "finished_at": "<TIME>",
           "committed_at": null,
-          "duration": null,
+          "duration": 8,
           "queued_duration": "<QUEUED>",
           "coverage": null,
           "detailed_status": {
@@ -3581,7 +3608,7 @@
             "group": "success",
             "tooltip": "passed",
             "has_details": true,
-            "details_path": "/mtd-<RUN>/app/-/pipelines/<pipeline:9>",
+            "details_path": "/mtd-<RUN>/app/-/pipelines/<pipeline:6>",
             "illustration": null,
             "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png"
           },
@@ -3668,16 +3695,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:6>",
-            "iid": 16,
+            "id": "<car.pipeline:5>",
+            "iid": 13,
             "project_id": "<project:1>",
-            "sha": "<SHA27>",
+            "sha": "<SHA24>",
             "ref": "refs/merge-requests/1/train",
             "status": "pending",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:16>"
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:13>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -3754,7 +3781,7 @@
         {
           "id": "<note:11>",
           "type": null,
-          "body": "mentioned in commit <SHA26>",
+          "body": "mentioned in commit <SHA23>",
           "author": {
             "id": "<user:1>",
             "username": "claude",
@@ -3835,7 +3862,7 @@
             "project_id": "<project:1>",
             "title": "Add one",
             "description": null,
-            "state": "opened",
+            "state": "merged",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
             "web_url": "<BASE>/mtd-<RUN>/app/-/merge_requests/1"
@@ -3851,23 +3878,23 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:6>",
-            "iid": 16,
+            "id": "<car.pipeline:5>",
+            "iid": 13,
             "project_id": "<project:1>",
-            "sha": "<SHA27>",
+            "sha": "<SHA24>",
             "ref": "refs/merge-requests/1/train",
-            "status": "pending",
+            "status": "success",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:16>"
+            "web_url": "<BASE>/mtd-<RUN>/app/-/pipelines/<pipeline:13>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "fresh",
-          "merged_at": null,
-          "duration": null
+          "status": "merged",
+          "merged_at": "<TIME>",
+          "duration": "<DURATION>"
         }
       ]
     },
@@ -3885,11 +3912,31 @@
       },
       "body": [
         {
-          "id": "<SHA26>",
-          "short_id": "<SHA26:short>",
+          "id": "<SHA25>",
+          "short_id": "<SHA25:short>",
           "created_at": "<TIME>",
           "parent_ids": [
-            "<SHA24>",
+            "<SHA23>",
+            "<SHA3>"
+          ],
+          "title": "Merge branch 'one' into 'main'",
+          "message": "Merge branch 'one' into 'main'\n\nAdd one\n\nSee merge request mtd-<RUN>/app!1",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/mtd-<RUN>/app/-/commit/<SHA25>"
+        },
+        {
+          "id": "<SHA23>",
+          "short_id": "<SHA23:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA21>",
             "<SHA8>"
           ],
           "title": "Merge branch 'six' into 'main'",
@@ -3902,11 +3949,11 @@
           "committed_date": "<TIME>",
           "trailers": {},
           "extended_trailers": {},
-          "web_url": "<BASE>/mtd-<RUN>/app/-/commit/<SHA26>"
+          "web_url": "<BASE>/mtd-<RUN>/app/-/commit/<SHA23>"
         },
         {
-          "id": "<SHA24>",
-          "short_id": "<SHA24:short>",
+          "id": "<SHA21>",
+          "short_id": "<SHA21:short>",
           "created_at": "<TIME>",
           "parent_ids": [
             "<SHA1>",
@@ -3922,7 +3969,7 @@
           "committed_date": "<TIME>",
           "trailers": {},
           "extended_trailers": {},
-          "web_url": "<BASE>/mtd-<RUN>/app/-/commit/<SHA24>"
+          "web_url": "<BASE>/mtd-<RUN>/app/-/commit/<SHA21>"
         },
         {
           "id": "<SHA8>",
@@ -3961,6 +4008,25 @@
           "trailers": {},
           "extended_trailers": {},
           "web_url": "<BASE>/mtd-<RUN>/app/-/commit/<SHA7>"
+        },
+        {
+          "id": "<SHA3>",
+          "short_id": "<SHA3:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA1>"
+          ],
+          "title": "Add one",
+          "message": "Add one",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/mtd-<RUN>/app/-/commit/<SHA3>"
         },
         {
           "id": "<SHA1>",
@@ -4003,107 +4069,161 @@
   ],
   "times": [
     0,
-    251,
-    6933,
-    13748,
-    23714,
-    34493,
-    43386,
-    53807,
-    63766,
-    73664,
-    83542,
-    93800,
-    103749,
-    113836,
-    123892,
-    133772,
-    196895,
-    197022,
-    197144,
-    197263,
-    204262,
-    223791,
-    223873,
-    223976,
-    224543,
-    233835,
-    233897,
-    243815,
-    243910,
-    243973,
-    244045,
-    244111,
-    244642,
-    253801,
-    253870,
-    253935,
-    254227,
-    264093,
-    275174,
-    275238,
-    275297,
-    314634,
-    314713
+    260,
+    9226,
+    19280,
+    29295,
+    39338,
+    51705,
+    59314,
+    69430,
+    79530,
+    89407,
+    99573,
+    112845,
+    119785,
+    129707,
+    139598,
+    215485,
+    221828,
+    239827,
+    259884,
+    281205,
+    377149,
+    377216,
+    377354,
+    384804,
+    398849,
+    398913,
+    427118,
+    427204,
+    427269,
+    427331,
+    427383,
+    427907,
+    437055,
+    437112,
+    437173,
+    447182,
+    452891,
+    460352,
+    460414,
+    460467,
+    487255,
+    487329
   ],
   "done_times": [
-    249,
-    999,
-    7271,
-    13922,
-    24041,
-    34650,
-    43707,
-    53922,
-    64141,
-    73774,
-    83903,
-    93930,
-    104073,
-    113970,
-    124226,
-    133896,
-    197021,
-    197143,
-    197262,
-    197380,
-    204565,
-    223873,
-    223976,
-    224063,
-    224678,
-    233897,
-    233977,
-    243910,
-    243973,
-    244045,
-    244111,
-    244640,
-    244710,
-    253870,
-    253935,
-    254061,
-    254326,
-    264924,
-    275238,
-    275297,
-    275365,
-    314713,
-    314782
+    259,
+    933,
+    9571,
+    19425,
+    29612,
+    39494,
+    52031,
+    59448,
+    69758,
+    79656,
+    89710,
+    99702,
+    113418,
+    119900,
+    130033,
+    139716,
+    215631,
+    221946,
+    239973,
+    260017,
+    281519,
+    377216,
+    377354,
+    377456,
+    385014,
+    398913,
+    398989,
+    427204,
+    427269,
+    427331,
+    427383,
+    427906,
+    427960,
+    437112,
+    437173,
+    437251,
+    447302,
+    453672,
+    460414,
+    460467,
+    460545,
+    487329,
+    487397
   ],
   "ci_times": [
-    145057,
-    145057,
-    145146,
-    145222,
-    145295,
-    145370,
-    145448,
-    204262,
-    224543,
-    234124,
-    254227,
-    275365
+    150550,
+    159628,
+    159727,
+    159805,
+    159874,
+    159947,
+    160030,
+    270179,
+    377666,
+    437401,
+    460707,
+    470810
   ],
-  "started_at": 1795289618948
+  "ci_picks": [
+    [
+      "refs/merge-requests/1/merge",
+      150550
+    ],
+    [
+      "refs/merge-requests/2/merge",
+      150734
+    ],
+    [
+      "refs/merge-requests/3/merge",
+      150885
+    ],
+    [
+      "refs/merge-requests/4/merge",
+      151118
+    ],
+    [
+      "refs/merge-requests/5/merge",
+      151376
+    ],
+    [
+      "refs/merge-requests/6/merge",
+      151560
+    ],
+    [
+      "refs/merge-requests/1/train",
+      270179
+    ],
+    [
+      "refs/merge-requests/2/train",
+      270323
+    ],
+    [
+      "refs/merge-requests/3/train",
+      270483
+    ],
+    [
+      "refs/merge-requests/4/train",
+      270636
+    ],
+    [
+      "refs/merge-requests/4/merge",
+      377666
+    ],
+    [
+      "refs/merge-requests/1/train",
+      437401
+    ],
+    [
+      "refs/merge-requests/1/train",
+      460707
+    ]
+  ],
+  "started_at": 1795293079221
 }

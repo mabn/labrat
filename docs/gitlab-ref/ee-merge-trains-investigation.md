@@ -125,8 +125,17 @@ a Developer gets 403) or GraphQL `projectCiCdSettingsUpdate`.
 - **Developers** can't add to a train when they can't merge into the target branch (a
   protected `main`).
 
-- **`approvals_syncing` after a push:** with CI, the sync shows from when the MR's new pipeline
-  starts running until it finishes, not while it is pending. Without CI it ends after a moment.
+- **`approvals_syncing` after a push:** with CI, the sync starts when the MR's new pipeline
+  starts running (not while it is pending), and ends after a moment, as without CI.
+- **Pipeline status:** EE updates it from the jobs in a background worker. A job that starts
+  and finishes within that moment leaves its pipeline going from `pending` straight to its
+  result, with no `started_at` and no duration.
+- **Canceling:** canceling a pipeline whose job a runner is running leaves the job, and the
+  pipeline, `canceling` until the runner reports back. That happens with or without graceful
+  cancellation.
+- **Train refresh:** EE creates one car pipeline per refresh and merges one car per refresh.
+  Merging a car takes several seconds after its pipeline passes (4 to 15 seconds in the
+  recordings).
 
 ## Leaving the train
 
@@ -168,12 +177,20 @@ In every case the car is deleted, and the cars behind it get new pipelines.
 - **`mergeTrainsDeleteCar`:** Developers may delete any active car. A car that is gone gives
   `RESOURCE_UNAVAILABLE`.
 
-## Known differences
+## Deterministic recordings
 
-These are left unmodelled; they are timing races in EE:
+EE's background jobs run with varying delays, so the same scenario recorded twice can catch EE
+in different in-between states. The scenarios avoid reading such states:
 
-- **Pipeline creation order:** after a push restarts cars, EE's concurrent workers create
-  the new car pipelines and the MR's own pipeline in no fixed order.
-- **Closing a car's MR:** the close response can show the car pipeline as `canceled` in
-  `pipeline` and `running` in `head_pipeline`.
-- **`latest_build_started_at`** can still be null right after a pipeline starts.
+- The harness settles after every `ci_pick`, so pipelines read as `running`.
+- Adds and accepts settle one by one.
+- The drops scenario takes the last car off the train each time. Nothing behind it restarts at
+  the moment the MR gets its own new pipeline, which EE's workers would create in no fixed
+  order. The failure case in `merge_train_flow` covers restarts behind a car.
+- The closed MR is read after things settle. The close response itself can show the car
+  pipeline as `canceled` in `pipeline` and `running` in `head_pipeline`.
+- Durations come from EE's job timing:
+  - pipeline durations are compared with a few seconds' slack;
+  - a merged car's `duration` is compared as `<DURATION>`, like the timestamps it is made of.
+- The fixtures keep when each job was picked and finished (`ci_picks`, `ci_times`). Replays
+  start and finish labrat's fake jobs at those moments.

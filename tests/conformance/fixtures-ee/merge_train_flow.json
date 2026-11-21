@@ -2,7 +2,7 @@
   "scenario": "merge_train_flow",
   "base": "http://localhost:8929",
   "ssh_port": 2224,
-  "run": "r185b83",
+  "run": "r297d2d",
   "steps": [
     {
       "label": "group",
@@ -1906,7 +1906,7 @@
           "started_at": "<TIME>",
           "finished_at": "<TIME>",
           "committed_at": null,
-          "duration": 1,
+          "duration": 10,
           "queued_duration": "<QUEUED>",
           "coverage": null,
           "detailed_status": {
@@ -2091,11 +2091,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:1>",
+            "iid": 6,
+            "project_id": "<project:1>",
+            "sha": "<SHA10>",
+            "ref": "refs/merge-requests/1/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:3>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -2176,7 +2187,7 @@
             "project_id": "<project:1>",
             "sha": "<SHA10>",
             "ref": "refs/merge-requests/1/train",
-            "status": "created",
+            "status": "pending",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
@@ -2212,11 +2223,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:2>",
+            "iid": 7,
+            "project_id": "<project:1>",
+            "sha": "<SHA11>",
+            "ref": "refs/merge-requests/2/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -2297,7 +2319,7 @@
             "project_id": "<project:1>",
             "sha": "<SHA10>",
             "ref": "refs/merge-requests/1/train",
-            "status": "created",
+            "status": "pending",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
@@ -2333,11 +2355,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:2>",
+            "iid": 7,
+            "project_id": "<project:1>",
+            "sha": "<SHA11>",
+            "ref": "refs/merge-requests/2/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -2364,11 +2397,22 @@
             "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
             "web_url": "<BASE>/claude"
           },
-          "pipeline": null,
+          "pipeline": {
+            "id": "<car.pipeline:3>",
+            "iid": 8,
+            "project_id": "<project:1>",
+            "sha": "<SHA12>",
+            "ref": "refs/merge-requests/3/train",
+            "status": "pending",
+            "source": "merge_request_event",
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:5>"
+          },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
           "target_branch": "main",
-          "status": "idle",
+          "status": "fresh",
           "merged_at": null,
           "duration": null
         },
@@ -2444,16 +2488,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:2>",
+            "id": "<car.pipeline:4>",
             "iid": 9,
             "project_id": "<project:1>",
-            "sha": "<SHA11>",
+            "sha": "<SHA13>",
             "ref": "refs/merge-requests/4/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -2528,16 +2572,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:4>",
+            "id": "<car.pipeline:2>",
             "iid": 7,
             "project_id": "<project:1>",
-            "sha": "<SHA13>",
+            "sha": "<SHA11>",
             "ref": "refs/merge-requests/2/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -2671,16 +2715,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:4>",
+            "id": "<car.pipeline:2>",
             "iid": 7,
             "project_id": "<project:1>",
-            "sha": "<SHA13>",
+            "sha": "<SHA11>",
             "ref": "refs/merge-requests/2/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -2755,16 +2799,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:2>",
+            "id": "<car.pipeline:4>",
             "iid": 9,
             "project_id": "<project:1>",
-            "sha": "<SHA11>",
+            "sha": "<SHA13>",
             "ref": "refs/merge-requests/4/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -2814,16 +2858,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:2>",
+            "id": "<car.pipeline:4>",
             "iid": 9,
             "project_id": "<project:1>",
-            "sha": "<SHA11>",
+            "sha": "<SHA13>",
             "ref": "refs/merge-requests/4/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -2898,16 +2942,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:4>",
+            "id": "<car.pipeline:2>",
             "iid": 7,
             "project_id": "<project:1>",
-            "sha": "<SHA13>",
+            "sha": "<SHA11>",
             "ref": "refs/merge-requests/2/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -3057,16 +3101,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:4>",
+            "id": "<car.pipeline:2>",
             "iid": 7,
             "project_id": "<project:1>",
-            "sha": "<SHA13>",
+            "sha": "<SHA11>",
             "ref": "refs/merge-requests/2/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -3141,16 +3185,16 @@
             "web_url": "<BASE>/claude"
           },
           "pipeline": {
-            "id": "<car.pipeline:2>",
+            "id": "<car.pipeline:4>",
             "iid": 9,
             "project_id": "<project:1>",
-            "sha": "<SHA11>",
+            "sha": "<SHA13>",
             "ref": "refs/merge-requests/4/train",
             "status": "running",
             "source": "merge_request_event",
             "created_at": "<TIME>",
             "updated_at": "<TIME>",
-            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
+            "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
           },
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
@@ -3208,16 +3252,16 @@
           "web_url": "<BASE>/claude"
         },
         "pipeline": {
-          "id": "<car.pipeline:4>",
+          "id": "<car.pipeline:2>",
           "iid": 7,
           "project_id": "<project:1>",
-          "sha": "<SHA13>",
+          "sha": "<SHA11>",
           "ref": "refs/merge-requests/2/train",
           "status": "running",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
         },
         "created_at": "<TIME>",
         "updated_at": "<TIME>",
@@ -3336,26 +3380,26 @@
           "id": "<mr.pipeline:3>",
           "iid": 7,
           "project_id": "<project:1>",
-          "sha": "<SHA13>",
+          "sha": "<SHA11>",
           "ref": "refs/merge-requests/2/train",
           "status": "running",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
         },
         "head_pipeline": {
           "id": "<mr.head_pipeline:3>",
           "iid": 7,
           "project_id": "<project:1>",
-          "sha": "<SHA13>",
+          "sha": "<SHA11>",
           "ref": "refs/merge-requests/2/train",
           "status": "running",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
-          "before_sha": "<SHA13>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
+          "before_sha": "<SHA11>",
           "tag": false,
           "yaml_errors": null,
           "user": {
@@ -3381,7 +3425,7 @@
             "group": "running",
             "tooltip": "running",
             "has_details": true,
-            "details_path": "/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
+            "details_path": "/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
             "illustration": null,
             "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png"
           },
@@ -3460,16 +3504,16 @@
       },
       "body": [
         {
-          "id": "<pipeline:4>",
+          "id": "<pipeline:6>",
           "iid": 9,
           "project_id": "<project:1>",
-          "sha": "<SHA11>",
+          "sha": "<SHA13>",
           "ref": "refs/merge-requests/4/train",
           "status": "running",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
           "name": null
         },
         {
@@ -3486,16 +3530,16 @@
           "name": null
         },
         {
-          "id": "<pipeline:6>",
+          "id": "<pipeline:4>",
           "iid": 7,
           "project_id": "<project:1>",
-          "sha": "<SHA13>",
+          "sha": "<SHA11>",
           "ref": "refs/merge-requests/2/train",
           "status": "running",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
           "name": null
         },
         {
@@ -3862,26 +3906,26 @@
           "id": "<mr.pipeline:3>",
           "iid": 7,
           "project_id": "<project:1>",
-          "sha": "<SHA13>",
+          "sha": "<SHA11>",
           "ref": "refs/merge-requests/2/train",
           "status": "failed",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>"
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>"
         },
         "head_pipeline": {
           "id": "<mr.head_pipeline:3>",
           "iid": 7,
           "project_id": "<project:1>",
-          "sha": "<SHA13>",
+          "sha": "<SHA11>",
           "ref": "refs/merge-requests/2/train",
           "status": "failed",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
-          "before_sha": "<SHA13>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
+          "before_sha": "<SHA11>",
           "tag": false,
           "yaml_errors": null,
           "user": {
@@ -3897,7 +3941,7 @@
           "started_at": "<TIME>",
           "finished_at": "<TIME>",
           "committed_at": null,
-          "duration": 1,
+          "duration": 10,
           "queued_duration": "<QUEUED>",
           "coverage": null,
           "detailed_status": {
@@ -3907,7 +3951,7 @@
             "group": "failed",
             "tooltip": "failed",
             "has_details": true,
-            "details_path": "/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
+            "details_path": "/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
             "illustration": null,
             "favicon": "/assets/ci_favicons/favicon_status_failed-41304d7f7e3828808b0c26771f0309e55296819a9beea3ea9fbf6689d9857c12.png"
           },
@@ -4040,16 +4084,16 @@
           "name": null
         },
         {
-          "id": "<pipeline:4>",
+          "id": "<pipeline:6>",
           "iid": 9,
           "project_id": "<project:1>",
-          "sha": "<SHA11>",
+          "sha": "<SHA13>",
           "ref": "refs/merge-requests/4/train",
           "status": "canceling",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
           "name": null
         },
         {
@@ -4066,16 +4110,16 @@
           "name": null
         },
         {
-          "id": "<pipeline:6>",
+          "id": "<pipeline:4>",
           "iid": 7,
           "project_id": "<project:1>",
-          "sha": "<SHA13>",
+          "sha": "<SHA11>",
           "ref": "refs/merge-requests/2/train",
           "status": "failed",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
           "name": null
         },
         {
@@ -4434,7 +4478,7 @@
           "started_at": "<TIME>",
           "finished_at": "<TIME>",
           "committed_at": null,
-          "duration": 0,
+          "duration": 9,
           "queued_duration": "<QUEUED>",
           "coverage": null,
           "detailed_status": {
@@ -4559,7 +4603,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 42
+          "duration": "<DURATION>"
         },
         {
           "id": "<car:1>",
@@ -4601,7 +4645,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 41
+          "duration": "<DURATION>"
         }
       ]
     },
@@ -4660,7 +4704,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 42
+          "duration": "<DURATION>"
         },
         {
           "id": "<car:1>",
@@ -4702,7 +4746,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 41
+          "duration": "<DURATION>"
         }
       ]
     },
@@ -4753,7 +4797,7 @@
         "target_branch": "main",
         "status": "merged",
         "merged_at": "<TIME>",
-        "duration": 41
+        "duration": "<DURATION>"
       }
     },
     {
@@ -4898,7 +4942,7 @@
           "started_at": "<TIME>",
           "finished_at": "<TIME>",
           "committed_at": null,
-          "duration": 20,
+          "duration": 40,
           "queued_duration": "<QUEUED>",
           "coverage": null,
           "detailed_status": {
@@ -5068,7 +5112,7 @@
           "started_at": "<TIME>",
           "finished_at": "<TIME>",
           "committed_at": null,
-          "duration": 0,
+          "duration": 9,
           "queued_duration": "<QUEUED>",
           "coverage": null,
           "detailed_status": {
@@ -5472,7 +5516,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 42
+          "duration": "<DURATION>"
         },
         {
           "id": "<car:1>",
@@ -5514,7 +5558,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 41
+          "duration": "<DURATION>"
         }
       ]
     },
@@ -5785,16 +5829,16 @@
           "name": null
         },
         {
-          "id": "<pipeline:4>",
+          "id": "<pipeline:6>",
           "iid": 9,
           "project_id": "<project:1>",
-          "sha": "<SHA11>",
+          "sha": "<SHA13>",
           "ref": "refs/merge-requests/4/train",
           "status": "canceling",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
           "name": null
         },
         {
@@ -5811,16 +5855,16 @@
           "name": null
         },
         {
-          "id": "<pipeline:6>",
+          "id": "<pipeline:4>",
           "iid": 7,
           "project_id": "<project:1>",
-          "sha": "<SHA13>",
+          "sha": "<SHA11>",
           "ref": "refs/merge-requests/2/train",
           "status": "failed",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
           "name": null
         },
         {
@@ -6017,7 +6061,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 41
+          "duration": "<DURATION>"
         },
         {
           "id": "<car:3>",
@@ -6059,7 +6103,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 42
+          "duration": "<DURATION>"
         },
         {
           "id": "<car:5>",
@@ -6264,7 +6308,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 13
+          "duration": "<DURATION>"
         },
         {
           "id": "<car:5>",
@@ -6306,7 +6350,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 21
+          "duration": "<DURATION>"
         },
         {
           "id": "<car:3>",
@@ -6348,7 +6392,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 42
+          "duration": "<DURATION>"
         },
         {
           "id": "<car:1>",
@@ -6390,7 +6434,7 @@
           "target_branch": "main",
           "status": "merged",
           "merged_at": "<TIME>",
-          "duration": 41
+          "duration": "<DURATION>"
         }
       ]
     },
@@ -6536,7 +6580,7 @@
           "started_at": "<TIME>",
           "finished_at": "<TIME>",
           "committed_at": null,
-          "duration": 0,
+          "duration": 10,
           "queued_duration": "<QUEUED>",
           "coverage": null,
           "detailed_status": {
@@ -6706,7 +6750,7 @@
           "started_at": "<TIME>",
           "finished_at": "<TIME>",
           "committed_at": null,
-          "duration": 0,
+          "duration": 10,
           "queued_duration": "<QUEUED>",
           "coverage": null,
           "detailed_status": {
@@ -6802,16 +6846,16 @@
           "name": null
         },
         {
-          "id": "<pipeline:4>",
+          "id": "<pipeline:6>",
           "iid": 9,
           "project_id": "<project:1>",
-          "sha": "<SHA11>",
+          "sha": "<SHA13>",
           "ref": "refs/merge-requests/4/train",
           "status": "canceled",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
           "name": null
         },
         {
@@ -6828,16 +6872,16 @@
           "name": null
         },
         {
-          "id": "<pipeline:6>",
+          "id": "<pipeline:4>",
           "iid": 7,
           "project_id": "<project:1>",
-          "sha": "<SHA13>",
+          "sha": "<SHA11>",
           "ref": "refs/merge-requests/2/train",
           "status": "failed",
           "source": "merge_request_event",
           "created_at": "<TIME>",
           "updated_at": "<TIME>",
-          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:6>",
+          "web_url": "<BASE>/mtf-<RUN>/app/-/pipelines/<pipeline:4>",
           "name": null
         },
         {
@@ -6923,181 +6967,235 @@
   ],
   "times": [
     0,
-    255,
-    8235,
-    18472,
-    24212,
-    24822,
-    24891,
-    25474,
-    25533,
-    25631,
-    31548,
-    38460,
-    48463,
-    58321,
-    68377,
-    78231,
-    89391,
-    98466,
-    108203,
-    118482,
-    139679,
-    139810,
-    139889,
-    140050,
-    140108,
-    140211,
-    178476,
-    178589,
-    178653,
-    178704,
-    178755,
-    178811,
-    178928,
-    178995,
-    179068,
-    179193,
-    179328,
-    199166,
-    199241,
-    199315,
-    199388,
-    199443,
-    199520,
-    199579,
-    199642,
-    199754,
-    199858,
-    199921,
-    199975,
-    200034,
-    208835,
-    208918,
-    209017,
-    209083,
-    218852,
-    218919,
-    238952,
-    239033,
-    239098,
-    239151,
-    239229,
-    239307,
-    239380,
-    239456,
-    239522,
-    239583,
-    239645,
-    258505,
-    258569,
-    258634,
-    258728,
-    258790,
-    268743,
-    268816,
-    279082,
-    298780,
-    298849,
-    298942,
-    299019
+    251,
+    9226,
+    19250,
+    29595,
+    30232,
+    30300,
+    30888,
+    30944,
+    31044,
+    42076,
+    52605,
+    116429,
+    173399,
+    188277,
+    194225,
+    205411,
+    214316,
+    236224,
+    245371,
+    264950,
+    265057,
+    265133,
+    265250,
+    265305,
+    265395,
+    301842,
+    301952,
+    302023,
+    302073,
+    302121,
+    302169,
+    307857,
+    307922,
+    307990,
+    314666,
+    324931,
+    344960,
+    345024,
+    345097,
+    345167,
+    345212,
+    345279,
+    345327,
+    345380,
+    345430,
+    345522,
+    345581,
+    345634,
+    345685,
+    354992,
+    355061,
+    355156,
+    355221,
+    374769,
+    374849,
+    425273,
+    425340,
+    425401,
+    425459,
+    425544,
+    425628,
+    425702,
+    425770,
+    425835,
+    425895,
+    425948,
+    435980,
+    436040,
+    436100,
+    436192,
+    436263,
+    446128,
+    446189,
+    476201,
+    517284,
+    517348,
+    517440,
+    517522
   ],
   "done_times": [
-    254,
-    1054,
-    8574,
-    18650,
-    24821,
-    24889,
-    25473,
-    25532,
-    25630,
-    25730,
-    31890,
-    38612,
-    48822,
-    58471,
-    68748,
-    78347,
-    89717,
-    98593,
-    108519,
-    118608,
-    139810,
-    139889,
-    140049,
-    140108,
-    140211,
-    140276,
-    178589,
-    178653,
-    178704,
-    178755,
-    178811,
-    178927,
-    178995,
-    179068,
-    179192,
-    179327,
-    179486,
-    199241,
-    199315,
-    199388,
-    199443,
-    199520,
-    199579,
-    199642,
-    199754,
-    199858,
-    199921,
-    199975,
-    200034,
-    200215,
-    208918,
-    209017,
-    209083,
-    209142,
-    218918,
-    219018,
-    239033,
-    239098,
-    239151,
-    239229,
-    239307,
-    239380,
-    239456,
-    239521,
-    239583,
-    239645,
-    239871,
-    258567,
-    258634,
-    258727,
-    258790,
-    258860,
-    268816,
-    268932,
-    279146,
-    298848,
-    298942,
-    299019,
-    299076
+    250,
+    917,
+    9565,
+    19386,
+    30231,
+    30298,
+    30887,
+    30943,
+    31043,
+    31133,
+    42407,
+    52742,
+    116764,
+    173544,
+    188603,
+    194342,
+    205730,
+    214432,
+    236568,
+    245519,
+    265057,
+    265133,
+    265249,
+    265305,
+    265395,
+    265453,
+    301952,
+    302023,
+    302073,
+    302121,
+    302169,
+    302289,
+    307922,
+    307990,
+    308120,
+    314798,
+    325061,
+    345024,
+    345097,
+    345167,
+    345212,
+    345279,
+    345327,
+    345380,
+    345430,
+    345522,
+    345581,
+    345634,
+    345685,
+    345739,
+    355061,
+    355155,
+    355221,
+    355275,
+    374849,
+    374951,
+    425340,
+    425401,
+    425459,
+    425544,
+    425628,
+    425702,
+    425770,
+    425835,
+    425895,
+    425948,
+    426176,
+    436039,
+    436100,
+    436192,
+    436263,
+    436325,
+    446189,
+    446304,
+    476272,
+    517348,
+    517440,
+    517522,
+    517582
   ],
   "ci_times": [
-    139679,
-    140276,
-    140350,
-    140455,
-    140545,
-    199166,
-    200215,
-    209462,
-    209462,
-    219018,
-    258860,
-    279082,
-    279146,
-    279212
+    254824,
+    265453,
+    265529,
+    265610,
+    265687,
+    335016,
+    345739,
+    355436,
+    364936,
+    374951,
+    436325,
+    466311,
+    476272,
+    476346
   ],
-  "started_at": 1795289934482
+  "ci_picks": [
+    [
+      "refs/merge-requests/1/merge",
+      254824
+    ],
+    [
+      "refs/merge-requests/2/merge",
+      255002
+    ],
+    [
+      "refs/merge-requests/3/merge",
+      255161
+    ],
+    [
+      "refs/merge-requests/4/merge",
+      255322
+    ],
+    [
+      "refs/merge-requests/5/merge",
+      255481
+    ],
+    [
+      "refs/merge-requests/1/train",
+      335016
+    ],
+    [
+      "refs/merge-requests/2/train",
+      335269
+    ],
+    [
+      "refs/merge-requests/3/train",
+      335499
+    ],
+    [
+      "refs/merge-requests/4/train",
+      335720
+    ],
+    [
+      "refs/merge-requests/3/train",
+      355436
+    ],
+    [
+      "refs/merge-requests/4/train",
+      355682
+    ],
+    [
+      "refs/merge-requests/5/train",
+      466311
+    ],
+    [
+      "refs/merge-requests/4/train",
+      466458
+    ]
+  ],
+  "started_at": 1795293566980
 }

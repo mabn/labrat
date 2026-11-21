@@ -251,8 +251,8 @@ pub fn refresh(
                 crate::services::approvals::reset_on_push(c, config, p, &mr, user, &before.mr.merge_status)?;
                 crate::services::approvals::start_sync(c, config, &mr)?;
                 // With CI, EE keeps syncing until the MR's new pipeline finishes.
-                // With CI, EE syncs while the MR's new pipeline runs: from when it starts to
-                // when it finishes (2: waiting for it to start).
+                // With CI, EE's sync starts once the MR's new pipeline runs (2: waiting for it
+                // to start).
                 if crate::services::fake_ci::config(c, p.id)?.is_some() {
                     c.execute("DELETE FROM jobs WHERE kind = 'approvals_sync' AND json_extract(payload, '$.merge_request_id') = ?1", [mr.id])?;
                     c.execute("UPDATE merge_requests SET approvals_syncing = 2 WHERE id = ?1", [mr.id])?;
