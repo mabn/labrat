@@ -563,10 +563,7 @@ pub fn execute(
             {
                 messages.push(String::new());
             }
-            "approve"
-                if !reviews::has_approved(c, &mr_now, user)?
-                    && mr_now.state != "merged"
-                    && reviews::can_approve(c, p, &mr_now, user)? =>
+            "approve" if can_approve_now(c, config, p, &mr_now, user)? =>
             {
                 if !ctx.publishing && reviews::has_drafts(c, &mr_now, user)? {
                     reviews::publish_drafts(c, config, p, &mr_now, user)?;
@@ -593,8 +590,10 @@ pub fn execute(
                 } else {
                     args.trim().to_string()
                 };
-                if state == "approve" && !reviews::has_approved(c, &mr_now, user)? && reviews::can_approve(c, p, &mr_now, user)? {
+                if state == "approve" && can_approve_now(c, config, p, &mr_now, user)? {
                     messages.push("Approved the current merge request.".into());
+                } else if state == "approve" && config.is_ee() {
+                    messages.push("Failed to approve the current merge request.".into());
                 }
                 deferred.push(("submit_review", state));
             }
@@ -871,4 +870,13 @@ fn to_sentence(items: &[String]) -> String {
         2 => format!("{} and {}", items[0], items[1]),
         n => format!("{}, and {}", items[..n - 1].join(", "), items[n - 1]),
     }
+}
+
+/// Whether `user` can approve `mr` now: CE's update rights, or EE's approval eligibility
+/// (which keeps authors out unless the project allows them).
+fn can_approve_now(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest, user: &User) -> Result<bool> {
+    if config.is_ee() {
+        return Ok(crate::services::approvals::eligibility(c, p, mr, user)? == crate::services::approvals::Eligibility::Yes);
+    }
+    Ok(!reviews::has_approved(c, mr, user)? && mr.state != "merged" && reviews::can_approve(c, p, mr, user)?)
 }

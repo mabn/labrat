@@ -530,10 +530,26 @@ impl Scenario {
         } else if !body.is_null() {
             rb = rb.json(&body);
         }
-        let resp = rb.send().await.expect("request failed");
-        let status = resp.status().as_u16();
-        let headers = resp.headers().clone();
-        let bytes = resp.bytes().await.unwrap();
+        // While recording through a proxy, the proxy's own 502/503/504 pages ("error code: 502")
+        // mean the request never reached GitLab: wait and send it again.
+        let retry = if self.target.recording && !self.extra_headers.is_empty() { rb.try_clone() } else { None };
+        let mut resp = rb.send().await.expect("request failed");
+        let mut status = resp.status().as_u16();
+        let mut headers = resp.headers().clone();
+        let mut bytes = resp.bytes().await.unwrap();
+        if let Some(rb) = retry {
+            for attempt in 1..=6 {
+                if !(502..=504).contains(&status) || !bytes.starts_with(b"error code:") {
+                    break;
+                }
+                eprintln!("proxy {status} on {method} {path}; retry {attempt}");
+                tokio::time::sleep(std::time::Duration::from_secs(10 * attempt)).await;
+                resp = rb.try_clone().unwrap().send().await.expect("request failed");
+                status = resp.status().as_u16();
+                headers = resp.headers().clone();
+                bytes = resp.bytes().await.unwrap();
+            }
+        }
         let body = if bytes.is_empty() {
             Value::Null
         } else {

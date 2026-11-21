@@ -36,8 +36,18 @@ const GLOBAL_SCOPES: &[&str] = &["projects", "issues", "work_items", "merge_requ
 const GROUP_SCOPES: &[&str] = &["projects", "issues", "work_items", "merge_requests", "milestones", "users"];
 const PROJECT_SCOPES: &[&str] = &["issues", "work_items", "merge_requests", "milestones", "notes", "wiki_blobs", "commits", "blobs", "users"];
 
+/// EE also declares the advanced search scopes for instance and group search, and refuses
+/// them without advanced search (Elasticsearch).
+const EE_ADVANCED_SCOPES: &[&str] = &["blobs", "commits", "notes", "wiki_blobs"];
+
 /// Grape's validation of `search` and `scope`, in declaration order.
 fn validate(req: &Req, scopes: &[&str]) -> Result<(String, String), ApiError> {
+    let ee_advanced = req.app.config.is_ee() && !std::ptr::eq(scopes, PROJECT_SCOPES);
+    let mut all: Vec<&str> = scopes.to_vec();
+    if ee_advanced {
+        all.extend(EE_ADVANCED_SCOPES);
+    }
+    let scopes = &all[..];
     let p = &req.params;
     let mut errors = vec![];
     let search = p.str("search");
@@ -57,6 +67,9 @@ fn validate(req: &Req, scopes: &[&str]) -> Result<(String, String), ApiError> {
     }
     if !errors.is_empty() {
         return Err(Error::Param(errors.join(", ")).into());
+    }
+    if ee_advanced && scope.as_deref().is_some_and(|s| EE_ADVANCED_SCOPES.contains(&s)) {
+        return Err(Error::Api(400, json!("Scope supported only with advanced search")).into());
     }
     Ok((search.unwrap_or_default(), scope.unwrap_or_default()))
 }

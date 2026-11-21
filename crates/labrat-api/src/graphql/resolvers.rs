@@ -1645,7 +1645,7 @@ impl Object for MrObj {
                 let pass = |b: bool| if b { "SUCCESS" } else { "FAILED" };
                 if cx.req.app.config.is_ee() {
                     // EE 18.11's list, with the EE checks labrat has no feature for inactive.
-                    let requested = mr.reviewers(c)?.iter().any(|(_, _, st, _)| *st == reviews::state::REQUESTED_CHANGES);
+                    let requested = reviews::changes_requested(c, mr)?;
                     let approved = labrat_core::services::approvals::state(c, p, mr)?.approved();
                     let checks = [
                         ("NOT_OPEN", pass(mr.is_open())),

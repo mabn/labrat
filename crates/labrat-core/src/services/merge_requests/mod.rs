@@ -446,7 +446,7 @@ fn set_assignees(c: &Connection, mr_id: i64, ids: &[i64]) -> Result<()> {
     Ok(())
 }
 
-fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64]) -> Result<()> {
+fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64], ee: bool) -> Result<()> {
     let old: Vec<i64> = {
         let mut st = c.prepare("SELECT user_id FROM merge_request_reviewers WHERE merge_request_id = ?1")?;
         st.query_map([mr_id], |r| r.get(0))?.collect::<rusqlite::Result<_>>()?
@@ -468,6 +468,21 @@ fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64]) -> Result<()> {
             .join(",")
     };
     c.execute(&format!("DELETE FROM merge_request_reviewers WHERE merge_request_id = ?1 AND user_id NOT IN ({list})"), [mr_id])?;
+    // EE (several reviewers): the list takes the order given. The rows are recreated in that
+    // order, keeping each reviewer's state.
+    if ee && ids.len() > 1 {
+        let mut st = c.prepare("SELECT user_id, state, created_at FROM merge_request_reviewers WHERE merge_request_id = ?1")?;
+        let kept: Vec<(i64, i64, i64)> = st.query_map([mr_id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<rusqlite::Result<_>>()?;
+        c.execute("DELETE FROM merge_request_reviewers WHERE merge_request_id = ?1", [mr_id])?;
+        for id in ids {
+            if let Some((_, state, at)) = kept.iter().find(|(u, _, _)| u == id) {
+                c.execute(
+                    "INSERT INTO merge_request_reviewers (merge_request_id, user_id, state, created_at) VALUES (?1, ?2, ?3, ?4)",
+                    params![mr_id, id, state, at],
+                )?;
+            }
+        }
+    }
     for id in ids {
         c.execute(
             // `set_reviewers_approved`: a reviewer who already approved comes back `approved`.
@@ -692,7 +707,7 @@ pub fn create(
             }
         if let Some(ids) = &prm.reviewer_ids
             && let Some(list) = filter_users(c, _config, p, ids)? {
-                set_reviewers(c, id, &list)?;
+                set_reviewers(c, id, &list, _config.is_ee())?;
             }
     }
     let can_create_labels = ProjectPerms::load(c, Some(user), p)?.reporter();
@@ -1057,7 +1072,7 @@ pub fn update(
         && let Some(ids) = &prm.reviewer_ids
             && let Some(list) = filter_users(c, config, p, ids)?
                 && list != before.reviewers {
-                    set_reviewers(c, mr.id, &list)?;
+                    set_reviewers(c, mr.id, &list, config.is_ee())?;
                     new_reviewers = Some(list);
                 }
     // `update_timestamp?` is true unless only `relative_position` changed, so every save

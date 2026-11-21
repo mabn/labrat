@@ -265,6 +265,14 @@ CREATE TABLE approvals (
     UNIQUE (merge_request_id, user_id)
 );
 
+-- EE: users who requested changes on an MR (`merge_request_requested_changes`), which blocks
+-- merging until they approve, whether or not they are reviewers.
+CREATE TABLE merge_request_requested_changes (
+    merge_request_id INTEGER NOT NULL REFERENCES merge_requests (id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    PRIMARY KEY (merge_request_id, user_id)
+);
+
 -- EE approval rules, mirroring GitLab's tables. Project rules are the defaults; MR rules are
 -- copied from them when an MR is created and can be overridden per MR.
 CREATE TABLE approval_project_rules (

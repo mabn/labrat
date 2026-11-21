@@ -265,7 +265,7 @@ pub fn first_failed_check(
         return Ok(Some("merge_time".into()));
     }
     // EE: a reviewer's "changes requested" blocks merging.
-    if config.is_ee() && mr.reviewers(c)?.iter().any(|(_, _, state, _)| *state == crate::services::reviews::state::REQUESTED_CHANGES) {
+    if config.is_ee() && crate::services::reviews::changes_requested(c, mr)? {
         return Ok(Some("requested_changes".into()));
     }
     if p.only_allow_merge_if_all_discussions_are_resolved && unresolved_discussions(c, mr)? {
