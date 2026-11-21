@@ -1,28 +1,65 @@
 # labrat
 
-labrat is a GitLab simulator for testing API integrations. It is a single Rust binary that serves
-GitLab's REST API (v4), GraphQL API, webhooks and Git over HTTP. It keeps everything in one SQLite
-file: users, projects, merge requests and the git objects themselves.
+**A fast, lightweight GitLab simulator for testing anything that talks to GitLab.**
 
-It is for testing anything that talks to GitLab, such as bots, CLIs, code-review tools and sync jobs.
-It starts in moments, can be wiped or snapshotted between tests, and answers API calls the way
-GitLab 18.11 does. Merge requests are the focus. That means the whole lifecycle and everything people
-do in one: comments, threads, diff comments, reviews, approvals, reactions, suggestions and merging.
+labrat answers GitLab's REST API, GraphQL API, webhooks and Git over HTTP the way GitLab 18.11
+does, from a single 22 MB binary. Point your bot, CLI, code-review tool or sync job at it instead of
+a real GitLab, and your tests start in milliseconds instead of minutes.
 
-It is not a GitLab replacement. It has no CI runners, no issues, no durability, no upgrade path and
-no high availability. Its web UI looks and works like GitLab's for what labrat implements, and talks
-to labrat only through the GitLab APIs.
+<p align="center">
+  <img src="docs/assets/benchmark.svg" alt="labrat compared with GitLab: 20 merge requests from creation to merge take 1.7 s instead of 189 s; idle memory is 15 MB instead of 3.0 GB; starting from an empty data directory takes 0.03 s instead of 4 minutes." width="760">
+</p>
 
-**Status:** the merge request and review feature set is implemented and checked against a real
-GitLab 18.11 instance (see [Fidelity](#fidelity)). [docs/PLAN.md](docs/PLAN.md) covers the
-architecture and scope; [docs/LOG.md](docs/LOG.md) is the work log.
-[docs/MAINTAINING.md](docs/MAINTAINING.md) explains how to record fixtures, write scenarios and move
-to a newer GitLab version.
+<p align="center">
+  <i>labrat compared with GitLab CE 18.11 in Docker, on the same laptop. <a href="docs/BENCHMARKS.md">How this was measured</a>.</i>
+</p>
+
+## Highlights
+
+- **Fast:** a merge request workload runs [114× faster](docs/BENCHMARKS.md) than on GitLab. labrat
+  starts in about 30 ms and wipes all its data in 7 ms, so every test can start from a clean state.
+- **Small:** one binary and one SQLite file. No Docker, PostgreSQL, Redis or Sidekiq, and about
+  15 MB of memory when idle instead of 3 GB.
+- **Faithful:** checked against 7,838 responses and 689 webhook deliveries recorded from a real
+  GitLab instance. The check compares status codes, headers, bodies and even key order.
+- **Merge requests end to end:** branches and pushes, diffs, comments and threads, reviews,
+  approvals, suggestions, mergeability checks, every merge method, auto-merge and webhooks.
+- **Built for tests:** endpoints to reset, snapshot and restore, to wait until background work is
+  done, and to move the clock. A request log shows every call your code made.
+- **Works with real clients:** it is tested with the Rust `gitlab` crate, `curl` and
+  `git clone`/`git push`. Other GitLab clients use the same API.
+- **Simple web UI:** a GitLab-style web UI to browse projects, review merge requests and change
+  settings while you develop or debug.
+
+## labrat and GitLab at a glance
+
+| | GitLab CE 18.11 (Docker) | labrat |
+|---|---|---|
+| Download | 1.83 GB image | 8.7 MB binary (gzipped) |
+| Size on disk | 6.25 GB | 22.5 MB |
+| Install | 4 minutes: the first start sets GitLab up | 0: nothing to install |
+| Start | 84 s | 27 ms |
+| Reset to an empty state | Recreate the instance | 7 ms |
+| Memory when idle | 3.0 GB | 15 MB |
+| Peak memory during the workload | 3.5 GB | 80 MB |
+| 20 merge requests, created to merged | 189 s | 1.7 s |
+| Processes | 89 | 1 |
+
+Details, the workload and the machine are in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
 
 ## Quick start
 
+Build it (tested with Rust 1.99; it needs at least 1.88):
+
 ```sh
+git clone https://github.com/mabn/labrat.git
+cd labrat
 cargo build --release   # also builds the web UI when pnpm (and Node.js 20.19+) is installed
+```
+
+Run it with an in-memory database and a known token for `root`:
+
+```sh
 ./target/release/labrat --db :memory: --root-token glpat-test-token
 ```
 
@@ -40,33 +77,24 @@ The web UI is at <http://localhost:8080/>. Sign in as `root` with the root passw
 [`web/`](web/README.md) that `cargo build` embeds from `web/dist`; a binary built without it serves
 a page that says how to build it.
 
-| Option | Environment | Default | Meaning |
-|---|---|---|---|
-| `--listen` | `LABRAT_LISTEN` | `127.0.0.1:8080` | Address to listen on |
-| `--db` | `LABRAT_DB` | `labrat.sqlite` | SQLite file, or `:memory:` |
-| `--external-url` | `LABRAT_EXTERNAL_URL` | `http://<listen>` | Base URL used in links and payloads |
-| `--root-password` | `LABRAT_ROOT_PASSWORD` | `labrat-root-password` | Password of `root`, created on an empty database |
-| `--root-token` | `LABRAT_ROOT_TOKEN` | none | A personal access token for `root` with this exact value |
-| `--ssh-port` | `LABRAT_SSH_PORT` | `22` | Port shown in `ssh_url_to_repo` (git over SSH isn't served) |
-| `--job-delay-ms` | `LABRAT_JOB_DELAY_MS` | `0` | Delay every background job, to expose intermediate states |
-| `--job-jitter-ms` | `LABRAT_JOB_JITTER_MS` | `0` | Random extra delay per job |
+<p align="center">
+  <img src="docs/assets/web-ui-merge-request.png" alt="labrat's web UI showing an open merge request: the description, an approve and merge widget, a review thread with a suggested change, and a sidebar with reviewers and labels." width="760">
+</p>
 
-The database schema version is checked on start. After an upgrade that changes it, delete the
-database file.
+### Using it in tests
 
-## Test endpoints
+A typical test suite starts one labrat and resets it before each test:
 
-These need no authentication. labrat is a test tool and should only listen where tests can reach
-it.
+```sh
+curl -X POST localhost:8080/-/labrat/reset     # empty again: only root and its token
+# ... run the code under test against http://localhost:8080 ...
+curl localhost:8080/-/labrat/idle              # returns once background jobs and webhooks are done
+```
 
-| Endpoint | What it does |
-|---|---|
-| `POST /-/labrat/reset` | Wipes all data and recreates `root` (and its token) |
-| `POST /-/labrat/snapshot?path=…` | Saves the database to a file |
-| `POST /-/labrat/restore?path=…` | Restores a saved database |
-| `GET /-/labrat/idle` | Returns once every background job and webhook delivery has finished |
-| `POST /-/labrat/time` | Shifts labrat's clock |
-| `GET /-/labrat/requests.json` | The last 500 API calls with requests and responses (also in the UI at `/-/labrat/requests`) |
+Background work runs as it does in GitLab: a new merge request is `preparing` for a moment and its
+merge status is computed afterwards. Call `/-/labrat/idle` before asserting on anything that depends
+on it. To check that your code copes with slow background work, start labrat with
+`--job-delay-ms`.
 
 ## What is simulated
 
@@ -76,13 +104,16 @@ it.
 - **Repository APIs**: branches, tags, commits (create from actions, cherry-pick, revert), files,
   trees, compare, commit comments and discussions, commit statuses and the external pipelines
   they create.
-- **Merge requests**: the full lifecycle, asynchronous preparation and mergeability, detailed merge
-  status, every merge method with squash and templates, rebase, auto-merge (waiting for a green
-  pipeline when one exists), scheduled merges (`merge_after`), source branch deletion with
-  retargeting, diffs and versions, context commits, description templates, labels (with
-  promotion), project and group milestones, time tracking with time logs, subscriptions, to-dos
-  (including snoozing), resource events, contribution events, markdown uploads, and the list
-  filters and sorts.
+- **Merge requests**:
+  - the full lifecycle, asynchronous preparation and mergeability, and detailed merge status;
+  - every merge method with squash and templates, rebase, auto-merge (waiting for a green pipeline
+    when one exists) and scheduled merges (`merge_after`);
+  - source branch deletion with retargeting, diffs and versions, context commits and description
+    templates;
+  - labels (with promotion), project and group milestones, time tracking with time logs;
+  - subscriptions, to-dos (including snoozing), resource events, contribution events and markdown
+    uploads;
+  - the list filters and sorts.
 - **Reviews**: notes, threads, diff notes with position tracing, suggestions, award emoji, draft
   notes and review submission, approvals, reviewer states and quick actions.
 - **Webhooks**: push, tag push, merge request, comment (MR and commit), emoji and pipeline
@@ -99,37 +130,75 @@ it.
   request settings, members, labels, milestones, webhooks, access tokens, users and the request
   log.
 
-Out of scope: CI runners and jobs, issues, forks, and the rest listed in the
-plan.
+labrat is not a GitLab replacement. It has no CI runners or jobs, no issues, no forks, no durability
+guarantees and no high availability. Its web UI looks and works like GitLab's for what labrat
+implements, and talks to labrat only through the GitLab APIs. The full scope
+is in [docs/PLAN.md](docs/PLAN.md).
 
-## Fidelity
+## How faithful is it?
 
-`tests/conformance` holds scenarios recorded against a real GitLab 18.11 instance. Each scenario
-is a sequence of API calls (and webhook deliveries). In check mode it runs against an in-process
-labrat, and every response is compared with the recording after normalizing ids, times and tokens:
-status, headers, body and key order.
+labrat is checked against a real GitLab, not against its documentation. `tests/conformance`
+holds 154 scenarios: sequences of API calls, GraphQL queries, git pushes and webhook deliveries,
+recorded against GitLab 18.11. `cargo test` runs each scenario against labrat and compares every response
+with the recording, after replacing ids, times and tokens with placeholders. It compares status,
+headers, body and key order.
 
 ```sh
-cargo test                       # check labrat against the recordings
-cargo test -p labrat-conformance --test conformance todo_lifecycle   # one scenario
-LABRAT_RECORD=1 GITLAB_URL=… GITLAB_TOKEN=… \
-  cargo test -p labrat-conformance -- --test-threads=1   # re-record against GitLab
+cargo test                                                            # check labrat against the recordings
+cargo test -p labrat-conformance --test conformance todo_lifecycle    # one scenario
 ```
 
-The scenarios live in `tests/conformance/tests/scenarios/` and build into one test binary.
+Some details that make this work:
 
-Recordings also store when each step was sent and when GitLab answered it. When a recording is
-checked, the harness moves the clock of that labrat instance forward to GitLab's answer time before
-the step, because GitLab writes near the end of a request. Behaviour that depends on time, such as
-GitLab touching an MR at most once a minute, then replays the same way. Each instance has its own
-clock (`POST /-/labrat/time`), so scenarios can run in parallel. A step within a fraction of a second
-of such a boundary can still come out differently; re-record that scenario rather than adjusting
-labrat.
+- **Time:** recordings store when GitLab answered each step. The check moves labrat's clock to
+  match, so time-dependent behaviour replays the same way, such as GitLab touching a merge request
+  at most once a minute.
+- **Random walks:** the `random_walk*` scenarios run fixed-seed sequences of operations by two users
+  on one or two merge requests, and compare every webhook delivery. They find interactions that
+  hand-written scenarios miss.
+- **Real clients:** `tests/client` drives labrat with the Rust `gitlab` crate and the real `git`
+  client.
+- **Documentation gaps:** where GitLab's documentation and its behaviour disagree, labrat follows
+  the behaviour. [docs/discrepancies.md](docs/discrepancies.md) lists those cases.
 
-The `random_walk*` scenarios run a fixed-seed sequence of operations by two users on one or two
-MRs. Most of them also compare every webhook delivery. They find interactions that hand-written
-scenarios miss.
+[docs/MAINTAINING.md](docs/MAINTAINING.md) explains how to record new scenarios and how to move to
+a newer GitLab version.
 
-`tests/client` drives labrat with the Rust `gitlab` crate and with the real `git` client.
-[docs/discrepancies.md](docs/discrepancies.md) lists where GitLab's documentation and its behaviour
-disagree. labrat follows the behaviour.
+## Configuration
+
+| Option | Environment | Default | Meaning |
+|---|---|---|---|
+| `--listen` | `LABRAT_LISTEN` | `127.0.0.1:8080` | Address to listen on |
+| `--db` | `LABRAT_DB` | `labrat.sqlite` | SQLite file, or `:memory:` |
+| `--external-url` | `LABRAT_EXTERNAL_URL` | `http://<listen>` | Base URL used in links and payloads |
+| `--root-password` | `LABRAT_ROOT_PASSWORD` | `labrat-root-password` | Password of `root`, created on an empty database |
+| `--root-token` | `LABRAT_ROOT_TOKEN` | none | A personal access token for `root` with this exact value |
+| `--ssh-port` | `LABRAT_SSH_PORT` | `22` | Port shown in `ssh_url_to_repo` (git over SSH isn't served) |
+| `--job-delay-ms` | `LABRAT_JOB_DELAY_MS` | `0` | Delay every background job, to expose intermediate states |
+| `--job-jitter-ms` | `LABRAT_JOB_JITTER_MS` | `0` | Random extra delay per job |
+
+The database schema version is checked on start. After an upgrade that changes it, delete the
+database file.
+
+### Test endpoints
+
+These need no authentication. labrat is a test tool: only let it listen where your tests can reach
+it.
+
+| Endpoint | What it does |
+|---|---|
+| `POST /-/labrat/reset` | Wipes all data and recreates `root` (and its token) |
+| `POST /-/labrat/snapshot?path=…` | Saves the database to a file |
+| `POST /-/labrat/restore?path=…` | Restores a saved database |
+| `GET /-/labrat/idle` | Returns once every background job and webhook delivery has finished |
+| `POST /-/labrat/time` | Shifts labrat's clock |
+| `GET /-/labrat/requests.json` | The last 500 API calls with requests and responses (also in the UI at `/-/labrat/requests`) |
+
+## Documentation
+
+- [docs/BENCHMARKS.md](docs/BENCHMARKS.md): the comparison with GitLab and how to run it.
+- [docs/MAINTAINING.md](docs/MAINTAINING.md): recording fixtures, writing scenarios and moving to a
+  newer GitLab version.
+- [docs/PLAN.md](docs/PLAN.md): architecture and scope.
+- [docs/discrepancies.md](docs/discrepancies.md): where GitLab's documentation and its behaviour
+  disagree.

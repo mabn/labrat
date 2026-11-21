@@ -142,8 +142,8 @@ instance stays available. Only one instance can run at a time because they all u
    - it gives `claude` a token named `claude-code` with the scopes `api`, `read_repository`,
      `write_repository` and `admin_mode`, valid for 364 days;
    - it turns on the `rebase_on_merge_automatic` feature flag;
-   - it writes `GITLAB_URL` and `GITLAB_TOKEN` to `$GITLAB_HOME/labrat.env`. That file holds a
-     secret: keep it out of the repository.
+   - it writes `GITLAB_URL`, `GITLAB_TOKEN` and `claude`'s random password to
+     `$GITLAB_HOME/labrat.env`. That file holds secrets: keep it out of the repository.
 
 7. Copy the Rails source and the version-specific data:
 

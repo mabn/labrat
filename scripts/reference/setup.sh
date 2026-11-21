@@ -43,9 +43,11 @@ if [ "$(api GET '/users?username=claude' | jq length)" != 0 ]; then
   exit 1
 fi
 
-# The same request the harness sends to labrat.
-USER_ID=$(api POST /users '{"username": "claude", "name": "Claude", "email": "claude@gitlab.unhood.org",
-  "password": "claude-password-123", "admin": true, "skip_confirmation": true}' | jq -r .id)
+# The same user the harness creates in labrat. GitLab rejects common passwords, so this one is
+# random; the scenarios never use it.
+PASSWORD=$(head -c 24 /dev/urandom | base64 | tr -d '/+=')
+USER_ID=$(api POST /users "{\"username\": \"claude\", \"name\": \"Claude\", \"email\": \"claude@gitlab.unhood.org\",
+  \"password\": \"$PASSWORD\", \"admin\": true, \"skip_confirmation\": true}" | jq -r .id)
 
 EXPIRES=$(date -d '+364 days' +%F)
 TOKEN=$(api POST "/users/$USER_ID/personal_access_tokens" "{\"name\": \"claude-code\",
@@ -57,6 +59,8 @@ umask 077
 cat > "$OUT" <<EOF
 GITLAB_URL=$URL
 GITLAB_TOKEN=$TOKEN
+# Don't sign in to the web UI with this password: the fixtures expect claude never to have signed in.
+GITLAB_PASSWORD=$PASSWORD
 # User claude (id $USER_ID); token expires $EXPIRES; scopes: api, read_repository, write_repository, admin_mode
 EOF
 echo "Done. Wrote $OUT. The token expires $EXPIRES."
