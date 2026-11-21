@@ -792,9 +792,11 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
         "success" => "passed",
         other => other,
     };
-    // Detached MR pipelines report the source branch as `ref` and carry their MR.
-    let mr = match pl.ref_.as_deref().and_then(|r| r.strip_prefix("refs/merge-requests/")).and_then(|r| r.strip_suffix("/head")) {
-        Some(iid) if pl.source == "merge_request_event" => {
+    // MR pipelines (detached, merged results, merge train) report the source branch as `ref`
+    // and carry their MR.
+    let mr = match (pl.merge_request_id, pl.ref_.as_deref().and_then(|r| r.strip_prefix("refs/merge-requests/")).and_then(|r| r.strip_suffix("/head"))) {
+        (Some(id), _) if pl.source == "merge_request_event" => crate::services::merge_requests::MergeRequest::find(c, id)?,
+        (None, Some(iid)) if pl.source == "merge_request_event" => {
             let iid: i64 = iid.parse().unwrap_or(0);
             crate::services::merge_requests::MergeRequest::find_by_iid(c, p.id, iid)?
         }
@@ -811,9 +813,25 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
         }),
         None => Value::Null,
     };
-    // Stages of the pipeline's jobs: commit statuses run in `external`.
-    let jobs: i64 = c.query_row("SELECT count(*) FROM commit_statuses WHERE pipeline_id = ?1", [pl.id], |r| r.get(0))?;
-    let stages = if jobs > 0 { json!(["external"]) } else { json!([]) };
+    // Stages of the pipeline's jobs: commit statuses run in `external`, fake CI jobs in theirs.
+    let jobs: i64 = c.query_row("SELECT count(*) FROM commit_statuses WHERE pipeline_id = ?1 AND build = 0", [pl.id], |r| r.get(0))?;
+    let builds = build_attrs(c, pl)?;
+    let stages = if !builds.is_empty() {
+        let mut st: Vec<String> = vec![];
+        for b in &builds {
+            if let Some(x) = b["stage"].as_str()
+                && !st.iter().any(|s| s == x)
+            {
+                st.push(x.to_string());
+            }
+        }
+        json!(st)
+    } else if jobs > 0 {
+        json!(["external"])
+    } else {
+        json!([])
+    };
+    let ref_status = if builds.is_empty() { Value::Null } else { json!(pl.status) };
     // `hook_attrs(backward: false)`: without the legacy URL keys.
     let mut pipeline_project = project_attrs(c, config, p)?;
     if let Some(o) = pipeline_project.as_object_mut() {
@@ -829,7 +847,7 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
             "name": pl.name,
             "ref": hook_ref,
             // `ci_ref&.status_name`: commit-status pipelines have no CI ref.
-            "ref_status_name": null,
+            "ref_status_name": ref_status,
             "tag": pl.tag,
             "sha": pl.sha,
             "before_sha": pl.before_sha.clone().unwrap_or_else(|| "0000000000000000000000000000000000000000".into()),
@@ -849,9 +867,51 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
         "user": user.as_ref().map(user_attrs),
         "project": pipeline_project,
         "commit": commit,
-        "builds": [],
+        "builds": builds,
     });
     Ok(Some(data))
+}
+
+/// The runner labrat's fake CI jobs run on, as pipeline hooks show it.
+fn fake_runner_attrs() -> Value {
+    json!({"id": 1, "description": "labrat-fake-runner", "runner_type": "instance_type", "active": true, "is_shared": true, "tags": []})
+}
+
+/// `builds` of a pipeline hook: the fake CI jobs, newest first.
+fn build_attrs(c: &Connection, pl: &crate::services::ci::Pipeline) -> Result<Vec<Value>> {
+    let mut st = c.prepare(
+        "SELECT id, name, stage, status, user_id, created_at, queued_at, started_at, finished_at FROM commit_statuses
+         WHERE pipeline_id = ?1 AND build = 1 AND retried = 0 ORDER BY id DESC",
+    )?;
+    #[allow(clippy::type_complexity)]
+    let rows: Vec<(i64, String, Option<String>, String, Option<i64>, i64, Option<i64>, Option<i64>, Option<i64>)> = st
+        .query_map([pl.id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?, r.get(7)?, r.get(8)?)))?
+        .collect::<rusqlite::Result<_>>()?;
+    let mut out = vec![];
+    for (id, name, stage, status, user_id, created, queued, started, finished) in rows {
+        let user = user_id.map(|u| User::find(c, u)).transpose()?.flatten();
+        let secs = |ms: i64| ms as f64 / 1000.0;
+        out.push(json!({
+            "id": id,
+            "stage": stage.unwrap_or_else(|| "test".into()),
+            "name": name,
+            "status": status,
+            "created_at": ar_time(created),
+            "started_at": opt_ar_time(started),
+            "finished_at": opt_ar_time(finished),
+            "duration": started.zip(finished).map(|(s, f)| secs(f - s)),
+            "queued_duration": started.map(|s| secs(s - queued.unwrap_or(created))),
+            "failure_reason": if status == "failed" { json!("script_failure") } else { Value::Null },
+            "when": "on_success",
+            "manual": false,
+            "allow_failure": false,
+            "user": user.as_ref().map(user_attrs),
+            "runner": if started.is_some() { fake_runner_attrs() } else { Value::Null },
+            "artifacts_file": {"filename": null, "size": null},
+            "environment": null,
+        }));
+    }
+    Ok(out)
 }
 
 /// Push and tag push hooks for one ref update.

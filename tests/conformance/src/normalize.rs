@@ -547,7 +547,8 @@ pub fn diff(expected: &Value, actual: &Value, path: &str) -> Option<String> {
         // compared as `<TIME>`: they follow the reference's background job timing, so they
         // only need to be close.
         (Value::Number(a), Value::Number(b))
-            if path.ends_with(".duration") && a.as_i64().zip(b.as_i64()).is_some_and(|(x, y)| (x - y).abs() <= DURATION_SLACK_S) =>
+            if (path.ends_with(".duration") || path.ends_with(".queued_duration"))
+                && a.as_f64().zip(b.as_f64()).is_some_and(|(x, y)| (x - y).abs() <= DURATION_SLACK_S as f64) =>
         {
             None
         }

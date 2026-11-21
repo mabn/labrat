@@ -1280,7 +1280,21 @@ async fn do_merge(req: Req) -> ApiResult {
         let mr = mr.reload(c)?;
         let not_allowed = || Error::message(405, "405 Method Not Allowed").into();
         let cannot = || Error::message(422, "Branch cannot be merged").into();
-        if auto {
+        // EE with merge trains: plain merge-when-checks-pass isn't offered (only the train
+        // strategies are, and this endpoint doesn't use them). An MR that can merge now merges;
+        // anything else is refused.
+        let trains = cfg.is_ee() && labrat_core::services::merge_trains::merge_trains_enabled(&proj);
+        if auto && trains {
+            let dhp = labrat_core::services::ci::diff_head_pipeline(c, &proj, &mr)?;
+            if !can_merge_now || dhp.as_ref().is_some_and(|pl| pl.is_unfinished()) {
+                return Ok(Err(not_allowed()));
+            }
+            merge::merge(c, cfg, &proj, &mr, &me, &mp)?;
+            if mr.reload(c)?.state != "merged" {
+                return Ok(Err(cannot()));
+            }
+            labrat_core::services::merge_trains::merged_past_train(c, cfg, &proj, &mr.reload(c)?, &me, false)?;
+        } else if auto {
             // `MergeWhenChecksPassService#availability_details`: the non-CI checks pass (drafts and
             // threads may wait), and the MR either cannot merge yet or its pipeline is still
             // running.

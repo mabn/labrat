@@ -7,3 +7,4 @@ pub mod merge_train_settings;
 mod merge_train_flow;
 mod merge_train_drops;
 mod graphql_merge_trains;
+mod merge_train_hooks;
