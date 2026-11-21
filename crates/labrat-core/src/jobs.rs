@@ -135,6 +135,7 @@ pub fn run(c: &Connection, config: &Config, job: &Job) -> Result<()> {
         "commit_cross_references" => crate::services::cross_refs::process_commits(c, config, &p),
         "update_merge_requests" => crate::services::merge_requests::refresh::refresh_job(c, config, &p),
         "approvals_sync" => crate::services::approvals::finish_sync(c, id("merge_request_id")),
+        "merge_train_abort" => crate::services::merge_trains::abort_job(c, config, id("car_id"), id("user_id"), p["reason"].as_str().unwrap_or("")),
         "merge_train_refresh" => crate::services::merge_trains::refresh(c, config, id("project_id"), p["target_branch"].as_str().unwrap_or("")),
         "merge_train_auto_add" => match crate::services::merge_requests::MergeRequest::find(c, id("merge_request_id"))? {
             Some(mr) => crate::services::merge_trains::auto_add(c, config, &mr).map(|_| ()),

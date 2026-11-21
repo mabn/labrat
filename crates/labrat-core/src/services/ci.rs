@@ -518,7 +518,12 @@ pub fn recompute(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()
     let started = if target == "running" && pl.started_at.is_none() { Some(now) } else { pl.started_at };
     let finished = if matches!(target.as_str(), "success" | "failed" | "canceled") { Some(now) } else { pl.finished_at };
     let duration = if matches!(target.as_str(), "success" | "failed" | "canceled") {
-        started.map(|_| 0)
+        // Fake CI pipelines last as long as their jobs ran; external ones report 0.
+        let builds: i64 = c.query_row("SELECT count(*) FROM commit_statuses WHERE pipeline_id = ?1 AND build = 1", [pl.id], |r| r.get(0))?;
+        match (started, finished) {
+            (Some(s), Some(f)) if builds > 0 => Some((f - s) / 1000),
+            _ => started.map(|_| 0),
+        }
     } else {
         pl.duration
     };
@@ -546,6 +551,11 @@ pub fn recompute(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()
             )?;
         }
     }
+    if target == "running"
+        && let Some(mr_id) = pl.merge_request_id
+    {
+        crate::services::approvals::pipeline_running(c, mr_id)?;
+    }
     crate::services::hooks::pipeline_event(c, config, &p, &pl)?;
     // EE merge trains: a car's pipeline moves its train on; a passing MR pipeline adds an MR
     // waiting to join.
@@ -572,7 +582,10 @@ pub fn has_ci(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<bool> {
 /// inactive, else `ci_still_running` or `ci_must_pass`.
 pub fn ci_check(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<Option<&'static str>> {
     let setting = p.only_allow_merge_if_pipeline_succeeds;
-    if !setting && !mr.merge_when_pipeline_succeeds {
+    // EE merge train strategies run their own pipelines: they don't make CI a merge check.
+    let auto_ci = mr.merge_when_pipeline_succeeds
+        && !matches!(mr.merge_params.get("auto_merge_strategy").and_then(|v| v.as_str()), Some("merge_train" | "add_to_merge_train_when_checks_pass"));
+    if !setting && !auto_ci {
         return Ok(None);
     }
     let must = setting || has_ci(c, p, mr)?;

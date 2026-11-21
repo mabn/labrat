@@ -264,7 +264,7 @@ impl Object for PageInfo {
     }
 }
 
-fn id_cursor(id: i64) -> Value {
+pub fn id_cursor(id: i64) -> Value {
     json!({"id": id.to_string()})
 }
 
@@ -946,6 +946,7 @@ impl Object for ProjectObj {
             "avatarUrl" => Out::Null,
             "autocloseReferencedIssues" | "lfsEnabled" | "sharedRunnersEnabled" => Out::val(true),
             "ciCdSettings" => super::merge_trains::ci_cd_settings(cx, p)?,
+            "mergeTrains" => super::merge_trains::project_trains(cx, p, args)?,
             "ciConfigPathOrDefault" => Out::val(p.setting("ci_config_path").and_then(|v| v.as_str().map(str::to_string)).filter(|v| !v.is_empty()).unwrap_or(".gitlab-ci.yml".into())),
             "containerRepositoriesCount" => Out::val(0),
             "isForked" | "pagesForceHttps" | "pagesUseUniqueDomain" => Out::val(false),
@@ -1479,10 +1480,18 @@ impl Object for MrObj {
             }
             "mergeOngoing" => Out::val(mr.state == "locked"),
             "squashReadOnly" => Out::val(matches!(p.squash_option.as_str(), "always" | "never")),
-            "autoMergeStrategy" => Out::val(if mr.merge_when_pipeline_succeeds { Some("merge_when_checks_pass") } else { None }),
+            "autoMergeStrategy" => Out::val(if mr.merge_when_pipeline_succeeds {
+                Some(mr.merge_params.get("auto_merge_strategy").and_then(Value::as_str).unwrap_or("merge_when_checks_pass").to_string())
+            } else {
+                None
+            }),
+            "mergeTrainCar" | "mergeTrainIndex" | "mergeTrainsCount" => super::merge_trains::mr_field(cx, p, mr, field)?,
             // `AutoMergeService#available_strategies`: merge-when-checks-pass, when the user can
             // merge, nothing auto-merge waits on is blocking, and the MR can't simply merge now
             // (a pipeline still running, a draft, open threads, ...).
+            "availableAutoMergeStrategies" if cx.req.app.config.is_ee() && labrat_core::services::merge_trains::merge_trains_enabled(p) => {
+                super::merge_trains::available_strategies(cx, p, mr)?
+            }
             "availableAutoMergeStrategies" => {
                 let available = match cx.user() {
                     Some(u) if mr.is_open() => {
@@ -1910,6 +1919,12 @@ impl Object for MilestoneObj {
 pub struct PipelineObj {
     p: Project,
     pl: labrat_core::services::ci::Pipeline,
+}
+
+impl PipelineObj {
+    pub fn new(p: Project, pl: labrat_core::services::ci::Pipeline) -> PipelineObj {
+        PipelineObj { p, pl }
+    }
 }
 
 impl Object for PipelineObj {
@@ -3057,6 +3072,18 @@ impl Mutation {
                 };
                 match error {
                     Some(e) => pl.errors = vec![e.to_string()],
+                    None if matches!(strategy.as_deref(), Some("MERGE_TRAIN" | "ADD_TO_MERGE_TRAIN_WHEN_CHECKS_PASS")) => {
+                        let opts = labrat_core::services::merge_trains::AddOpts {
+                            auto_merge: strategy.as_deref() == Some("ADD_TO_MERGE_TRAIN_WHEN_CHECKS_PASS"),
+                            sha: input.str("sha"),
+                            squash: input.bool("squash"),
+                        };
+                        if labrat_core::services::merge_trains::add(c, config, &p, &mr, &user, &opts).is_err() {
+                            pl.errors = vec!["The merge failed".into()];
+                        }
+                        pl.mr = Some((p.clone(), mr.reload(c)?));
+                        return Ok(pl);
+                    }
                     None if strategy.is_some() => {
                         c.execute(
                             "UPDATE merge_requests SET merge_error = NULL, squash = ?1 WHERE id = ?2",
@@ -3291,6 +3318,10 @@ impl Object for Mutation {
                 pl.errors = errors;
                 pl.approval_rule = rule;
                 pl
+            }
+            "mergeTrainsDeleteCar" => {
+                super::merge_trains::delete_car(cx, &input)?;
+                Payload { ty: "MergeTrainsDeleteCarPayload".into(), client_id: input.str("clientMutationId"), ..Default::default() }
             }
             "projectCiCdSettingsUpdate" => {
                 let p = super::merge_trains::settings_update(cx, &input)?;

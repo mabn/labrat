@@ -132,16 +132,25 @@ async fn add(req: Req) -> ApiResult {
             sha: req.params.str("sha"),
             squash: req.params.bool("squash")?,
         };
-        match mt::add(c, &config, &p, &mr, &me, &opts)? {
-            mt::Added::Now => {
-                // The whole train, paginated like the listings.
-                let cars = Car::train(c, p.id, &mr.target_branch)?;
-                let mut resp = paginate(&req, cars, &[], |car| car_json(c, &req, &p, car))?;
-                resp.status = axum::http::StatusCode::CREATED;
-                Ok::<_, ApiError>(resp)
-            }
-            mt::Added::WhenChecksPass => Ok(Resp::status(202, json!([]))),
-        }
+        // The links of the paginated answer carry the declared params that were given.
+        let given: Vec<(String, String)> = ["auto_merge", "sha", "squash", "when_pipeline_succeeds"]
+            .iter()
+            .filter_map(|k| {
+                req.params.raw(k).map(|v| (k.to_string(), match v {
+                    Value::String(s) => s.clone(),
+                    other => other.to_string(),
+                }))
+            })
+            .collect();
+        let defaults: Vec<(&str, &str)> = given.iter().map(|(k, v)| (k.as_str(), v.as_str())).collect();
+        let (cars, status) = match mt::add(c, &config, &p, &mr, &me, &opts)? {
+            // Every car of the target branch, merged ones too.
+            mt::Added::Now => (Car::list(c, p.id, Some(&mr.target_branch), None, true)?, axum::http::StatusCode::CREATED),
+            mt::Added::WhenChecksPass => (vec![], axum::http::StatusCode::ACCEPTED),
+        };
+        let mut resp = paginate(&req, cars, &defaults, |car| car_json(c, &req, &p, car))?;
+        resp.status = status;
+        Ok::<_, ApiError>(resp)
     })?;
     crate::jobs::kick(&req.app);
     Ok(res)

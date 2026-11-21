@@ -114,5 +114,66 @@ a Developer gets 403) or GraphQL `projectCiCdSettingsUpdate`.
 - **Merging past the train:** `PUT /merge` without `auto_merge` still merges at once on 18.11
   ("merge immediately").
 
-See the fixtures for drops on push, draft and close; merging past the train; skipping the train;
-and GraphQL.
+- **The add response** lists every car of the target branch, merged ones included,
+  ascending. It is paginated, and its links carry the parameters that were given. Adding when
+  checks pass answers 202 with an empty page.
+- **Readiness:** the MR must be mergeable, and its pipeline must have finished. A failed
+  pipeline is fine, since the train runs its own. Without a pipeline, or while one runs, the
+  add is refused (`Failed to merge`).
+- **CI as a merge check:** the train strategies don't make CI a merge check. An MR waiting to
+  join, or on the train, stays `mergeable` while its pipeline runs.
+- **Developers** can't add to a train when they can't merge into the target branch (a
+  protected `main`).
+
+- **`approvals_syncing` after a push:** with CI, the sync shows from when the MR's new pipeline
+  starts running until it finishes, not while it is pending. Without CI it ends after a moment.
+
+## Leaving the train
+
+| Cause | System note (after `removed this merge request from the merge train`) | When |
+|---|---|---|
+| Car pipeline failed | ` because the pipeline did not succeed. [Learn more](…).` | refresh |
+| Push to the source branch | ` because the source branch was updated. [Learn more](…).` | during the push refresh, before the "added commits" note |
+| Marked as draft | ` because the merge request is marked as draft. [Learn more](…).` | after the request |
+| Closed | ` because merge request was closed` | after the request; auto-merge is cleared at once |
+| Cancel auto-merge, `mergeTrainsDeleteCar` | (none) | at once; the car's pipeline is canceled |
+
+In every case the car is deleted, and the cars behind it get new pipelines.
+
+## Merging past the train
+
+- `PUT /merge` without `auto_merge` merges at once (setting off, `skip_merge_train` ignored).
+  The train then restarts: every car gets a new pipeline on top of the new target.
+- With `merge_trains_skip_train_allowed`, `skip_merge_train: true` also records the MR as a car
+  with status `skip_merged` (no pipeline, no duration). The train restarts too.
+
+## GraphQL
+
+- **`Project.mergeTrains(status, targetBranches)`:** one `MergeTrain` per target branch that
+  has cars of that status (`ACTIVE`/`COMPLETED`; any status when omitted).
+  `cars(activityStatus:)` lists active cars front first, and completed ones latest first.
+- **`MergeTrainCar`:** `id` is `gid://gitlab/MergeTrains::Car/N`. `index` is null once merged.
+  `status` is uppercase. `userPermissions.deleteMergeTrainCar` holds for Developers.
+- **The MR's train fields:**
+  - `mergeTrainCar`: the merged car too;
+  - `mergeTrainIndex`: null off the train;
+  - `mergeTrainsCount`: active cars on the target branch, 0 with trains on;
+  - `autoMergeStrategy`: `merge_train` or `add_to_merge_train_when_checks_pass`;
+  - `availableAutoMergeStrategies`: `add_to_merge_train_when_checks_pass` while the
+    pipeline runs, `merge_train` when the MR could merge, otherwise `[]`.
+- **`mergeRequestAccept` with `MERGE_TRAIN` or `ADD_TO_MERGE_TRAIN_WHEN_CHECKS_PASS`:**
+  - errors as usual (`already scheduled`, `not at the anticipated SHA`);
+  - `The merge failed` when `MERGE_TRAIN` is asked for while the pipeline runs;
+  - users who can't merge get `RESOURCE_UNAVAILABLE`.
+- **`mergeTrainsDeleteCar`:** Developers may delete any active car. A car that is gone gives
+  `RESOURCE_UNAVAILABLE`.
+
+## Known differences
+
+These are left unmodelled; they are timing races in EE:
+
+- **Pipeline creation order:** after a push restarts cars, EE's concurrent workers create
+  the new car pipelines and the MR's own pipeline in no fixed order.
+- **Closing a car's MR:** the close response can show the car pipeline as `canceled` in
+  `pipeline` and `running` in `head_pipeline`.
+- **`latest_build_started_at`** can still be null right after a pipeline starts.

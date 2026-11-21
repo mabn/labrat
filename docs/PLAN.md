@@ -495,6 +495,29 @@ that the conformance suite catches.
   - re-authentication to approve;
   - approval policies, which are security policies and depend on CI scans.
 
+**EE: merge trains** (EE mode only)
+- Settings: `merge_pipelines_enabled`, `merge_trains_enabled` and
+  `merge_trains_skip_train_allowed` (REST `PUT /projects/:id`, GraphQL `ciCdSettings` and
+  `projectCiCdSettingsUpdate`).
+- REST: `/projects/:id/merge_trains` (with `scope` and `sort`), `/merge_trains/:target_branch`,
+  and `/merge_trains/merge_requests/:iid` (show and add, also when checks pass). Removal goes
+  through `cancel_merge_when_pipeline_succeeds`.
+- Train behaviour:
+  - car pipelines on `refs/merge-requests/:iid/train`;
+  - the front car merges when its pipeline passes;
+  - a failed car is dropped and the cars behind it restart;
+  - a push, a draft or closing the MR drops its car;
+  - merging past the train restarts it, and an allowed skip records a `skip_merged` car.
+- GraphQL: `Project.mergeTrains` with cars; the MR's `mergeTrainCar`, `mergeTrainIndex`,
+  `mergeTrainsCount` and train auto-merge strategies; `mergeRequestAccept` with
+  `MERGE_TRAIN` and `ADD_TO_MERGE_TRAIN_WHEN_CHECKS_PASS`; `mergeTrainsDeleteCar`.
+- **Fake CI**, the one exception to "CI/CD is out of scope", added for merge trains:
+  - labrat reads no `.gitlab-ci.yml`;
+  - a project's fake CI is set up through `/-/labrat/projects/:id/ci`;
+  - with it on, MRs get detached or merged results pipelines, and trains get car pipelines;
+  - jobs are finished by a fake runner, by hand (`/-/labrat/ci/pick`, `/-/labrat/ci/finish`)
+    or automatically, with a given result after a given duration.
+
 ### Later (candidates, by demand)
 
 Items marked **done** are implemented and covered by conformance scenarios.
@@ -527,6 +550,7 @@ Items marked **done** are implemented and covered by conformance scenarios.
 - **Forks:** forks and cross-project MRs, where the source and target projects differ.
 - **Group webhooks.**
 - **CI/CD:** pipelines, jobs, runners, artifacts, CI variables, environments and deployments.
+  The only exception is the fake CI that merge trains need (see "EE: merge trains").
 - **Other GitLab products:** container and package registries, Pages, Releases, feature flags,
   Kubernetes and Terraform state.
 - **Planning:** issues, epics, boards, work items, incidents, Service Desk, requirements and

@@ -335,10 +335,32 @@ pub fn restart_train(c: &Connection, config: &Config, project_id: i64, target_br
 
 /// The car of an MR that leaves the train for a reason: closed,
 /// marked as draft, pushed to.
-pub fn abort_for_mr(c: &Connection, config: &Config, mr: &MergeRequest, user: &User, reason: &str) -> Result<bool> {
+pub fn abort_for_mr(c: &Connection, config: &Config, mr: &MergeRequest, user: &User, reason: &str, clear_now: bool) -> Result<bool> {
+    let Some(car) = Car::active_for_mr(c, mr.id)? else { return Ok(false) };
+    // GitLab drops the car from a worker, after the request; closing clears auto-merge at once.
+    let _ = config;
+    if clear_now {
+        clear_auto_merge(c, mr)?;
+    }
+    jobs::enqueue(c, "merge_train_abort", json!({"car_id": car.id, "user_id": user.id, "reason": reason}))?;
+    Ok(true)
+}
+
+/// Drops the MR's car right away (a push to its source branch).
+pub fn abort_now(c: &Connection, config: &Config, mr: &MergeRequest, user: &User, reason: &str) -> Result<bool> {
     let Some(car) = Car::active_for_mr(c, mr.id)? else { return Ok(false) };
     drop_car(c, config, &car, user, Some(reason), true)?;
     Ok(true)
+}
+
+/// The `merge_train_abort` job.
+pub fn abort_job(c: &Connection, config: &Config, car_id: i64, user_id: i64, reason: &str) -> Result<()> {
+    let Some(car) = Car::find(c, car_id)? else { return Ok(()) };
+    if !car.is_active() {
+        return Ok(());
+    }
+    let Some(user) = User::find(c, user_id)? else { return Ok(()) };
+    drop_car(c, config, &car, &user, Some(reason), true)
 }
 
 /// `cancel_merge_when_pipeline_succeeds` for an MR on a train: removes it.
@@ -445,7 +467,7 @@ fn merge_car(c: &Connection, config: &Config, p: &Project, car: &Car, mr: &Merge
     let now = time::now();
     c.execute(
         "UPDATE merge_train_cars SET status = 'merged', merged_at = ?1, duration = ?2, updated_at = ?1 WHERE id = ?3",
-        params![now, (now - car.created_at) / 1000, car.id],
+        params![now, (now - car.created_at + 500) / 1000, car.id],
     )?;
     Ok(())
 }
@@ -467,4 +489,22 @@ pub fn on_pipeline_complete(c: &Connection, _config: &Config, pl: &Pipeline) -> 
         jobs::enqueue(c, "merge_train_auto_add", json!({"merge_request_id": mr.id}))?;
     }
     Ok(())
+}
+
+/// An MR merged directly while its target branch has a train ("merge immediately"): the train
+/// restarts on top of it. With `skip_merge_train` allowed, the MR is recorded as a
+/// `skip_merged` car.
+pub fn merged_past_train(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest, user: &User, skip: bool) -> Result<()> {
+    if !merge_trains_enabled(p) {
+        return Ok(());
+    }
+    if skip && skip_train_allowed(p) {
+        let now = time::now();
+        c.execute(
+            "INSERT INTO merge_train_cars (project_id, merge_request_id, user_id, target_branch, status, created_at, updated_at, merged_at, duration)
+             VALUES (?1, ?2, ?3, ?4, 'skip_merged', ?5, ?5, ?5, NULL)",
+            params![p.id, mr.id, user.id, mr.target_branch, now],
+        )?;
+    }
+    restart_train(c, config, p.id, &mr.target_branch)
 }
