@@ -796,6 +796,7 @@ pub fn reset_on_push(c: &Connection, config: &crate::Config, p: &Project, mr: &M
         return Ok(());
     }
     approvers.sort();
+    let was_approved = state(c, p, mr)?.approved();
     let mut names = vec![];
     for uid in &approvers {
         if let Some(u) = User::find(c, *uid)? {
@@ -812,7 +813,9 @@ pub fn reset_on_push(c: &Connection, config: &crate::Config, p: &Project, mr: &M
         "approvals_reset",
     )?;
     let mr = mr.reload(c)?;
-    crate::services::hooks::merge_request_system_event(c, config, p, &mr, Some(user), "unapproved", "approvals_reset_on_push", prev_merge_status)
+    // Like an unapprove: `unapproved` only when the reset takes the MR from approved to not.
+    let action = if was_approved && !state(c, p, &mr)?.approved() { "unapproved" } else { "unapproval" };
+    crate::services::hooks::merge_request_system_event(c, config, p, &mr, Some(user), action, "approvals_reset_on_push", prev_merge_status)
 }
 
 /// Sets the MR's required approvals through its `any_approver` rule, creating an
