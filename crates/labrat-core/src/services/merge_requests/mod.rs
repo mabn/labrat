@@ -756,6 +756,10 @@ pub fn after_create(c: &Connection, config: &Config, mr_id: i64, user_id: i64) -
         },
         None => None,
     };
+    // Fake CI: the MR's pipeline (`create_pipeline_for`, which GitLab runs in its own job).
+    if crate::services::fake_ci::config(c, p.id)?.is_some() {
+        jobs::enqueue(c, "mr_create_pipeline", json!({"merge_request_id": mr_id, "user_id": user_id}))?;
+    }
     if mr.merge_status == "preparing" {
         c.execute(
             "UPDATE merge_requests SET merge_status = 'unchecked' WHERE id = ?1",

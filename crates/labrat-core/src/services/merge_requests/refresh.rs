@@ -160,6 +160,8 @@ pub fn refresh(
         if is_source && !removed {
             if let Some(pl) = crate::services::ci::create_skipped_mr_pipeline(c, p, &mr, user)? {
                 crate::services::hooks::pipeline_event(c, config, p, &pl)?;
+            } else if crate::services::fake_ci::config(c, p.id)?.is_some() {
+                crate::jobs::enqueue(c, "mr_create_pipeline", serde_json::json!({"merge_request_id": mr.id, "user_id": user.id}))?;
             }
         }
         // `mark_pending_todos_done`: the pusher's pending to-dos on MRs from this branch.
@@ -229,6 +231,10 @@ pub fn refresh(
                 auto_draft_from_commits(c, p, &mr, user, &pushed)?;
                 crate::services::approvals::reset_on_push(c, config, p, &mr, user, &before.mr.merge_status)?;
                 crate::services::approvals::start_sync(c, config, &mr)?;
+                // With CI, EE keeps syncing until the MR's new pipeline finishes.
+                if crate::services::fake_ci::config(c, p.id)?.is_some() {
+                    c.execute("DELETE FROM jobs WHERE kind = 'approvals_sync' AND json_extract(payload, '$.merge_request_id') = ?1", [mr.id])?;
+                }
             }
             let mr = mr.reload(c)?;
             if reloaded {

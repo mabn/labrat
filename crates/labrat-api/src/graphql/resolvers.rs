@@ -945,6 +945,7 @@ impl Object for ProjectObj {
             "serviceDeskEnabled" => Out::val(false),
             "avatarUrl" => Out::Null,
             "autocloseReferencedIssues" | "lfsEnabled" | "sharedRunnersEnabled" => Out::val(true),
+            "ciCdSettings" => super::merge_trains::ci_cd_settings(cx, p)?,
             "ciConfigPathOrDefault" => Out::val(p.setting("ci_config_path").and_then(|v| v.as_str().map(str::to_string)).filter(|v| !v.is_empty()).unwrap_or(".gitlab-ci.yml".into())),
             "containerRepositoriesCount" => Out::val(0),
             "isForked" | "pagesForceHttps" | "pagesUseUniqueDomain" => Out::val(false),
@@ -2608,6 +2609,8 @@ struct Payload {
     pipeline_path: Option<String>,
     /// EE approval rule mutations.
     approval_rule: Option<labrat_core::services::approvals::Rule>,
+    /// `projectCiCdSettingsUpdate`: the project.
+    ci_settings: Option<Project>,
 }
 
 use serde_json::Map;
@@ -2633,6 +2636,10 @@ impl Object for Payload {
             "commitPipelinePath" => Out::val(self.pipeline_path.clone()),
             "approvalRule" => match &self.approval_rule {
                 Some(r) => Out::obj(super::approvals::ApprovalProjectRuleObj { rule: r.clone() }),
+                None => Out::Null,
+            },
+            "ciCdSettings" => match &self.ci_settings {
+                Some(p) => super::merge_trains::payload_settings(p),
                 None => Out::Null,
             },
             "errors" if self.errors_null => Out::Null,
@@ -3284,6 +3291,10 @@ impl Object for Mutation {
                 pl.errors = errors;
                 pl.approval_rule = rule;
                 pl
+            }
+            "projectCiCdSettingsUpdate" => {
+                let p = super::merge_trains::settings_update(cx, &input)?;
+                Payload { ty: "ProjectCiCdSettingsUpdatePayload".into(), client_id: input.str("clientMutationId"), ci_settings: Some(p), ..Default::default() }
             }
             f if f.starts_with("mergeRequest") => self.mr_mutation(cx, field, args, &input)?,
             "commitCreate" => commit_create(cx, &input)?,

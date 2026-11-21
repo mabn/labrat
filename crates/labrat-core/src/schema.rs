@@ -558,7 +558,12 @@ CREATE TABLE ci_pipelines (
     queued_duration INTEGER,
     -- Set with `PUT .../metadata`.
     name TEXT,
-    before_sha TEXT
+    before_sha TEXT,
+    -- Merge request pipelines (detached, merged results, merge train): the MR, and for merged
+    -- results and train pipelines the MR head (`source_sha`) and the target it was merged onto.
+    merge_request_id INTEGER,
+    source_sha TEXT,
+    target_sha TEXT
 );
 
 CREATE TABLE commit_statuses (
@@ -578,7 +583,42 @@ CREATE TABLE commit_statuses (
     updated_at INTEGER NOT NULL,
     queued_at INTEGER,
     started_at INTEGER,
-    finished_at INTEGER
+    finished_at INTEGER,
+    -- A CI job (`Ci::Build`) of a fake CI pipeline rather than an external status.
+    build INTEGER NOT NULL DEFAULT 0,
+    stage TEXT
+);
+
+-- labrat's fake CI per project (set with `PUT /-/labrat/projects/:id/ci`): the jobs each
+-- merge request pipeline gets, and how the fake runner finishes them.
+CREATE TABLE fake_ci (
+    project_id INTEGER PRIMARY KEY REFERENCES projects (id) ON DELETE CASCADE,
+    jobs TEXT NOT NULL DEFAULT '["test"]',
+    -- `manual`: jobs wait for `/-/labrat/ci/pick` and `/-/labrat/ci/finish`; `auto`: each job
+    -- starts at once and finishes with `status` after `duration_ms`.
+    mode TEXT NOT NULL DEFAULT 'manual',
+    status TEXT NOT NULL DEFAULT 'success',
+    duration_ms INTEGER NOT NULL DEFAULT 0,
+    -- `{"<ref>": "<status>"}`: auto mode results for particular refs.
+    overrides TEXT NOT NULL DEFAULT '{}'
+);
+
+-- EE merge trains: one row per car (`merge_trains` in GitLab). Cars that leave the train
+-- (dropped or removed) are deleted; merged ones stay.
+CREATE TABLE merge_train_cars (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL REFERENCES projects (id) ON DELETE CASCADE,
+    merge_request_id INTEGER NOT NULL REFERENCES merge_requests (id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL,
+    target_branch TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'idle',
+    pipeline_id INTEGER,
+    -- The commit the car's train ref was built on (the previous car's train ref or the target).
+    previous_ref_sha TEXT,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    merged_at INTEGER,
+    duration INTEGER
 );
 
 -- `head_pipeline_id` and `merge_request_metrics` columns of GitLab's MR tables.
