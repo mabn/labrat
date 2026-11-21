@@ -139,12 +139,14 @@ pub fn unapprove(
     if mr.state == "merged" || !has_approved(c, mr, user)? {
         return Ok(false);
     }
-    // EE: `unapproved` when this takes away a full approval, `unapproval` otherwise.
-    let action = if !config.is_ee() || crate::services::approvals::state(c, p, mr)?.approved() { "unapproved" } else { "unapproval" };
+    // EE: `unapproved` when this takes the MR from approved to not approved, `unapproval`
+    // otherwise (always, without rules).
+    let was_approved = config.is_ee() && crate::services::approvals::state(c, p, mr)?.approved();
     c.execute(
         "DELETE FROM approvals WHERE merge_request_id = ?1 AND user_id = ?2",
         params![mr.id, user.id],
     )?;
+    let action = if !config.is_ee() || (was_approved && !crate::services::approvals::state(c, p, mr)?.approved()) { "unapproved" } else { "unapproval" };
     set_reviewer_state(c, mr, user, state::UNAPPROVED)?;
     // The synchronous system note's (throttled) touch is the only change the hook reports.
     let before = crate::services::merge_requests::snapshot(c, mr)?;

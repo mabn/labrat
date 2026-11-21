@@ -1,0 +1,1719 @@
+{
+  "scenario": "mr_action_params",
+  "base": "http://localhost:8929",
+  "ssh_port": 2224,
+  "run": "r290c99",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/ap-<RUN>",
+        "name": "ap-<RUN>",
+        "path": "ap-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "ap-<RUN>",
+        "full_path": "ap-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "ap-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "ap-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/ap-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/ap-<RUN>/app.git",
+        "web_url": "<BASE>/ap-<RUN>/app",
+        "readme_url": "<BASE>/ap-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "ap-<RUN>",
+          "path": "ap-<RUN>",
+          "kind": "group",
+          "full_path": "ap-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/ap-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null,
+        "approvals_before_merge": 0,
+        "mirror": false,
+        "external_authorization_classification_label": null,
+        "requirements_enabled": true,
+        "requirements_access_level": "enabled",
+        "security_and_compliance_enabled": true,
+        "secret_push_protection_enabled": false,
+        "pre_receive_secret_detection_enabled": false,
+        "compliance_frameworks": [],
+        "issues_template": null,
+        "merge_requests_template": null,
+        "ci_restrict_pipeline_cancellation_role": "developer",
+        "merge_pipelines_enabled": false,
+        "merge_trains_enabled": false,
+        "merge_trains_skip_train_allowed": false,
+        "only_allow_merge_if_all_status_checks_passed": false,
+        "allow_pipeline_trigger_approve_deployment": false,
+        "prevent_merge_without_jira_issue": false,
+        "duo_remote_flows_enabled": true,
+        "duo_foundational_flows_enabled": true,
+        "duo_sast_fp_detection_enabled": false,
+        "duo_secret_detection_fp_enabled": false,
+        "duo_sast_vr_workflow_enabled": false,
+        "spp_repository_pipeline_access": true,
+        "security_policy_pipeline_must_succeed": false,
+        "merge_request_title_regex": null,
+        "merge_request_title_regex_description": null
+      }
+    },
+    {
+      "label": "commit 1",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "a one",
+        "message": "a one",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "commit 2",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA1>"
+        ],
+        "title": "a two",
+        "message": "a two",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA3>",
+        "stats": {
+          "additions": 1,
+          "deletions": 1,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "commit 1",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA4>",
+        "short_id": "<SHA4:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "b one",
+        "message": "b one",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA4>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "commit 2",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA5>",
+        "short_id": "<SHA5:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA4>"
+        ],
+        "title": "b two",
+        "message": "b two",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA5>",
+        "stats": {
+          "additions": 1,
+          "deletions": 1,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "commit 1",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA6>",
+        "short_id": "<SHA6:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "c one",
+        "message": "c one",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA6>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "commit 2",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA7>",
+        "short_id": "<SHA7:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA6>"
+        ],
+        "title": "c two",
+        "message": "c two",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA7>",
+        "stats": {
+          "additions": 1,
+          "deletions": 1,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "MR a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "a",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA3>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "ap-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/ap-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:2>",
+        "iid": 2,
+        "project_id": "<project:1>",
+        "title": "MR b",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA5>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!2",
+        "references": {
+          "short": "!2",
+          "relative": "!2",
+          "full": "ap-<RUN>/app!2"
+        },
+        "web_url": "<BASE>/ap-<RUN>/app/-/merge_requests/2",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:3>",
+        "iid": 3,
+        "project_id": "<project:1>",
+        "title": "MR c",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "c",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA7>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!3",
+        "references": {
+          "short": "!3",
+          "relative": "!3",
+          "full": "ap-<RUN>/app!3"
+        },
+        "web_url": "<BASE>/ap-<RUN>/app/-/merge_requests/3",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "main moves",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA8>",
+        "short_id": "<SHA8:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "main moves",
+        "message": "main moves",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA8>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "diverged count",
+      "request": "GET /projects/<project:1>/merge_requests/3",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:3>",
+        "iid": 3,
+        "project_id": "<project:1>",
+        "title": "MR c",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "c",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "checking",
+        "merge_after": null,
+        "sha": "<SHA7>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!3",
+        "references": {
+          "short": "!3",
+          "relative": "!3",
+          "full": "ap-<RUN>/app!3"
+        },
+        "web_url": "<BASE>/ap-<RUN>/app/-/merge_requests/3",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA7>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "diverged_commits_count": 1,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "render_html",
+      "request": "GET /projects/<project:1>/merge_requests/3",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:3>",
+        "iid": 3,
+        "project_id": "<project:1>",
+        "title": "MR c",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "title_html": "MR c",
+        "description_html": "",
+        "target_branch": "main",
+        "source_branch": "c",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "checking",
+        "merge_after": null,
+        "sha": "<SHA7>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!3",
+        "references": {
+          "short": "!3",
+          "relative": "!3",
+          "full": "ap-<RUN>/app!3"
+        },
+        "web_url": "<BASE>/ap-<RUN>/app/-/merge_requests/3",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA7>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "merge with message",
+      "request": "PUT /projects/<project:1>/merge_requests/1/merge",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "MR a",
+        "description": null,
+        "state": "merged",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "merge_user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "merged_at": "<TIME>",
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "a",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "not_open",
+        "merge_after": null,
+        "sha": "<SHA3>",
+        "merge_commit_sha": "<SHA9>",
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "ap-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/ap-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA3>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "squash merge with messages",
+      "request": "PUT /projects/<project:1>/merge_requests/2/merge",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:2>",
+        "iid": 2,
+        "project_id": "<project:1>",
+        "title": "MR b",
+        "description": null,
+        "state": "merged",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "merge_user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "merged_at": "<TIME>",
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "not_open",
+        "merge_after": null,
+        "sha": "<SHA5>",
+        "merge_commit_sha": "<SHA10>",
+        "squash_commit_sha": "<SHA11>",
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!2",
+        "references": {
+          "short": "!2",
+          "relative": "!2",
+          "full": "ap-<RUN>/app!2"
+        },
+        "web_url": "<BASE>/ap-<RUN>/app/-/merge_requests/2",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": true,
+        "squash_on_merge": true,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA5>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "main log",
+      "request": "GET /projects/<project:1>/repository/commits",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-page": "1",
+        "x-per-page": "6",
+        "x-next-page": "2",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/repository/commits?id=<project:1>&order=default&page=2&per_page=6&ref_name=main&trailers=false>; rel=\"next\", <<BASE>/api/v4/projects/<project:1>/repository/commits?id=<project:1>&order=default&page=1&per_page=6&ref_name=main&trailers=false>; rel=\"first\""
+      },
+      "body": [
+        {
+          "id": "<SHA10>",
+          "short_id": "<SHA10:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA9>",
+            "<SHA11>"
+          ],
+          "title": "Merging squashed",
+          "message": "Merging squashed",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA10>"
+        },
+        {
+          "id": "<SHA11>",
+          "short_id": "<SHA11:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA2>"
+          ],
+          "title": "Squashed!",
+          "message": "Squashed!\n",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA11>"
+        },
+        {
+          "id": "<SHA9>",
+          "short_id": "<SHA9:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA8>",
+            "<SHA3>"
+          ],
+          "title": "Custom merge message",
+          "message": "Custom merge message\n\nWith a body",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA9>"
+        },
+        {
+          "id": "<SHA8>",
+          "short_id": "<SHA8:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA2>"
+          ],
+          "title": "main moves",
+          "message": "main moves",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA8>"
+        },
+        {
+          "id": "<SHA3>",
+          "short_id": "<SHA3:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA1>"
+          ],
+          "title": "a two",
+          "message": "a two",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA3>"
+        },
+        {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA2>"
+          ],
+          "title": "a one",
+          "message": "a one",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ap-<RUN>/app/-/commit/<SHA1>"
+        }
+      ]
+    },
+    {
+      "label": "rebase skip_ci",
+      "request": "PUT /projects/<project:1>/merge_requests/3/rebase",
+      "status": 202,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "rebase_in_progress": true
+      }
+    },
+    {
+      "label": "mr 3 after rebase",
+      "request": "GET /projects/<project:1>/merge_requests/3",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:3>",
+        "iid": 3,
+        "project_id": "<project:1>",
+        "title": "MR c",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "c",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "checking",
+        "merge_after": null,
+        "sha": "<SHA12>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!3",
+        "references": {
+          "short": "!3",
+          "relative": "!3",
+          "full": "ap-<RUN>/app!3"
+        },
+        "web_url": "<BASE>/ap-<RUN>/app/-/merge_requests/3",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": {
+          "id": "<mr.head_pipeline:1>",
+          "iid": 2,
+          "project_id": "<project:1>",
+          "sha": "<SHA12>",
+          "ref": "refs/merge-requests/3/head",
+          "status": "skipped",
+          "source": "merge_request_event",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/ap-<RUN>/app/-/pipelines/<pipeline:1>",
+          "before_sha": "<SHA13>",
+          "tag": false,
+          "yaml_errors": null,
+          "user": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "started_at": null,
+          "finished_at": null,
+          "committed_at": null,
+          "duration": null,
+          "queued_duration": "<QUEUED>",
+          "coverage": null,
+          "detailed_status": {
+            "icon": "status_skipped",
+            "text": "Skipped",
+            "label": "skipped",
+            "group": "skipped",
+            "tooltip": "skipped",
+            "has_details": true,
+            "details_path": "/ap-<RUN>/app/-/pipelines/<pipeline:1>",
+            "illustration": null,
+            "favicon": "/assets/ci_favicons/favicon_status_skipped-0b9c5e543588945e8c4ca57786bbf2d0c56631959c9f853300392d0315be829b.png"
+          },
+          "archived": false
+        },
+        "diff_refs": {
+          "base_sha": "<SHA10>",
+          "head_sha": "<SHA12>",
+          "start_sha": "<SHA10>"
+        },
+        "merge_error": null,
+        "rebase_in_progress": false,
+        "first_contribution": false,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "pipeline async",
+      "request": "POST /projects/<project:1>/merge_requests/3/pipelines",
+      "status": 202,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": 202
+    },
+    {
+      "label": "pipeline sync",
+      "request": "POST /projects/<project:1>/merge_requests/3/pipelines",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": {
+          "base": [
+            "The pipeline did not run. Review the workflow:rules configuration for the pipeline."
+          ]
+        }
+      }
+    },
+    {
+      "label": "thread",
+      "request": "POST /projects/<project:1>/merge_requests/3/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA14>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:1>",
+            "type": "DiscussionNote",
+            "body": "Thread",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 3,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "reply internal",
+      "request": "POST /projects/<project:1>/merge_requests/3/discussions/<SHA14>/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:1>",
+        "type": "DiscussionNote",
+        "body": "Reply",
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": true,
+        "resolved": false,
+        "resolved_by": null,
+        "resolved_at": null,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 3,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "spend with summary",
+      "request": "POST /projects/<project:1>/merge_requests/3/add_spent_time",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "time_estimate": 0,
+        "total_time_spent": 3600,
+        "human_time_estimate": null,
+        "human_total_time_spent": "1h"
+      }
+    },
+    {
+      "label": "timelogs",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "timelogs": {
+                "nodes": [
+                  {
+                    "timeSpent": 3600,
+                    "summary": "Reviewing"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "times": [
+    0,
+    173,
+    9289,
+    19210,
+    19536,
+    29228,
+    29575,
+    39398,
+    49240,
+    59314,
+    69294,
+    79543,
+    89452,
+    89557,
+    89644,
+    99275,
+    109444,
+    109510,
+    119507,
+    119597,
+    119649,
+    120150,
+    120246,
+    120348,
+    120454
+  ],
+  "done_times": [
+    172,
+    752,
+    9609,
+    19535,
+    19863,
+    29573,
+    29917,
+    39700,
+    49392,
+    59438,
+    69417,
+    79892,
+    89557,
+    89643,
+    90418,
+    100027,
+    109510,
+    109567,
+    119597,
+    119647,
+    120150,
+    120241,
+    120346,
+    120452,
+    120515
+  ],
+  "started_at": 1795249421359
+}

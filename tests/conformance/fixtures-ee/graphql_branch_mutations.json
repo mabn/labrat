@@ -1,0 +1,947 @@
+{
+  "scenario": "graphql_branch_mutations",
+  "base": "http://localhost:8929",
+  "ssh_port": 2224,
+  "run": "rbefa53",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/gb-<RUN>",
+        "name": "gb-<RUN>",
+        "path": "gb-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "gb-<RUN>",
+        "full_path": "gb-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "gb-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "gb-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/gb-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/gb-<RUN>/app.git",
+        "web_url": "<BASE>/gb-<RUN>/app",
+        "readme_url": "<BASE>/gb-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "gb-<RUN>",
+          "path": "gb-<RUN>",
+          "kind": "group",
+          "full_path": "gb-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/gb-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null,
+        "approvals_before_merge": 0,
+        "mirror": false,
+        "external_authorization_classification_label": null,
+        "requirements_enabled": true,
+        "requirements_access_level": "enabled",
+        "security_and_compliance_enabled": true,
+        "secret_push_protection_enabled": false,
+        "pre_receive_secret_detection_enabled": false,
+        "compliance_frameworks": [],
+        "issues_template": null,
+        "merge_requests_template": null,
+        "ci_restrict_pipeline_cancellation_role": "developer",
+        "merge_pipelines_enabled": false,
+        "merge_trains_enabled": false,
+        "merge_trains_skip_train_allowed": false,
+        "only_allow_merge_if_all_status_checks_passed": false,
+        "allow_pipeline_trigger_approve_deployment": false,
+        "prevent_merge_without_jira_issue": false,
+        "duo_remote_flows_enabled": true,
+        "duo_foundational_flows_enabled": true,
+        "duo_sast_fp_detection_enabled": false,
+        "duo_secret_detection_fp_enabled": false,
+        "duo_sast_vr_workflow_enabled": false,
+        "spp_repository_pipeline_access": true,
+        "security_policy_pipeline_must_succeed": false,
+        "merge_request_title_regex": null,
+        "merge_request_title_regex_description": null
+      }
+    },
+    {
+      "label": "reporter",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "rep-<RUN>",
+        "public_email": null,
+        "name": "Rep",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/rep-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "rep-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "rep-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "reporter token",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "reporter member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "rep-<RUN>",
+        "public_email": null,
+        "name": "Rep",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/rep-<RUN>",
+        "access_level": 20,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "rep-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "create",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createBranch": {
+            "errors": [],
+            "branch": {
+              "name": "feature",
+              "commit": {
+                "sha": "<SHA1>",
+                "title": "Initial commit"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "create existing",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createBranch": {
+            "errors": [
+              "Branch already exists"
+            ],
+            "branch": null
+          }
+        }
+      }
+    },
+    {
+      "label": "create bad ref",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createBranch": {
+            "errors": [
+              "Failed to create branch 'other': invalid reference name 'nope'"
+            ],
+            "branch": null
+          }
+        }
+      }
+    },
+    {
+      "label": "create bad name",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createBranch": {
+            "errors": [
+              "Branch name is invalid"
+            ],
+            "branch": null
+          }
+        }
+      }
+    },
+    {
+      "label": "create from sha",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "createBranch": {
+            "errors": [
+              "Failed to create branch 'from-sha': invalid reference name '<SHA2>'"
+            ],
+            "branch": null
+          }
+        }
+      }
+    },
+    {
+      "label": "create as reporter",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 47
+              }
+            ],
+            "path": [
+              "createBranch"
+            ]
+          }
+        ],
+        "data": {
+          "createBranch": null
+        }
+      }
+    },
+    {
+      "label": "create unknown project",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 47
+              }
+            ],
+            "path": [
+              "createBranch"
+            ]
+          }
+        ],
+        "data": {
+          "createBranch": null
+        }
+      }
+    },
+    {
+      "label": "branches",
+      "request": "GET /projects/<project:1>/repository/branches",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/repository/branches?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/repository/branches?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "name": "feature",
+          "commit": {
+            "id": "<SHA1>",
+            "short_id": "<SHA1:short>",
+            "created_at": "<TIME>",
+            "parent_ids": [],
+            "title": "Initial commit",
+            "message": "Initial commit",
+            "author_name": "Claude",
+            "author_email": "claude@gitlab.unhood.org",
+            "authored_date": "<TIME>",
+            "committer_name": "Claude",
+            "committer_email": "claude@gitlab.unhood.org",
+            "committed_date": "<TIME>",
+            "trailers": {},
+            "extended_trailers": {},
+            "web_url": "<BASE>/gb-<RUN>/app/-/commit/<SHA1>"
+          },
+          "merged": false,
+          "protected": false,
+          "developers_can_push": false,
+          "developers_can_merge": false,
+          "can_push": true,
+          "default": false,
+          "web_url": "<BASE>/gb-<RUN>/app/-/tree/feature"
+        },
+        {
+          "name": "main",
+          "commit": {
+            "id": "<SHA1>",
+            "short_id": "<SHA1:short>",
+            "created_at": "<TIME>",
+            "parent_ids": [],
+            "title": "Initial commit",
+            "message": "Initial commit",
+            "author_name": "Claude",
+            "author_email": "claude@gitlab.unhood.org",
+            "authored_date": "<TIME>",
+            "committer_name": "Claude",
+            "committer_email": "claude@gitlab.unhood.org",
+            "committed_date": "<TIME>",
+            "trailers": {},
+            "extended_trailers": {},
+            "web_url": "<BASE>/gb-<RUN>/app/-/commit/<SHA1>"
+          },
+          "merged": false,
+          "protected": true,
+          "developers_can_push": false,
+          "developers_can_merge": false,
+          "can_push": true,
+          "default": true,
+          "web_url": "<BASE>/gb-<RUN>/app/-/tree/main"
+        }
+      ]
+    },
+    {
+      "label": "delete",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "branchDelete": {
+            "errors": [],
+            "branch": null
+          }
+        }
+      }
+    },
+    {
+      "label": "delete missing",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "branchDelete": {
+            "errors": [
+              "No such branch"
+            ],
+            "branch": null
+          }
+        }
+      }
+    },
+    {
+      "label": "delete default",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "branchDelete": {
+            "errors": [
+              "7:deletion denied by access checks: running pre-receive hooks: GitLab: The default branch of a project cannot be deleted.."
+            ],
+            "branch": {
+              "name": "main"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "delete as reporter",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 34
+              }
+            ],
+            "path": [
+              "branchDelete"
+            ]
+          }
+        ],
+        "data": {
+          "branchDelete": null
+        }
+      }
+    },
+    {
+      "label": "branch rule create",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "branchRuleCreate": {
+            "errors": [],
+            "branchRule": {
+              "name": "release/*",
+              "isDefault": false,
+              "isProtected": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "branch rule create existing",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "branchRuleCreate": {
+            "errors": [
+              "Name has already been taken"
+            ],
+            "branchRule": null
+          }
+        }
+      }
+    },
+    {
+      "label": "protected branches",
+      "request": "GET /projects/<project:1>/protected_branches",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/protected_branches?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/protected_branches?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<branch:1>",
+          "name": "main",
+          "push_access_levels": [
+            {
+              "id": "<branch.push_access_levels:1>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "deploy_key_id": null,
+              "user_id": null,
+              "group_id": null
+            }
+          ],
+          "merge_access_levels": [
+            {
+              "id": "<branch.merge_access_levels:1>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "user_id": null,
+              "group_id": null
+            }
+          ],
+          "allow_force_push": false,
+          "unprotect_access_levels": [],
+          "code_owner_approval_required": false,
+          "inherited": false
+        },
+        {
+          "id": "<branch:2>",
+          "name": "release/*",
+          "push_access_levels": [
+            {
+              "id": "<branch.push_access_levels:2>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "deploy_key_id": null,
+              "user_id": null,
+              "group_id": null
+            }
+          ],
+          "merge_access_levels": [
+            {
+              "id": "<branch.merge_access_levels:2>",
+              "access_level": 40,
+              "access_level_description": "Maintainers",
+              "user_id": null,
+              "group_id": null
+            }
+          ],
+          "allow_force_push": false,
+          "unprotect_access_levels": [],
+          "code_owner_approval_required": false,
+          "inherited": false
+        }
+      ]
+    },
+    {
+      "label": "tag",
+      "request": "POST /projects/<project:1>/repository/tags",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "name": "v1",
+        "message": "",
+        "target": "<SHA1>",
+        "commit": {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [],
+          "title": "Initial commit",
+          "message": "Initial commit",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/gb-<RUN>/app/-/commit/<SHA1>"
+        },
+        "protected": false,
+        "created_at": null
+      }
+    },
+    {
+      "label": "tag 2",
+      "request": "POST /projects/<project:1>/repository/tags",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "name": "v0",
+        "message": "annotated",
+        "target": "<SHA3>",
+        "commit": {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [],
+          "title": "Initial commit",
+          "message": "Initial commit",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/gb-<RUN>/app/-/commit/<SHA1>"
+        },
+        "protected": false,
+        "created_at": null
+      }
+    },
+    {
+      "label": "commit tags",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "repository": {
+              "commit": {
+                "sha": "<SHA1>",
+                "tags": [],
+                "signature": null,
+                "signatureHtml": null
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "times": [
+    0,
+    248,
+    12505,
+    13101,
+    13157,
+    13245,
+    13425,
+    13494,
+    13590,
+    13644,
+    13708,
+    13781,
+    13823,
+    13960,
+    14116,
+    14175,
+    14299,
+    14352,
+    14430,
+    14480,
+    14611,
+    14830,
+    15035
+  ],
+  "done_times": [
+    247,
+    885,
+    13100,
+    13156,
+    13243,
+    13424,
+    13493,
+    13588,
+    13643,
+    13707,
+    13780,
+    13822,
+    13960,
+    14114,
+    14174,
+    14298,
+    14351,
+    14429,
+    14479,
+    14534,
+    14828,
+    15033,
+    15088
+  ],
+  "started_at": 1795246497317
+}

@@ -790,7 +790,12 @@ pub fn after_create(c: &Connection, config: &Config, mr_id: i64, user_id: i64) -
         // `AfterCreateService`: `create_cross_references!`.
         crate::services::cross_refs::mr_mentions(c, config, &p, u, &mr, &crate::services::todos::mentionable_text(&mr), None)?;
     }
-    crate::services::hooks::merge_request_event(c, config, &p, &mr, user.as_ref(), "open", Some(&before))?;
+    // EE: an MR whose creation failed after it was saved (`approvals_before_merge` clashing
+    // with a copied any-approver rule) gets no open hook.
+    let failed: bool = c.query_row("SELECT creation_failed FROM merge_requests WHERE id = ?1", [mr.id], |r| r.get::<_, i64>(0))? != 0;
+    if !failed {
+        crate::services::hooks::merge_request_event(c, config, &p, &mr, user.as_ref(), "open", Some(&before))?;
+    }
     // The pipeline's own hook is delivered after the open hook.
     if let Some(data) = mr_pipeline {
         crate::services::hooks::fire_pipeline_event(c, &p, &data)?;

@@ -787,7 +787,7 @@ fn to_sentence(items: &[String]) -> String {
 
 /// EE drops an MR's approvals when commits are pushed to it, unless the project retains them:
 /// a system note naming the approvers, and an `unapproved` hook.
-pub fn reset_on_push(c: &Connection, config: &crate::Config, p: &Project, mr: &MergeRequest, user: &User) -> Result<()> {
+pub fn reset_on_push(c: &Connection, config: &crate::Config, p: &Project, mr: &MergeRequest, user: &User, prev_merge_status: &str) -> Result<()> {
     if !config.is_ee() || effective(c, p)?.retain_approvals_on_push.value {
         return Ok(());
     }
@@ -812,7 +812,7 @@ pub fn reset_on_push(c: &Connection, config: &crate::Config, p: &Project, mr: &M
         "approvals_reset",
     )?;
     let mr = mr.reload(c)?;
-    crate::services::hooks::merge_request_event(c, config, p, &mr, Some(user), "unapproved", None)
+    crate::services::hooks::merge_request_system_event(c, config, p, &mr, Some(user), "unapproved", "approvals_reset_on_push", prev_merge_status)
 }
 
 /// Sets the MR's required approvals through its `any_approver` rule, creating an

@@ -945,6 +945,7 @@ async fn create(req: Req) -> ApiResult {
                 c.execute("UPDATE merge_requests SET approvals_before_merge = ?1 WHERE id = ?2", rusqlite::params![n, mr.id])?;
                 if labrat_core::services::approvals::mr_rules(c, &mr)?.iter().any(|r| r.is_any_approver()) {
                     failed = true;
+                    c.execute("UPDATE merge_requests SET creation_failed = 1 WHERE id = ?1", [mr.id])?;
                 } else {
                     labrat_core::services::approvals::set_required(c, &mr, n)?;
                 }

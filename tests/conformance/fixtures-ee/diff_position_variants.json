@@ -1,0 +1,3802 @@
+{
+  "scenario": "diff_position_variants",
+  "base": "http://localhost:8929",
+  "ssh_port": 2224,
+  "run": "rde6760",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/dp-<RUN>",
+        "name": "dp-<RUN>",
+        "path": "dp-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "dp-<RUN>",
+        "full_path": "dp-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "dp-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "dp-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/dp-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/dp-<RUN>/app.git",
+        "web_url": "<BASE>/dp-<RUN>/app",
+        "readme_url": "<BASE>/dp-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "dp-<RUN>",
+          "path": "dp-<RUN>",
+          "kind": "group",
+          "full_path": "dp-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/dp-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null,
+        "approvals_before_merge": 0,
+        "mirror": false,
+        "external_authorization_classification_label": null,
+        "requirements_enabled": true,
+        "requirements_access_level": "enabled",
+        "security_and_compliance_enabled": true,
+        "secret_push_protection_enabled": false,
+        "pre_receive_secret_detection_enabled": false,
+        "compliance_frameworks": [],
+        "issues_template": null,
+        "merge_requests_template": null,
+        "ci_restrict_pipeline_cancellation_role": "developer",
+        "merge_pipelines_enabled": false,
+        "merge_trains_enabled": false,
+        "merge_trains_skip_train_allowed": false,
+        "only_allow_merge_if_all_status_checks_passed": false,
+        "allow_pipeline_trigger_approve_deployment": false,
+        "prevent_merge_without_jira_issue": false,
+        "duo_remote_flows_enabled": true,
+        "duo_foundational_flows_enabled": true,
+        "duo_sast_fp_detection_enabled": false,
+        "duo_secret_detection_fp_enabled": false,
+        "duo_sast_vr_workflow_enabled": false,
+        "spp_repository_pipeline_access": true,
+        "security_policy_pipeline_must_succeed": false,
+        "merge_request_title_regex": null,
+        "merge_request_title_regex_description": null
+      }
+    },
+    {
+      "label": "base",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "base",
+        "message": "base",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/dp-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 17,
+          "deletions": 0,
+          "total": 17
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "change",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA1>"
+        ],
+        "title": "change",
+        "message": "change",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/dp-<RUN>/app/-/commit/<SHA3>",
+        "stats": {
+          "additions": 4,
+          "deletions": 4,
+          "total": 8
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "F",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "f",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA3>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "dp-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/dp-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "file comment",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA4>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:1>",
+            "type": "DiffNote",
+            "body": "On the file",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "a.txt",
+              "new_path": "b.txt",
+              "position_type": "file"
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "file comment deleted",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA5>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:2>",
+            "type": "DiffNote",
+            "body": "On the deleted file",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "del.txt",
+              "new_path": "del.txt",
+              "position_type": "file"
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "file comment binary",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA6>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:3>",
+            "type": "DiffNote",
+            "body": "On the binary",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "bin.dat",
+              "new_path": "bin.dat",
+              "position_type": "file"
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "renamed new line",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA7>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:4>",
+            "type": "DiffNote",
+            "body": "Renamed",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "a.txt",
+              "new_path": "b.txt",
+              "position_type": "text",
+              "old_line": null,
+              "new_line": 6,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "renamed old line",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA8>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:5>",
+            "type": "DiffNote",
+            "body": "Old side",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "a.txt",
+              "new_path": "b.txt",
+              "position_type": "text",
+              "old_line": 6,
+              "new_line": null,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "renamed unchanged line",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA9>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:6>",
+            "type": "DiffNote",
+            "body": "Context",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "a.txt",
+              "new_path": "b.txt",
+              "position_type": "text",
+              "old_line": 2,
+              "new_line": 2,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "no newline line",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA10>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:7>",
+            "type": "DiffNote",
+            "body": "Last",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "a.txt",
+              "new_path": "b.txt",
+              "position_type": "text",
+              "old_line": null,
+              "new_line": 13,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "added after no newline",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA11>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:8>",
+            "type": "DiffNote",
+            "body": "Added",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "a.txt",
+              "new_path": "b.txt",
+              "position_type": "text",
+              "old_line": null,
+              "new_line": 14,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "past end",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "400 Bad request - Note {:line_code=>[\"can't be blank\", \"must be a valid line code\"]}"
+      }
+    },
+    {
+      "label": "deleted file line",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA12>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:9>",
+            "type": "DiffNote",
+            "body": "Gone",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "del.txt",
+              "new_path": "del.txt",
+              "position_type": "text",
+              "old_line": 1,
+              "new_line": null,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "binary line",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "400 Bad request - Note {:line_code=>[\"can't be blank\", \"must be a valid line code\"]}"
+      }
+    },
+    {
+      "label": "image on text",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA13>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:10>",
+            "type": "DiffNote",
+            "body": "Img",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "keep.txt",
+              "new_path": "keep.txt",
+              "position_type": "image",
+              "width": 10,
+              "height": 10,
+              "x": 1,
+              "y": 1
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "negative image",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA14>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:11>",
+            "type": "DiffNote",
+            "body": "Img",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "bin.dat",
+              "new_path": "bin.dat",
+              "position_type": "image",
+              "width": 10,
+              "height": 10,
+              "x": -5,
+              "y": 1
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "suggestion past end",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA15>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:12>",
+            "type": "DiffNote",
+            "body": "```suggestion:-0+50\nX\n```",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "keep.txt",
+              "new_path": "keep.txt",
+              "position_type": "text",
+              "old_line": 3,
+              "new_line": 3,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [
+              {
+                "id": "<discussion.notes.suggestions:1>",
+                "from_line": 3,
+                "to_line": 53,
+                "appliable": true,
+                "applied": false,
+                "from_content": "k3\n",
+                "to_content": "X\n"
+              }
+            ],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "suggestion before start",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA16>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:13>",
+            "type": "DiffNote",
+            "body": "```suggestion:-50+0\nX\n```",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "keep.txt",
+              "new_path": "keep.txt",
+              "position_type": "text",
+              "old_line": null,
+              "new_line": 2,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [
+              {
+                "id": "<discussion.notes.suggestions:2>",
+                "from_line": 1,
+                "to_line": 2,
+                "appliable": true,
+                "applied": false,
+                "from_content": "k1\nK2\n",
+                "to_content": "X\n"
+              }
+            ],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "suggestion multibyte",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA17>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:14>",
+            "type": "DiffNote",
+            "body": "```suggestion:-0+0\nligne 6 🎉🎉\n```",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "a.txt",
+              "new_path": "b.txt",
+              "position_type": "text",
+              "old_line": null,
+              "new_line": 6,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [
+              {
+                "id": "<discussion.notes.suggestions:3>",
+                "from_line": 6,
+                "to_line": 6,
+                "appliable": true,
+                "applied": false,
+                "from_content": "LINE 6 ünï 🎉\n",
+                "to_content": "ligne 6 🎉🎉\n"
+              }
+            ],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "suggestion on no newline",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA18>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:15>",
+            "type": "DiffNote",
+            "body": "```suggestion:-0+0\nfinal\n```",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "a.txt",
+              "new_path": "b.txt",
+              "position_type": "text",
+              "old_line": null,
+              "new_line": 13,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [
+              {
+                "id": "<discussion.notes.suggestions:4>",
+                "from_line": 13,
+                "to_line": 13,
+                "appliable": true,
+                "applied": false,
+                "from_content": "last without newline\n",
+                "to_content": "final\n"
+              }
+            ],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "two suggestions",
+      "request": "POST /projects/<project:1>/merge_requests/1/discussions",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA19>",
+        "individual_note": false,
+        "resolvable": true,
+        "resolved": false,
+        "notes": [
+          {
+            "id": "<discussion.notes:16>",
+            "type": "DiffNote",
+            "body": "```suggestion:-0+0\none\n```\nand\n```suggestion:-0+0\ntwo\n```",
+            "author": {
+              "id": "<user:1>",
+              "username": "claude",
+              "public_email": null,
+              "name": "Claude",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/claude"
+            },
+            "created_at": "<TIME>",
+            "updated_at": "<TIME>",
+            "system": false,
+            "noteable_id": "<other:noteable_id:1>",
+            "noteable_type": "MergeRequest",
+            "project_id": "<project:1>",
+            "commit_id": null,
+            "position": {
+              "base_sha": "<SHA1>",
+              "start_sha": "<SHA1>",
+              "head_sha": "<SHA3>",
+              "old_path": "keep.txt",
+              "new_path": "keep.txt",
+              "position_type": "text",
+              "old_line": null,
+              "new_line": 2,
+              "line_range": null
+            },
+            "resolvable": true,
+            "resolved": false,
+            "resolved_by": null,
+            "resolved_at": null,
+            "suggestions": [
+              {
+                "id": "<discussion.notes.suggestions:5>",
+                "from_line": 2,
+                "to_line": 2,
+                "appliable": true,
+                "applied": false,
+                "from_content": "K2\n",
+                "to_content": "one\n"
+              },
+              {
+                "id": "<discussion.notes.suggestions:6>",
+                "from_line": 2,
+                "to_line": 2,
+                "appliable": true,
+                "applied": false,
+                "from_content": "K2\n",
+                "to_content": "two\n"
+              }
+            ],
+            "confidential": false,
+            "internal": false,
+            "imported": false,
+            "imported_from": "none",
+            "noteable_iid": 1,
+            "commands_changes": {}
+          }
+        ]
+      }
+    },
+    {
+      "label": "discussions",
+      "request": "GET /projects/<project:1>/merge_requests/1/discussions",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "16",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "100",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/discussions?id=<project:1>&noteable_id=1&page=1&per_page=100>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/discussions?id=<project:1>&noteable_id=1&page=1&per_page=100>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<SHA4>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:1>",
+              "type": "DiffNote",
+              "body": "On the file",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "a.txt",
+                "new_path": "b.txt",
+                "position_type": "file"
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA5>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:2>",
+              "type": "DiffNote",
+              "body": "On the deleted file",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "del.txt",
+                "new_path": "del.txt",
+                "position_type": "file"
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA6>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:3>",
+              "type": "DiffNote",
+              "body": "On the binary",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "bin.dat",
+                "new_path": "bin.dat",
+                "position_type": "file"
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA7>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:4>",
+              "type": "DiffNote",
+              "body": "Renamed",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "a.txt",
+                "new_path": "b.txt",
+                "position_type": "text",
+                "old_line": null,
+                "new_line": 6,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA8>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:5>",
+              "type": "DiffNote",
+              "body": "Old side",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "a.txt",
+                "new_path": "b.txt",
+                "position_type": "text",
+                "old_line": 6,
+                "new_line": null,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA9>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:6>",
+              "type": "DiffNote",
+              "body": "Context",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "a.txt",
+                "new_path": "b.txt",
+                "position_type": "text",
+                "old_line": 2,
+                "new_line": 2,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA10>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:7>",
+              "type": "DiffNote",
+              "body": "Last",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "a.txt",
+                "new_path": "b.txt",
+                "position_type": "text",
+                "old_line": null,
+                "new_line": 13,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA11>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:8>",
+              "type": "DiffNote",
+              "body": "Added",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "a.txt",
+                "new_path": "b.txt",
+                "position_type": "text",
+                "old_line": null,
+                "new_line": 14,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA12>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:9>",
+              "type": "DiffNote",
+              "body": "Gone",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "del.txt",
+                "new_path": "del.txt",
+                "position_type": "text",
+                "old_line": 1,
+                "new_line": null,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA13>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:10>",
+              "type": "DiffNote",
+              "body": "Img",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "keep.txt",
+                "new_path": "keep.txt",
+                "position_type": "image",
+                "width": 10,
+                "height": 10,
+                "x": 1,
+                "y": 1
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA14>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:11>",
+              "type": "DiffNote",
+              "body": "Img",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "bin.dat",
+                "new_path": "bin.dat",
+                "position_type": "image",
+                "width": 10,
+                "height": 10,
+                "x": -5,
+                "y": 1
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA15>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:12>",
+              "type": "DiffNote",
+              "body": "```suggestion:-0+50\nX\n```",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "keep.txt",
+                "new_path": "keep.txt",
+                "position_type": "text",
+                "old_line": 3,
+                "new_line": 3,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [
+                {
+                  "id": "<discussion.notes.suggestions:1>",
+                  "from_line": 3,
+                  "to_line": 53,
+                  "appliable": true,
+                  "applied": false,
+                  "from_content": "k3\n",
+                  "to_content": "X\n"
+                }
+              ],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA16>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:13>",
+              "type": "DiffNote",
+              "body": "```suggestion:-50+0\nX\n```",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "keep.txt",
+                "new_path": "keep.txt",
+                "position_type": "text",
+                "old_line": null,
+                "new_line": 2,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [
+                {
+                  "id": "<discussion.notes.suggestions:2>",
+                  "from_line": 1,
+                  "to_line": 2,
+                  "appliable": true,
+                  "applied": false,
+                  "from_content": "k1\nK2\n",
+                  "to_content": "X\n"
+                }
+              ],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA17>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:14>",
+              "type": "DiffNote",
+              "body": "```suggestion:-0+0\nligne 6 🎉🎉\n```",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "a.txt",
+                "new_path": "b.txt",
+                "position_type": "text",
+                "old_line": null,
+                "new_line": 6,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [
+                {
+                  "id": "<discussion.notes.suggestions:3>",
+                  "from_line": 6,
+                  "to_line": 6,
+                  "appliable": true,
+                  "applied": false,
+                  "from_content": "LINE 6 ünï 🎉\n",
+                  "to_content": "ligne 6 🎉🎉\n"
+                }
+              ],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA18>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:15>",
+              "type": "DiffNote",
+              "body": "```suggestion:-0+0\nfinal\n```",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "a.txt",
+                "new_path": "b.txt",
+                "position_type": "text",
+                "old_line": null,
+                "new_line": 13,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [
+                {
+                  "id": "<discussion.notes.suggestions:4>",
+                  "from_line": 13,
+                  "to_line": 13,
+                  "appliable": true,
+                  "applied": false,
+                  "from_content": "last without newline\n",
+                  "to_content": "final\n"
+                }
+              ],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        },
+        {
+          "id": "<SHA19>",
+          "individual_note": false,
+          "resolvable": true,
+          "resolved": false,
+          "notes": [
+            {
+              "id": "<discussion.notes:16>",
+              "type": "DiffNote",
+              "body": "```suggestion:-0+0\none\n```\nand\n```suggestion:-0+0\ntwo\n```",
+              "author": {
+                "id": "<user:1>",
+                "username": "claude",
+                "public_email": null,
+                "name": "Claude",
+                "state": "active",
+                "locked": false,
+                "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+                "web_url": "<BASE>/claude"
+              },
+              "created_at": "<TIME>",
+              "updated_at": "<TIME>",
+              "system": false,
+              "noteable_id": "<other:noteable_id:1>",
+              "noteable_type": "MergeRequest",
+              "project_id": "<project:1>",
+              "commit_id": null,
+              "position": {
+                "base_sha": "<SHA1>",
+                "start_sha": "<SHA1>",
+                "head_sha": "<SHA3>",
+                "old_path": "keep.txt",
+                "new_path": "keep.txt",
+                "position_type": "text",
+                "old_line": null,
+                "new_line": 2,
+                "line_range": null
+              },
+              "resolvable": true,
+              "resolved": false,
+              "resolved_by": null,
+              "resolved_at": null,
+              "suggestions": [
+                {
+                  "id": "<discussion.notes.suggestions:5>",
+                  "from_line": 2,
+                  "to_line": 2,
+                  "appliable": true,
+                  "applied": false,
+                  "from_content": "K2\n",
+                  "to_content": "one\n"
+                },
+                {
+                  "id": "<discussion.notes.suggestions:6>",
+                  "from_line": 2,
+                  "to_line": 2,
+                  "appliable": true,
+                  "applied": false,
+                  "from_content": "K2\n",
+                  "to_content": "two\n"
+                }
+              ],
+              "confidential": false,
+              "internal": false,
+              "imported": false,
+              "imported_from": "none",
+              "noteable_iid": 1,
+              "commands_changes": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "apply 0",
+      "request": "PUT /suggestions/<suggestion:1>/apply",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<suggestion:1>",
+        "from_line": 3,
+        "to_line": 53,
+        "appliable": true,
+        "applied": false,
+        "from_content": "k3\n",
+        "to_content": "X\n"
+      }
+    },
+    {
+      "label": "apply 1",
+      "request": "PUT /suggestions/<suggestion:2>/apply",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<suggestion:2>",
+        "from_line": 1,
+        "to_line": 2,
+        "appliable": true,
+        "applied": false,
+        "from_content": "k1\nK2\n",
+        "to_content": "X\n"
+      }
+    },
+    {
+      "label": "apply 2",
+      "request": "PUT /suggestions/<suggestion:3>/apply",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<suggestion:3>",
+        "from_line": 6,
+        "to_line": 6,
+        "appliable": true,
+        "applied": false,
+        "from_content": "LINE 6 ünï 🎉\n",
+        "to_content": "ligne 6 🎉🎉\n"
+      }
+    },
+    {
+      "label": "apply 3",
+      "request": "PUT /suggestions/<suggestion:4>/apply",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<suggestion:4>",
+        "from_line": 13,
+        "to_line": 13,
+        "appliable": true,
+        "applied": false,
+        "from_content": "last without newline\n",
+        "to_content": "final\n"
+      }
+    },
+    {
+      "label": "apply 4",
+      "request": "PUT /suggestions/<suggestion:5>/apply",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "Can't apply as this line was changed in a more recent version."
+      }
+    },
+    {
+      "label": "apply 5",
+      "request": "PUT /suggestions/<suggestion:6>/apply",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "Can't apply as this line was changed in a more recent version."
+      }
+    },
+    {
+      "label": "b.txt after",
+      "request": "GET /projects/<project:1>/repository/files/b.txt/raw",
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "body": "line 1 ünï 🎉\nline 2 ünï 🎉\nline 3 ünï 🎉\nline 4 ünï 🎉\nline 5 ünï 🎉\nligne 6 🎉🎉\nline 7 ünï 🎉\nline 8 ünï 🎉\nline 9 ünï 🎉\nline 10 ünï 🎉\nline 11 ünï 🎉\nline 12 ünï 🎉\nfinal\nadded"
+    },
+    {
+      "label": "keep.txt after",
+      "request": "GET /projects/<project:1>/repository/files/keep.txt/raw",
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "body": "X\nX\n"
+    },
+    {
+      "label": "notes after",
+      "request": "GET /projects/<project:1>/merge_requests/1/notes",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "29",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "100",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/notes?activity_filter=all_notes&id=<project:1>&noteable_id=1&order_by=created_at&page=1&per_page=100&sort=asc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/notes?activity_filter=all_notes&id=<project:1>&noteable_id=1&order_by=created_at&page=1&per_page=100&sort=asc>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<note:1>",
+          "type": "DiffNote",
+          "body": "On the file",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA20>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "file"
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:2>",
+          "type": "DiffNote",
+          "body": "On the deleted file",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA21>",
+            "old_path": "del.txt",
+            "new_path": "del.txt",
+            "position_type": "file"
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:3>",
+          "type": "DiffNote",
+          "body": "On the binary",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA21>",
+            "old_path": "bin.dat",
+            "new_path": "bin.dat",
+            "position_type": "file"
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:4>",
+          "type": "DiffNote",
+          "body": "Renamed",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA20>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 6,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:5>",
+          "type": "DiffNote",
+          "body": "Old side",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA21>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": 6,
+            "new_line": null,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:6>",
+          "type": "DiffNote",
+          "body": "Context",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA21>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": 2,
+            "new_line": 2,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:7>",
+          "type": "DiffNote",
+          "body": "Last",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA22>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 13,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:8>",
+          "type": "DiffNote",
+          "body": "Added",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA21>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 14,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:9>",
+          "type": "DiffNote",
+          "body": "Gone",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA21>",
+            "old_path": "del.txt",
+            "new_path": "del.txt",
+            "position_type": "text",
+            "old_line": 1,
+            "new_line": null,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:10>",
+          "type": "DiffNote",
+          "body": "Img",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA3>",
+            "old_path": "keep.txt",
+            "new_path": "keep.txt",
+            "position_type": "image",
+            "width": 10,
+            "height": 10,
+            "x": 1,
+            "y": 1
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:11>",
+          "type": "DiffNote",
+          "body": "Img",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA21>",
+            "old_path": "bin.dat",
+            "new_path": "bin.dat",
+            "position_type": "image",
+            "width": 10,
+            "height": 10,
+            "x": -5,
+            "y": 1
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:12>",
+          "type": "DiffNote",
+          "body": "```suggestion:-0+50\nX\n```",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA3>",
+            "old_path": "keep.txt",
+            "new_path": "keep.txt",
+            "position_type": "text",
+            "old_line": 3,
+            "new_line": 3,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [
+            {
+              "id": "<note.suggestions:1>",
+              "from_line": 3,
+              "to_line": 53,
+              "appliable": false,
+              "applied": true,
+              "from_content": "k3\n",
+              "to_content": "X\n"
+            }
+          ],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:13>",
+          "type": "DiffNote",
+          "body": "```suggestion:-50+0\nX\n```",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA23>",
+            "old_path": "keep.txt",
+            "new_path": "keep.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 2,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [
+            {
+              "id": "<note.suggestions:2>",
+              "from_line": 1,
+              "to_line": 2,
+              "appliable": false,
+              "applied": true,
+              "from_content": "k1\nK2\n",
+              "to_content": "X\n"
+            }
+          ],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:14>",
+          "type": "DiffNote",
+          "body": "```suggestion:-0+0\nligne 6 🎉🎉\n```",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA20>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 6,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [
+            {
+              "id": "<note.suggestions:3>",
+              "from_line": 6,
+              "to_line": 6,
+              "appliable": false,
+              "applied": true,
+              "from_content": "LINE 6 ünï 🎉\n",
+              "to_content": "ligne 6 🎉🎉\n"
+            }
+          ],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:15>",
+          "type": "DiffNote",
+          "body": "```suggestion:-0+0\nfinal\n```",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA22>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 13,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [
+            {
+              "id": "<note.suggestions:4>",
+              "from_line": 13,
+              "to_line": 13,
+              "appliable": false,
+              "applied": true,
+              "from_content": "last without newline\n",
+              "to_content": "final\n"
+            }
+          ],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:16>",
+          "type": "DiffNote",
+          "body": "```suggestion:-0+0\none\n```\nand\n```suggestion:-0+0\ntwo\n```",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA23>",
+            "old_path": "keep.txt",
+            "new_path": "keep.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 2,
+            "line_range": null
+          },
+          "resolvable": true,
+          "resolved": false,
+          "resolved_by": null,
+          "resolved_at": null,
+          "suggestions": [
+            {
+              "id": "<note.suggestions:5>",
+              "from_line": 2,
+              "to_line": 2,
+              "appliable": false,
+              "applied": false,
+              "from_content": "K2\n",
+              "to_content": "one\n"
+            },
+            {
+              "id": "<note.suggestions:6>",
+              "from_line": 2,
+              "to_line": 2,
+              "appliable": false,
+              "applied": false,
+              "from_content": "K2\n",
+              "to_content": "two\n"
+            }
+          ],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:17>",
+          "type": "DiffNote",
+          "body": "changed this file in [version 2 of the diff](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:1>&start_sha=<SHA3>#<SHA24>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA3>",
+            "old_path": "keep.txt",
+            "new_path": "keep.txt",
+            "position_type": "image",
+            "width": 10,
+            "height": 10,
+            "x": 1,
+            "y": 1
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:18>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 2 of the diff](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:1>&start_sha=<SHA3>#5f6ab5370352298c4343fab249d366284f633cc8_3_3)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA3>",
+            "old_path": "keep.txt",
+            "new_path": "keep.txt",
+            "position_type": "text",
+            "old_line": 3,
+            "new_line": 3,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:19>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA23:short> - Apply 1 suggestion(s) to 1 file(s)</li></ul>\n\n[Compare with previous version](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:1>&start_sha=<SHA3>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:20>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 3 of the diff](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:2>&start_sha=<SHA23>#5f6ab5370352298c4343fab249d366284f633cc8_2_1)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA23>",
+            "old_path": "keep.txt",
+            "new_path": "keep.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 2,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:21>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 3 of the diff](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:2>&start_sha=<SHA23>#5f6ab5370352298c4343fab249d366284f633cc8_2_1)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA23>",
+            "old_path": "keep.txt",
+            "new_path": "keep.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 2,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:22>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA20:short> - Apply 1 suggestion(s) to 1 file(s)</li></ul>\n\n[Compare with previous version](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:2>&start_sha=<SHA23>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:23>",
+          "type": "DiffNote",
+          "body": "changed this file in [version 4 of the diff](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:3>&start_sha=<SHA20>#<SHA25>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA20>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "file"
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:24>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 4 of the diff](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:3>&start_sha=<SHA20>#aceba96ffdf13ce4cd4171c0248420cc03108ef0_6_6)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA20>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 6,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:25>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 4 of the diff](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:3>&start_sha=<SHA20>#aceba96ffdf13ce4cd4171c0248420cc03108ef0_6_6)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA20>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 6,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:26>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA22:short> - Apply 1 suggestion(s) to 1 file(s)</li></ul>\n\n[Compare with previous version](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:3>&start_sha=<SHA20>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:27>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 5 of the diff](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:4>&start_sha=<SHA22>#aceba96ffdf13ce4cd4171c0248420cc03108ef0_13_13)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA22>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 13,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:28>",
+          "type": "DiffNote",
+          "body": "changed this line in [version 5 of the diff](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:4>&start_sha=<SHA22>#aceba96ffdf13ce4cd4171c0248420cc03108ef0_13_13)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "commit_id": null,
+          "position": {
+            "base_sha": "<SHA1>",
+            "start_sha": "<SHA1>",
+            "head_sha": "<SHA22>",
+            "old_path": "a.txt",
+            "new_path": "b.txt",
+            "position_type": "text",
+            "old_line": null,
+            "new_line": 13,
+            "line_range": null
+          },
+          "resolvable": false,
+          "suggestions": [],
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        },
+        {
+          "id": "<note:29>",
+          "type": null,
+          "body": "added 1 commit\n\n<ul><li><SHA21:short> - Apply 1 suggestion(s) to 1 file(s)</li></ul>\n\n[Compare with previous version](/dp-<RUN>/app/-/merge_requests/1/diffs?diff_id=<diff:4>&start_sha=<SHA22>)",
+          "author": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": true,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        }
+      ]
+    }
+  ],
+  "times": [
+    0,
+    149,
+    21488,
+    21865,
+    29605,
+    39637,
+    39786,
+    39918,
+    40053,
+    40267,
+    40478,
+    40695,
+    40913,
+    41141,
+    41224,
+    41421,
+    41502,
+    41641,
+    41780,
+    42002,
+    42217,
+    42432,
+    42649,
+    42864,
+    43119,
+    53057,
+    62832,
+    79685,
+    90143,
+    99855,
+    110012,
+    110079,
+    110154
+  ],
+  "done_times": [
+    148,
+    710,
+    21864,
+    22211,
+    29728,
+    39784,
+    39917,
+    40051,
+    40266,
+    40477,
+    40693,
+    40912,
+    41139,
+    41223,
+    41420,
+    41501,
+    41640,
+    41778,
+    42000,
+    42215,
+    42430,
+    42648,
+    42862,
+    43009,
+    43432,
+    53371,
+    63145,
+    80088,
+    90211,
+    99922,
+    110079,
+    110154,
+    110369
+  ],
+  "started_at": 1795245297403
+}

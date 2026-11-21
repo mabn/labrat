@@ -1147,7 +1147,12 @@ async fn pick(req: Req, revert: bool) -> ApiResult {
         // `SystemNoteService.picked_into_branch` on the MR whose merge commit was picked.
         if !revert && let Some(m) = &merged_mr {
             let body = format!("picked the changes into the branch [`{branch}`](/{}/-/tree/{branch}) with commit {}", p.full_path, new_oid.hex());
-            labrat_core::services::notes::system_note(c, m.id, p.id, &user, &body, "cherry_pick")?;
+            if req.app.config.is_ee() {
+                // EE writes this note after the commit's cross-references (recorded on EE 18.11).
+                labrat_core::jobs::enqueue(c, "cherry_pick_note", json!({"merge_request_id": m.id, "project_id": p.id, "user_id": user.id, "body": body}))?;
+            } else {
+                labrat_core::services::notes::system_note(c, m.id, p.id, &user, &body, "cherry_pick")?;
+            }
         }
         let stored = r.commit(&new_oid)?;
         Ok(Ok(Some(Value::Object(ent::commit(&req.app.config, &p, &new_oid, &stored)))))

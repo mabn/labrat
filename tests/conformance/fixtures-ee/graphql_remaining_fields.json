@@ -1,0 +1,980 @@
+{
+  "scenario": "graphql_remaining_fields",
+  "base": "http://localhost:8929",
+  "ssh_port": 2224,
+  "run": "rb95af8",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/gr-<RUN>",
+        "name": "gr-<RUN>",
+        "path": "gr-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "gr-<RUN>",
+        "full_path": "gr-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "gr-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "gr-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/gr-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/gr-<RUN>/app.git",
+        "web_url": "<BASE>/gr-<RUN>/app",
+        "readme_url": "<BASE>/gr-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "gr-<RUN>",
+          "path": "gr-<RUN>",
+          "kind": "group",
+          "full_path": "gr-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/gr-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null,
+        "approvals_before_merge": 0,
+        "mirror": false,
+        "external_authorization_classification_label": null,
+        "requirements_enabled": true,
+        "requirements_access_level": "enabled",
+        "security_and_compliance_enabled": true,
+        "secret_push_protection_enabled": false,
+        "pre_receive_secret_detection_enabled": false,
+        "compliance_frameworks": [],
+        "issues_template": null,
+        "merge_requests_template": null,
+        "ci_restrict_pipeline_cancellation_role": "developer",
+        "merge_pipelines_enabled": false,
+        "merge_trains_enabled": false,
+        "merge_trains_skip_train_allowed": false,
+        "only_allow_merge_if_all_status_checks_passed": false,
+        "allow_pipeline_trigger_approve_deployment": false,
+        "prevent_merge_without_jira_issue": false,
+        "duo_remote_flows_enabled": true,
+        "duo_foundational_flows_enabled": true,
+        "duo_sast_fp_detection_enabled": false,
+        "duo_secret_detection_fp_enabled": false,
+        "duo_sast_vr_workflow_enabled": false,
+        "spp_repository_pipeline_access": true,
+        "security_policy_pipeline_must_succeed": false,
+        "merge_request_title_regex": null,
+        "merge_request_title_regex_description": null
+      }
+    },
+    {
+      "label": "bob",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "bob-<RUN>",
+        "public_email": null,
+        "name": "Bob",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/bob-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "bob-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "bob-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "bob token",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "bob developer",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "bob-<RUN>",
+        "public_email": null,
+        "name": "Bob",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/bob-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "bob-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "commit",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Change",
+        "message": "Change",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/gr-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 20002,
+          "deletions": 93,
+          "total": 20095
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "move",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA1>"
+        ],
+        "title": "Move and delete",
+        "message": "Move and delete",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/gr-<RUN>/app/-/commit/<SHA3>",
+        "stats": {
+          "additions": 0,
+          "deletions": 20000,
+          "total": 20000
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "F",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "f",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:2>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "Bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA3>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "gr-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/gr-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "status",
+      "request": "POST /projects/<project:1>/statuses/<SHA3>",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<status:1>",
+        "sha": "<SHA3>",
+        "ref": "f",
+        "status": "success",
+        "name": "ci",
+        "target_url": null,
+        "description": null,
+        "created_at": "<TIME>",
+        "started_at": null,
+        "finished_at": "<TIME>",
+        "allow_failure": false,
+        "coverage": null,
+        "pipeline_id": "<pipeline:1>",
+        "author": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        }
+      }
+    },
+    {
+      "label": "milestone",
+      "request": "POST /projects/<project:1>/milestones",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<milestone:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "v1",
+        "description": null,
+        "state": "active",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "due_date": null,
+        "start_date": null,
+        "expired": false,
+        "web_url": "<BASE>/gr-<RUN>/app/-/milestones/1"
+      }
+    },
+    {
+      "label": "commit diffs head",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "repository": {
+              "tree": {
+                "lastCommit": {
+                  "sha": "<SHA3>",
+                  "diffs": [
+                    {
+                      "aMode": "100644",
+                      "bMode": "0",
+                      "collapsed": "true",
+                      "deletedFile": "true",
+                      "diff": "",
+                      "newFile": "false",
+                      "newPath": "big.txt",
+                      "oldPath": "big.txt",
+                      "renamedFile": "false",
+                      "tooLarge": "false"
+                    },
+                    {
+                      "aMode": "100644",
+                      "bMode": "100644",
+                      "collapsed": "false",
+                      "deletedFile": "false",
+                      "diff": "",
+                      "newFile": "false",
+                      "newPath": "renamed.txt",
+                      "oldPath": "new.txt",
+                      "renamedFile": "true",
+                      "tooLarge": "false"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "commit diffs first",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "repository": {
+              "tree": {
+                "lastCommit": {
+                  "sha": "<SHA1>",
+                  "diffs": [
+                    {
+                      "aMode": "100644",
+                      "bMode": "100644",
+                      "collapsed": "false",
+                      "deletedFile": "false",
+                      "diff": "@@ -1,93 +1 @@\n-# app\n-\n-\n-\n-## Getting started\n-\n-To make it easy for you to get started with GitLab, here's a list of recommended next steps.\n-\n-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!\n-\n-## Add your files\n-\n-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files\n-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:\n-\n-```\n-cd existing_repo\n-git remote add origin <BASE>/gr-<RUN>/app.git\n-git branch -M main\n-git push -uf origin main\n-```\n-\n-## Integrate with your tools\n-\n-* [Set up project integrations](<BASE>/gr-<RUN>/app/-/settings/integrations)\n-\n-## Collaborate with your team\n-\n-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)\n-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)\n-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)\n-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)\n-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)\n-\n-## Test and Deploy\n-\n-Use the built-in continuous integration in GitLab.\n-\n-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)\n-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)\n-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)\n-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)\n-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)\n-\n-***\n-\n-# Editing this README\n-\n-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.\n-\n-## Suggestions for a good README\n-\n-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.\n-\n-## Name\n-Choose a self-explaining name for your project.\n-\n-## Description\n-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.\n-\n-## Badges\n-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.\n-\n-## Visuals\n-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.\n-\n-## Installation\n-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.\n-\n-## Usage\n-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.\n-\n-## Support\n-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.\n-\n-## Roadmap\n-If you have ideas for releases in the future, it is a good idea to list them in the README.\n-\n-## Contributing\n-State if you are open to contributions and what your requirements are for accepting them.\n-\n-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.\n-\n-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.\n-\n-## Authors and acknowledgment\n-Show your appreciation to those who have contributed to the project.\n-\n-## License\n-For open source projects, say how it is licensed.\n-\n-## Project status\n-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.\n+changed\n",
+                      "newFile": "false",
+                      "newPath": "README.md",
+                      "oldPath": "README.md",
+                      "renamedFile": "false",
+                      "tooLarge": "false"
+                    },
+                    {
+                      "aMode": "0",
+                      "bMode": "100644",
+                      "collapsed": "true",
+                      "deletedFile": "false",
+                      "diff": "",
+                      "newFile": "true",
+                      "newPath": "big.txt",
+                      "oldPath": "big.txt",
+                      "renamedFile": "false",
+                      "tooLarge": "false"
+                    },
+                    {
+                      "aMode": "0",
+                      "bMode": "100644",
+                      "collapsed": "false",
+                      "deletedFile": "false",
+                      "diff": "@@ -0,0 +1 @@\n+n\n",
+                      "newFile": "true",
+                      "newPath": "new.txt",
+                      "oldPath": "new.txt",
+                      "renamedFile": "false",
+                      "tooLarge": "false"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "bob comments",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:1>",
+        "type": null,
+        "body": "Looks fine",
+        "author": {
+          "id": "<user:2>",
+          "username": "bob-<RUN>",
+          "public_email": null,
+          "name": "Bob",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/bob-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "user fields as admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "bob-<RUN>",
+                    "customAttributes": [],
+                    "ide": {
+                      "codeSuggestionsEnabled": true
+                    },
+                    "userPreferences": {
+                      "issuesSort": null,
+                      "mergeRequestDashboardListType": "ACTION_BASED",
+                      "mergeRequestDashboardShowDrafts": true,
+                      "projectsSort": null,
+                      "timezone": null,
+                      "useWorkItemsView": false,
+                      "visibilityPipelineIdType": "ID"
+                    },
+                    "callouts": {
+                      "nodes": []
+                    },
+                    "groupCallouts": {
+                      "nodes": []
+                    },
+                    "namespaceCommitEmails": {
+                      "nodes": []
+                    },
+                    "savedReplies": {
+                      "nodes": []
+                    },
+                    "savedReply": null,
+                    "starredProjects": {
+                      "nodes": []
+                    },
+                    "contributedProjects": {
+                      "nodes": [
+                        {
+                          "fullPath": "gr-<RUN>/app"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "user fields as bob",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "bob-<RUN>",
+                    "customAttributes": null,
+                    "ide": {
+                      "codeSuggestionsEnabled": true
+                    },
+                    "userPreferences": {
+                      "issuesSort": null,
+                      "mergeRequestDashboardListType": "ACTION_BASED",
+                      "mergeRequestDashboardShowDrafts": true,
+                      "projectsSort": null,
+                      "timezone": null,
+                      "useWorkItemsView": false,
+                      "visibilityPipelineIdType": "ID"
+                    },
+                    "callouts": {
+                      "nodes": []
+                    },
+                    "groupCallouts": {
+                      "nodes": []
+                    },
+                    "namespaceCommitEmails": {
+                      "nodes": []
+                    },
+                    "savedReplies": {
+                      "nodes": []
+                    },
+                    "savedReply": null,
+                    "starredProjects": {
+                      "nodes": []
+                    },
+                    "contributedProjects": {
+                      "nodes": [
+                        {
+                          "fullPath": "gr-<RUN>/app"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline fields",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "headPipeline": {
+                "status": "SUCCESS",
+                "jobs": {
+                  "nodes": [
+                    {
+                      "name": "ci",
+                      "status": "SUCCESS"
+                    }
+                  ]
+                },
+                "stages": {
+                  "nodes": [
+                    {
+                      "name": "external",
+                      "status": "success"
+                    }
+                  ]
+                },
+                "testReportSummary": {
+                  "total": {
+                    "count": 0
+                  }
+                },
+                "warningMessages": {
+                  "nodes": []
+                },
+                "job": {
+                  "name": "ci",
+                  "status": "SUCCESS"
+                },
+                "manualVariables": {
+                  "nodes": []
+                },
+                "sourceJob": null,
+                "jobArtifacts": []
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "times": [
+    0,
+    164,
+    21434,
+    22021,
+    22075,
+    22168,
+    38998,
+    50476,
+    63123,
+    63303,
+    109963,
+    110067,
+    110164,
+    119953,
+    120093,
+    120206
+  ],
+  "done_times": [
+    163,
+    747,
+    22020,
+    22074,
+    22166,
+    22575,
+    39286,
+    50676,
+    63302,
+    63373,
+    110066,
+    110163,
+    110263,
+    120085,
+    120199,
+    120313
+  ],
+  "started_at": 1795248053760
+}

@@ -563,6 +563,34 @@ pub fn merge_request_event(
     fire(c, p, "merge_requests_events", "merge_request_hooks", &data, None)
 }
 
+/// An MR event raised by the system rather than the user (EE: `approvals_reset_on_push`):
+/// `system` is true, `system_action` follows `actioned_at`, and `merge_status` is the one the
+/// MR had when the event was raised.
+pub fn merge_request_system_event(
+    c: &Connection,
+    config: &Config,
+    p: &Project,
+    mr: &MergeRequest,
+    user: Option<&User>,
+    action: &str,
+    system_action: &str,
+    merge_status: &str,
+) -> Result<()> {
+    if !has_hooks(c, p, "merge_requests_events")? {
+        return Ok(());
+    }
+    let mut data = mr_payload(c, config, p, &mr.reload(c)?, user, action, None, None)?;
+    let mut then = mr.reload(c)?;
+    then.merge_status = merge_status.to_string();
+    let detailed = crate::services::merge_requests::mergeability::detailed_status(c, config, p, &then)?;
+    let attrs = &mut data["object_attributes"];
+    attrs["merge_status"] = json!(merge_status);
+    attrs["detailed_merge_status"] = json!(detailed);
+    attrs["system"] = json!(true);
+    attrs["system_action"] = json!(system_action);
+    fire(c, p, "merge_requests_events", "merge_request_hooks", &data, None)
+}
+
 /// `Refresh::WebHooksService`: `update` with `oldrev` after a push to the source branch.
 pub fn merge_request_push_update(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest, user: &User, _before: &Snapshot, oldrev: &Oid) -> Result<()> {
     if !has_hooks(c, p, "merge_requests_events")? {

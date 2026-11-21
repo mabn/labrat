@@ -187,9 +187,12 @@ async fn start_labrat(external_url: &str, ssh_port: u16) -> Target {
     per_kind.insert("mr_after_create".to_string(), 300);
     per_kind.insert("mr_check_mergeability".to_string(), 300);
     per_kind.insert("mr_check_mergeability_closed".to_string(), 1500);
-    per_kind.insert("approval_events".to_string(), 200);
+    // EE's Sidekiq picked approval events up quicker than CE's in the recordings.
+    per_kind.insert("approval_events".to_string(), if edition().is_ee() { 0 } else { 200 });
     // EE: approvals re-sync after a push or a draft becoming ready.
     per_kind.insert("approvals_sync".to_string(), 750);
+    // EE: the cherry-pick note follows the commit's cross-references.
+    per_kind.insert("cherry_pick_note".to_string(), 400);
     per_kind.insert("note_event".to_string(), 300);
     // `PostReceive` -> `ProcessCommitWorker`: two Sidekiq hops before "mentioned in commit".
     per_kind.insert("commit_cross_references".to_string(), 750);
@@ -1003,7 +1006,7 @@ fn sort_rule_users(v: &mut Value) {
         Value::Object(m) => {
             let rule = m.contains_key("approvals_required") || m.contains_key("approvalsRequired");
             for (k, x) in m.iter_mut() {
-                if rule && matches!(k.as_str(), "users" | "eligible_approvers" | "eligibleApprovers" | "approvers") {
+                if rule && matches!(k.as_str(), "users" | "eligible_approvers" | "eligibleApprovers" | "approvers" | "approved_by" | "approvedBy") {
                     let list = match x {
                         Value::Array(a) => Some(a),
                         Value::Object(o) => match o.get_mut("nodes") {
