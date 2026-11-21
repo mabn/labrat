@@ -256,7 +256,7 @@ pub fn finish(c: &Connection, config: &Config, project_id: i64, r#ref: &str, sta
         return Err(Error::message(400, "status must be success, failed or canceled"));
     }
     let mut st = c.prepare(
-        "SELECT id, pipeline_id, status FROM commit_statuses WHERE project_id = ?1 AND ref = ?2 AND build = 1 AND retried = 0 AND status IN ('pending', 'running') ORDER BY id",
+        "SELECT id, pipeline_id, status FROM commit_statuses WHERE project_id = ?1 AND ref = ?2 AND build = 1 AND retried = 0 AND status IN ('pending', 'running', 'canceling') ORDER BY id",
     )?;
     let rows: Vec<(i64, i64, String)> = st.query_map(params![project_id, r#ref], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<rusqlite::Result<_>>()?;
     let mut n = 0;
@@ -268,7 +268,8 @@ pub fn finish(c: &Connection, config: &Config, project_id: i64, r#ref: &str, sta
         if s == "pending" {
             set_job(c, id, "running")?;
         }
-        set_job(c, id, status)?;
+        // A job being canceled ends canceled, whatever the runner reports.
+        set_job(c, id, if s == "canceling" { "canceled" } else { status })?;
         n += 1;
         if !pipelines.contains(&pl) {
             pipelines.push(pl);
@@ -280,10 +281,14 @@ pub fn finish(c: &Connection, config: &Config, project_id: i64, r#ref: &str, sta
     Ok(n)
 }
 
-/// Cancels a pipeline's unfinished jobs (`Ci::CancelPipelineService`).
+/// Cancels a pipeline's unfinished jobs (`Ci::CancelPipelineService`). Jobs a runner is
+/// running become `canceling` until the runner reports back (`ci/finish`, or the auto runner).
 pub fn cancel_pipeline(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()> {
-    for id in job_ids(c, pipeline_id, &["created", "pending", "running"])? {
+    for id in job_ids(c, pipeline_id, &["created", "pending"])? {
         set_job(c, id, "canceled")?;
+    }
+    for id in job_ids(c, pipeline_id, &["running"])? {
+        c.execute("UPDATE commit_statuses SET status = 'canceling', updated_at = ?1 WHERE id = ?2", params![time::now(), id])?;
     }
     ci::recompute(c, config, pipeline_id)
 }
@@ -309,14 +314,14 @@ pub fn auto_finish(c: &Connection, config: &Config, pipeline_id: i64) -> Result<
     let Some(cfg) = self::config(c, pl.project_id)? else { return Ok(()) };
     let r#ref = pl.ref_.clone().unwrap_or_default();
     let status = cfg.overrides.get(&r#ref).and_then(Value::as_str).unwrap_or(&cfg.status).to_string();
+    for id in job_ids(c, pipeline_id, &["canceling"])? {
+        set_job(c, id, "canceled")?;
+    }
     let ids = job_ids(c, pipeline_id, &["running"])?;
     for id in &ids {
         set_job(c, *id, &status)?;
     }
-    if !ids.is_empty() {
-        ci::recompute(c, config, pipeline_id)?;
-    }
-    Ok(())
+    ci::recompute(c, config, pipeline_id)
 }
 
 /// The jobs of the project for `GET /-/labrat/ci/jobs`.

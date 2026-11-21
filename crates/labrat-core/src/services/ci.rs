@@ -482,6 +482,10 @@ fn composite(statuses: &[String]) -> &'static str {
     if set.is_empty() {
         return "success";
     }
+    // Jobs a runner still has to acknowledge as canceled.
+    if set.contains("canceling") {
+        return "canceling";
+    }
     if subset(&["skipped"]) {
         "skipped"
     } else if subset(&["success", "skipped"]) {

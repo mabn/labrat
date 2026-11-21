@@ -62,8 +62,12 @@ async fn merge_train_drops() {
     s.ci_pick(1).await;
 
     // Closing car 4 takes it off.
-    s.step("close 4", PUT, &format!("{mrs}/4"), Some(&admin), json!({"state_event": "close"}), "mr").await;
+    // The close response races with the train dropping the car (its pipeline can read as
+    // canceled and running at once), so the MR is read after things settle.
+    let r = s.send(PUT, &format!("{mrs}/4"), Some(&admin), json!({"state_event": "close"})).await;
+    assert_eq!(r.status, 200, "{}", r.body);
     s.settle().await;
+    s.step("mr 4 closed", GET, &format!("{mrs}/4"), Some(&admin), json!(null), "mr").await;
     s.step("list after close", GET, &trains, Some(&admin), json!(null), "car").await;
     s.step("mr 4 notes after close", GET, &format!("{mrs}/4/notes"), Some(&admin), json!({"sort": "asc"}), "note").await;
     s.step("pipelines after drops", GET, &format!("/projects/{pid}/pipelines"), Some(&admin), json!({"per_page": 50}), "pipeline").await;

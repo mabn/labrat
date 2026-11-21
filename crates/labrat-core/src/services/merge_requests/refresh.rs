@@ -157,6 +157,13 @@ pub fn refresh(
             }
         mergeability::mark_as_unchecked(c, mr.id)?;
         let mr = mr.reload(c)?;
+        // EE: an MR waiting to join a merge train is checked again at once.
+        if !is_source
+            && config.is_ee()
+            && crate::services::merge_trains::strategy(&mr).as_deref() == Some("add_to_merge_train_when_checks_pass")
+        {
+            mergeability::check_async(c, &mr)?;
+        }
         if is_source && !removed {
             if let Some(pl) = crate::services::ci::create_skipped_mr_pipeline(c, p, &mr, user)? {
                 crate::services::hooks::pipeline_event(c, config, p, &pl)?;

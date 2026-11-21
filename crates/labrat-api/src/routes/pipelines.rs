@@ -100,6 +100,7 @@ fn detailed_status(p: &Project, pl: &Pipeline, has_details: bool) -> Value {
         "success" => ("status_success", "Passed", "passed", "success"),
         "failed" => ("status_failed", "Failed", "failed", "failed"),
         "canceled" => ("status_canceled", "Canceled", "canceled", "canceled"),
+        "canceling" => ("status_canceled", "Canceling", "canceling", "canceling"),
         "skipped" => ("status_skipped", "Skipped", "skipped", "skipped"),
         _ => ("status_created", "Created", "created", "created"),
     };

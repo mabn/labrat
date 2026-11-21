@@ -402,6 +402,8 @@ pub fn refresh(c: &Connection, config: &Config, project_id: i64, target_branch: 
         let cars = Car::train(c, project_id, target_branch)?;
         let Some(mut base) = r.branch(target_branch)? else { return Ok(()) };
         let mut changed = false;
+        // EE creates one car pipeline per refresh and refreshes again for the next car.
+        let mut created = false;
         for (i, car) in cars.iter().enumerate() {
             let pl = car.pipeline_id.map(|id| Pipeline::find(c, id)).transpose()?.flatten();
             let user = User::get(c, car.user_id)?;
@@ -426,6 +428,10 @@ pub fn refresh(c: &Connection, config: &Config, project_id: i64, target_branch: 
                 continue;
             }
             // A new pipeline on top of the car ahead.
+            if created {
+                return enqueue_refresh(c, project_id, target_branch);
+            }
+            created = true;
             let Some(train_sha) = build_train_ref(c, config, &p, &mr, &base)? else {
                 drop_car(c, config, car, &user, Some("the merge request could not be merged with the previous merge requests"), false)?;
                 changed = true;
