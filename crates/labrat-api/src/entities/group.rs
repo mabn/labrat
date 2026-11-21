@@ -164,7 +164,7 @@ pub fn detail(
     config: &Config,
     user_can_admin_group: bool,
 ) -> Map<String, Value> {
-    let mut m = group(g, config);
+    let mut m = group_with(g, config, perms.admin_group());
     m.insert("shared_with_groups".into(), json!([]));
     let admin = user_can_admin_group && perms.admin_group();
     if admin {

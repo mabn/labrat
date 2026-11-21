@@ -54,6 +54,23 @@ fn entity(c: &Connection, req: &Req, ns: &Namespace) -> labrat_core::Result<Valu
         // projects, so it reports 0 (the conformance normalizer masks the value).
         m.insert("root_repository_size".into(), json!(0));
         m.insert("projects_count".into(), json!(projects));
+        if req.app.config.is_ee() {
+            // EE's namespace fields: billable members are the distinct users with a
+            // role above Guest in the group tree or its projects (Ultimate doesn't bill Guests).
+            let billable: i64 = c.query_row(
+                &format!(
+                    "SELECT COUNT(DISTINCT m.user_id) FROM members m JOIN users u ON u.id = m.user_id WHERE m.access_level > 10 AND u.user_type = 0 AND (
+                        (m.source_type = 'Namespace' AND m.source_id IN ({in_list}))
+                        OR (m.source_type = 'Project' AND m.source_id IN (SELECT id FROM projects WHERE namespace_id IN ({in_list}))))"
+                ),
+                [],
+                |r| r.get(0),
+            )?;
+            m.insert("billable_members_count".into(), json!(billable));
+            m.insert("plan".into(), json!("default"));
+            m.insert("trial_ends_on".into(), Value::Null);
+            m.insert("trial".into(), json!(false));
+        }
     }
     Ok(v)
 }

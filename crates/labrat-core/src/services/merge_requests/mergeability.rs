@@ -261,6 +261,10 @@ pub fn first_failed_check(
     if super::merge_after(c, mr)?.is_some_and(|t| t > crate::time::now()) {
         return Ok(Some("merge_time".into()));
     }
+    // EE: a reviewer's "changes requested" blocks merging.
+    if config.is_ee() && mr.reviewers(c)?.iter().any(|(_, _, state, _)| *state == crate::services::reviews::state::REQUESTED_CHANGES) {
+        return Ok(Some("requested_changes".into()));
+    }
     if p.only_allow_merge_if_all_discussions_are_resolved && unresolved_discussions(c, mr)? {
         return Ok(Some("discussions_not_resolved".into()));
     }

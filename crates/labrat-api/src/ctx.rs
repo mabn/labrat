@@ -284,6 +284,11 @@ impl FromRequest<Arc<App>> for Req {
                     .collect(),
                 Err(_) => vec![],
             };
+        // Grape's path params never match an empty segment (`/discussions//notes`): the
+        // request falls through to the catch-all route.
+        if path_params.iter().any(|(_, v)| v.is_empty()) {
+            return Err(Error::Body(404, serde_json::json!({"error": "404 Not Found"})).into());
+        }
         let query = parts.uri.query().unwrap_or("").to_string();
         let mut map = Map::new();
         parse_query(&query, &mut map);

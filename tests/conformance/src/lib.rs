@@ -675,12 +675,14 @@ impl Scenario {
             }
         }
         let path = self.norm.string(path, "");
+        let mut body = res.body.clone();
+        sort_rule_users(&mut body);
         let mut step = json!({
             "label": label,
             "request": format!("{method} {path}"),
             "status": res.status,
             "headers": Value::Object(headers),
-            "body": res.body.clone(),
+            "body": body,
         });
         self.norm.value(&mut step["headers"], "header");
         self.norm.value_kind(&mut step["body"], kind);
@@ -972,6 +974,47 @@ fn receiver_response_headers(v: &mut Value) {
             }
         }
         Value::Array(a) => a.iter_mut().for_each(receiver_response_headers),
+        _ => {}
+    }
+}
+
+/// GitLab EE lists an approval rule's users and eligible approvers without an `ORDER BY`, so
+/// their order varies from call to call. Sorts them by username (before ids are normalized).
+fn sort_rule_users(v: &mut Value) {
+    match v {
+        Value::Object(m) => {
+            let rule = m.contains_key("approvals_required") || m.contains_key("approvalsRequired");
+            for (k, x) in m.iter_mut() {
+                if rule && matches!(k.as_str(), "users" | "eligible_approvers" | "eligibleApprovers" | "approvers") {
+                    let list = match x {
+                        Value::Array(a) => Some(a),
+                        Value::Object(o) => match o.get_mut("nodes") {
+                            Some(Value::Array(a)) => Some(a),
+                            _ => None,
+                        },
+                        _ => None,
+                    };
+                    if let Some(a) = list
+                        && a.iter().all(|u| u["username"].is_string()) {
+                            a.sort_by(|p, q| p["username"].as_str().cmp(&q["username"].as_str()));
+                        }
+                }
+                sort_rule_users(x);
+            }
+        }
+        Value::Array(a) => {
+            // Lists of approval rules: EE copies project rules onto an MR in no fixed order,
+            // so the MR's rules (and their ids) come in varying order.
+            let key = |r: &Value| -> Option<(String, String)> {
+                let t = r.get("rule_type").or_else(|| r.get("type"))?.as_str()?.to_lowercase();
+                let n = r.get("name")?.as_str()?.to_string();
+                (r.get("approvals_required").is_some() || r.get("approvalsRequired").is_some() || r.get("rule_type").is_some()).then_some((t, n))
+            };
+            if !a.is_empty() && a.iter().all(|r| key(r).is_some()) {
+                a.sort_by_key(|r| key(r).unwrap());
+            }
+            a.iter_mut().for_each(sort_rule_users)
+        }
         _ => {}
     }
 }

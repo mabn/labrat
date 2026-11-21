@@ -234,7 +234,15 @@ impl<'a> Ctx<'a> {
     fn error(&self, msg: &str, pos: async_graphql_parser::Pos, path: &[Value], extensions: Option<Value>) {
         let mut e = Map::new();
         e.insert("message".into(), json!(msg));
-        e.insert("locations".into(), json!([location(pos)]));
+        // graphql-ruby reports most execution errors (invalid nulls, for one) with a column
+        // counted from the start of the document; a resolver's `ResourceNotAvailable` gets the
+        // column within its line (recorded on EE 18.11 with multi-line mutations).
+        let loc = if msg == super::resolvers::RESOURCE_UNAVAILABLE {
+            json!({"line": pos.line, "column": pos.column})
+        } else {
+            location(pos)
+        };
+        e.insert("locations".into(), json!([loc]));
         e.insert("path".into(), Value::Array(path.to_vec()));
         if let Some(x) = extensions {
             e.insert("extensions".into(), x);

@@ -590,7 +590,8 @@ async fn create_draft(req: Req) -> ApiResult {
     let me = req.user()?.clone();
     req.params.require(&["note"])?;
     let note = req.params.str("note").unwrap_or_default();
-    let reply_to = req.params.str("in_reply_to_discussion_id");
+    // An empty id is no discussion at all.
+    let reply_to = req.params.str("in_reply_to_discussion_id").filter(|s| !s.is_empty());
     let resolve = req.params.bool_or("resolve_discussion", false)?;
     let position = position_param(&req)?;
     let commit_id = req.params.str("commit_id").filter(|s| s != "undefined");

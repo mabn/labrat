@@ -468,17 +468,24 @@ pub fn create_rule(c: &Connection, scope: Scope, owner_id: i64, rp: &RuleParams)
         return Ok(Err(errs));
     }
     let now = time::now();
+    // Project and MR rule ids come from one counter, so an id never names both kinds (on a
+    // real instance the two tables' ids are far apart, and recordings rely on that).
+    let id: i64 = c.query_row(
+        "SELECT 1 + max(coalesce((SELECT max(id) FROM approval_project_rules), 0), coalesce((SELECT max(id) FROM approval_merge_request_rules), 0),
+                        coalesce((SELECT max(seq) FROM sqlite_sequence WHERE name IN ('approval_project_rules', 'approval_merge_request_rules')), 0))",
+        [],
+        |r| r.get(0),
+    )?;
     match scope {
         Scope::Project => c.execute(
-            "INSERT INTO approval_project_rules (project_id, name, approvals_required, rule_type, report_type, applies_to_all_protected_branches, created_at, updated_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)",
-            params![owner_id, name, required, rule_type, rp.report_type, rp.applies_to_all_protected_branches.unwrap_or(false), now],
+            "INSERT INTO approval_project_rules (id, project_id, name, approvals_required, rule_type, report_type, applies_to_all_protected_branches, created_at, updated_at) VALUES (?8, ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)",
+            params![owner_id, name, required, rule_type, rp.report_type, rp.applies_to_all_protected_branches.unwrap_or(false), now, id],
         )?,
         Scope::MergeRequest => c.execute(
-            "INSERT INTO approval_merge_request_rules (merge_request_id, name, approvals_required, rule_type, report_type, approval_project_rule_id, created_at, updated_at) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)",
-            params![owner_id, name, required, rule_type, rp.report_type, rp.source_id, now],
+            "INSERT INTO approval_merge_request_rules (id, merge_request_id, name, approvals_required, rule_type, report_type, approval_project_rule_id, created_at, updated_at) VALUES (?8, ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)",
+            params![owner_id, name, required, rule_type, rp.report_type, rp.source_id, now, id],
         )?,
     };
-    let id = c.last_insert_rowid();
     // `applies_to_all_protected_branches` ignores the branch list.
     let pbs = if rp.applies_to_all_protected_branches == Some(true) { Some(vec![]) } else { rp.protected_branch_ids.clone() };
     set_links(c, scope, id, rp.user_ids.as_deref(), rp.group_ids.as_deref(), pbs.as_deref())?;
@@ -539,6 +546,8 @@ fn applies_to_branch(c: &Connection, p: &Project, rule: &Rule, branch: &str) -> 
 
 /// Copies the project rules that apply to the MR's target branch (`MergeRequests::CreateService`).
 pub fn copy_project_rules(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<()> {
+    // GitLab copies them in no fixed order (two recordings of one scenario differ); labrat
+    // goes by id, and the conformance harness compares rule lists sorted by type and name.
     for rule in project_rules(c, p)? {
         if !applies_to_branch(c, p, &rule, &mr.target_branch)? {
             continue;

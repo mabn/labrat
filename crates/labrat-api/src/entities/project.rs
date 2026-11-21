@@ -460,7 +460,9 @@ fn ee_fields(c: &Connection, p: &Project, perms: &ProjectPerms, m: &mut Map<Stri
     if perms.feature(p, "merge_requests", labrat_core::model::access::GUEST) {
         m.insert("merge_requests_template".into(), setting(p, "merge_requests_template", Value::Null));
     }
-    m.insert("ci_restrict_pipeline_cancellation_role".into(), json!("developer"));
+    if perms.admin_project() {
+        m.insert("ci_restrict_pipeline_cancellation_role".into(), json!("developer"));
+    }
     m.insert("merge_pipelines_enabled".into(), setting_bool(p, "merge_pipelines_enabled", false));
     m.insert("merge_trains_enabled".into(), setting_bool(p, "merge_trains_enabled", false));
     m.insert("merge_trains_skip_train_allowed".into(), setting_bool(p, "merge_trains_skip_train_allowed", false));

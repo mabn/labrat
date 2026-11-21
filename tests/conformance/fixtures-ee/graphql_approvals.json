@@ -1,0 +1,2853 @@
+{
+  "scenario": "graphql_approvals",
+  "base": "http://localhost:8929",
+  "ssh_port": 2224,
+  "run": "r821413",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/gqa-<RUN>",
+        "name": "gqa-<RUN>",
+        "path": "gqa-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "gqa-<RUN>",
+        "full_path": "gqa-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "gqa-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "gqa-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/gqa-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/gqa-<RUN>/app.git",
+        "web_url": "<BASE>/gqa-<RUN>/app",
+        "readme_url": "<BASE>/gqa-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "gqa-<RUN>",
+          "path": "gqa-<RUN>",
+          "kind": "group",
+          "full_path": "gqa-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/gqa-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null,
+        "approvals_before_merge": 0,
+        "mirror": false,
+        "external_authorization_classification_label": null,
+        "requirements_enabled": true,
+        "requirements_access_level": "enabled",
+        "security_and_compliance_enabled": true,
+        "secret_push_protection_enabled": false,
+        "pre_receive_secret_detection_enabled": false,
+        "compliance_frameworks": [],
+        "issues_template": null,
+        "merge_requests_template": null,
+        "ci_restrict_pipeline_cancellation_role": "developer",
+        "merge_pipelines_enabled": false,
+        "merge_trains_enabled": false,
+        "merge_trains_skip_train_allowed": false,
+        "only_allow_merge_if_all_status_checks_passed": false,
+        "allow_pipeline_trigger_approve_deployment": false,
+        "prevent_merge_without_jira_issue": false,
+        "duo_remote_flows_enabled": true,
+        "duo_foundational_flows_enabled": true,
+        "duo_sast_fp_detection_enabled": false,
+        "duo_secret_detection_fp_enabled": false,
+        "duo_sast_vr_workflow_enabled": false,
+        "spp_repository_pipeline_access": true,
+        "security_policy_pipeline_must_succeed": false,
+        "merge_request_title_regex": null,
+        "merge_request_title_regex_description": null
+      }
+    },
+    {
+      "label": "user author",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "author-<RUN>",
+        "public_email": null,
+        "name": "author",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/author-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "author-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "author-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token author",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "user alice",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "alice-<RUN>",
+        "public_email": null,
+        "name": "alice",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/alice-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "alice-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "alice-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:3>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token alice",
+      "request": "POST /users/<user:3>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:2>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:3>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "user bob",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:4>",
+        "username": "bob-<RUN>",
+        "public_email": null,
+        "name": "bob",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/bob-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "bob-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "bob-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:4>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token bob",
+      "request": "POST /users/<user:4>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:3>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:4>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "user dev",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:5>",
+        "username": "dev-<RUN>",
+        "public_email": null,
+        "name": "dev",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/dev-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "dev-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "dev-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:5>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token dev",
+      "request": "POST /users/<user:5>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:4>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:5>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-21",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "author member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "author-<RUN>",
+        "public_email": null,
+        "name": "author",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/author-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "author-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "alice member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "alice-<RUN>",
+        "public_email": null,
+        "name": "alice",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/alice-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "alice-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "bob member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:4>",
+        "username": "bob-<RUN>",
+        "public_email": null,
+        "name": "bob",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/bob-<RUN>",
+        "access_level": 40,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "bob-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "dev member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:5>",
+        "username": "dev-<RUN>",
+        "public_email": null,
+        "name": "dev",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/dev-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "dev-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "rule backend",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:1>",
+        "name": "Backend",
+        "rule_type": "regular",
+        "eligible_approvers": [
+          {
+            "id": "<user:3>",
+            "username": "alice-<RUN>",
+            "public_email": null,
+            "name": "alice",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/alice-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          }
+        ],
+        "approvals_required": 1,
+        "users": [
+          {
+            "id": "<user:3>",
+            "username": "alice-<RUN>",
+            "public_email": null,
+            "name": "alice",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/alice-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          }
+        ],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "rule any",
+      "request": "POST /projects/<project:1>/approval_rules",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<rule:2>",
+        "name": "Anyone",
+        "rule_type": "any_approver",
+        "eligible_approvers": [],
+        "approvals_required": 2,
+        "users": [],
+        "groups": [],
+        "contains_hidden_groups": false,
+        "report_type": null,
+        "protected_branches": [],
+        "applies_to_all_protected_branches": false
+      }
+    },
+    {
+      "label": "commit",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Add a",
+        "message": "Add a",
+        "author_name": "author",
+        "author_email": "author-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "author",
+        "committer_email": "author-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/gqa-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "author-<RUN>",
+          "public_email": null,
+          "name": "author",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/author-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA1>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "gqa-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/gqa-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "mr as admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": false,
+              "approvalsRequired": 2,
+              "approvalsLeft": 2,
+              "detailedMergeStatus": "NOT_APPROVED",
+              "approvedBy": {
+                "nodes": []
+              },
+              "userPermissions": {
+                "canApprove": true
+              },
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "FAILED"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "approvalRulesOverwritten": true,
+                "invalidApproversRules": [],
+                "suggestedApprovers": {
+                  "nodes": [
+                    {
+                      "username": "alice-<RUN>"
+                    },
+                    {
+                      "username": "bob-<RUN>"
+                    }
+                  ]
+                },
+                "rules": [
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:1>",
+                    "name": "All Members",
+                    "type": "ANY_APPROVER",
+                    "approvalsRequired": 2,
+                    "approved": false,
+                    "overridden": false,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": false,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [],
+                    "users": {
+                      "nodes": []
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": []
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:1>",
+                      "name": "Anyone",
+                      "type": "ANY_APPROVER",
+                      "approvalsRequired": 2
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:2>",
+                    "name": "Backend",
+                    "type": "REGULAR",
+                    "approvalsRequired": 1,
+                    "approved": false,
+                    "overridden": false,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": false,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [
+                      {
+                        "username": "alice-<RUN>"
+                      },
+                      {
+                        "username": "bob-<RUN>"
+                      }
+                    ],
+                    "users": {
+                      "nodes": [
+                        {
+                          "username": "alice-<RUN>"
+                        },
+                        {
+                          "username": "bob-<RUN>"
+                        }
+                      ]
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": []
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:2>",
+                      "name": "Backend",
+                      "type": "REGULAR",
+                      "approvalsRequired": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "mr as author",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": false,
+              "approvalsRequired": 2,
+              "approvalsLeft": 2,
+              "detailedMergeStatus": "NOT_APPROVED",
+              "approvedBy": {
+                "nodes": []
+              },
+              "userPermissions": {
+                "canApprove": false
+              },
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "FAILED"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "approvalRulesOverwritten": true,
+                "invalidApproversRules": [],
+                "suggestedApprovers": {
+                  "nodes": [
+                    {
+                      "username": "alice-<RUN>"
+                    },
+                    {
+                      "username": "bob-<RUN>"
+                    }
+                  ]
+                },
+                "rules": [
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:1>",
+                    "name": "All Members",
+                    "type": "ANY_APPROVER",
+                    "approvalsRequired": 2,
+                    "approved": false,
+                    "overridden": false,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": false,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [],
+                    "users": {
+                      "nodes": []
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": []
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:1>",
+                      "name": "Anyone",
+                      "type": "ANY_APPROVER",
+                      "approvalsRequired": 2
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:2>",
+                    "name": "Backend",
+                    "type": "REGULAR",
+                    "approvalsRequired": 1,
+                    "approved": false,
+                    "overridden": false,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": false,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [
+                      {
+                        "username": "alice-<RUN>"
+                      },
+                      {
+                        "username": "bob-<RUN>"
+                      }
+                    ],
+                    "users": {
+                      "nodes": [
+                        {
+                          "username": "alice-<RUN>"
+                        },
+                        {
+                          "username": "bob-<RUN>"
+                        }
+                      ]
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": []
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:2>",
+                      "name": "Backend",
+                      "type": "REGULAR",
+                      "approvalsRequired": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "alice approves",
+      "request": "POST /projects/<project:1>/merge_requests/1/approve",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": false,
+        "approvals_required": 2,
+        "approvals_left": 1,
+        "require_password_to_approve": false,
+        "approved_by": [
+          {
+            "user": {
+              "id": "<user:3>",
+              "username": "alice-<RUN>",
+              "public_email": null,
+              "name": "alice",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/alice-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          }
+        ],
+        "suggested_approvers": [
+          {
+            "id": "<user:4>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          }
+        ],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": true,
+        "user_can_approve": false,
+        "approval_rules_left": [
+          {
+            "id": "<approval.approval_rules_left:1>",
+            "name": "All Members",
+            "rule_type": "any_approver"
+          }
+        ],
+        "has_approval_rules": true,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "mr after alice",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": false,
+              "approvalsRequired": 2,
+              "approvalsLeft": 1,
+              "detailedMergeStatus": "NOT_APPROVED",
+              "approvedBy": {
+                "nodes": [
+                  {
+                    "username": "alice-<RUN>"
+                  }
+                ]
+              },
+              "userPermissions": {
+                "canApprove": true
+              },
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "FAILED"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "approvalRulesOverwritten": true,
+                "invalidApproversRules": [],
+                "suggestedApprovers": {
+                  "nodes": [
+                    {
+                      "username": "bob-<RUN>"
+                    }
+                  ]
+                },
+                "rules": [
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:1>",
+                    "name": "All Members",
+                    "type": "ANY_APPROVER",
+                    "approvalsRequired": 2,
+                    "approved": false,
+                    "overridden": false,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": false,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [],
+                    "users": {
+                      "nodes": []
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": [
+                        {
+                          "username": "alice-<RUN>"
+                        }
+                      ]
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:1>",
+                      "name": "Anyone",
+                      "type": "ANY_APPROVER",
+                      "approvalsRequired": 2
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:2>",
+                    "name": "Backend",
+                    "type": "REGULAR",
+                    "approvalsRequired": 1,
+                    "approved": true,
+                    "overridden": false,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": false,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [
+                      {
+                        "username": "alice-<RUN>"
+                      },
+                      {
+                        "username": "bob-<RUN>"
+                      }
+                    ],
+                    "users": {
+                      "nodes": [
+                        {
+                          "username": "alice-<RUN>"
+                        },
+                        {
+                          "username": "bob-<RUN>"
+                        }
+                      ]
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": [
+                        {
+                          "username": "alice-<RUN>"
+                        }
+                      ]
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:2>",
+                      "name": "Backend",
+                      "type": "REGULAR",
+                      "approvalsRequired": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "mr as alice",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": false,
+              "approvalsRequired": 2,
+              "approvalsLeft": 1,
+              "detailedMergeStatus": "NOT_APPROVED",
+              "approvedBy": {
+                "nodes": [
+                  {
+                    "username": "alice-<RUN>"
+                  }
+                ]
+              },
+              "userPermissions": {
+                "canApprove": false
+              },
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "FAILED"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "approvalRulesOverwritten": true,
+                "invalidApproversRules": [],
+                "suggestedApprovers": {
+                  "nodes": [
+                    {
+                      "username": "bob-<RUN>"
+                    }
+                  ]
+                },
+                "rules": [
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:1>",
+                    "name": "All Members",
+                    "type": "ANY_APPROVER",
+                    "approvalsRequired": 2,
+                    "approved": false,
+                    "overridden": false,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": false,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [],
+                    "users": {
+                      "nodes": []
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": [
+                        {
+                          "username": "alice-<RUN>"
+                        }
+                      ]
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:1>",
+                      "name": "Anyone",
+                      "type": "ANY_APPROVER",
+                      "approvalsRequired": 2
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:2>",
+                    "name": "Backend",
+                    "type": "REGULAR",
+                    "approvalsRequired": 1,
+                    "approved": true,
+                    "overridden": false,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": false,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [
+                      {
+                        "username": "alice-<RUN>"
+                      },
+                      {
+                        "username": "bob-<RUN>"
+                      }
+                    ],
+                    "users": {
+                      "nodes": [
+                        {
+                          "username": "alice-<RUN>"
+                        },
+                        {
+                          "username": "bob-<RUN>"
+                        }
+                      ]
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": [
+                        {
+                          "username": "alice-<RUN>"
+                        }
+                      ]
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:2>",
+                      "name": "Backend",
+                      "type": "REGULAR",
+                      "approvalsRequired": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "mr rules",
+      "request": "GET /projects/<project:1>/merge_requests/1/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/approval_rules?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/approval_rules?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<rule:3>",
+          "name": "Anyone",
+          "rule_type": "any_approver",
+          "eligible_approvers": [],
+          "approvals_required": 2,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "section": null,
+          "source_rule": {
+            "approvals_required": 2
+          },
+          "overridden": false
+        },
+        {
+          "id": "<rule:4>",
+          "name": "Backend",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:3>",
+              "username": "alice-<RUN>",
+              "public_email": null,
+              "name": "alice",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/alice-<RUN>"
+            },
+            {
+              "id": "<user:4>",
+              "username": "bob-<RUN>",
+              "public_email": null,
+              "name": "bob",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/bob-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "alice-<RUN>",
+              "public_email": null,
+              "name": "alice",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/alice-<RUN>"
+            },
+            {
+              "id": "<user:4>",
+              "username": "bob-<RUN>",
+              "public_email": null,
+              "name": "bob",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/bob-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "section": null,
+          "source_rule": {
+            "approvals_required": 1
+          },
+          "overridden": false
+        }
+      ]
+    },
+    {
+      "label": "update mr rule",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestUpdateApprovalRule": {
+            "errors": [],
+            "mergeRequest": null
+          }
+        }
+      }
+    },
+    {
+      "label": "update mr rule as dev",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 2,
+                "column": 7
+              }
+            ],
+            "path": [
+              "mergeRequestUpdateApprovalRule"
+            ]
+          }
+        ],
+        "data": {
+          "mergeRequestUpdateApprovalRule": null
+        }
+      }
+    },
+    {
+      "label": "update missing rule",
+      "request": "POST /api/graphql",
+      "status": 500,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Internal server error"
+          }
+        ]
+      }
+    },
+    {
+      "label": "update bad count",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestUpdateApprovalRule": {
+            "errors": [],
+            "mergeRequest": null
+          }
+        }
+      }
+    },
+    {
+      "label": "mr after update",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": false,
+              "approvalsRequired": 2,
+              "approvalsLeft": 2,
+              "detailedMergeStatus": "NOT_APPROVED",
+              "approvedBy": {
+                "nodes": [
+                  {
+                    "username": "alice-<RUN>"
+                  }
+                ]
+              },
+              "userPermissions": {
+                "canApprove": true
+              },
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "FAILED"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "approvalRulesOverwritten": true,
+                "invalidApproversRules": [
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:2>",
+                    "name": "Backend team"
+                  }
+                ],
+                "suggestedApprovers": {
+                  "nodes": [
+                    {
+                      "username": "bob-<RUN>"
+                    }
+                  ]
+                },
+                "rules": [
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:1>",
+                    "name": "All Members",
+                    "type": "ANY_APPROVER",
+                    "approvalsRequired": 2,
+                    "approved": false,
+                    "overridden": false,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": false,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [],
+                    "users": {
+                      "nodes": []
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": [
+                        {
+                          "username": "alice-<RUN>"
+                        }
+                      ]
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:1>",
+                      "name": "Anyone",
+                      "type": "ANY_APPROVER",
+                      "approvalsRequired": 2
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/ApprovalMergeRequestRule/<ApprovalMergeRequestRule:2>",
+                    "name": "Backend team",
+                    "type": "REGULAR",
+                    "approvalsRequired": 2,
+                    "approved": true,
+                    "overridden": true,
+                    "section": null,
+                    "containsHiddenGroups": false,
+                    "invalid": true,
+                    "allowMergeWhenInvalid": true,
+                    "eligibleApprovers": [
+                      {
+                        "username": "bob-<RUN>"
+                      }
+                    ],
+                    "users": {
+                      "nodes": [
+                        {
+                          "username": "bob-<RUN>"
+                        }
+                      ]
+                    },
+                    "groups": {
+                      "nodes": []
+                    },
+                    "approvedBy": {
+                      "nodes": []
+                    },
+                    "commentedBy": {
+                      "nodes": []
+                    },
+                    "sourceRule": {
+                      "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:2>",
+                      "name": "Backend",
+                      "type": "REGULAR",
+                      "approvalsRequired": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "branch rules",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequestsDisableCommittersApproval": false,
+            "branchRules": {
+              "nodes": [
+                {
+                  "id": "gid://gitlab/Projects::AllBranchesRule/<Projects::AllBranchesRule:1>",
+                  "name": "All branches",
+                  "isDefault": false,
+                  "isProtected": false,
+                  "branchProtection": null,
+                  "approvalRules": {
+                    "nodes": [
+                      {
+                        "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:1>",
+                        "name": "Anyone",
+                        "type": "ANY_APPROVER",
+                        "approvalsRequired": 2,
+                        "eligibleApprovers": {
+                          "nodes": []
+                        }
+                      },
+                      {
+                        "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:2>",
+                        "name": "Backend",
+                        "type": "REGULAR",
+                        "approvalsRequired": 1,
+                        "eligibleApprovers": {
+                          "nodes": [
+                            {
+                              "username": "alice-<RUN>"
+                            },
+                            {
+                              "username": "bob-<RUN>"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Projects::BranchRule/<Projects::BranchRule:1>",
+                  "name": "main",
+                  "isDefault": true,
+                  "isProtected": true,
+                  "branchProtection": {
+                    "allowForcePush": false,
+                    "codeOwnerApprovalRequired": false
+                  },
+                  "approvalRules": {
+                    "nodes": []
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "create branch rule approval",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "branchRuleApprovalProjectRuleCreate": {
+            "errors": [],
+            "approvalRule": {
+              "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:3>",
+              "name": "Main reviewers",
+              "type": "REGULAR",
+              "approvalsRequired": 1,
+              "eligibleApprovers": {
+                "nodes": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "create duplicate",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "branchRuleApprovalProjectRuleCreate": {
+            "errors": [
+              "Rule type any-approver for the project already exists"
+            ],
+            "approvalRule": null
+          }
+        }
+      }
+    },
+    {
+      "label": "create as dev",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 2,
+                "column": 7
+              }
+            ],
+            "path": [
+              "branchRuleApprovalProjectRuleCreate"
+            ]
+          }
+        ],
+        "data": {
+          "branchRuleApprovalProjectRuleCreate": null
+        }
+      }
+    },
+    {
+      "label": "create bad branch rule",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 2,
+                "column": 7
+              }
+            ],
+            "path": [
+              "branchRuleApprovalProjectRuleCreate"
+            ]
+          }
+        ],
+        "data": {
+          "branchRuleApprovalProjectRuleCreate": null
+        }
+      }
+    },
+    {
+      "label": "update project rule",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "approvalProjectRuleUpdate": {
+            "errors": [],
+            "approvalRule": {
+              "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:3>",
+              "name": "Main team",
+              "type": "REGULAR",
+              "approvalsRequired": 2,
+              "eligibleApprovers": {
+                "nodes": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "update project rule bad",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "approvalProjectRuleUpdate": {
+            "errors": [
+              "Name can't be blank"
+            ],
+            "approvalRule": null
+          }
+        }
+      }
+    },
+    {
+      "label": "update project rule as dev",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 2,
+                "column": 7
+              }
+            ],
+            "path": [
+              "approvalProjectRuleUpdate"
+            ]
+          }
+        ],
+        "data": {
+          "approvalProjectRuleUpdate": null
+        }
+      }
+    },
+    {
+      "label": "project rules rest",
+      "request": "GET /projects/<project:1>/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "3",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/approval_rules?id=<project:1>&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<rule:2>",
+          "name": "Anyone",
+          "rule_type": "any_approver",
+          "eligible_approvers": [],
+          "approvals_required": 2,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:1>",
+          "name": "Backend",
+          "rule_type": "regular",
+          "eligible_approvers": [
+            {
+              "id": "<user:3>",
+              "username": "alice-<RUN>",
+              "public_email": null,
+              "name": "alice",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/alice-<RUN>"
+            },
+            {
+              "id": "<user:4>",
+              "username": "bob-<RUN>",
+              "public_email": null,
+              "name": "bob",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/bob-<RUN>"
+            }
+          ],
+          "approvals_required": 1,
+          "users": [
+            {
+              "id": "<user:3>",
+              "username": "alice-<RUN>",
+              "public_email": null,
+              "name": "alice",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/alice-<RUN>"
+            },
+            {
+              "id": "<user:4>",
+              "username": "bob-<RUN>",
+              "public_email": null,
+              "name": "bob",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/bob-<RUN>"
+            }
+          ],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        },
+        {
+          "id": "<rule:5>",
+          "name": "Main team",
+          "rule_type": "regular",
+          "eligible_approvers": [],
+          "approvals_required": 2,
+          "users": [],
+          "groups": [],
+          "contains_hidden_groups": false,
+          "report_type": null,
+          "protected_branches": [],
+          "applies_to_all_protected_branches": false
+        }
+      ]
+    },
+    {
+      "label": "branch rules after",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequestsDisableCommittersApproval": false,
+            "branchRules": {
+              "nodes": [
+                {
+                  "id": "gid://gitlab/Projects::AllBranchesRule/<Projects::AllBranchesRule:1>",
+                  "name": "All branches",
+                  "isDefault": false,
+                  "isProtected": false,
+                  "branchProtection": null,
+                  "approvalRules": {
+                    "nodes": [
+                      {
+                        "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:1>",
+                        "name": "Anyone",
+                        "type": "ANY_APPROVER",
+                        "approvalsRequired": 2,
+                        "eligibleApprovers": {
+                          "nodes": []
+                        }
+                      },
+                      {
+                        "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:2>",
+                        "name": "Backend",
+                        "type": "REGULAR",
+                        "approvalsRequired": 1,
+                        "eligibleApprovers": {
+                          "nodes": [
+                            {
+                              "username": "alice-<RUN>"
+                            },
+                            {
+                              "username": "bob-<RUN>"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:3>",
+                        "name": "Main team",
+                        "type": "REGULAR",
+                        "approvalsRequired": 2,
+                        "eligibleApprovers": {
+                          "nodes": []
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Projects::BranchRule/<Projects::BranchRule:1>",
+                  "name": "main",
+                  "isDefault": true,
+                  "isProtected": true,
+                  "branchProtection": {
+                    "allowForcePush": false,
+                    "codeOwnerApprovalRequired": false
+                  },
+                  "approvalRules": {
+                    "nodes": []
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "delete project rule as dev",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 41
+              }
+            ],
+            "path": [
+              "approvalProjectRuleDelete"
+            ]
+          }
+        ],
+        "data": {
+          "approvalProjectRuleDelete": null
+        }
+      }
+    },
+    {
+      "label": "delete project rule",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "approvalProjectRuleDelete": {
+            "errors": [],
+            "approvalRule": {
+              "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:3>",
+              "name": "Main team"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "delete project rule again",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 41
+              }
+            ],
+            "path": [
+              "approvalProjectRuleDelete"
+            ]
+          }
+        ],
+        "data": {
+          "approvalProjectRuleDelete": null
+        }
+      }
+    },
+    {
+      "label": "branch rules final",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequestsDisableCommittersApproval": false,
+            "branchRules": {
+              "nodes": [
+                {
+                  "id": "gid://gitlab/Projects::AllBranchesRule/<Projects::AllBranchesRule:1>",
+                  "name": "All branches",
+                  "isDefault": false,
+                  "isProtected": false,
+                  "branchProtection": null,
+                  "approvalRules": {
+                    "nodes": [
+                      {
+                        "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:1>",
+                        "name": "Anyone",
+                        "type": "ANY_APPROVER",
+                        "approvalsRequired": 2,
+                        "eligibleApprovers": {
+                          "nodes": []
+                        }
+                      },
+                      {
+                        "id": "gid://gitlab/ApprovalProjectRule/<ApprovalProjectRule:2>",
+                        "name": "Backend",
+                        "type": "REGULAR",
+                        "approvalsRequired": 1,
+                        "eligibleApprovers": {
+                          "nodes": [
+                            {
+                              "username": "alice-<RUN>"
+                            },
+                            {
+                              "username": "bob-<RUN>"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Projects::BranchRule/<Projects::BranchRule:1>",
+                  "name": "main",
+                  "isDefault": true,
+                  "isProtected": true,
+                  "branchProtection": {
+                    "allowForcePush": false,
+                    "codeOwnerApprovalRequired": false
+                  },
+                  "approvalRules": {
+                    "nodes": []
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "times": [
+    0,
+    150,
+    6428,
+    7076,
+    7136,
+    7830,
+    7911,
+    8502,
+    8568,
+    9175,
+    9228,
+    9332,
+    9433,
+    9525,
+    16940,
+    17055,
+    17118,
+    26702,
+    36783,
+    36944,
+    37105,
+    57193,
+    57309,
+    57461,
+    57567,
+    57683,
+    57778,
+    57856,
+    57943,
+    58096,
+    58191,
+    58375,
+    58453,
+    58506,
+    58561,
+    58649,
+    58706,
+    58770,
+    58832,
+    58905,
+    58965,
+    59029,
+    59081
+  ],
+  "done_times": [
+    149,
+    786,
+    7075,
+    7134,
+    7828,
+    7910,
+    8501,
+    8567,
+    9174,
+    9227,
+    9331,
+    9431,
+    9524,
+    9614,
+    17054,
+    17116,
+    17467,
+    26957,
+    36943,
+    37104,
+    37278,
+    57307,
+    57460,
+    57566,
+    57682,
+    57777,
+    57856,
+    57942,
+    58095,
+    58190,
+    58373,
+    58452,
+    58505,
+    58559,
+    58647,
+    58705,
+    58769,
+    58832,
+    58904,
+    58964,
+    59028,
+    59079,
+    59154
+  ],
+  "started_at": 1795247904807
+}

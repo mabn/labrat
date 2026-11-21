@@ -1,6 +1,7 @@
 //! `POST/GET /api/graphql`.
 
 mod analysis;
+pub mod approvals;
 mod did_you_mean;
 pub mod exec;
 pub mod mr_filters;

@@ -17,6 +17,10 @@ async fn approval_mr_flow() {
     let mut s = Scenario::new("approval_mr_flow").await;
     let mut rx = s.receiver().await;
     let admin = s.admin();
+    // The receiver is local when replaying (on the reference instance it is reached through
+    // HOOK_PUBLIC_URL, so GitLab's settings cache doesn't need waiting out).
+    let r = s.send(PUT, "/application/settings", Some(&admin), json!({"allow_local_requests_from_web_hooks_and_services": true})).await;
+    assert_eq!(r.status, 200, "{}", r.body);
     let gpath = s.name("amf");
     let g = s.step("group", POST, "/groups", Some(&admin), json!({"name": gpath, "path": gpath}), "namespace").await;
     let p = s.step("project", POST, "/projects", Some(&admin), json!({"name": "app", "namespace_id": g.id(), "initialize_with_readme": true}), "project").await;

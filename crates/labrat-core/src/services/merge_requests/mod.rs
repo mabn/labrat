@@ -373,11 +373,28 @@ fn duplicate_open(
     Ok(iid)
 }
 
-/// Users from `ids` who can read merge requests in `p`, keeping only the first.
+/// Users from `ids` who can read merge requests in `p`: CE keeps only the first; EE (multiple
+/// assignees and reviewers) keeps every one, in id order.
 /// `Some(vec![])` clears; `None` means "no change".
-fn filter_users(c: &Connection, p: &Project, ids: &[i64]) -> Result<Option<Vec<i64>>> {
+fn filter_users(c: &Connection, config: &Config, p: &Project, ids: &[i64]) -> Result<Option<Vec<i64>>> {
     if ids.is_empty() || ids == [0] {
         return Ok(Some(vec![]));
+    }
+    if config.is_ee() {
+        let mut keep = vec![];
+        for id in ids {
+            if let Some(u) = User::find(c, *id)?
+                && ProjectPerms::load(c, Some(&u), p)?.read_merge_request(p)
+                && !keep.contains(&u.id)
+            {
+                keep.push(u.id);
+            }
+        }
+        if keep.is_empty() {
+            return Ok(None);
+        }
+        keep.sort();
+        return Ok(Some(keep));
     }
     let first = ids[0];
     if first == 0 {
@@ -664,11 +681,11 @@ pub fn create(
     }
     if admin {
         if let Some(ids) = &prm.assignee_ids
-            && let Some(list) = filter_users(c, p, ids)? {
+            && let Some(list) = filter_users(c, _config, p, ids)? {
                 set_assignees(c, id, &list)?;
             }
         if let Some(ids) = &prm.reviewer_ids
-            && let Some(list) = filter_users(c, p, ids)? {
+            && let Some(list) = filter_users(c, _config, p, ids)? {
                 set_reviewers(c, id, &list)?;
             }
     }
@@ -1021,7 +1038,7 @@ pub fn update(
     let mut new_assignees = None;
     if admin
         && let Some(ids) = &prm.assignee_ids
-            && let Some(list) = filter_users(c, p, ids)?
+            && let Some(list) = filter_users(c, config, p, ids)?
                 && list != before.assignees {
                     // `MergeRequestAssignee` touches the MR (throttled).
                     notes::touch_noteable(c, "MergeRequest", mr.id, now)?;
@@ -1031,7 +1048,7 @@ pub fn update(
     let mut new_reviewers = None;
     if admin
         && let Some(ids) = &prm.reviewer_ids
-            && let Some(list) = filter_users(c, p, ids)?
+            && let Some(list) = filter_users(c, config, p, ids)?
                 && list != before.reviewers {
                     set_reviewers(c, mr.id, &list)?;
                     new_reviewers = Some(list);

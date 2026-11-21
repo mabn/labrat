@@ -2,3 +2,4 @@
 pub mod approval_settings;
 mod approval_rules_project;
 mod approval_mr_flow;
+mod graphql_approvals;
