@@ -1376,7 +1376,7 @@ impl Object for MrObj {
             // `public_merge_status`: preparing and rechecking show as checking.
             "mergeStatus" => Out::val(mergeability::public_status(&mr.merge_status)),
             "mergeStatusEnum" => Out::val(mergeability::public_status(&mr.merge_status).to_uppercase()),
-            "detailedMergeStatus" => Out::val(mergeability::detailed_status(c, p, mr)?.to_uppercase()),
+            "detailedMergeStatus" => Out::val(mergeability::detailed_status(c, &cx.req.app.config, p, mr)?.to_uppercase()),
             "mergeable" => Out::val(mergeability::mergeable(c, &cx.req.app.config, p, mr)?),
             "conflicts" => Out::val(mr.merge_status == "cannot_be_merged"),
             "mergeableDiscussionsState" => Out::val(mergeability::blocking_discussions_resolved(c, p, mr)?),

@@ -679,6 +679,10 @@ pub fn create(
             label_events(c, id, user, &[], &set)?;
         }
     let mr = MergeRequest::get(c, id)?;
+    if _config.is_ee() {
+        // EE copies the project's approval rules onto the new MR.
+        crate::services::approvals::copy_project_rules(c, p, &mr)?;
+    }
     if milestone.is_some() {
         milestone_event(c, &mr, user, None, milestone)?;
     }

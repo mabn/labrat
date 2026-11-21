@@ -207,14 +207,14 @@ pub fn blocking_discussions_resolved(
 }
 
 /// `Mergeability::DetailedMergeStatusService`.
-pub fn detailed_status(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<String> {
+pub fn detailed_status(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest) -> Result<String> {
     match mr.merge_status.as_str() {
         "preparing" => return Ok("preparing".into()),
         "checking" | "cannot_be_merged_rechecking" => return Ok("checking".into()),
         "unchecked" => return Ok("unchecked".into()),
         _ => {}
     }
-    if let Some(failed) = first_failed_check(c, p, mr, true)? {
+    if let Some(failed) = first_failed_check(c, config, p, mr, true)? {
         return Ok(failed);
     }
     // The CI check runs last on its own.
@@ -247,6 +247,7 @@ pub fn auto_merge_blocking(c: &Connection, p: &Project, mr: &MergeRequest) -> Re
 /// Returns the identifier of the first blocking check (skipping CI when `skip_ci`).
 pub fn first_failed_check(
     c: &Connection,
+    config: &Config,
     p: &Project,
     mr: &MergeRequest,
     skip_ci: bool,
@@ -268,6 +269,11 @@ pub fn first_failed_check(
     }
     if broken(c, p, mr)? {
         return Ok(Some("commits_status".into()));
+    }
+    // EE checks the approval rules after the commits and before the rebase (EE 18.11's
+    // `mergeabilityChecks` order).
+    if config.is_ee() && !crate::services::approvals::state(c, p, mr)?.approved() {
+        return Ok(Some("not_approved".into()));
     }
     if should_be_rebased(c, p, mr)? {
         return Ok(Some("need_rebase".into()));
@@ -301,5 +307,5 @@ pub fn mergeable(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest
         check(c, config, mr.id)?;
     }
     let mr = mr.reload(c)?;
-    Ok(first_failed_check(c, p, &mr, false)?.is_none())
+    Ok(first_failed_check(c, config, p, &mr, false)?.is_none())
 }

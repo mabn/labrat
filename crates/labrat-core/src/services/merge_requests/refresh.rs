@@ -227,6 +227,7 @@ pub fn refresh(
                     if created { None } else { Some(u.old) },
                 )?;
                 auto_draft_from_commits(c, p, &mr, user, &pushed)?;
+                crate::services::approvals::reset_on_push(c, config, p, &mr, user)?;
             }
             let mr = mr.reload(c)?;
             if reloaded {

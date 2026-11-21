@@ -329,7 +329,7 @@ pub fn mr_attrs(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest)
     m.insert("prepared_at".into(), opt_ar_time(mr.prepared_at));
     m.insert("assignee_ids".into(), json!(assignees));
     m.insert("blocking_discussions_resolved".into(), json!(mergeability::blocking_discussions_resolved(c, p, mr)?));
-    m.insert("detailed_merge_status".into(), json!(mergeability::detailed_status(c, p, mr)?));
+    m.insert("detailed_merge_status".into(), json!(mergeability::detailed_status(c, config, p, mr)?));
     let first = if mr.state == "merged" {
         mr.first_contribution
     } else {
@@ -778,7 +778,7 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
             "id": m.id, "iid": m.iid, "title": m.title, "source_branch": m.source_branch, "source_project_id": m.source_project_id,
             "target_branch": m.target_branch, "target_project_id": m.target_project_id, "state": m.state,
             "merge_status": crate::services::merge_requests::mergeability::public_status(&m.merge_status),
-            "detailed_merge_status": mergeability::detailed_status(c, p, m)?,
+            "detailed_merge_status": mergeability::detailed_status(c, config, p, m)?,
             "url": config.url(&format!("/{}/-/merge_requests/{}", p.full_path, m.iid)),
         }),
         None => Value::Null,

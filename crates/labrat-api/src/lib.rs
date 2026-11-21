@@ -100,7 +100,10 @@ pub fn router(app: Arc<App>) -> Router {
         .merge(routes::context_commits::routes())
         .merge(routes::search::routes())
         .merge(routes::uploads::routes())
-        .merge(routes::templates::routes())
+        .merge(routes::templates::routes());
+    // EE-only routes; on CE they are unknown routes.
+    let api = if app.config.is_ee() { api.merge(routes::approvals::routes()) } else { api };
+    let api = api
         .fallback(api_not_found)
         // GitLab's catch-all API route answers a method mismatch with 404, not 405.
         .method_not_allowed_fallback(api_not_found);

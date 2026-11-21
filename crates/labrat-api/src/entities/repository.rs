@@ -404,9 +404,9 @@ pub fn protected_branch(pb: &ProtectedBranch, ee: bool) -> Value {
     m.insert("merge_access_levels".into(), json!(pb.merge.iter().map(|l| level(l.id, l.access_level, false)).collect::<Vec<_>>()));
     m.insert("allow_force_push".into(), json!(pb.allow_force_push));
     if ee {
-        // EE creates one "allowed to unprotect" level (Maintainers) with each protected branch;
-        // labrat doesn't store it, so it borrows the branch's id.
-        m.insert("unprotect_access_levels".into(), json!([level(pb.id, 40, false)]));
+        // EE's "allowed to unprotect" level; it borrows the branch's id.
+        let unprotect: Vec<Value> = pb.unprotect_access_level.map(|l| level(pb.id, l, false)).into_iter().collect();
+        m.insert("unprotect_access_levels".into(), json!(unprotect));
         m.insert("code_owner_approval_required".into(), json!(pb.code_owner_approval_required));
         m.insert("inherited".into(), json!(false));
     }

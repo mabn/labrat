@@ -20,7 +20,7 @@ static SSH: LazyLock<Regex> =
 static RUNNERS: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"GR1348941[A-Za-z0-9_\-]{20}").unwrap());
 static API_ID: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"/(projects|groups|users|namespaces|members|all|access_tokens|personal_access_tokens|award_emoji|draft_notes|suggestions|notes|versions|hooks|todos|discussions|milestones|pipelines|uploads|statuses|resource_label_events|resource_state_events|resource_milestone_events|resource_state_events|resource_label_events|resource_milestone_events)/(\d+)").unwrap()
+    Regex::new(r"/(projects|groups|users|namespaces|members|all|access_tokens|personal_access_tokens|award_emoji|draft_notes|suggestions|notes|versions|hooks|todos|discussions|milestones|pipelines|uploads|statuses|resource_label_events|resource_state_events|resource_milestone_events|resource_state_events|resource_label_events|resource_milestone_events|approval_rules)/(\d+)").unwrap()
 });
 /// Query params holding user, project or pipeline ids, possibly inside `not[...]`.
 static QUERY_REF_ID: LazyLock<Regex> = LazyLock::new(|| {
@@ -95,6 +95,10 @@ fn object_kind(key: &str, parent_kind: &str) -> String {
         | "closed_by" | "resolved_by" | "reviewer" | "approved_by" | "assignees" | "reviewers" => {
             "user".into()
         }
+        // EE approval rules.
+        "eligible_approvers" | "users" | "suggested_approvers" | "approvers" => "user".into(),
+        "groups" | "approver_groups" => "namespace".into(),
+        "protected_branches" => "branch".into(),
         "namespace" | "parent" => "namespace".into(),
         "project"
         | "projects"
@@ -310,6 +314,7 @@ impl Normalizer {
                 "resource_milestone_events" => "milestone_event",
                 "versions" => "version",
                 "uploads" => "upload",
+                "approval_rules" => "rule",
                 k => k,
             };
             let ph = self.id(id_kind, id);

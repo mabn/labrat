@@ -153,6 +153,9 @@ CREATE TABLE protected_branches (
     allow_force_push INTEGER NOT NULL DEFAULT 0,
     -- EE: merging needs Code Owner approval.
     code_owner_approval_required INTEGER NOT NULL DEFAULT 0,
+    -- EE: who may unprotect the branch. EE creates a Maintainers level for branches protected
+    -- through the API, and none for default branch protection.
+    unprotect_access_level INTEGER,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL,
     UNIQUE (project_id, name)
@@ -189,6 +192,8 @@ CREATE TABLE merge_requests (
     -- Set when the MR was retargeted because its target branch was merged and deleted.
     retargeted INTEGER NOT NULL DEFAULT 0,
     squash INTEGER NOT NULL DEFAULT 0,
+    -- EE: the deprecated per-MR approval count given on create.
+    approvals_before_merge INTEGER,
     merge_params TEXT NOT NULL DEFAULT '{}',
     merge_when_pipeline_succeeds INTEGER NOT NULL DEFAULT 0,
     merge_user_id INTEGER,
@@ -255,6 +260,64 @@ CREATE TABLE approvals (
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL,
     UNIQUE (merge_request_id, user_id)
+);
+
+-- EE approval rules, mirroring GitLab's tables. Project rules are the defaults; MR rules are
+-- copied from them when an MR is created and can be overridden per MR.
+CREATE TABLE approval_project_rules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL REFERENCES projects (id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    approvals_required INTEGER NOT NULL DEFAULT 0,
+    rule_type TEXT NOT NULL DEFAULT 'regular',   -- regular, any_approver, report_approver
+    report_type TEXT,
+    applies_to_all_protected_branches INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE approval_project_rules_users (
+    rule_id INTEGER NOT NULL REFERENCES approval_project_rules (id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    PRIMARY KEY (rule_id, user_id)
+);
+
+CREATE TABLE approval_project_rules_groups (
+    rule_id INTEGER NOT NULL REFERENCES approval_project_rules (id) ON DELETE CASCADE,
+    group_id INTEGER NOT NULL REFERENCES namespaces (id) ON DELETE CASCADE,
+    PRIMARY KEY (rule_id, group_id)
+);
+
+CREATE TABLE approval_project_rules_protected_branches (
+    rule_id INTEGER NOT NULL REFERENCES approval_project_rules (id) ON DELETE CASCADE,
+    protected_branch_id INTEGER NOT NULL REFERENCES protected_branches (id) ON DELETE CASCADE,
+    PRIMARY KEY (rule_id, protected_branch_id)
+);
+
+CREATE TABLE approval_merge_request_rules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    merge_request_id INTEGER NOT NULL REFERENCES merge_requests (id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    approvals_required INTEGER NOT NULL DEFAULT 0,
+    rule_type TEXT NOT NULL DEFAULT 'regular',
+    report_type TEXT,
+    -- The project rule this one was copied from (`approval_merge_request_rule_sources`).
+    approval_project_rule_id INTEGER,
+    modified_from_project_rule INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE approval_merge_request_rules_users (
+    rule_id INTEGER NOT NULL REFERENCES approval_merge_request_rules (id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    PRIMARY KEY (rule_id, user_id)
+);
+
+CREATE TABLE approval_merge_request_rules_groups (
+    rule_id INTEGER NOT NULL REFERENCES approval_merge_request_rules (id) ON DELETE CASCADE,
+    group_id INTEGER NOT NULL REFERENCES namespaces (id) ON DELETE CASCADE,
+    PRIMARY KEY (rule_id, group_id)
 );
 
 CREATE TABLE labels (

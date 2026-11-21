@@ -288,7 +288,7 @@ pub fn basic(
     );
     m.insert(
         "detailed_merge_status".into(),
-        json!(mergeability::detailed_status(c, p, mr)?),
+        json!(mergeability::detailed_status(c, config, p, mr)?),
     );
     m.insert(
         "merge_after".into(),

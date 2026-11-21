@@ -7,6 +7,12 @@ use labrat_core::{Config, time};
 use serde_json::{Map, Value, json};
 
 pub fn group(g: &Namespace, config: &Config) -> Map<String, Value> {
+    group_with(g, config, true)
+}
+
+/// `group`, where `can_admin` says whether the viewer administers the group: EE shows its
+/// storage and Duo fields only to them.
+pub fn group_with(g: &Namespace, config: &Config, can_admin: bool) -> Map<String, Value> {
     let mut m = Map::new();
     m.insert("id".into(), json!(g.id));
     m.insert(
@@ -107,11 +113,15 @@ pub fn group(g: &Namespace, config: &Config) -> Map<String, Value> {
         m.insert("ldap_cn".into(), Value::Null);
         m.insert("ldap_access".into(), Value::Null);
         m.insert("wiki_access_level".into(), json!("enabled"));
-        m.insert("repository_storage".into(), Value::Null);
-        m.insert("duo_core_features_enabled".into(), Value::Null);
-        m.insert("duo_features_enabled".into(), json!(true));
-        m.insert("lock_duo_features_enabled".into(), json!(false));
-        m.insert("duo_namespace_access_rules".into(), json!([]));
+        if can_admin {
+            m.insert("repository_storage".into(), Value::Null);
+            m.insert("duo_core_features_enabled".into(), Value::Null);
+            m.insert("duo_features_enabled".into(), json!(true));
+            m.insert("lock_duo_features_enabled".into(), json!(false));
+            if g.parent_id.is_none() {
+                m.insert("duo_namespace_access_rules".into(), json!([]));
+            }
+        }
     }
     m
 }
@@ -122,7 +132,10 @@ pub fn ee_detail(g: &Namespace, m: &mut Map<String, Value>, owner_ids: &[i64]) {
     m.insert("shared_runners_minutes_limit".into(), Value::Null);
     m.insert("extra_shared_runners_minutes_limit".into(), Value::Null);
     m.insert("prevent_forking_outside_group".into(), json!(false));
-    m.insert("service_access_tokens_expiration_enforced".into(), json!(true));
+    let top = g.parent_id.is_none();
+    if top {
+        m.insert("service_access_tokens_expiration_enforced".into(), json!(true));
+    }
     m.insert("experiment_features_enabled".into(), json!(false));
     m.insert("membership_lock".into(), json!(false));
     m.insert("ip_restriction_ranges".into(), Value::Null);
@@ -134,11 +147,14 @@ pub fn ee_detail(g: &Namespace, m: &mut Map<String, Value>, owner_ids: &[i64]) {
     ] {
         m.insert(k.into(), json!(g.setting_bool(k, false)));
     }
-    m.insert("unique_project_download_limit".into(), json!(0));
-    m.insert("unique_project_download_limit_interval_in_seconds".into(), json!(0));
-    m.insert("unique_project_download_limit_allowlist".into(), json!([]));
-    m.insert("unique_project_download_limit_alertlist".into(), json!(owner_ids));
-    m.insert("auto_ban_user_on_excessive_projects_download".into(), json!(false));
+    // Top-level groups only.
+    if top {
+        m.insert("unique_project_download_limit".into(), json!(0));
+        m.insert("unique_project_download_limit_interval_in_seconds".into(), json!(0));
+        m.insert("unique_project_download_limit_allowlist".into(), json!([]));
+        m.insert("unique_project_download_limit_alertlist".into(), json!(owner_ids));
+        m.insert("auto_ban_user_on_excessive_projects_download".into(), json!(false));
+    }
 }
 
 /// `GroupDetail`: the shape of `GET /groups/:id`. Projects are inserted by the caller.

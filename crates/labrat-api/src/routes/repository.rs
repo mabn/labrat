@@ -1663,8 +1663,12 @@ async fn create_protected(req: Req) -> ApiResult {
             return Err(Error::Api(422, json!(["Name can't be blank"])).into());
         }
         repo::create_protected_branch(c, &p, &name, push, merge, force)?;
-        if req.app.config.is_ee() && req.params.bool_or("code_owner_approval_required", false)? {
-            c.execute("UPDATE protected_branches SET code_owner_approval_required = 1 WHERE project_id = ?1 AND name = ?2", rusqlite::params![p.id, name])?;
+        if req.app.config.is_ee() {
+            let code_owner = req.params.bool_or("code_owner_approval_required", false)?;
+            c.execute(
+                "UPDATE protected_branches SET code_owner_approval_required = ?1, unprotect_access_level = 40 WHERE project_id = ?2 AND name = ?3",
+                rusqlite::params![code_owner, p.id, name],
+            )?;
         }
         Ok::<_, ApiError>(ent::protected_branch(&find_protected(c, &p, &name)?, req.app.config.is_ee()))
     })?;

@@ -81,7 +81,7 @@ pub fn routes() -> Router<Arc<App>> {
         )
         .route("/suggestions/{id}/apply", put(apply_suggestion))
         .route("/suggestions/batch_apply", put(batch_apply))
-        .route(&format!("{mr}/approvals"), get(approvals))
+        .route(&format!("{mr}/approvals"), get(approvals).post(change_approvals_required))
         .route(&format!("{mr}/approve"), post(approve))
         .route(&format!("{mr}/unapprove"), post(unapprove))
         .route(&format!("{mr}/reset_approvals"), put(reset_approvals))
@@ -895,13 +895,7 @@ async fn approvals(req: Req) -> ApiResult {
     let app = req.app.clone();
     let body = app.db.read(|c| {
         let (p, _, mr) = load(c, &req)?;
-        Ok::<_, ApiError>(ent::merge_request_approvals(
-            c,
-            &ectx(&req),
-            &p,
-            &mr,
-            req.user.as_ref(),
-        )?)
+        Ok::<_, ApiError>(approvals_body(c, &req, &p, &mr, req.user.as_ref())?)
     })?;
     Ok(Resp::ok(body))
 }
@@ -913,7 +907,13 @@ async fn approve(req: Req) -> ApiResult {
     let app = req.app.clone();
     let body = app.db.tx(|c| {
         let (p, _, mr) = load(c, &req)?;
-        if !reviews::can_approve(c, &p, &mr, &me)? {
+        let ee = req.app.config.is_ee();
+        if ee {
+            // EE: developers may approve; the author only when the project allows it.
+            if labrat_core::services::approvals::eligibility(c, &p, &mr, &me)? == labrat_core::services::approvals::Eligibility::Forbidden {
+                return Err(Error::forbidden().into());
+            }
+        } else if !reviews::can_approve(c, &p, &mr, &me)? {
             return Err(Error::forbidden().into());
         }
         if let Some(sha) = &sha {
@@ -932,11 +932,14 @@ async fn approve(req: Req) -> ApiResult {
         if publish {
             reviews::publish_drafts(c, &req.app.config, &p, &mr, &me)?;
         }
+        if ee && labrat_core::services::approvals::eligibility(c, &p, &mr, &me)? != labrat_core::services::approvals::Eligibility::Yes {
+            return Err(Error::Unauthorized(None).into());
+        }
         if !reviews::approve(c, &req.app.config, &p, &mr, &me)? {
             return Err(Error::Unauthorized(None).into());
         }
         let mr = mr.reload(c)?;
-        Ok::<_, ApiError>(ent::merge_request_approvals(c, &ectx(&req), &p, &mr, Some(&me))?)
+        Ok::<_, ApiError>(approvals_body(c, &req, &p, &mr, Some(&me))?)
     })?;
     crate::jobs::kick(&req.app);
     Ok(Resp::created(body))
@@ -947,16 +950,51 @@ async fn unapprove(req: Req) -> ApiResult {
     let app = req.app.clone();
     let body = app.db.tx(|c| {
         let (p, _, mr) = load(c, &req)?;
-        if !reviews::can_approve(c, &p, &mr, &me)? {
+        let allowed = if req.app.config.is_ee() {
+            labrat_core::services::approvals::eligibility(c, &p, &mr, &me)? != labrat_core::services::approvals::Eligibility::Forbidden
+        } else {
+            reviews::can_approve(c, &p, &mr, &me)?
+        };
+        if !allowed {
             return Err(Error::forbidden().into());
         }
         if !reviews::unapprove(c, &req.app.config, &p, &mr, &me)? {
             return Err(Error::NotFound(None).into());
         }
         let mr = mr.reload(c)?;
-        Ok::<_, ApiError>(ent::merge_request_approvals(c, &ectx(&req), &p, &mr, Some(&me))?)
+        Ok::<_, ApiError>(approvals_body(c, &req, &p, &mr, Some(&me))?)
     })?;
     crate::jobs::kick(&req.app);
+    Ok(Resp::created(body))
+}
+
+/// The approvals body: CE's `MergeRequestApprovals`, or EE's approval state.
+fn approvals_body(c: &Connection, req: &Req, p: &Project, mr: &MergeRequest, current: Option<&User>) -> labrat_core::Result<Value> {
+    if req.app.config.is_ee() {
+        crate::routes::approvals::approvals_json(c, &ectx(req), &req.app.config, p, mr, current)
+    } else {
+        ent::merge_request_approvals(c, &ectx(req), p, mr, current)
+    }
+}
+
+/// EE's deprecated `POST /approvals`: sets the MR's required approval count (its
+/// `any_approver` rule). CE has no such route.
+async fn change_approvals_required(req: Req) -> ApiResult {
+    if !req.app.config.is_ee() {
+        return Err(Error::Body(404, json!({"error": "404 Not Found"})).into());
+    }
+    let me = req.user()?.clone();
+    req.params.require(&["approvals_required"])?;
+    let n = req.params.int("approvals_required")?.unwrap_or(0);
+    let app = req.app.clone();
+    let body = app.db.tx(|c| {
+        let (p, perms, mr) = load(c, &req)?;
+        if !(perms.admin || perms.admin_project() || (mr.author_id == me.id && perms.developer())) {
+            return Err(Error::forbidden().into());
+        }
+        labrat_core::services::approvals::set_required(c, &mr, n)?;
+        Ok::<_, ApiError>(approvals_body(c, &req, &p, &mr, Some(&me))?)
+    })?;
     Ok(Resp::created(body))
 }
 

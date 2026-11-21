@@ -915,6 +915,7 @@ async fn create(req: Req) -> ApiResult {
         .require(&["title", "source_branch", "target_branch"])?;
     let mut prm = mr_params(&req)?;
     let cmds = take_quick_actions(&mut prm);
+    let approvals_before_merge = if req.app.config.is_ee() { req.params.int("approvals_before_merge")? } else { None };
     let app = req.app.clone();
     let body = app.db.tx(|c| {
         let (p, perms) = find::project(c, &req, req.path_param("id"))?;
@@ -936,14 +937,30 @@ async fn create(req: Req) -> ApiResult {
             return Err(Error::Api(422, json!(["Source project is not a fork of the target project"])).into());
         }
         let mr = mrs::create(c, &req.app.config, &p, &me, prm)?;
+        // EE: `approvals_before_merge` becomes the MR's "All Members" rule. If the MR already
+        // has an `any_approver` rule from the project, EE fails after creating the MR: a 500.
+        let mut failed = false;
+        if req.app.config.is_ee()
+            && let Some(n) = approvals_before_merge {
+                c.execute("UPDATE merge_requests SET approvals_before_merge = ?1 WHERE id = ?2", rusqlite::params![n, mr.id])?;
+                if labrat_core::services::approvals::mr_rules(c, &mr)?.iter().any(|r| r.is_any_approver()) {
+                    failed = true;
+                } else {
+                    labrat_core::services::approvals::set_required(c, &mr, n)?;
+                }
+            }
         if !cmds.is_empty() {
             let ctx = labrat_core::services::comments::CreateParams { new_record: true, ..Default::default() };
             labrat_core::services::quick_actions::execute(c, &req.app.config, &p, &mr, &me, &cmds, &ctx)?;
         }
         let mr = mr.reload(c)?;
-        single(c, &req, &p, &mr, Opts::default())
+        Ok::<_, ApiError>((single(c, &req, &p, &mr, Opts::default())?, failed))
     })?;
     crate::jobs::kick(&req.app);
+    let (body, failed) = body;
+    if failed {
+        return Err(Error::Api(500, json!("500 Internal Server Error")).into());
+    }
     Ok(Resp::created(body))
 }
 

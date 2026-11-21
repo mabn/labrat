@@ -114,7 +114,9 @@ pub fn approval_events_job(
         "approved",
     )?;
     crate::services::todos::resolve_for_target(c, &mr, Some(user.id))?;
-    crate::services::hooks::merge_request_event(c, config, &p, &mr, Some(&user), "approved", None)
+    // EE reports a partial approval as `approval` and the final one as `approved`.
+    let action = if config.is_ee() && !crate::services::approvals::state(c, &p, &mr)?.approved() { "approval" } else { "approved" };
+    crate::services::hooks::merge_request_event(c, config, &p, &mr, Some(&user), action, None)
 }
 
 /// `MergeRequests::RemoveApprovalService`. Returns false when there was nothing to remove.
@@ -128,6 +130,8 @@ pub fn unapprove(
     if mr.state == "merged" || !has_approved(c, mr, user)? {
         return Ok(false);
     }
+    // EE: `unapproved` when this takes away a full approval, `unapproval` otherwise.
+    let action = if !config.is_ee() || crate::services::approvals::state(c, p, mr)?.approved() { "unapproved" } else { "unapproval" };
     c.execute(
         "DELETE FROM approvals WHERE merge_request_id = ?1 AND user_id = ?2",
         params![mr.id, user.id],
@@ -144,7 +148,7 @@ pub fn unapprove(
         "unapproved",
     )?;
     let mr = mr.reload(c)?;
-    crate::services::hooks::merge_request_event(c, config, p, &mr, Some(user), "unapproved", Some(&before))?;
+    crate::services::hooks::merge_request_event(c, config, p, &mr, Some(user), action, Some(&before))?;
     Ok(true)
 }
 
