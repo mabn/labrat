@@ -186,7 +186,7 @@ fn train_link(config: &Config, p: &Project) -> String {
 /// Whether the MR could join the train right now: mergeable, with a finished pipeline (a
 /// failed one too: the train runs its own).
 fn ready(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest) -> Result<bool> {
-    let finished = crate::services::ci::diff_head_pipeline(c, p, mr)?.is_some_and(|pl| pl.is_complete());
+    let finished = crate::services::ci::diff_head_pipeline(c, p, mr)?.is_some_and(|pl| !pl.is_unfinished());
     Ok(finished && mergeability::mergeable(c, config, p, mr)?)
 }
 
@@ -263,6 +263,22 @@ fn start_car(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest, us
 
 pub fn enqueue_refresh(c: &Connection, project_id: i64, target_branch: &str) -> Result<()> {
     jobs::enqueue(c, "merge_train_refresh", json!({"project_id": project_id, "target_branch": target_branch}))
+}
+
+/// A refresh after a car's pipeline finished or a car merged: GitLab takes a moment longer
+/// there, as merging goes through more workers.
+pub fn enqueue_process(c: &Connection, project_id: i64, target_branch: &str) -> Result<()> {
+    // One pending refresh per train is enough (GitLab deduplicates the worker).
+    let pending: i64 = c.query_row(
+        "SELECT count(*) FROM jobs WHERE kind = 'merge_train_process' AND running = 0
+         AND json_extract(payload, '$.project_id') = ?1 AND json_extract(payload, '$.target_branch') = ?2",
+        params![project_id, target_branch],
+        |r| r.get(0),
+    )?;
+    if pending > 0 {
+        return Ok(());
+    }
+    jobs::enqueue(c, "merge_train_process", json!({"project_id": project_id, "target_branch": target_branch}))
 }
 
 /// `add_to_merge_train_when_checks_pass`: once the MR's pipeline passes, it joins the train.
@@ -420,9 +436,9 @@ pub fn refresh(c: &Connection, config: &Config, project_id: i64, target_branch: 
                     break;
                 }
                 if i == 0 && pl.status == "success" {
+                    // One merge per pass; the next car merges in a later pass.
                     merge_car(c, config, &p, car, &mr, &user)?;
-                    changed = true;
-                    break;
+                    return enqueue_process(c, project_id, target_branch);
                 }
                 base = Oid::from_hex(&pl.sha).map_err(Error::from)?;
                 continue;
@@ -487,7 +503,7 @@ pub fn on_pipeline_complete(c: &Connection, _config: &Config, pl: &Pipeline) -> 
         .query_row(&format!("SELECT {CAR_COLS} FROM merge_train_cars WHERE pipeline_id = ?1"), [pl.id], car_row)
         .optional()?;
     if let Some(car) = car {
-        return enqueue_refresh(c, car.project_id, &car.target_branch);
+        return enqueue_process(c, car.project_id, &car.target_branch);
     }
     if let Some(mr) = MergeRequest::find(c, mr_id)?
         && strategy(&mr).as_deref() == Some("add_to_merge_train_when_checks_pass")

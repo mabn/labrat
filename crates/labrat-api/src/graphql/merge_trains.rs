@@ -196,7 +196,7 @@ pub fn available_strategies(cx: &Ctx, p: &Project, mr: &MergeRequest) -> FResult
         return Ok(Out::val(Vec::<String>::new()));
     }
     let dhp = ci::diff_head_pipeline(c, p, mr)?;
-    let running = dhp.as_ref().is_some_and(|pl| !pl.is_complete());
+    let running = dhp.as_ref().is_some_and(|pl| pl.is_unfinished());
     Ok(Out::val(if running {
         vec!["add_to_merge_train_when_checks_pass"]
     } else if mergeability::mergeable(c, &cx.req.app.config, p, mr)? {

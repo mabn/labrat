@@ -69,14 +69,16 @@ fn project_param(req: &Req) -> Result<String, crate::ctx::ApiError> {
     }
 }
 
-/// The fake runner picks up a project's pending jobs (`{"project_id": 1}`): they start running.
+/// The fake runner picks up a project's pending jobs (`{"project_id": 1}`, optionally with
+/// `"ref"`): they start running.
 async fn ci_pick(req: Req) -> ApiResult {
     crate::jobs::wait_idle(&req.app).await;
     let id = project_param(&req)?;
+    let r#ref = req.params.raw_all()["ref"].as_str().map(String::from);
     let config = req.app.config.clone();
     let body = req.app.db.tx(|c| {
         let p = ci_project(c, &id)?;
-        let picked = labrat_core::services::fake_ci::pick(c, &config, p.id)?;
+        let picked = labrat_core::services::fake_ci::pick(c, &config, p.id, r#ref.as_deref())?;
         Ok::<_, crate::ctx::ApiError>(json!({"picked": picked.iter().map(|(id, r)| json!({"id": id, "ref": r})).collect::<Vec<_>>()}))
     })?;
     crate::jobs::kick(&req.app);

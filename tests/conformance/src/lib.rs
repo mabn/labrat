@@ -70,6 +70,11 @@ pub struct Scenario {
     ci_times: Vec<i64>,
     expected_ci_times: Option<Vec<i64>>,
     ci_done: usize,
+    /// Each picked job's ref and pick time (recording), the recording's (replaying), and how
+    /// many were replayed.
+    ci_picks: Vec<Value>,
+    expected_ci_picks: Option<Vec<Value>>,
+    ci_picks_done: usize,
 }
 
 /// One HTTP response with its parsed JSON body.
@@ -225,8 +230,12 @@ async fn start_labrat(external_url: &str, ssh_port: u16) -> Target {
     per_kind.insert("cherry_pick_note".to_string(), 400);
     per_kind.insert("note_event".to_string(), 300);
     // EE fake CI: Sidekiq creates MR pipelines and train car pipelines a moment later.
-    per_kind.insert("mr_create_pipeline".to_string(), 600);
-    per_kind.insert("merge_train_refresh".to_string(), 900);
+    per_kind.insert("mr_create_pipeline".to_string(), 1000);
+    per_kind.insert("merge_train_refresh".to_string(), 380);
+    per_kind.insert("fake_ci_enqueue".to_string(), 1000);
+    per_kind.insert("merge_train_process".to_string(), 1000);
+    // EE updates a pipeline's status from its jobs a moment after they change.
+    per_kind.insert("fake_ci_process".to_string(), 700);
     // `PostReceive` -> `ProcessCommitWorker`: two Sidekiq hops before "mentioned in commit".
     per_kind.insert("commit_cross_references".to_string(), 750);
     // `PostReceive` -> `UpdateMergeRequestsWorker`: the MR refresh after a push.
@@ -357,6 +366,7 @@ impl Scenario {
         }
         let send_times = fixture.as_ref().and_then(|v| v["times"].as_array()).map(|a| a.iter().filter_map(Value::as_i64).collect());
         let expected_ci_times = fixture.as_ref().and_then(|v| v["ci_times"].as_array()).map(|a| a.iter().filter_map(Value::as_i64).collect());
+        let expected_ci_picks = fixture.as_ref().and_then(|v| v["ci_picks"].as_array()).cloned();
         let expected = fixture.map(|v| v["steps"].as_array().unwrap().clone());
         let mut norm = Normalizer::new(&target.public_base, &run);
         norm.set_today(&days_to_date(started_at.div_euclid(86_400_000)));
@@ -385,6 +395,9 @@ impl Scenario {
             ci_times: vec![],
             expected_ci_times,
             ci_done: 0,
+            ci_picks: vec![],
+            expected_ci_picks,
+            ci_picks_done: 0,
         }
     }
 
@@ -417,6 +430,7 @@ impl Scenario {
     pub async fn ci_pick(&mut self, count: usize) {
         let project = self.ci_project.expect("ci_enable first");
         if self.target.recording {
+            let mut first_at: Option<i64> = None;
             let token = std::env::var("GITLAB_RUNNER_TOKEN").expect("GITLAB_RUNNER_TOKEN (a runner registered on the reference instance)");
             let url = format!("{}/api/v4/jobs/request", self.target.base);
             let mut got = 0;
@@ -438,10 +452,29 @@ impl Scenario {
                     continue;
                 }
                 let r#ref = job["git_info"]["ref"].as_str().unwrap_or("").to_string();
+                let at = self.started.elapsed().as_millis() as i64;
+                self.ci_picks.push(json!([r#ref, at]));
                 self.ci_running.entry(r#ref).or_default().push((id, jtoken));
+                first_at.get_or_insert(at);
                 got += 1;
             }
-            self.sync_ci_clock(true).await;
+            self.ci_times.push(first_at.unwrap_or(self.started.elapsed().as_millis() as i64));
+        } else if let Some(picks) = self.expected_ci_picks.clone() {
+            // Each job starts when the recording's runner picked it.
+            self.ci_done += 1;
+            let url = format!("{}/-/labrat/ci/pick", self.target.base);
+            let mut got = 0;
+            for p in picks.iter().skip(self.ci_picks_done).take(count) {
+                let (r#ref, at) = (p[0].as_str().unwrap_or("").to_string(), p[1].as_i64().unwrap_or(0));
+                let _ = self.http.get(format!("{}/-/labrat/idle", self.target.base)).send().await;
+                self.advance_clock_to(at).await;
+                let r: Value = self.http.post(&url).json(&json!({"project_id": project, "ref": r#ref})).send().await.expect("ci request failed").json().await.unwrap();
+                got += r["picked"].as_array().map(|a| a.len()).unwrap_or(0);
+            }
+            self.ci_picks_done += count;
+            if got != count {
+                self.failures.push(format!("ci_pick: labrat had {got} of the {count} jobs the recording picked"));
+            }
         } else {
             let url = format!("{}/-/labrat/ci/pick", self.target.base);
             let _ = self.http.get(format!("{}/-/labrat/idle", self.target.base)).send().await;
@@ -451,6 +484,17 @@ impl Scenario {
             if got != count {
                 self.failures.push(format!("ci_pick: labrat had {got} pending jobs, the recording picked {count}"));
             }
+        }
+    }
+
+    /// Replaying: moves labrat's clock forward to `want` (ms since the start), if behind.
+    async fn advance_clock_to(&mut self, want: i64) {
+        let have = self.started.elapsed().as_millis() as i64 + self.clock_offset;
+        if want > have {
+            self.clock_offset += want - have;
+            let url = format!("{}/-/labrat/time?offset_ms={}", self.target.base, self.base_offset + self.clock_offset);
+            let r = self.http.post(&url).send().await.expect("clock request failed");
+            assert!(r.status().is_success(), "setting the labrat clock failed: {}", r.status());
         }
     }
 
@@ -927,7 +971,7 @@ impl Scenario {
     pub fn finish(self) {
         if self.target.recording {
             let path = fixture_path(&self.name);
-            let data = json!({"scenario": self.name, "base": self.target.public_base, "ssh_port": self.ssh_port, "run": self.run, "steps": self.steps, "times": self.times, "done_times": self.done_times, "ci_times": self.ci_times, "started_at": self.started_at});
+            let data = json!({"scenario": self.name, "base": self.target.public_base, "ssh_port": self.ssh_port, "run": self.run, "steps": self.steps, "times": self.times, "done_times": self.done_times, "ci_times": self.ci_times, "ci_picks": self.ci_picks, "started_at": self.started_at});
             let text = serde_json::to_string_pretty(&data).unwrap() + "\n";
             let lower = text.to_ascii_lowercase();
             if let Ok(t) = std::env::var("GITLAB_RUNNER_TOKEN") {

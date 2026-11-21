@@ -81,7 +81,12 @@ impl Pipeline {
         matches!(self.status.as_str(), "success" | "failed" | "canceled" | "skipped")
     }
 
-    /// `merged_result_pipeline?` / merge train pipelines: built on a merge with the target.
+    /// Still to run or running (a pipeline being canceled no longer counts).
+    pub fn is_unfinished(&self) -> bool {
+        matches!(self.status.as_str(), "created" | "pending" | "running" | "preparing" | "waiting_for_resource" | "scheduled")
+    }
+
+    /// Merged results and merge train pipelines: built on a merge with the target.
     pub fn is_merged_result(&self) -> bool {
         self.source == "merge_request_event" && self.target_sha.is_some()
     }

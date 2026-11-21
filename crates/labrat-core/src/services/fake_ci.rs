@@ -195,16 +195,30 @@ pub fn create(c: &Connection, config: &Config, p: &Project, user: &User, sha: &s
     let pid = c.last_insert_rowid();
     for name in &cfg.jobs {
         c.execute(
-            "INSERT INTO commit_statuses (pipeline_id, project_id, name, ref, sha, status, user_id, created_at, updated_at, queued_at, build, stage)
-             VALUES (?1, ?2, ?3, ?4, ?5, 'pending', ?6, ?7, ?7, ?7, 1, 'test')",
+            "INSERT INTO commit_statuses (pipeline_id, project_id, name, ref, sha, status, user_id, created_at, updated_at, build, stage)
+             VALUES (?1, ?2, ?3, ?4, ?5, 'created', ?6, ?7, ?7, 1, 'test')",
             params![pid, p.id, name, r#ref, sha, user.id, now],
         )?;
     }
     ci::recompute(c, config, pid)?;
-    if cfg.mode == "auto" {
-        jobs::enqueue(c, "fake_ci_run", json!({"pipeline_id": pid}))?;
-    }
+    // The jobs are queued a moment later, as GitLab's pipeline processing does.
+    jobs::enqueue(c, "fake_ci_enqueue", json!({"pipeline_id": pid}))?;
     Ok(Pipeline::find(c, pid)?.expect("just inserted"))
+}
+
+/// The pipeline's created jobs become pending (waiting for a runner); in auto mode the runner
+/// takes them.
+pub fn enqueue(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()> {
+    let Some(pl) = Pipeline::find(c, pipeline_id)? else { return Ok(()) };
+    let now = time::now();
+    for id in job_ids(c, pipeline_id, &["created"])? {
+        c.execute("UPDATE commit_statuses SET status = 'pending', queued_at = ?1, updated_at = ?1 WHERE id = ?2", params![now, id])?;
+    }
+    ci::recompute(c, config, pipeline_id)?;
+    if self::config(c, pl.project_id)?.is_some_and(|f| f.mode == "auto") {
+        jobs::enqueue(c, "fake_ci_run", json!({"pipeline_id": pipeline_id}))?;
+    }
+    Ok(())
 }
 
 /// The jobs of a pipeline.
@@ -231,11 +245,13 @@ fn set_job(c: &Connection, id: i64, status: &str) -> Result<()> {
 
 /// The fake runner picks up the project's pending jobs: they start running. Returns the
 /// picked jobs as `(job id, ref)`.
-pub fn pick(c: &Connection, config: &Config, project_id: i64) -> Result<Vec<(i64, String)>> {
+/// With `ref`, only that ref's jobs.
+pub fn pick(c: &Connection, config: &Config, project_id: i64, r#ref: Option<&str>) -> Result<Vec<(i64, String)>> {
     let mut st = c.prepare(
-        "SELECT s.id, s.pipeline_id, coalesce(s.ref, '') FROM commit_statuses s WHERE s.project_id = ?1 AND s.build = 1 AND s.status = 'pending' AND s.retried = 0 ORDER BY s.id",
+        "SELECT s.id, s.pipeline_id, coalesce(s.ref, '') FROM commit_statuses s WHERE s.project_id = ?1 AND s.build = 1 AND s.status = 'pending' AND s.retried = 0
+         AND (?2 IS NULL OR s.ref = ?2) ORDER BY s.id",
     )?;
-    let rows: Vec<(i64, i64, String)> = st.query_map([project_id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<rusqlite::Result<_>>()?;
+    let rows: Vec<(i64, i64, String)> = st.query_map(params![project_id, r#ref], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<rusqlite::Result<_>>()?;
     let mut pipelines = vec![];
     for (id, pl, _) in &rows {
         set_job(c, *id, "running")?;
@@ -244,7 +260,7 @@ pub fn pick(c: &Connection, config: &Config, project_id: i64) -> Result<Vec<(i64
         }
     }
     for pl in pipelines {
-        ci::recompute(c, config, pl)?;
+        process_later(c, config, pl)?;
     }
     Ok(rows.into_iter().map(|(id, _, r)| (id, r)).collect())
 }
@@ -276,7 +292,7 @@ pub fn finish(c: &Connection, config: &Config, project_id: i64, r#ref: &str, sta
         }
     }
     for pl in pipelines {
-        ci::recompute(c, config, pl)?;
+        process_later(c, config, pl)?;
     }
     Ok(n)
 }
@@ -304,7 +320,7 @@ pub fn auto_run(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()>
     for id in &ids {
         set_job(c, *id, "running")?;
     }
-    ci::recompute(c, config, pipeline_id)?;
+    process_later(c, config, pipeline_id)?;
     jobs::enqueue_after(c, "fake_ci_finish", json!({"pipeline_id": pipeline_id}), cfg.duration_ms)
 }
 
@@ -321,7 +337,22 @@ pub fn auto_finish(c: &Connection, config: &Config, pipeline_id: i64) -> Result<
     for id in &ids {
         set_job(c, *id, &status)?;
     }
-    ci::recompute(c, config, pipeline_id)
+    process_later(c, config, pipeline_id)
+}
+
+/// GitLab updates a pipeline's status from its jobs in a worker, a moment after a job
+/// changed. Jobs that start and finish within that moment leave the pipeline going from
+/// `pending` straight to its result, never `running` (no `started_at`, no duration).
+fn process_later(c: &Connection, _config: &Config, pipeline_id: i64) -> Result<()> {
+    let pending: i64 = c.query_row(
+        "SELECT count(*) FROM jobs WHERE kind = 'fake_ci_process' AND running = 0 AND json_extract(payload, '$.pipeline_id') = ?1",
+        [pipeline_id],
+        |r| r.get(0),
+    )?;
+    if pending == 0 {
+        jobs::enqueue(c, "fake_ci_process", json!({"pipeline_id": pipeline_id}))?;
+    }
+    Ok(())
 }
 
 /// The jobs of the project for `GET /-/labrat/ci/jobs`.
