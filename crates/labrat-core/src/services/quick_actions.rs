@@ -74,7 +74,10 @@ const OTHER_COMMANDS: &[&str] = &[
 ];
 
 /// `Gitlab::QuickActions::Extractor`: command lines outside code blocks are removed.
-pub fn extract(text: &str) -> Extracted {
+/// Commands only EE defines (for other targets), which the extractor still recognises.
+const EE_OTHER_COMMANDS: &[&str] = &["q"];
+
+pub fn extract(text: &str, ee: bool) -> Extracted {
     let text = text.replace('\r', "");
     let mut out: Vec<String> = vec![];
     let mut commands = vec![];
@@ -95,7 +98,7 @@ pub fn extract(text: &str) -> Extracted {
                 Some(i) if rest[i..].starts_with(' ') => (rest[..i].to_lowercase(), rest[i..].trim().to_string()),
                 Some(_) => (String::new(), String::new()),
             };
-            if COMMANDS.contains(&name.as_str()) || OTHER_COMMANDS.contains(&name.as_str()) {
+            if COMMANDS.contains(&name.as_str()) || OTHER_COMMANDS.contains(&name.as_str()) || (ee && EE_OTHER_COMMANDS.contains(&name.as_str())) {
                 match name.as_str() {
                     // Substitutions replace the whole line (the text after them is dropped).
                     "shrug" => out.push("¯\\＿(ツ)＿/¯".to_string()),
@@ -341,6 +344,28 @@ pub fn execute(
                     messages.push(format!("Toggled :{emoji}: emoji reaction."));
                 }
             }
+            "assign" if admin && config.is_ee() => match resolve_users(c, user, args)? {
+                Err(e) => messages.push(format!("Could not apply assign command. {e}.")),
+                Ok(users) if !users.is_empty() => {
+                    // EE (multiple assignees): the users named join the current ones, and earlier
+                    // `/assign`s in the same note add up.
+                    let mut union = match &upd.assignee_ids {
+                        Some(v) if v != &vec![0] => v.clone(),
+                        Some(_) => vec![],
+                        None => mr_now.assignee_ids(c)?,
+                    };
+                    for u in &users {
+                        if !union.contains(&u.id) {
+                            union.push(u.id);
+                        }
+                    }
+                    upd.assignee_ids = Some(union.clone());
+                    changes.insert("assignee_ids".into(), json!(union));
+                    let refs: Vec<String> = users.iter().map(|u| format!("@{}", u.username)).collect();
+                    messages.push(format!("Assigned {}.", to_sentence(&refs)));
+                }
+                Ok(_) => {}
+            },
             "assign" if admin => match resolve_users(c, user, args)? {
                 Err(e) => messages.push(format!("Could not apply assign command. {e}.")),
                 Ok(users) => {
@@ -362,7 +387,8 @@ pub fn execute(
                         .collect();
                     upd.assignee_ids = Some(vec![0]);
                     changes.insert("assignee_ids".into(), json!([]));
-                    messages.push(format!("Removed assignee {}.", names.join(" and ")));
+                    let noun = if names.len() > 1 { "assignees" } else { "assignee" };
+                    messages.push(format!("Removed {noun} {}.", names.join(" and ")));
                 }
             }
             // Offered only when the project or its groups have an active milestone.
@@ -581,7 +607,10 @@ pub fn execute(
                 if let Err(e) = &resolved {
                     messages.push(format!("Could not apply request_review command. {e}."));
                 }
-                if let Some(u) = resolved.ok().and_then(|v| v.into_iter().next()) {
+                // EE requests a review from every user named; CE from the first.
+                let named: Vec<User> = resolved.ok().unwrap_or_default();
+                let named: Vec<User> = if config.is_ee() { named } else { named.into_iter().take(1).collect() };
+                for u in named {
                     // `@updates[:reviewer_ids] |= users`: the existing reviewers stay first, so in
                     // With one reviewer allowed, an extra reviewer is dropped by the update.
                     let current = mr_now.reviewer_ids(c)?;
@@ -832,4 +861,14 @@ thread_local! {
 /// The attribute changes collected by the last `execute` run with `return_update`.
 pub fn take_update() -> MrParams {
     PENDING_UPDATE.with(|u| u.borrow_mut().take()).unwrap_or_default()
+}
+
+/// Ruby's `Array#to_sentence`.
+fn to_sentence(items: &[String]) -> String {
+    match items.len() {
+        0 => String::new(),
+        1 => items[0].clone(),
+        2 => format!("{} and {}", items[0], items[1]),
+        n => format!("{}, and {}", items[..n - 1].join(", "), items[n - 1]),
+    }
 }

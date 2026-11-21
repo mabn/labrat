@@ -2848,7 +2848,7 @@ impl Mutation {
                 ..Default::default()
             };
             let mut prm = prm;
-            let cmds = crate::routes::merge_requests::take_quick_actions(&mut prm);
+            let cmds = crate::routes::merge_requests::take_quick_actions(&mut prm, config.is_ee());
             match mrs::create(c, config, &p, &user, prm) {
                 Ok(mr) => {
                     if !cmds.is_empty() {
@@ -2907,7 +2907,7 @@ impl Mutation {
                     ..Default::default()
                 };
                 let mut prm = prm;
-                let cmds = crate::routes::merge_requests::take_quick_actions(&mut prm);
+                let cmds = crate::routes::merge_requests::take_quick_actions(&mut prm, config.is_ee());
                 if !cmds.is_empty() {
                     // One update with the description's commands merged in (`handle_quick_actions`).
                     let ctx = labrat_core::services::comments::CreateParams { return_update: true, ..Default::default() };
@@ -3125,7 +3125,7 @@ impl Mutation {
         let c = cx.c;
         let mut pl = Payload { ty: payload_type(field), client_id: input.str("clientMutationId"), ..Default::default() };
         if let Some(body) = input.str("body") {
-            pl.command_names = labrat_core::services::quick_actions::extract(&body).commands.into_iter().map(|(n, _)| n).collect();
+            pl.command_names = labrat_core::services::quick_actions::extract(&body, cx.req.app.config.is_ee()).commands.into_iter().map(|(n, _)| n).collect();
         }
         let outcome = |pl: &mut Payload, p: &Project, mr: &MergeRequest, r: labrat_core::Result<Outcome>| -> FResult<()> {
             match r {

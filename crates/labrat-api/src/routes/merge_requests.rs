@@ -898,11 +898,11 @@ fn mr_params(req: &Req) -> Result<MrParams, ApiError> {
 }
 
 /// Quick actions in a description are run, and removed from the stored text.
-pub(crate) fn take_quick_actions(prm: &mut MrParams) -> Vec<(String, String)> {
+pub(crate) fn take_quick_actions(prm: &mut MrParams, ee: bool) -> Vec<(String, String)> {
     let Some(Some(d)) = &prm.description else { return vec![] };
     // `merge_quick_actions_into_params!`: the extractor's text (no `\r`, trailing whitespace
     // stripped) replaces the description whenever it differs, commands or not.
-    let ex = labrat_core::services::quick_actions::extract(d);
+    let ex = labrat_core::services::quick_actions::extract(d, ee);
     if ex.text != *d {
         prm.description = Some(Some(ex.text));
     }
@@ -914,7 +914,7 @@ async fn create(req: Req) -> ApiResult {
     req.params
         .require(&["title", "source_branch", "target_branch"])?;
     let mut prm = mr_params(&req)?;
-    let cmds = take_quick_actions(&mut prm);
+    let cmds = take_quick_actions(&mut prm, req.app.config.is_ee());
     let approvals_before_merge = if req.app.config.is_ee() { req.params.int("approvals_before_merge")? } else { None };
     let app = req.app.clone();
     let body = app.db.tx(|c| {
@@ -1011,7 +1011,7 @@ async fn update(req: Req) -> ApiResult {
         }
     }
     let mut prm = mr_params(&req)?;
-    let cmds = take_quick_actions(&mut prm);
+    let cmds = take_quick_actions(&mut prm, req.app.config.is_ee());
     let state_event = prm.state_event.clone();
     let app = req.app.clone();
     let result = app.db.tx(|c| {

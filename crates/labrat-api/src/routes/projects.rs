@@ -379,6 +379,32 @@ fn attrs_from_params(req: &Req) -> Result<ProjectAttrs, ApiError> {
             a.settings.push((key.to_string(), json!(s)));
         }
     }
+    if req.app.config.is_ee() {
+        // EE's project params: merge settings, templates and the approval settings that the
+        // approvals endpoints also change.
+        for key in [
+            "merge_pipelines_enabled",
+            "merge_trains_enabled",
+            "merge_trains_skip_train_allowed",
+            "only_allow_merge_if_all_status_checks_passed",
+            "reset_approvals_on_push",
+            "merge_requests_author_approval",
+            "merge_requests_disable_committers_approval",
+            "disable_overriding_approvers_per_merge_request",
+        ] {
+            if let Some(b) = p.bool(key)? {
+                a.settings.push((key.to_string(), Value::Bool(b)));
+            }
+        }
+        if let Some(n) = p.int("approvals_before_merge")? {
+            a.settings.push(("approvals_before_merge".to_string(), json!(n)));
+        }
+        for key in ["merge_requests_template", "issues_template", "merge_request_title_regex", "merge_request_title_regex_description"] {
+            if let Some(v) = p.nullable_str(key) {
+                a.settings.push((key.to_string(), json!(v)));
+            }
+        }
+    }
     Ok(a)
 }
 

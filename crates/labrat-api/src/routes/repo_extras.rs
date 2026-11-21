@@ -34,15 +34,23 @@ fn level_description(level: i64) -> &'static str {
     }
 }
 
-fn protected_entity(t: &ProtectedTag) -> Value {
+fn protected_entity(t: &ProtectedTag, ee: bool) -> Value {
     json!({
         "name": t.name,
-        "create_access_levels": t.create_levels.iter().map(|(id, l)| json!({
-            "id": id,
-            "access_level": l,
-            "access_level_description": level_description(*l),
-            "deploy_key_id": null,
-        })).collect::<Vec<_>>(),
+        "create_access_levels": t.create_levels.iter().map(|(id, l)| {
+            let mut m = json!({
+                "id": id,
+                "access_level": l,
+                "access_level_description": level_description(*l),
+                "deploy_key_id": null,
+            });
+            if ee {
+                // EE also allows specific users and groups.
+                m["user_id"] = Value::Null;
+                m["group_id"] = Value::Null;
+            }
+            m
+        }).collect::<Vec<_>>(),
     })
 }
 
@@ -63,7 +71,7 @@ async fn list_protected(req: Req) -> ApiResult {
     let app = req.app.clone();
     app.db.read(|c| {
         let p = maintainer(c, &req)?;
-        paginate(&req, protected_tags::list(c, p.id)?, &[], |t| Ok(protected_entity(t)))
+        paginate(&req, protected_tags::list(c, p.id)?, &[], |t| Ok(protected_entity(t, req.app.config.is_ee())))
     })
 }
 
@@ -72,7 +80,7 @@ async fn show_protected(req: Req) -> ApiResult {
     let body = req.app.db.read(|c| {
         let p = maintainer(c, &req)?;
         let t = protected_tags::find(c, p.id, &name)?.ok_or_else(not_found)?;
-        Ok::<_, ApiError>(protected_entity(&t))
+        Ok::<_, ApiError>(protected_entity(&t, req.app.config.is_ee()))
     })?;
     Ok(Resp::ok(body))
 }
@@ -92,7 +100,7 @@ async fn protect(req: Req) -> ApiResult {
             return Err(Error::Api(422, json!(["Name has already been taken"])).into());
         }
         let t = protected_tags::create(c, p.id, &name, level)?;
-        Ok::<_, ApiError>(protected_entity(&t))
+        Ok::<_, ApiError>(protected_entity(&t, req.app.config.is_ee()))
     })?;
     Ok(Resp::created(body))
 }
