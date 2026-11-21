@@ -945,7 +945,13 @@ async fn create(req: Req) -> ApiResult {
                 c.execute("UPDATE merge_requests SET approvals_before_merge = ?1 WHERE id = ?2", rusqlite::params![n, mr.id])?;
                 if labrat_core::services::approvals::mr_rules(c, &mr)?.iter().any(|r| r.is_any_approver()) {
                     failed = true;
-                    c.execute("UPDATE merge_requests SET creation_failed = 1 WHERE id = ?1", [mr.id])?;
+                    // The error comes before `AfterCreateService`: the MR is never prepared
+                    // (no diff, no open hook) and reads as `cannot_be_merged`.
+                    c.execute("UPDATE merge_requests SET creation_failed = 1, merge_status = 'cannot_be_merged' WHERE id = ?1", [mr.id])?;
+                    c.execute(
+                        "DELETE FROM jobs WHERE kind = 'mr_after_create' AND json_extract(payload, '$.merge_request_id') = ?1",
+                        [mr.id],
+                    )?;
                 } else {
                     labrat_core::services::approvals::set_required(c, &mr, n)?;
                 }

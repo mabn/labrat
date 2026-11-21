@@ -176,7 +176,7 @@ fn reviewer_row(c: &Connection, mr: &MergeRequest, user: &User) -> Result<Option
 }
 
 /// Sets a reviewer's state if the user is a reviewer (errors are ignored as in GitLab).
-fn set_reviewer_state(
+pub(crate) fn set_reviewer_state(
     c: &Connection,
     mr: &MergeRequest,
     user: &User,

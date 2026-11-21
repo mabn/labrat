@@ -798,12 +798,14 @@ pub fn reset_on_push(c: &Connection, config: &crate::Config, p: &Project, mr: &M
     approvers.sort();
     let was_approved = state(c, p, mr)?.approved();
     let mut names = vec![];
+    c.execute("DELETE FROM approvals WHERE merge_request_id = ?1", [mr.id])?;
     for uid in &approvers {
         if let Some(u) = User::find(c, *uid)? {
             names.push(format!("@{}", u.username));
+            // The reset approvers who are reviewers go back to `unapproved`.
+            crate::services::reviews::set_reviewer_state(c, mr, &u, crate::services::reviews::state::UNAPPROVED)?;
         }
     }
-    c.execute("DELETE FROM approvals WHERE merge_request_id = ?1", [mr.id])?;
     crate::services::notes::system_note(
         c,
         mr.id,
@@ -824,7 +826,9 @@ pub fn set_required(c: &Connection, mr: &MergeRequest, n: i64) -> Result<()> {
     match mr_rules(c, mr)?.into_iter().find(|r| r.is_any_approver()) {
         Some(r) => {
             c.execute(
-                "UPDATE approval_merge_request_rules SET approvals_required = ?1, updated_at = ?2 WHERE id = ?3",
+                // A rule copied from the project's is now modified from it.
+                "UPDATE approval_merge_request_rules SET approvals_required = ?1, updated_at = ?2,
+                 modified_from_project_rule = (approval_project_rule_id IS NOT NULL) WHERE id = ?3",
                 params![n, time::now(), r.id],
             )?;
         }
