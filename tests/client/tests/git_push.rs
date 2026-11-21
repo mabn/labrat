@@ -19,6 +19,7 @@ fn start() -> String {
                 ssh_port: 22,
                 root_password: "labrat-root-password".into(),
                 root_token: Some(TOKEN.into()),
+                edition: labrat_core::Edition::Ce,
             };
             let app = Arc::new(labrat_core::App { db: labrat_core::Db::open(":memory:").unwrap(), config });
             labrat_api::bootstrap(&app).unwrap();

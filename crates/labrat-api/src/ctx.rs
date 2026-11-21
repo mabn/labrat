@@ -364,6 +364,9 @@ impl Req {
                 return Ok::<_, Error>((None, None));
             };
             let mut user = User::find(c, token.user_id)?;
+            // Expiry is judged here, on the database's clock (tests move it), not after the
+            // transaction on the bare system clock.
+            let expired = token.expired();
             if token.active() {
                 tokens::touch(c, &token)?;
                 if let Some(u) = &user
@@ -372,9 +375,9 @@ impl Req {
                         user = User::find(c, u.id)?;
                     }
             }
-            Ok((user, Some(token)))
+            Ok((user, Some((token, expired))))
         })?;
-        let (Some(user), Some(token)) = (user, token) else {
+        let (Some(user), Some((token, expired))) = (user, token) else {
             return Err(Error::Unauthorized(None).into());
         };
         if token.revoked {
@@ -384,7 +387,7 @@ impl Req {
                 "Token was revoked. You have to re-authorize from the user.",
             ));
         }
-        if token.expired() {
+        if expired {
             return Err(oauth_error(
                 401,
                 "invalid_token",
