@@ -1,0 +1,5357 @@
+{
+  "scenario": "random_walk_reviewers",
+  "base": "http://localhost:8929",
+  "ssh_port": 2224,
+  "run": "rb1e6b0",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/rv-<RUN>",
+        "name": "rv-<RUN>",
+        "path": "rv-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "rv-<RUN>",
+        "full_path": "rv-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "rv-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "rv-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/rv-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/rv-<RUN>/app.git",
+        "web_url": "<BASE>/rv-<RUN>/app",
+        "readme_url": "<BASE>/rv-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "rv-<RUN>",
+          "path": "rv-<RUN>",
+          "kind": "group",
+          "full_path": "rv-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/rv-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null,
+        "approvals_before_merge": 0,
+        "mirror": false,
+        "external_authorization_classification_label": null,
+        "requirements_enabled": true,
+        "requirements_access_level": "enabled",
+        "security_and_compliance_enabled": true,
+        "secret_push_protection_enabled": false,
+        "pre_receive_secret_detection_enabled": false,
+        "compliance_frameworks": [],
+        "issues_template": null,
+        "merge_requests_template": null,
+        "ci_restrict_pipeline_cancellation_role": "developer",
+        "merge_pipelines_enabled": false,
+        "merge_trains_enabled": false,
+        "merge_trains_skip_train_allowed": false,
+        "only_allow_merge_if_all_status_checks_passed": false,
+        "allow_pipeline_trigger_approve_deployment": false,
+        "prevent_merge_without_jira_issue": false,
+        "duo_remote_flows_enabled": true,
+        "duo_foundational_flows_enabled": true,
+        "duo_sast_fp_detection_enabled": false,
+        "duo_secret_detection_fp_enabled": false,
+        "duo_sast_vr_workflow_enabled": false,
+        "spp_repository_pipeline_access": true,
+        "security_policy_pipeline_must_succeed": false,
+        "merge_request_title_regex": null,
+        "merge_request_title_regex_description": null
+      }
+    },
+    {
+      "label": "ann",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "ann-<RUN>",
+        "public_email": null,
+        "name": "ann",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/ann-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "ann-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "ann-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "ann token",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-22",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "ann developer",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "ann-<RUN>",
+        "public_email": null,
+        "name": "ann",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/ann-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "ann-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "bob",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "bob-<RUN>",
+        "public_email": null,
+        "name": "bob",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/bob-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "bob-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "bob-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:3>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "bob token",
+      "request": "POST /users/<user:3>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:2>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:3>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-22",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "bob developer",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "bob-<RUN>",
+        "public_email": null,
+        "name": "bob",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/bob-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "bob-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "cat",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:4>",
+        "username": "cat-<RUN>",
+        "public_email": null,
+        "name": "cat",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/cat-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "cat-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "cat-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:4>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "cat token",
+      "request": "POST /users/<user:4>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:3>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:4>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-22",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "cat developer",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:4>",
+        "username": "cat-<RUN>",
+        "public_email": null,
+        "name": "cat",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/cat-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "cat-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "dan",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:5>",
+        "username": "dan-<RUN>",
+        "public_email": null,
+        "name": "dan",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/dan-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "dan-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "dan-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:5>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "dan token",
+      "request": "POST /users/<user:5>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:4>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:5>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-22",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "dan developer",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:5>",
+        "username": "dan-<RUN>",
+        "public_email": null,
+        "name": "dan",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/dan-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "dan-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "commit",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Add a",
+        "message": "Add a",
+        "author_name": "ann",
+        "author_email": "ann-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "ann",
+        "committer_email": "ann-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rv-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA1>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "00 cat op10",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:1>",
+        "type": null,
+        "body": "Comment 0",
+        "author": {
+          "id": "<user:4>",
+          "username": "cat-<RUN>",
+          "public_email": null,
+          "name": "cat",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/cat-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "01 dan op3",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:2>",
+        "type": null,
+        "body": "Review 1",
+        "author": {
+          "id": "<user:5>",
+          "username": "dan-<RUN>",
+          "public_email": null,
+          "name": "dan",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/dan-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "02 dan op0",
+      "request": "POST /projects/<project:1>/merge_requests/1/approve",
+      "status": 401,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "401 Unauthorized"
+      }
+    },
+    {
+      "label": "03 dan op6",
+      "request": "PUT /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 2,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "merge_after": null,
+        "sha": "<SHA1>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA1>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "04 bob op8",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA1>"
+        ],
+        "title": "Push 1",
+        "message": "Push 1",
+        "author_name": "ann",
+        "author_email": "ann-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "ann",
+        "committer_email": "ann-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rv-<RUN>/app/-/commit/<SHA3>",
+        "stats": {
+          "additions": 1,
+          "deletions": 1,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "05 cat op6",
+      "request": "PUT /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 2,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "merge_after": null,
+        "sha": "<SHA3>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA3>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "06 bob op8",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA4>",
+        "short_id": "<SHA4:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA3>"
+        ],
+        "title": "Push 2",
+        "message": "Push 2",
+        "author_name": "ann",
+        "author_email": "ann-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "ann",
+        "committer_email": "ann-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rv-<RUN>/app/-/commit/<SHA4>",
+        "stats": {
+          "additions": 1,
+          "deletions": 1,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "cp6 reviewers",
+      "request": "GET /projects/<project:1>/merge_requests/1/reviewers",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "user": {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          "state": "unreviewed",
+          "created_at": "<TIME>"
+        },
+        {
+          "user": {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          },
+          "state": "unapproved",
+          "created_at": "<TIME>"
+        }
+      ]
+    },
+    {
+      "label": "cp6 approvals",
+      "request": "GET /projects/<project:1>/merge_requests/1/approvals",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": false,
+        "user_can_approve": true,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "cp6 mr",
+      "request": "GET /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 2,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA4>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "cp6 graphql",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "detailedMergeStatus": "MERGEABLE",
+              "approved": true,
+              "approvedBy": {
+                "nodes": []
+              },
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "UNAPPROVED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  },
+                  {
+                    "username": "bob-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "UNREVIEWED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "cp6 ann counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp6 ann todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "cp6 bob counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 1,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp6 bob todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_requested",
+          "author": "ann-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp6 cat counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp6 cat todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "cp6 dan counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 1,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp6 dan todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "07 dan op9",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetReviewers": {
+            "errors": [],
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "08 cat op1",
+      "request": "POST /projects/<project:1>/merge_requests/1/unapprove",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not Found"
+      }
+    },
+    {
+      "label": "09 dan op10",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:3>",
+        "type": null,
+        "body": "Comment 9",
+        "author": {
+          "id": "<user:5>",
+          "username": "dan-<RUN>",
+          "public_email": null,
+          "name": "dan",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/dan-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "10 bob op3",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:4>",
+        "type": null,
+        "body": "Review 10",
+        "author": {
+          "id": "<user:3>",
+          "username": "bob-<RUN>",
+          "public_email": null,
+          "name": "bob",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/bob-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "11 cat op4",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<draft:1>",
+        "author_id": "<user:4>",
+        "merge_request_id": "<other:merge_request_id:1>",
+        "resolve_discussion": false,
+        "discussion_id": null,
+        "note": "Draft 11",
+        "commit_id": null,
+        "line_code": null,
+        "position": {
+          "base_sha": null,
+          "start_sha": null,
+          "head_sha": null,
+          "old_path": null,
+          "new_path": null,
+          "position_type": "text",
+          "old_line": null,
+          "new_line": null,
+          "line_range": null
+        }
+      }
+    },
+    {
+      "label": "11 cat op4 quick",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<draft:2>",
+        "author_id": "<user:4>",
+        "merge_request_id": "<other:merge_request_id:1>",
+        "resolve_discussion": false,
+        "discussion_id": null,
+        "note": "/submit_review requested_changes",
+        "commit_id": null,
+        "line_code": null,
+        "position": {
+          "base_sha": null,
+          "start_sha": null,
+          "head_sha": null,
+          "old_path": null,
+          "new_path": null,
+          "position_type": "text",
+          "old_line": null,
+          "new_line": null,
+          "line_range": null
+        }
+      }
+    },
+    {
+      "label": "11 cat op4 publish",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes/bulk_publish",
+      "status": 204,
+      "headers": {},
+      "body": null
+    },
+    {
+      "label": "12 cat op10",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:5>",
+        "type": null,
+        "body": "Comment 12",
+        "author": {
+          "id": "<user:4>",
+          "username": "cat-<RUN>",
+          "public_email": null,
+          "name": "cat",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/cat-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "13 bob op9",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetReviewers": {
+            "errors": [],
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>"
+                  },
+                  {
+                    "username": "bob-<RUN>"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "cp13 reviewers",
+      "request": "GET /projects/<project:1>/merge_requests/1/reviewers",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "user": {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          },
+          "state": "unapproved",
+          "created_at": "<TIME>"
+        },
+        {
+          "user": {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          "state": "requested_changes",
+          "created_at": "<TIME>"
+        }
+      ]
+    },
+    {
+      "label": "cp13 approvals",
+      "request": "GET /projects/<project:1>/merge_requests/1/approvals",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": false,
+        "user_can_approve": true,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "cp13 mr",
+      "request": "GET /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 6,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "requested_changes",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA4>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "cp13 graphql",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "detailedMergeStatus": "REQUESTED_CHANGES",
+              "approved": true,
+              "approvedBy": {
+                "nodes": []
+              },
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "UNAPPROVED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  },
+                  {
+                    "username": "bob-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "REQUESTED_CHANGES",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "cp13 ann counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp13 ann todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "cp13 bob counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp13 bob todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_requested",
+          "author": "ann-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp13 cat counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp13 cat todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "cp13 dan counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 1,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp13 dan todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "14 cat op0",
+      "request": "POST /projects/<project:1>/merge_requests/1/approve",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [
+          {
+            "user": {
+              "id": "<user:4>",
+              "username": "cat-<RUN>",
+              "public_email": null,
+              "name": "cat",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/cat-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          }
+        ],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": true,
+        "user_can_approve": false,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "15 dan op6",
+      "request": "PUT /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 6,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "requested_changes",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA4>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "16 cat op10",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:6>",
+        "type": null,
+        "body": "Comment 16",
+        "author": {
+          "id": "<user:4>",
+          "username": "cat-<RUN>",
+          "public_email": null,
+          "name": "cat",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/cat-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "17 cat op9",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetReviewers": {
+            "errors": [],
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "cat-<RUN>"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "18 dan op0",
+      "request": "POST /projects/<project:1>/merge_requests/1/approve",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [
+          {
+            "user": {
+              "id": "<user:4>",
+              "username": "cat-<RUN>",
+              "public_email": null,
+              "name": "cat",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/cat-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          },
+          {
+            "user": {
+              "id": "<user:5>",
+              "username": "dan-<RUN>",
+              "public_email": null,
+              "name": "dan",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dan-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          }
+        ],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": true,
+        "user_can_approve": false,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "19 bob op3",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:7>",
+        "type": null,
+        "body": "Review 19",
+        "author": {
+          "id": "<user:3>",
+          "username": "bob-<RUN>",
+          "public_email": null,
+          "name": "bob",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/bob-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "20 dan op4",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<draft:3>",
+        "author_id": "<user:5>",
+        "merge_request_id": "<other:merge_request_id:1>",
+        "resolve_discussion": false,
+        "discussion_id": null,
+        "note": "Draft 20",
+        "commit_id": null,
+        "line_code": null,
+        "position": {
+          "base_sha": null,
+          "start_sha": null,
+          "head_sha": null,
+          "old_path": null,
+          "new_path": null,
+          "position_type": "text",
+          "old_line": null,
+          "new_line": null,
+          "line_range": null
+        }
+      }
+    },
+    {
+      "label": "20 dan op4 quick",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<draft:4>",
+        "author_id": "<user:5>",
+        "merge_request_id": "<other:merge_request_id:1>",
+        "resolve_discussion": false,
+        "discussion_id": null,
+        "note": "/submit_review requested_changes",
+        "commit_id": null,
+        "line_code": null,
+        "position": {
+          "base_sha": null,
+          "start_sha": null,
+          "head_sha": null,
+          "old_path": null,
+          "new_path": null,
+          "position_type": "text",
+          "old_line": null,
+          "new_line": null,
+          "line_range": null
+        }
+      }
+    },
+    {
+      "label": "20 dan op4 publish",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes/bulk_publish",
+      "status": 204,
+      "headers": {},
+      "body": null
+    },
+    {
+      "label": "cp20 reviewers",
+      "request": "GET /projects/<project:1>/merge_requests/1/reviewers",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "user": {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          "state": "approved",
+          "created_at": "<TIME>"
+        }
+      ]
+    },
+    {
+      "label": "cp20 approvals",
+      "request": "GET /projects/<project:1>/merge_requests/1/approvals",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [
+          {
+            "user": {
+              "id": "<user:4>",
+              "username": "cat-<RUN>",
+              "public_email": null,
+              "name": "cat",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/cat-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          },
+          {
+            "user": {
+              "id": "<user:5>",
+              "username": "dan-<RUN>",
+              "public_email": null,
+              "name": "dan",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dan-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          }
+        ],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": false,
+        "user_can_approve": true,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "cp20 mr",
+      "request": "GET /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 9,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "requested_changes",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA4>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "cp20 graphql",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "detailedMergeStatus": "REQUESTED_CHANGES",
+              "approved": true,
+              "approvedBy": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>"
+                  },
+                  {
+                    "username": "cat-<RUN>"
+                  }
+                ]
+              },
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "cat-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "APPROVED",
+                      "approved": true,
+                      "reviewed": false
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "cp20 ann counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp20 ann todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_submitted",
+          "author": "dan-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp20 bob counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp20 bob todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "cp20 cat counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp20 cat todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_requested",
+          "author": "ann-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp20 dan counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp20 dan todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "21 bob op3",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:8>",
+        "type": null,
+        "body": "Review 21",
+        "author": {
+          "id": "<user:3>",
+          "username": "bob-<RUN>",
+          "public_email": null,
+          "name": "bob",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/bob-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "22 dan op6",
+      "request": "PUT /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 10,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA4>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "23 cat op1",
+      "request": "POST /projects/<project:1>/merge_requests/1/unapprove",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [
+          {
+            "user": {
+              "id": "<user:5>",
+              "username": "dan-<RUN>",
+              "public_email": null,
+              "name": "dan",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dan-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          },
+          {
+            "user": {
+              "id": "<user:3>",
+              "username": "bob-<RUN>",
+              "public_email": null,
+              "name": "bob",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/bob-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          }
+        ],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": false,
+        "user_can_approve": true,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "24 dan op8",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA5>",
+        "short_id": "<SHA5:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA4>"
+        ],
+        "title": "Push 3",
+        "message": "Push 3",
+        "author_name": "ann",
+        "author_email": "ann-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "ann",
+        "committer_email": "ann-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rv-<RUN>/app/-/commit/<SHA5>",
+        "stats": {
+          "additions": 1,
+          "deletions": 1,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "25 bob op8",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA6>",
+        "short_id": "<SHA6:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA5>"
+        ],
+        "title": "Push 4",
+        "message": "Push 4",
+        "author_name": "ann",
+        "author_email": "ann-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "ann",
+        "committer_email": "ann-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rv-<RUN>/app/-/commit/<SHA6>",
+        "stats": {
+          "additions": 1,
+          "deletions": 1,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "26 bob op6",
+      "request": "PUT /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 10,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "merge_after": null,
+        "sha": "<SHA6>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA6>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "27 bob op8",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA7>",
+        "short_id": "<SHA7:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA6>"
+        ],
+        "title": "Push 5",
+        "message": "Push 5",
+        "author_name": "ann",
+        "author_email": "ann-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "ann",
+        "committer_email": "ann-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rv-<RUN>/app/-/commit/<SHA7>",
+        "stats": {
+          "additions": 1,
+          "deletions": 1,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "cp27 reviewers",
+      "request": "GET /projects/<project:1>/merge_requests/1/reviewers",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "3",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "user": {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          "state": "unapproved",
+          "created_at": "<TIME>"
+        },
+        {
+          "user": {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          "state": "unapproved",
+          "created_at": "<TIME>"
+        },
+        {
+          "user": {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          },
+          "state": "unapproved",
+          "created_at": "<TIME>"
+        }
+      ]
+    },
+    {
+      "label": "cp27 approvals",
+      "request": "GET /projects/<project:1>/merge_requests/1/approvals",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": false,
+        "user_can_approve": true,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "cp27 mr",
+      "request": "GET /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 10,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "merge_after": null,
+        "sha": "<SHA7>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA7>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "cp27 graphql",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "detailedMergeStatus": "MERGEABLE",
+              "approved": true,
+              "approvedBy": {
+                "nodes": []
+              },
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "UNAPPROVED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  },
+                  {
+                    "username": "cat-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "UNAPPROVED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  },
+                  {
+                    "username": "bob-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "UNAPPROVED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "cp27 ann counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp27 ann todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "cp27 bob counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 1,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp27 bob todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_requested",
+          "author": "ann-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp27 cat counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 1,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp27 cat todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_requested",
+          "author": "ann-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp27 dan counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 1,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp27 dan todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_requested",
+          "author": "ann-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "28 dan op1",
+      "request": "POST /projects/<project:1>/merge_requests/1/unapprove",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not Found"
+      }
+    },
+    {
+      "label": "29 cat op3",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:9>",
+        "type": null,
+        "body": "Review 29",
+        "author": {
+          "id": "<user:4>",
+          "username": "cat-<RUN>",
+          "public_email": null,
+          "name": "cat",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/cat-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "30 cat op10",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<note:10>",
+        "type": null,
+        "body": "Comment 30",
+        "author": {
+          "id": "<user:4>",
+          "username": "cat-<RUN>",
+          "public_email": null,
+          "name": "cat",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/cat-<RUN>"
+        },
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "system": false,
+        "noteable_id": "<other:noteable_id:1>",
+        "noteable_type": "MergeRequest",
+        "project_id": "<project:1>",
+        "resolvable": false,
+        "confidential": false,
+        "internal": false,
+        "imported": false,
+        "imported_from": "none",
+        "noteable_iid": 1,
+        "commands_changes": {}
+      }
+    },
+    {
+      "label": "31 dan op0",
+      "request": "POST /projects/<project:1>/merge_requests/1/approve",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [
+          {
+            "user": {
+              "id": "<user:5>",
+              "username": "dan-<RUN>",
+              "public_email": null,
+              "name": "dan",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dan-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          }
+        ],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": true,
+        "user_can_approve": false,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "32 cat op5",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 202,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "commands_changes": {
+          "reviewer_ids": [
+            "<other:reviewer_id:1>",
+            "<other:reviewer_id:2>",
+            "<other:reviewer_id:3>"
+          ]
+        },
+        "summary": [
+          "Requested a review from @cat-<RUN>."
+        ]
+      }
+    },
+    {
+      "label": "33 bob op9",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetReviewers": {
+            "errors": [],
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>"
+                  },
+                  {
+                    "username": "cat-<RUN>"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "34 cat op4",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<draft:5>",
+        "author_id": "<user:4>",
+        "merge_request_id": "<other:merge_request_id:1>",
+        "resolve_discussion": false,
+        "discussion_id": null,
+        "note": "Draft 34",
+        "commit_id": null,
+        "line_code": null,
+        "position": {
+          "base_sha": null,
+          "start_sha": null,
+          "head_sha": null,
+          "old_path": null,
+          "new_path": null,
+          "position_type": "text",
+          "old_line": null,
+          "new_line": null,
+          "line_range": null
+        }
+      }
+    },
+    {
+      "label": "34 cat op4 publish",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes/bulk_publish",
+      "status": 204,
+      "headers": {},
+      "body": null
+    },
+    {
+      "label": "cp34 reviewers",
+      "request": "GET /projects/<project:1>/merge_requests/1/reviewers",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "user": {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          },
+          "state": "approved",
+          "created_at": "<TIME>"
+        },
+        {
+          "user": {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          "state": "review_started",
+          "created_at": "<TIME>"
+        }
+      ]
+    },
+    {
+      "label": "cp34 approvals",
+      "request": "GET /projects/<project:1>/merge_requests/1/approvals",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [
+          {
+            "user": {
+              "id": "<user:5>",
+              "username": "dan-<RUN>",
+              "public_email": null,
+              "name": "dan",
+              "state": "active",
+              "locked": false,
+              "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+              "web_url": "<BASE>/dan-<RUN>"
+            },
+            "approved_at": "<TIME>"
+          }
+        ],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": false,
+        "user_can_approve": true,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "cp34 mr",
+      "request": "GET /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 13,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "requested_changes",
+        "merge_after": null,
+        "sha": "<SHA7>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA7>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "cp34 graphql",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "detailedMergeStatus": "REQUESTED_CHANGES",
+              "approved": true,
+              "approvedBy": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>"
+                  }
+                ]
+              },
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "APPROVED",
+                      "approved": true,
+                      "reviewed": false
+                    }
+                  },
+                  {
+                    "username": "cat-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "REVIEW_STARTED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "cp34 ann counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp34 ann todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_submitted",
+          "author": "cat-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp34 bob counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp34 bob todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_requested",
+          "author": "ann-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp34 cat counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 1,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp34 cat todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "cp34 dan counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp34 dan todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "35 dan op4",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<draft:6>",
+        "author_id": "<user:5>",
+        "merge_request_id": "<other:merge_request_id:1>",
+        "resolve_discussion": false,
+        "discussion_id": null,
+        "note": "Draft 35",
+        "commit_id": null,
+        "line_code": null,
+        "position": {
+          "base_sha": null,
+          "start_sha": null,
+          "head_sha": null,
+          "old_path": null,
+          "new_path": null,
+          "position_type": "text",
+          "old_line": null,
+          "new_line": null,
+          "line_range": null
+        }
+      }
+    },
+    {
+      "label": "35 dan op4 quick",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<draft:7>",
+        "author_id": "<user:5>",
+        "merge_request_id": "<other:merge_request_id:1>",
+        "resolve_discussion": false,
+        "discussion_id": null,
+        "note": "/submit_review approve",
+        "commit_id": null,
+        "line_code": null,
+        "position": {
+          "base_sha": null,
+          "start_sha": null,
+          "head_sha": null,
+          "old_path": null,
+          "new_path": null,
+          "position_type": "text",
+          "old_line": null,
+          "new_line": null,
+          "line_range": null
+        }
+      }
+    },
+    {
+      "label": "35 dan op4 publish",
+      "request": "POST /projects/<project:1>/merge_requests/1/draft_notes/bulk_publish",
+      "status": 204,
+      "headers": {},
+      "body": null
+    },
+    {
+      "label": "36 cat op5",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestReviewerRereview": {
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "37 dan op6",
+      "request": "PUT /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 14,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          },
+          {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "requested_changes",
+        "merge_after": null,
+        "sha": "<SHA7>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA7>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "38 dan op9",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetReviewers": {
+            "errors": [],
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>"
+                  },
+                  {
+                    "username": "cat-<RUN>"
+                  },
+                  {
+                    "username": "bob-<RUN>"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "39 cat op5",
+      "request": "POST /projects/<project:1>/merge_requests/1/notes",
+      "status": 202,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "commands_changes": {
+          "reviewer_ids": [
+            "<other:reviewer_id:3>",
+            "<other:reviewer_id:2>",
+            "<other:reviewer_id:1>"
+          ]
+        },
+        "summary": [
+          "Requested a review from @cat-<RUN>."
+        ]
+      }
+    },
+    {
+      "label": "40 cat op9",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "mergeRequestSetReviewers": {
+            "errors": [],
+            "mergeRequest": {
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>"
+                  },
+                  {
+                    "username": "cat-<RUN>"
+                  },
+                  {
+                    "username": "bob-<RUN>"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "41 bob op8",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA8>",
+        "short_id": "<SHA8:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA7>"
+        ],
+        "title": "Push 6",
+        "message": "Push 6",
+        "author_name": "ann",
+        "author_email": "ann-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "ann",
+        "committer_email": "ann-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/rv-<RUN>/app/-/commit/<SHA8>",
+        "stats": {
+          "additions": 1,
+          "deletions": 1,
+          "total": 2
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "cp41 reviewers",
+      "request": "GET /projects/<project:1>/merge_requests/1/reviewers",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "3",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/reviewers?id=<project:1>&merge_request_iid=1&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": [
+        {
+          "user": {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          "state": "unreviewed",
+          "created_at": "<TIME>"
+        },
+        {
+          "user": {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          "state": "unreviewed",
+          "created_at": "<TIME>"
+        },
+        {
+          "user": {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          },
+          "state": "unapproved",
+          "created_at": "<TIME>"
+        }
+      ]
+    },
+    {
+      "label": "cp41 approvals",
+      "request": "GET /projects/<project:1>/merge_requests/1/approvals",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<approval:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merge_status": "can_be_merged",
+        "approved": true,
+        "approvals_required": 0,
+        "approvals_left": 0,
+        "require_password_to_approve": false,
+        "approved_by": [],
+        "suggested_approvers": [],
+        "approvers": [],
+        "approver_groups": [],
+        "user_has_approved": false,
+        "user_can_approve": true,
+        "approval_rules_left": [],
+        "has_approval_rules": false,
+        "merge_request_approvers_available": true,
+        "multiple_approval_rules_available": true,
+        "invalid_approvers_rules": []
+      }
+    },
+    {
+      "label": "cp41 mr",
+      "request": "GET /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "Add a",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "feature",
+        "user_notes_count": 14,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "ann-<RUN>",
+          "public_email": null,
+          "name": "ann",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/ann-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [
+          {
+            "id": "<user:4>",
+            "username": "cat-<RUN>",
+            "public_email": null,
+            "name": "cat",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/cat-<RUN>"
+          },
+          {
+            "id": "<user:3>",
+            "username": "bob-<RUN>",
+            "public_email": null,
+            "name": "bob",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/bob-<RUN>"
+          },
+          {
+            "id": "<user:5>",
+            "username": "dan-<RUN>",
+            "public_email": null,
+            "name": "dan",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/dan-<RUN>"
+          }
+        ],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "requested_changes",
+        "merge_after": null,
+        "sha": "<SHA8>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "rv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/rv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA8>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "cp41 graphql",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "detailedMergeStatus": "REQUESTED_CHANGES",
+              "approved": true,
+              "approvedBy": {
+                "nodes": []
+              },
+              "reviewers": {
+                "nodes": [
+                  {
+                    "username": "dan-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "UNAPPROVED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  },
+                  {
+                    "username": "cat-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "UNREVIEWED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  },
+                  {
+                    "username": "bob-<RUN>",
+                    "mergeRequestInteraction": {
+                      "reviewState": "UNREVIEWED",
+                      "approved": false,
+                      "reviewed": false
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "cp41 ann counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp41 ann todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    },
+    {
+      "label": "cp41 bob counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 1,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp41 bob todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_requested",
+          "author": "ann-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp41 cat counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 1,
+        "todos": 1
+      }
+    },
+    {
+      "label": "cp41 cat todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": [
+        {
+          "action": "review_requested",
+          "author": "ann-<RUN>"
+        }
+      ]
+    },
+    {
+      "label": "cp41 dan counts",
+      "request": "GET /user_counts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "merge_requests": 0,
+        "assigned_issues": 0,
+        "assigned_merge_requests": 0,
+        "review_requested_merge_requests": 0,
+        "todos": 0
+      }
+    },
+    {
+      "label": "cp41 dan todos",
+      "request": "GET /todos",
+      "status": 200,
+      "headers": {},
+      "body": []
+    }
+  ],
+  "times": [
+    0,
+    198,
+    11847,
+    12467,
+    12520,
+    12617,
+    13187,
+    13238,
+    13338,
+    13921,
+    13988,
+    14091,
+    14674,
+    14731,
+    14821,
+    21881,
+    31748,
+    45366,
+    53602,
+    74960,
+    81997,
+    125430,
+    132062,
+    162105,
+    162168,
+    162225,
+    162320,
+    162413,
+    162512,
+    162512,
+    162661,
+    162661,
+    162751,
+    162751,
+    162848,
+    162849,
+    172134,
+    181991,
+    191992,
+    202324,
+    202391,
+    202459,
+    212071,
+    222109,
+    242073,
+    242137,
+    242203,
+    242299,
+    242388,
+    242468,
+    242468,
+    242616,
+    242616,
+    242698,
+    242698,
+    242778,
+    242778,
+    252037,
+    262070,
+    274909,
+    292257,
+    302108,
+    312243,
+    312326,
+    312391,
+    325823,
+    325875,
+    325943,
+    326031,
+    326113,
+    326244,
+    326244,
+    326346,
+    326346,
+    326493,
+    326493,
+    326587,
+    326587,
+    332900,
+    342147,
+    352269,
+    412475,
+    452319,
+    462661,
+    492346,
+    492405,
+    492466,
+    492570,
+    492656,
+    492738,
+    492738,
+    492890,
+    492890,
+    493036,
+    493036,
+    493179,
+    493179,
+    502800,
+    512638,
+    522857,
+    532690,
+    546816,
+    552783,
+    552873,
+    562980,
+    563043,
+    563108,
+    563195,
+    563264,
+    563405,
+    563405,
+    563545,
+    563545,
+    563644,
+    563644,
+    563736,
+    563736,
+    563797,
+    563860,
+    572629,
+    582475,
+    592582,
+    612964,
+    622786,
+    632828,
+    673164,
+    673217,
+    673267,
+    673346,
+    673415,
+    673510,
+    673510,
+    673657,
+    673657,
+    673801,
+    673801,
+    673877
+  ],
+  "done_times": [
+    196,
+    822,
+    12465,
+    12519,
+    12616,
+    13186,
+    13237,
+    13337,
+    13917,
+    13984,
+    14086,
+    14673,
+    14730,
+    14820,
+    15151,
+    22129,
+    31850,
+    45511,
+    53660,
+    75115,
+    82328,
+    125621,
+    132405,
+    162168,
+    162225,
+    162320,
+    162412,
+    162476,
+    162512,
+    162571,
+    162661,
+    162714,
+    162751,
+    162806,
+    162848,
+    162961,
+    172203,
+    182080,
+    192108,
+    202389,
+    202458,
+    202563,
+    212167,
+    222274,
+    242137,
+    242203,
+    242299,
+    242387,
+    242429,
+    242468,
+    242526,
+    242616,
+    242656,
+    242698,
+    242736,
+    242778,
+    242861,
+    252189,
+    262164,
+    275039,
+    292357,
+    302213,
+    312324,
+    312390,
+    312503,
+    325875,
+    325943,
+    326031,
+    326112,
+    326154,
+    326244,
+    326302,
+    326346,
+    326405,
+    326493,
+    326544,
+    326587,
+    326692,
+    333109,
+    342264,
+    352626,
+    412824,
+    452476,
+    463037,
+    492405,
+    492466,
+    492570,
+    492654,
+    492696,
+    492738,
+    492797,
+    492890,
+    492941,
+    493036,
+    493087,
+    493179,
+    493238,
+    502939,
+    512734,
+    522968,
+    532910,
+    546946,
+    552872,
+    552970,
+    563043,
+    563108,
+    563195,
+    563263,
+    563316,
+    563405,
+    563458,
+    563545,
+    563600,
+    563644,
+    563693,
+    563736,
+    563796,
+    563858,
+    563959,
+    572760,
+    582652,
+    592680,
+    613149,
+    622865,
+    633203,
+    673217,
+    673267,
+    673346,
+    673413,
+    673466,
+    673510,
+    673560,
+    673657,
+    673714,
+    673801,
+    673840,
+    673877
+  ],
+  "started_at": 1795305843583
+}

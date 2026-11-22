@@ -725,6 +725,8 @@ impl Scenario {
                         let (mut e, mut a) = (exp.clone(), step.clone());
                         sort_reviewers(&mut e);
                         sort_reviewers(&mut a);
+                        forget_admin_sign_in(&mut e);
+                        forget_admin_sign_in(&mut a);
                         normalize::diff(&e, &a, "")
                     } else {
                         normalize::diff(exp, &step, "")
@@ -1003,6 +1005,26 @@ fn receiver_response_headers(v: &mut Value) {
             }
         }
         Value::Array(a) => a.iter_mut().for_each(receiver_response_headers),
+        _ => {}
+    }
+}
+
+/// The EE reference's admin (`claude`) gets signed in by something outside the scenarios
+/// (no sign-in shows in its audit events), so its own sign-in times depend on the instance's
+/// history rather than on the scenario. Replays leave them out of the comparison.
+fn forget_admin_sign_in(v: &mut Value) {
+    match v {
+        Value::Object(m) => {
+            if m.get("username").and_then(Value::as_str) == Some("claude") {
+                for k in ["last_sign_in_at", "current_sign_in_at"] {
+                    if let Some(x) = m.get_mut(k) {
+                        *x = Value::Null;
+                    }
+                }
+            }
+            m.values_mut().for_each(forget_admin_sign_in);
+        }
+        Value::Array(a) => a.iter_mut().for_each(forget_admin_sign_in),
         _ => {}
     }
 }

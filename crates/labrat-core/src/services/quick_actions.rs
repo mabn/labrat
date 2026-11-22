@@ -770,6 +770,9 @@ pub fn execute(
             "submit_review" => {
                 if arg == "approve" {
                     reviews::approve(c, config, p, &mr_now, user)?;
+                } else if ctx.publishing && config.is_ee() && !mr_now.reviewer_ids(c)?.contains(&user.id) {
+                    // EE: a review published from drafts sets a state only for a reviewer; a
+                    // non-reviewer's leaves no system note and requests no changes.
                 } else {
                     reviews::update_reviewer_state(c, config, p, &mr_now, user, &arg)?;
                 }

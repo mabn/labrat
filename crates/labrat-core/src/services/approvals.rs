@@ -802,8 +802,13 @@ pub fn reset_on_push(c: &Connection, config: &crate::Config, p: &Project, mr: &M
     for uid in &approvers {
         if let Some(u) = User::find(c, *uid)? {
             names.push(format!("@{}", u.username));
-            // The reset approvers who are reviewers go back to `unapproved`.
-            crate::services::reviews::set_reviewer_state(c, mr, &u, crate::services::reviews::state::UNAPPROVED)?;
+            // The reset approvers who are reviewers go back to `unapproved`. Their cached
+            // review-request counts stay as they were (the EE reference still counted 0 for
+            // such a reviewer).
+            c.execute(
+                "UPDATE merge_request_reviewers SET state = ?1 WHERE merge_request_id = ?2 AND user_id = ?3",
+                params![crate::services::reviews::state::UNAPPROVED, mr.id, u.id],
+            )?;
         }
     }
     crate::services::notes::system_note(
