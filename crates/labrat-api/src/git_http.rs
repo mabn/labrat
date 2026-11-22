@@ -325,6 +325,7 @@ fn maybe_gunzip(body: &[u8]) -> Vec<u8> {
 fn check_update(
     c: &rusqlite::Connection,
     base: &str,
+    ee: bool,
     user: &User,
     project: &Project,
     u: &RefUpdate,
@@ -349,6 +350,10 @@ fn check_update(
                     "You cannot create a branch with an invalid name.".into(),
                 ));
             }
+        }
+        // EE: an approval policy can block pushing (and force pushing) to protected branches.
+        if ee && !creation && !deletion && labrat_core::services::policies::push_blocked(c, project, branch)? {
+            return Ok(Some(labrat_core::services::policies::PUSH_BLOCKED.into()));
         }
         if repo::is_protected(c, project, branch)? {
             let empty = r.is_empty()?;
@@ -474,7 +479,7 @@ fn receive_pack(app: &App, project: &Project, user: &User, body: &[u8]) -> Resul
                         .collect();
                     return Ok((None, results, String::new()));
                 }
-                if let Some(msg) = check_update(c, &app.config.external_url, user, project, u)? {
+                if let Some(msg) = check_update(c, &app.config.external_url, app.config.is_ee(), user, project, u)? {
                     let results = req
                         .updates
                         .iter()

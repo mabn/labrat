@@ -129,6 +129,10 @@ fn ensure_push_to_branch(
     branch: &str,
 ) -> Result<(), ApiError> {
     let u = req.user()?;
+    // EE: an approval policy can block pushes to protected branches.
+    if req.app.config.is_ee() && labrat_core::services::policies::push_blocked(c, p, branch)? {
+        return Err(Error::message(400, labrat_core::services::policies::PUSH_BLOCKED).into());
+    }
     if !repo::can_push_to_branch(c, u, p, branch)? {
         return Err(
             Error::Forbidden(Some("You are not allowed to push into this branch".into())).into(),
@@ -371,6 +375,10 @@ pub(crate) fn delete_branch_in(c: &Connection, config: &labrat_core::Config, p: 
     let denied = |msg: &str| -> ApiError { Error::message(400, format!("7:deletion denied by access checks: running pre-receive hooks: GitLab: {msg}.")).into() };
     if p.default_branch.as_deref() == Some(name) {
         return Err(denied("The default branch of a project cannot be deleted."));
+    }
+    // EE: an approval policy can block deleting the protected branches it covers.
+    if config.is_ee() && labrat_core::services::policies::modification_blocked(c, p, name)? {
+        return Err(Error::message(500, "Deleting protected branches is blocked by security policies").into());
     }
     if !repo::matching_rules(c, p, name)?.is_empty() {
         let msg = if perms.admin_project() {
@@ -1324,6 +1332,9 @@ async fn write_file(req: Req, kind: &'static str) -> ApiResult {
             if !perms.developer() {
                 return Err(Error::forbidden().into());
             }
+            if req.app.config.is_ee() && labrat_core::services::policies::push_blocked(c, &p, &branch)? {
+                return Err(Error::message(400, labrat_core::services::policies::PUSH_BLOCKED).into());
+            }
             if !repo::can_push_to_branch(c, req.user.as_ref().unwrap(), &p, &branch)? {
                 return Err(Error::message(400, "You are not allowed to push into this branch").into());
             }
@@ -1688,7 +1699,8 @@ async fn update_protected(req: Req) -> ApiResult {
     let body = app.db.tx(|c| {
         let (p, perms) = code_project(c, &req)?;
         let pb = find_protected(c, &p, &name)?;
-        if !perms.admin_project() {
+        // EE: a policy's `block_branch_modification` forbids changing the protection.
+        if !perms.admin_project() || (req.app.config.is_ee() && labrat_core::services::policies::modification_blocked(c, &p, &name)?) {
             return Err(Error::forbidden().into());
         }
         if let Some(f) = force {
@@ -1710,7 +1722,8 @@ async fn delete_protected(req: Req) -> ApiResult {
     app.db.tx(|c| {
         let (p, perms) = code_project(c, &req)?;
         let pb = find_protected(c, &p, &name)?;
-        if !perms.admin_project() {
+        // EE: a policy's `block_branch_modification` forbids unprotecting.
+        if !perms.admin_project() || (req.app.config.is_ee() && labrat_core::services::policies::modification_blocked(c, &p, &name)?) {
             return Err(Error::forbidden().into());
         }
         c.execute("DELETE FROM protected_branches WHERE id = ?1", [pb.id])?;

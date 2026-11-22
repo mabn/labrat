@@ -919,6 +919,7 @@ async fn approvals(req: Req) -> ApiResult {
 async fn approve(req: Req) -> ApiResult {
     let me = req.user()?.clone();
     let sha = req.params.str("sha");
+    let password = req.params.str("approval_password");
     let publish = req.params.bool_or("publish_review", false)?;
     let app = req.app.clone();
     let body = app.db.tx(|c| {
@@ -949,6 +950,12 @@ async fn approve(req: Req) -> ApiResult {
             reviews::publish_drafts(c, &req.app.config, &p, &mr, &me)?;
         }
         if ee && labrat_core::services::approvals::eligibility(c, &p, &mr, &me)? != labrat_core::services::approvals::Eligibility::Yes {
+            return Err(Error::Unauthorized(None).into());
+        }
+        // EE: approving may need the approver's password (`approval_password`).
+        if ee && labrat_core::services::policies::password_required(c, &p, &mr)?
+            && !password.as_deref().is_some_and(|pw| labrat_core::services::users::check_password(&me, pw))
+        {
             return Err(Error::Unauthorized(None).into());
         }
         if !reviews::approve(c, &req.app.config, &p, &mr, &me)? {

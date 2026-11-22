@@ -185,8 +185,9 @@ live in `tests/conformance/fixtures-ee/`. The `conformance_ee` test binary check
 labrat running as EE. It runs every scenario in `tests/scenarios/` and the EE-only ones in
 `tests/scenarios_ee/`.
 
-- **Instance:** a GitLab EE instance of the same version as the CE reference, with a license
-  that includes approval rules (Premium or Ultimate).
+- **Instance:** a GitLab EE instance of the same version as the CE reference, with an Ultimate
+  license (approval policies need it; approval rules, code owners and MR dependencies need
+  Premium).
 - **Source:** don't use EE's source or containers. The EE instance is studied through its API
   only.
 - **Setup:** prepare the instance like the CE one (`claude`, its `claude-code` token and the
@@ -219,6 +220,16 @@ Recording settings, all read from the environment:
     those moments.
 - **When replaying:** labrat's fake CI stands in for both (`/-/labrat/projects/:id/ci`,
   `/-/labrat/ci/pick`, `/-/labrat/ci/finish`).
+
+**Approval policies.** `Scenario::approval_policies` gives the scenario's project a security
+policy project (`securityPolicyProjectCreate`) and replaces its policy file through a merged MR
+(the policy project's default branch is protected), none of it recorded. It then waits until
+`Project.approvalPolicies` lists the policies, and a little longer for EE to sync their rules.
+The policy file is the JSON list itself (YAML reads JSON). When replaying, the same list goes to
+labrat's `/-/labrat/projects/:id/approval_policies`.
+
+**Code owners.** `Scenario::code_owners` commits a `CODEOWNERS` file built from the sections (a
+recorded step); when replaying, the same sections go to `/-/labrat/projects/:id/code_owners`.
 
 A job request must announce a current runner's features (the harness's `runner_info`), or
 GitLab drops the job as `runner_unsupported`.

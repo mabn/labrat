@@ -27,7 +27,7 @@ pub fn basic(u: &User, ctx: &Ctx) -> Map<String, Value> {
     m.insert("name".into(), json!(u.name));
     m.insert("state".into(), json!(u.state));
     m.insert("locked".into(), json!(false));
-    m.insert("avatar_url".into(), json!(avatar_url(&u.email)));
+    m.insert("avatar_url".into(), json!(u.avatar_url()));
     m.insert(
         "web_url".into(),
         json!(format!("{}/{}", ctx.base_url, u.username)),

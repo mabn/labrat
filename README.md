@@ -179,24 +179,33 @@ a newer GitLab version.
 | `--noee` | `LABRAT_NOEE` | off | Behave like GitLab Community Edition instead of Enterprise Edition |
 
 **Editions.** By default labrat answers like GitLab Enterprise Edition 18.11. EE support covers
-the features labrat supports on CE, plus merge request approval rules and merge trains. Nothing
-else from EE is included.
+the features labrat supports on CE, plus merge request approval rules, code owners and approval
+policies (as merge requests see them), merge request dependencies and merge trains. Nothing else
+from EE is included.
 
 - **CE features:** these answer as EE answers them. That means EE's extra JSON fields, its GraphQL
   schema, and its defaults where they differ (for example, authors can't approve their own merge
   requests, and approvals reset on push).
 - **Approval rules:** project and merge request approval rules, approval settings and approval
   state, over REST and GraphQL.
+- **Code owners:** the `code_owner` approval rules merge requests get, and how they block or
+  allow merging. labrat doesn't read `CODEOWNERS` files: set a branch's code owners through the
+  test endpoint below.
+- **Approval policies:** the policy approval rules, violations, warn mode dismissals, bypasses
+  and the security bot's comment on merge requests. labrat runs no security scans: set the
+  policies (GitLab's policy schema, as JSON) through the test endpoints below.
+- **Merge request dependencies:** blocking merge requests over REST and GraphQL, and the merge
+  status they cause.
 - **Merge trains:** the merge train settings, adding and removing merge requests, the train
   listings, and the train's pipelines, merges and restarts, over REST and GraphQL. labrat runs
   no real CI. Pipelines come from labrat's fake CI, which is set up through the test endpoints
   below.
 - **Other EE-only features:** their endpoints and fields don't exist, as on an instance without
-  the feature. That includes code owners, approval policies, epics, and security and compliance
+  the feature. That includes external status checks, epics, and security and compliance
   features.
 
-With `--noee` labrat answers exactly like the Community Edition, and the approval and merge
-train endpoints don't exist.
+With `--noee` labrat answers exactly like the Community Edition, and the EE endpoints and fields
+don't exist.
 
 The database schema version is checked on start. After an upgrade that changes it, delete the
 database file.
@@ -218,6 +227,9 @@ it.
 | `GET /-/labrat/projects/:id/ci/jobs` | The project's fake CI jobs |
 | `POST /-/labrat/ci/pick` | `{"project_id": 1}`: the fake runner starts the project's pending jobs |
 | `POST /-/labrat/ci/finish` | `{"project_id": 1, "ref": "refs/merge-requests/1/train", "status": "failed"}`: finishes the running jobs on that ref (`"include_pending": true` for pending ones too) |
+| `PUT /-/labrat/projects/:id/code_owners` | EE code owners of a branch, as `CODEOWNERS` sections: `{"branch": "main", "sections": [{"name": null, "entries": [{"pattern": "*", "owners": ["@alice"]}]}, {"name": "Backend", "approvals": 2, "optional": false, "entries": [{"pattern": "/app/", "owners": ["@bob", "@group/path"]}]}]}`. Open MRs into the branch get their code owner rules at once. `GET` and `DELETE` take `?branch=` (default: the default branch). |
+| `PUT /-/labrat/projects/:id/approval_policies` | EE approval policies: `{"approval_policy": [...]}`, a policy file's list in GitLab's schema (as JSON). Replaces the project's policies and evaluates the open MRs. `GET` shows them, `DELETE` removes them. |
+| `PUT /-/labrat/projects/:id/merge_requests/:iid/policy_results` | Approval policies' results on one MR, by name (`null`: as labrat evaluates it): `{"policies": {"Licenses": {"violated": false}, "No critical vulns": {"violated": true, "status": "FAILED", "newScanFinding": [{"name": "SQL injection", "path": "app/db.rb", "reportType": "SAST", "severity": "CRITICAL", "location": {}}]}}}`. The lists take GraphQL's `PolicyViolationDetails` shapes: `newScanFinding`, `previousScanFinding`, `licenseScanning`, `errors`, `comparisonPipelines`. |
 
 ## Documentation
 

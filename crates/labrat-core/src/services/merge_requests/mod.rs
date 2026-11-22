@@ -710,6 +710,7 @@ pub fn create(
     if _config.is_ee() {
         // EE copies the project's approval rules onto the new MR, then syncs its approvals.
         crate::services::approvals::copy_project_rules(c, p, &mr)?;
+        crate::services::policies::sync_rules(c, p, &mr)?;
         crate::services::approvals::start_sync(c, _config, &mr)?;
     }
     if milestone.is_some() {
@@ -800,6 +801,13 @@ pub fn after_create(c: &Connection, config: &Config, mr_id: i64, user_id: i64) -
     // The pipeline's own hook is delivered after the open hook.
     if let Some(data) = mr_pipeline {
         crate::services::hooks::fire_pipeline_event(c, &p, &data)?;
+    }
+    // EE: the code owner rules come after the open hook, and so does evaluating the approval
+    // policies (with the security bot's comment).
+    if config.is_ee() {
+        crate::services::code_owners::sync(c, &p, &MergeRequest::get(c, mr_id)?)?;
+        // Once the MR's mergeability is checked.
+        crate::jobs::enqueue(c, "policies_evaluate", serde_json::json!({"merge_request_id": mr_id}))?;
     }
     Ok(())
 }

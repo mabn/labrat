@@ -260,6 +260,10 @@ pub struct Rule {
     /// MR rules: the project rule this was copied from.
     pub source_id: Option<i64>,
     pub modified_from_project_rule: bool,
+    /// Code owner rules: the CODEOWNERS section (`codeowners` for the unnamed one).
+    pub section: Option<String>,
+    /// Code owner rules: from an optional section (`^[Section]`), so never required.
+    pub optional: bool,
     pub created_at: i64,
     pub updated_at: i64,
     pub user_ids: Vec<i64>,
@@ -271,6 +275,15 @@ impl Rule {
     pub fn is_any_approver(&self) -> bool {
         self.rule_type == "any_approver"
     }
+
+    /// Rules people set up (as opposed to code owner and policy rules, which GitLab derives).
+    pub fn is_user_defined(&self) -> bool {
+        matches!(self.rule_type.as_str(), "regular" | "any_approver")
+    }
+
+    pub fn is_code_owner(&self) -> bool {
+        self.rule_type == "code_owner"
+    }
 }
 
 fn ids(c: &Connection, sql: &str, id: i64) -> Result<Vec<i64>> {
@@ -281,8 +294,8 @@ fn ids(c: &Connection, sql: &str, id: i64) -> Result<Vec<i64>> {
 
 fn load(c: &Connection, scope: Scope, where_sql: &str, arg: i64) -> Result<Vec<Rule>> {
     let (owner, extra) = match scope {
-        Scope::Project => ("project_id", "applies_to_all_protected_branches, NULL, 0"),
-        Scope::MergeRequest => ("merge_request_id", "0, approval_project_rule_id, modified_from_project_rule"),
+        Scope::Project => ("project_id", "applies_to_all_protected_branches, NULL, 0, NULL, 0"),
+        Scope::MergeRequest => ("merge_request_id", "0, approval_project_rule_id, modified_from_project_rule, section, code_owner_optional"),
     };
     let sql = format!(
         "SELECT id, {owner}, name, approvals_required, rule_type, report_type, {extra}, created_at, updated_at FROM {} WHERE {where_sql} ORDER BY id",
@@ -302,8 +315,10 @@ fn load(c: &Connection, scope: Scope, where_sql: &str, arg: i64) -> Result<Vec<R
                 applies_to_all_protected_branches: r.get::<_, i64>(6)? != 0,
                 source_id: r.get(7)?,
                 modified_from_project_rule: r.get::<_, i64>(8)? != 0,
-                created_at: r.get(9)?,
-                updated_at: r.get(10)?,
+                section: r.get(9)?,
+                optional: r.get::<_, i64>(10)? != 0,
+                created_at: r.get(11)?,
+                updated_at: r.get(12)?,
                 user_ids: vec![],
                 group_ids: vec![],
                 protected_branch_ids: vec![],
@@ -325,9 +340,46 @@ fn load(c: &Connection, scope: Scope, where_sql: &str, arg: i64) -> Result<Vec<R
     Ok(rules)
 }
 
-/// Project rules in id order.
+/// Project rules in id order (not the hidden ones approval policies add).
 pub fn project_rules(c: &Connection, p: &Project) -> Result<Vec<Rule>> {
-    load(c, Scope::Project, "project_id = ?1", p.id)
+    load(c, Scope::Project, "project_id = ?1 AND rule_type != 'report_approver'", p.id)
+}
+
+/// The project rules approval policies add (hidden from the API's lists), in id order.
+pub fn policy_project_rules(c: &Connection, p: &Project) -> Result<Vec<Rule>> {
+    load(c, Scope::Project, "project_id = ?1 AND rule_type = 'report_approver'", p.id)
+}
+
+/// A project rule by id, whatever its kind.
+pub fn any_project_rule(c: &Connection, id: i64) -> Result<Option<Rule>> {
+    Ok(load(c, Scope::Project, "id = ?1", id)?.pop())
+}
+
+/// Adds an approval policy's project rule for one of its rules (`policy_rule`, as JSON).
+pub fn insert_policy_project_rule(c: &Connection, project_id: i64, rp: &RuleParams, policy_id: i64, policy_rule: &Value, action: &Value) -> Result<i64> {
+    let id = next_rule_id(c)?;
+    let now = time::now();
+    c.execute(
+        "INSERT INTO approval_project_rules (id, project_id, name, approvals_required, rule_type, report_type, security_policy_id, policy_rule, policy_action, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, 'report_approver', ?5, ?6, ?7, ?8, ?9, ?9)",
+        params![id, project_id, rp.name, rp.approvals_required.unwrap_or(0), rp.report_type, policy_id, policy_rule.to_string(), action.to_string(), now],
+    )?;
+    set_links(c, Scope::Project, id, rp.user_ids.as_deref(), rp.group_ids.as_deref(), None)?;
+    Ok(id)
+}
+
+/// Copies a policy's project rule onto an MR, asking for no approvals until evaluated.
+pub fn copy_policy_rule(c: &Connection, mr_id: i64, source: &Rule) -> Result<i64> {
+    let id = next_rule_id(c)?;
+    let now = time::now();
+    let policy_id: Option<i64> = c.query_row("SELECT security_policy_id FROM approval_project_rules WHERE id = ?1", [source.id], |r| r.get(0))?;
+    c.execute(
+        "INSERT INTO approval_merge_request_rules (id, merge_request_id, name, approvals_required, rule_type, report_type, approval_project_rule_id, security_policy_id, created_at, updated_at)
+         VALUES (?1, ?2, ?3, 0, 'report_approver', ?4, ?5, ?6, ?7, ?7)",
+        params![id, mr_id, source.name, source.report_type, source.id, policy_id, now],
+    )?;
+    set_links(c, Scope::MergeRequest, id, Some(&source.user_ids), Some(&source.group_ids), None)?;
+    Ok(id)
 }
 
 /// Project rules as the API lists them: the `any_approver` rule first, then by id.
@@ -350,6 +402,64 @@ pub fn project_rule(c: &Connection, p: &Project, id: i64) -> Result<Option<Rule>
 /// MR rules in id order.
 pub fn mr_rules(c: &Connection, mr: &MergeRequest) -> Result<Vec<Rule>> {
     load(c, Scope::MergeRequest, "merge_request_id = ?1", mr.id)
+}
+
+/// The MR's own user-defined rules (not code owner or policy rules), in id order.
+pub fn mr_user_rules(c: &Connection, mr: &MergeRequest) -> Result<Vec<Rule>> {
+    Ok(mr_rules(c, mr)?.into_iter().filter(Rule::is_user_defined).collect())
+}
+
+/// The next approval rule id: project and MR rule ids come from one counter, so an id never
+/// names both kinds (on a real instance the two tables' ids are far apart, and recordings rely
+/// on that).
+fn next_rule_id(c: &Connection) -> Result<i64> {
+    Ok(c.query_row(
+        "SELECT 1 + max(coalesce((SELECT max(id) FROM approval_project_rules), 0), coalesce((SELECT max(id) FROM approval_merge_request_rules), 0),
+                        coalesce((SELECT max(seq) FROM sqlite_sequence WHERE name IN ('approval_project_rules', 'approval_merge_request_rules')), 0))",
+        [],
+        |r| r.get(0),
+    )?)
+}
+
+/// A rule GitLab derives for an MR (code owner and policy rules), without validation.
+pub struct SystemRule<'a> {
+    pub name: &'a str,
+    pub approvals_required: i64,
+    pub rule_type: &'a str,
+    pub report_type: Option<&'a str>,
+    pub section: Option<&'a str>,
+    pub optional: bool,
+    pub user_ids: &'a [i64],
+    pub group_ids: &'a [i64],
+}
+
+pub fn insert_system_rule(c: &Connection, mr_id: i64, r: &SystemRule) -> Result<i64> {
+    let id = next_rule_id(c)?;
+    let now = time::now();
+    c.execute(
+        "INSERT INTO approval_merge_request_rules (id, merge_request_id, name, approvals_required, rule_type, report_type, section, code_owner_optional, created_at, updated_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?9)",
+        params![id, mr_id, r.name, r.approvals_required, r.rule_type, r.report_type, r.section, r.optional, now],
+    )?;
+    set_links(c, Scope::MergeRequest, id, Some(r.user_ids), Some(r.group_ids), None)?;
+    Ok(id)
+}
+
+/// Updates a derived rule's count, section flag and approvers (only when they changed).
+pub fn update_system_rule(c: &Connection, rule: &Rule, r: &SystemRule) -> Result<()> {
+    let mut users = r.user_ids.to_vec();
+    users.sort();
+    let mut groups = r.group_ids.to_vec();
+    groups.sort();
+    if rule.approvals_required == r.approvals_required && rule.optional == r.optional && rule.user_ids == users && rule.group_ids == groups {
+        return Ok(());
+    }
+    c.execute(
+        "UPDATE approval_merge_request_rules SET approvals_required = ?1, code_owner_optional = ?2, updated_at = ?3 WHERE id = ?4",
+        params![r.approvals_required, r.optional, time::now(), rule.id],
+    )?;
+    set_links(c, Scope::MergeRequest, rule.id, Some(r.user_ids), Some(r.group_ids), None)?;
+    Ok(())
 }
 
 pub fn mr_rule(c: &Connection, mr: &MergeRequest, id: i64) -> Result<Option<Rule>> {
@@ -468,14 +578,7 @@ pub fn create_rule(c: &Connection, scope: Scope, owner_id: i64, rp: &RuleParams)
         return Ok(Err(errs));
     }
     let now = time::now();
-    // Project and MR rule ids come from one counter, so an id never names both kinds (on a
-    // real instance the two tables' ids are far apart, and recordings rely on that).
-    let id: i64 = c.query_row(
-        "SELECT 1 + max(coalesce((SELECT max(id) FROM approval_project_rules), 0), coalesce((SELECT max(id) FROM approval_merge_request_rules), 0),
-                        coalesce((SELECT max(seq) FROM sqlite_sequence WHERE name IN ('approval_project_rules', 'approval_merge_request_rules')), 0))",
-        [],
-        |r| r.get(0),
-    )?;
+    let id = next_rule_id(c)?;
     match scope {
         Scope::Project => c.execute(
             "INSERT INTO approval_project_rules (id, project_id, name, approvals_required, rule_type, report_type, applies_to_all_protected_branches, created_at, updated_at) VALUES (?8, ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?7)",
@@ -584,15 +687,72 @@ pub fn rule_approver_ids(c: &Connection, rule: &Rule) -> Result<Vec<i64>> {
     for g in &rule.group_ids {
         v.extend(group_member_ids(c, *g)?);
     }
+    v.extend(role_approver_ids(c, rule)?);
     v.sort();
     v.dedup();
     Ok(v)
 }
 
+/// A policy rule's `role_approvers`: the project's members whose role is exactly one of them.
+fn role_approver_ids(c: &Connection, rule: &Rule) -> Result<Vec<i64>> {
+    if rule.rule_type != "report_approver" {
+        return Ok(vec![]);
+    }
+    let mr = if rule.scope == Scope::MergeRequest { MergeRequest::find(c, rule.owner_id)? } else { None };
+    let (project_rule_id, project_id) = match rule.scope {
+        Scope::Project => (Some(rule.id), Some(rule.owner_id)),
+        Scope::MergeRequest => (rule.source_id, mr.as_ref().map(|m| m.target_project_id)),
+    };
+    let (Some(prid), Some(pid)) = (project_rule_id, project_id) else { return Ok(vec![]) };
+    let action: Option<String> = c.query_row("SELECT policy_action FROM approval_project_rules WHERE id = ?1", [prid], |r| r.get(0)).optional()?.flatten();
+    let action: Value = action.and_then(|a| serde_json::from_str(&a).ok()).unwrap_or(Value::Null);
+    let levels: Vec<i64> = action["role_approvers"]
+        .as_array()
+        .map(|a| {
+            a.iter()
+                .filter_map(Value::as_str)
+                .filter_map(|r| match r {
+                    "guest" => Some(10),
+                    "planner" => Some(15),
+                    "reporter" => Some(20),
+                    "developer" => Some(30),
+                    "maintainer" => Some(40),
+                    "owner" => Some(50),
+                    _ => None,
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    if levels.is_empty() {
+        return Ok(vec![]);
+    }
+    let Some(p) = Project::find(c, pid)? else { return Ok(vec![]) };
+    // Members of the project and of its groups.
+    let mut candidates: Vec<i64> = ids(c, "SELECT user_id FROM members WHERE source_type = 'Project' AND source_id = ?1", p.id)?;
+    for ns in crate::model::Namespace::self_and_ancestor_ids(c, p.namespace_id)? {
+        candidates.extend(ids(c, "SELECT user_id FROM members WHERE source_type = 'Namespace' AND source_id = ?1", ns)?);
+    }
+    candidates.sort();
+    candidates.dedup();
+    let mut out = vec![];
+    for uid in candidates {
+        // The MR's author is never a role approver.
+        if mr.as_ref().is_some_and(|m| m.author_id == uid) {
+            continue;
+        }
+        if let Some(u) = User::find(c, uid)?
+            && levels.contains(&ProjectPerms::load(c, Some(&u), &p)?.level)
+        {
+            out.push(uid);
+        }
+    }
+    Ok(out)
+}
+
 // ---------------------------------------------------------------------------------------------
 // Approval state
 
-/// A rule as an MR's approval state sees it (`ApprovalWrappedRule`).
+/// A rule as an MR's approval state sees it.
 #[derive(Debug, Clone)]
 pub struct Wrapped {
     pub rule: Rule,
@@ -600,8 +760,14 @@ pub struct Wrapped {
     pub source: Option<Rule>,
     /// Who may approve for the rule (empty for `any_approver`).
     pub approvers: Vec<i64>,
+    /// The rule's groups with the members that may approve through them.
+    pub group_members: Vec<(i64, Vec<i64>)>,
     /// Approvals that count toward the rule, by user id.
     pub approved_by: Vec<i64>,
+    /// The approvals the rule asks for now: a code owner rule asks for none unless the target
+    /// branch requires code owner approval, and then for at least one unless its section is
+    /// optional.
+    pub required: i64,
 }
 
 impl Wrapped {
@@ -611,11 +777,11 @@ impl Wrapped {
     }
 
     pub fn approved(&self) -> bool {
-        self.approved_by.len() as i64 >= self.rule.approvals_required
+        self.approved_by.len() as i64 >= self.required
     }
 
     pub fn left(&self) -> i64 {
-        (self.rule.approvals_required - self.approved_by.len() as i64).max(0)
+        (self.required - self.approved_by.len() as i64).max(0)
     }
 
     /// Whether the MR rule differs from the project rule it was copied from.
@@ -645,8 +811,8 @@ pub struct State {
 
 impl State {
     pub fn approvals_required(&self) -> i64 {
-        let any = self.rules.iter().filter(|w| w.rule.is_any_approver()).map(|w| w.rule.approvals_required).max().unwrap_or(0);
-        let regular: i64 = self.rules.iter().filter(|w| !w.rule.is_any_approver()).map(|w| w.rule.approvals_required).sum();
+        let any = self.rules.iter().filter(|w| w.rule.is_any_approver()).map(|w| w.required).max().unwrap_or(0);
+        let regular: i64 = self.rules.iter().filter(|w| !w.rule.is_any_approver()).map(|w| w.required).sum();
         any.max(regular)
     }
 
@@ -664,19 +830,101 @@ impl State {
         self.approvals.iter().any(|(u, _)| *u == uid)
     }
 
-    /// Approvers of unapproved rules who haven't approved yet, by id.
-    pub fn suggested_approvers(&self) -> Vec<i64> {
-        let mut v: Vec<i64> = self
-            .rules
-            .iter()
-            .filter(|w| !w.rule.is_any_approver())
-            .flat_map(|w| w.approvers.iter().copied())
-            .filter(|u| !self.has_approved(*u))
-            .collect();
-        v.sort();
-        v.dedup();
-        v
+    /// The rules' groups `user` can't see.
+    pub fn hidden_groups(&self, c: &Connection, user: Option<&User>) -> Result<Vec<i64>> {
+        let mut out = vec![];
+        for w in &self.rules {
+            for g in &w.rule.group_ids {
+                if out.contains(g) {
+                    continue;
+                }
+                let visible = match crate::model::Namespace::find(c, *g)? {
+                    Some(n) => crate::perms::GroupPerms::load(c, user, &n)?.read_group(),
+                    None => false,
+                };
+                if !visible {
+                    out.push(*g);
+                }
+            }
+        }
+        Ok(out)
     }
+
+    /// Whether the MR has rules people set up (`has_approval_rules`).
+    pub fn has_user_rules(&self) -> bool {
+        self.rules.iter().any(|w| w.rule.is_user_defined())
+    }
+
+    /// Eligible approvers who haven't approved yet: those of the user-defined rules first, then
+    /// of code owner rules, then of policy rules, each rule's users before its groups' members.
+    /// Members of groups the viewer can't see (`hidden_groups`) are left out.
+    pub fn suggested_approvers(&self, hidden_groups: &[i64]) -> Vec<i64> {
+        let rank = |w: &Wrapped| match w.rule.rule_type.as_str() {
+            "code_owner" => 1,
+            "report_approver" => 2,
+            _ => 0,
+        };
+        let mut rules: Vec<&Wrapped> = self.rules.iter().filter(|w| !w.rule.is_any_approver()).collect();
+        rules.sort_by_key(|w| (rank(w), w.rule.id));
+        let mut out: Vec<i64> = vec![];
+        for w in rules {
+            let mut cands: Vec<i64> = w.rule.user_ids.iter().copied().filter(|u| w.approvers.contains(u)).collect();
+            for (g, members) in &w.group_members {
+                if !hidden_groups.contains(g) {
+                    cands.extend(members.iter().copied().filter(|u| w.approvers.contains(u)));
+                }
+            }
+            // Policy role approvers, newest user first.
+            if w.rule.rule_type == "report_approver" {
+                let mut roles: Vec<i64> = w.approvers.iter().copied().filter(|u| !w.rule.user_ids.contains(u) && !w.group_members.iter().any(|(_, m)| m.contains(u))).collect();
+                roles.sort_by(|a, b| b.cmp(a));
+                cands.extend(roles);
+            }
+            for u in cands {
+                if !self.has_approved(u) && !out.contains(&u) {
+                    out.push(u);
+                }
+            }
+        }
+        out
+    }
+}
+
+/// Whether an approval policy violated on the MR prevents its author from approving.
+fn policy_prevents_author(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<bool> {
+    Ok(crate::services::policies::overriding_settings(c, p, mr)?.contains_key("prevent_approval_by_author"))
+}
+
+/// The users who committed to the MR (`MergeRequest#committers`: users matching the commits'
+/// committer emails, merge commits included).
+pub fn committer_ids(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<Vec<i64>> {
+    let Some(d) = mr.latest_diff(c)? else { return Ok(vec![]) };
+    let r = crate::repo::repo(c, p);
+    let mut emails: Vec<String> = vec![];
+    for oid in d.commits(&r)? {
+        let commit = r.commit(&oid)?;
+        let e = commit.committer.email.to_lowercase();
+        if !emails.contains(&e) {
+            emails.push(e);
+        }
+    }
+    let mut out = vec![];
+    for e in emails {
+        let id: Option<i64> = c.query_row("SELECT id FROM users WHERE lower(email) = ?1", [&e], |r| r.get(0)).optional()?;
+        if let Some(id) = id
+            && !out.contains(&id)
+        {
+            out.push(id);
+        }
+    }
+    Ok(out)
+}
+
+/// Whether committers may not approve the MR: the project's setting. (A policy's
+/// `prevent_approval_by_commit_author` is reported but, on the EE reference, doesn't stop
+/// them.)
+fn committers_prevented(c: &Connection, p: &Project, _mr: &MergeRequest) -> Result<bool> {
+    Ok(!effective(c, p)?.allow_committer_approval.value)
 }
 
 /// Whether the MR's own rules are in force.
@@ -684,16 +932,31 @@ pub fn uses_mr_rules(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<b
     if !effective(c, p)?.allow_overrides_to_approver_list_per_merge_request.value {
         return Ok(false);
     }
-    Ok(!mr_rules(c, mr)?.is_empty())
+    Ok(!mr_user_rules(c, mr)?.is_empty())
+}
+
+/// Whether a protected branch matching `branch` requires code owner approval.
+pub fn code_owner_approval_required(c: &Connection, p: &Project, branch: &str) -> Result<bool> {
+    Ok(crate::repo::matching_rules(c, p, branch)?.iter().any(|pb| pb.code_owner_approval_required))
+}
+
+/// A group's direct members by username, for listing code owners.
+fn group_members_by_name(c: &Connection, gid: i64) -> Result<Vec<i64>> {
+    ids(
+        c,
+        "SELECT m.user_id FROM members m JOIN users u ON u.id = m.user_id WHERE m.source_type = 'Namespace' AND m.source_id = ?1 ORDER BY u.username",
+        gid,
+    )
 }
 
 pub fn state(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<State> {
     let eff = effective(c, p)?;
-    let author_can_approve = eff.allow_author_approval.value;
+    // Approval policies with violations on the MR can take author approval away.
+    let author_can_approve = eff.allow_author_approval.value && !policy_prevents_author(c, p, mr)?;
     let overwritten = uses_mr_rules(c, p, mr)?;
-    let rules: Vec<(Rule, Option<Rule>)> = if overwritten {
+    let mut rules: Vec<(Rule, Option<Rule>)> = if overwritten {
         let mut v = vec![];
-        for r in mr_rules(c, mr)? {
+        for r in mr_user_rules(c, mr)? {
             let source = match r.source_id {
                 Some(sid) => project_rule(c, p, sid)?,
                 None => None,
@@ -710,20 +973,42 @@ pub fn state(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<State> {
         }
         v
     };
+    // Code owner and policy rules always come from the MR; a policy rule's source is its
+    // policy's project rule.
+    for r in mr_rules(c, mr)? {
+        if !r.is_user_defined() {
+            let source = if r.rule_type == "report_approver" { r.source_id.map(|id| any_project_rule(c, id)).transpose()?.flatten() } else { None };
+            rules.push((r, source));
+        }
+    }
+    let code_owners_required = code_owner_approval_required(c, p, &mr.target_branch)?;
     let approvals = crate::services::reviews::approvals(c, mr)?;
+    let committers = if committers_prevented(c, p, mr)? { committer_ids(c, p, mr)? } else { vec![] };
     let mut wrapped = vec![];
     for (rule, source) in rules {
+        let mut group_members = vec![];
+        for g in &rule.group_ids {
+            group_members.push((*g, if rule.is_code_owner() { group_members_by_name(c, *g)? } else { group_member_ids(c, *g)? }));
+        }
         let mut approvers = if rule.is_any_approver() { vec![] } else { rule_approver_ids(c, &rule)? };
         if !author_can_approve {
             approvers.retain(|u| *u != mr.author_id);
         }
+        approvers.retain(|u| !committers.contains(u));
         let mut approved_by: Vec<i64> = approvals
             .iter()
             .map(|(u, _)| *u)
             .filter(|u| rule.is_any_approver() || approvers.contains(u))
             .collect();
         approved_by.sort();
-        wrapped.push(Wrapped { rule, source, approvers, approved_by });
+        let required = if rule.is_code_owner() {
+            if code_owners_required && !rule.optional { rule.approvals_required.max(1) } else { 0 }
+        } else if crate::services::policies::waived(c, mr.id, &rule)? {
+            0
+        } else {
+            rule.approvals_required
+        };
+        wrapped.push(Wrapped { rule, source, approvers, group_members, approved_by, required });
     }
     wrapped.sort_by_key(|w| (!w.rule.is_any_approver(), w.rule.id));
     Ok(State { overwritten, rules: wrapped, approvals, author_id: mr.author_id, author_can_approve })
@@ -749,7 +1034,10 @@ pub fn eligibility(c: &Connection, p: &Project, mr: &MergeRequest, user: &User) 
         return Ok(Eligibility::No);
     }
     let eff = effective(c, p)?;
-    if mr.author_id == user.id && !eff.allow_author_approval.value {
+    if mr.author_id == user.id && (!eff.allow_author_approval.value || policy_prevents_author(c, p, mr)?) {
+        return Ok(Eligibility::No);
+    }
+    if committers_prevented(c, p, mr)? && committer_ids(c, p, mr)?.contains(&user.id) {
         return Ok(Eligibility::No);
     }
     Ok(Eligibility::Yes)
@@ -797,7 +1085,11 @@ fn to_sentence(items: &[String]) -> String {
 /// EE drops an MR's approvals when commits are pushed to it, unless the project retains them:
 /// a system note naming the approvers, and an `unapproved` hook.
 pub fn reset_on_push(c: &Connection, config: &crate::Config, p: &Project, mr: &MergeRequest, user: &User, prev_merge_status: &str) -> Result<()> {
-    if !config.is_ee() || effective(c, p)?.retain_approvals_on_push.value {
+    // An approval policy violated on the MR can remove approvals on push anyway.
+    if !config.is_ee()
+        || (effective(c, p)?.retain_approvals_on_push.value
+            && !crate::services::policies::overriding_settings(c, p, mr)?.contains_key("remove_approvals_with_new_commit"))
+    {
         return Ok(());
     }
     let mut approvers: Vec<i64> = crate::services::reviews::approvals(c, mr)?.into_iter().map(|(u, _)| u).collect();
@@ -859,6 +1151,32 @@ pub fn hook_rules(c: &Connection, mr: &MergeRequest) -> Result<Vec<Value>> {
     let p = Project::find(c, mr.target_project_id)?;
     let mut out = vec![];
     for r in mr_rules(c, mr)? {
+        // Policy rules carry their policy rule's settings.
+        let mut policy = json!({
+            "orchestration_policy_idx": null, "vulnerabilities_allowed": 0, "scanners": [], "severity_levels": [],
+            "vulnerability_states": ["new_needs_triage", "new_dismissed"], "security_orchestration_policy_configuration_id": null,
+            "scan_result_policy_id": null, "approval_policy_rule_id": null,
+        });
+        if r.rule_type == "report_approver"
+            && let Some(src) = r.source_id
+            && let Some((pid, rule_json)) = c
+                .query_row("SELECT security_policy_id, policy_rule FROM approval_project_rules WHERE id = ?1", [src], |x| Ok((x.get::<_, Option<i64>>(0)?, x.get::<_, Option<String>>(1)?)))
+                .optional()?
+            && let Some(pol) = pid.map(|id| crate::services::policies::find(c, id)).transpose()?.flatten()
+        {
+            let rule: Value = rule_json.and_then(|j| serde_json::from_str(&j).ok()).unwrap_or(Value::Null);
+            let scan = rule["type"] == "scan_finding";
+            policy = json!({
+                "orchestration_policy_idx": pol.position,
+                "vulnerabilities_allowed": rule["vulnerabilities_allowed"].as_i64().unwrap_or(0),
+                "scanners": rule["scanners"].as_array().cloned().unwrap_or_default(),
+                "severity_levels": if scan { rule["severity_levels"].clone() } else if rule["type"] == "any_merge_request" { json!(["unknown", "high", "critical"]) } else { json!([]) },
+                "vulnerability_states": if scan && rule["vulnerability_states"].is_array() { rule["vulnerability_states"].clone() } else { json!(["new_needs_triage", "new_dismissed"]) },
+                "security_orchestration_policy_configuration_id": pol.project_id,
+                "scan_result_policy_id": src,
+                "approval_policy_rule_id": src,
+            });
+        }
         out.push(json!({
             "id": r.id,
             "approvals_required": r.approvals_required,
@@ -866,18 +1184,18 @@ pub fn hook_rules(c: &Connection, mr: &MergeRequest) -> Result<Vec<Value>> {
             "rule_type": r.rule_type,
             "report_type": r.report_type,
             "merge_request_id": mr.id,
-            "section": null,
+            "section": r.section,
             "modified_from_project_rule": r.modified_from_project_rule,
-            "orchestration_policy_idx": null,
-            "vulnerabilities_allowed": 0,
-            "scanners": [],
-            "severity_levels": [],
-            "vulnerability_states": ["new_needs_triage", "new_dismissed"],
-            "security_orchestration_policy_configuration_id": null,
-            "scan_result_policy_id": null,
+            "orchestration_policy_idx": policy["orchestration_policy_idx"],
+            "vulnerabilities_allowed": policy["vulnerabilities_allowed"],
+            "scanners": policy["scanners"],
+            "severity_levels": policy["severity_levels"],
+            "vulnerability_states": policy["vulnerability_states"],
+            "security_orchestration_policy_configuration_id": policy["security_orchestration_policy_configuration_id"],
+            "scan_result_policy_id": policy["scan_result_policy_id"],
             "applicable_post_merge": null,
             "project_id": p.as_ref().map(|p| p.id),
-            "approval_policy_rule_id": null,
+            "approval_policy_rule_id": policy["approval_policy_rule_id"],
             "updated_at": time::iso(r.updated_at),
             "created_at": time::iso(r.created_at),
         }));

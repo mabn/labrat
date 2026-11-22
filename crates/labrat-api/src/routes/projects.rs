@@ -504,6 +504,15 @@ async fn update(req: Req) -> ApiResult {
             if !exists {
                 return Err(Error::message(400, "Could not set the default branch").into());
             }
+            // EE: a policy's `block_branch_modification` keeps the default branch; the update
+            // is dropped and answered with `null`.
+            if req.app.config.is_ee()
+                && p.default_branch.as_deref() != Some(b.as_str())
+                && let Some(cur) = &p.default_branch
+                && labrat_core::services::policies::modification_blocked(c, &p, cur)?
+            {
+                return Ok(Value::Null);
+            }
         }
         let p = projects::update(c, &p, attrs)?;
         let perms = ProjectPerms::load(c, req.user.as_ref(), &p)?;

@@ -264,6 +264,14 @@ pub fn refresh(
                     c, config, p, &mr, user, &before, &u.old,
                 )?;
             }
+            // EE: the code owner rules follow the push, once its approvals are synced.
+            if reloaded && !pushed.is_empty() && config.is_ee() {
+                crate::jobs::enqueue(
+                    c,
+                    "code_owners_after_push",
+                    serde_json::json!({"merge_request_id": mr.id, "user_id": user.id, "old": u.old.hex(), "new": u.new.hex(), "merge_status": before.mr.merge_status}),
+                )?;
+            }
         }
     }
     Ok(())
@@ -286,6 +294,7 @@ fn mark_merged_by_push(
     )?;
     crate::services::user_counts::invalidate_all(c, mr)?;
     super::merge::set_first_contribution(c, p, mr)?;
+    crate::services::mr_blocks::after_merge(c, mr)?;
     // The event's source: a merged MR (one merged without an event source, earliest merge
     // first) whose merge commit, squash commit or commits include the SHA; else the commit.
     match source_merge_request(c, p, mr.id, head)? {

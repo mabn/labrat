@@ -406,6 +406,7 @@ pub fn merge(
     )?;
     crate::services::user_counts::invalidate_all(c, &mr)?;
     set_first_contribution(c, p, &mr)?;
+    crate::services::mr_blocks::after_merge(c, &mr)?;
     let mut mparams = mr.merge_params.clone();
     let remove = mp
         .should_remove_source_branch

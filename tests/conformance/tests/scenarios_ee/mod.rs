@@ -8,3 +8,8 @@ mod merge_train_flow;
 mod merge_train_drops;
 mod graphql_merge_trains;
 mod merge_train_hooks;
+mod mr_dependencies;
+mod code_owners;
+mod approval_policies;
+mod approval_policies_variants;
+mod approval_policy_settings;

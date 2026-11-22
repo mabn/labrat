@@ -135,6 +135,26 @@ pub fn run(c: &Connection, config: &Config, job: &Job) -> Result<()> {
         "commit_cross_references" => crate::services::cross_refs::process_commits(c, config, &p),
         "update_merge_requests" => crate::services::merge_requests::refresh::refresh_job(c, config, &p),
         "approvals_sync" => crate::services::approvals::finish_sync(c, id("merge_request_id")),
+        "policies_evaluate" => {
+            let Some(mr) = crate::services::merge_requests::MergeRequest::find(c, id("merge_request_id"))? else { return Ok(()) };
+            let Some(project) = crate::model::Project::find(c, mr.target_project_id)? else { return Ok(()) };
+            crate::services::policies::evaluate(c, config, &project, &mr)
+        }
+        "code_owners_after_push" => {
+            let (Some(mr), Some(user)) = (crate::services::merge_requests::MergeRequest::find(c, id("merge_request_id"))?, crate::model::User::find(c, id("user_id"))?) else {
+                return Ok(());
+            };
+            // It runs once the push's approvals sync is done.
+            if crate::services::approvals::syncing(c, &mr)? {
+                return enqueue_after(c, "code_owners_after_push", p.clone(), 50);
+            }
+            let Some(project) = crate::model::Project::find(c, mr.target_project_id)? else { return Ok(()) };
+            let s = |k: &str| p[k].as_str().unwrap_or("").to_string();
+            crate::services::code_owners::after_push(c, config, &project, &mr, &user, &s("old"), &s("new"), &s("merge_status"))?;
+            // The approval policies are evaluated again.
+            crate::services::policies::sync_rules(c, &project, &mr)?;
+            crate::services::policies::evaluate(c, config, &project, &mr.reload(c)?)
+        }
         "merge_train_abort" => crate::services::merge_trains::abort_job(c, config, id("car_id"), id("user_id"), p["reason"].as_str().unwrap_or("")),
         "merge_train_refresh" | "merge_train_process" => crate::services::merge_trains::refresh(c, config, id("project_id"), p["target_branch"].as_str().unwrap_or("")),
         "merge_train_auto_add" => match crate::services::merge_requests::MergeRequest::find(c, id("merge_request_id"))? {

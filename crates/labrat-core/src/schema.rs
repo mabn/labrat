@@ -41,7 +41,9 @@ CREATE TABLE users (
     last_sign_in_at INTEGER,
     current_sign_in_at INTEGER,
     last_activity_on TEXT,
-    sign_in_count INTEGER NOT NULL DEFAULT 0
+    sign_in_count INTEGER NOT NULL DEFAULT 0,
+    -- An uploaded avatar's URL (bot users); GitLab's Gravatar URL otherwise.
+    avatar_url TEXT
 );
 CREATE UNIQUE INDEX users_username ON users (lower(username));
 CREATE UNIQUE INDEX users_email ON users (lower(email));
@@ -285,6 +287,12 @@ CREATE TABLE approval_project_rules (
     rule_type TEXT NOT NULL DEFAULT 'regular',   -- regular, any_approver, report_approver
     report_type TEXT,
     applies_to_all_protected_branches INTEGER NOT NULL DEFAULT 0,
+    -- Policy rules (hidden from the API's lists): the approval policy and the policy rule
+    -- (JSON) they come from.
+    security_policy_id INTEGER,
+    policy_rule TEXT,
+    -- Its `require_approval` action (JSON), for `role_approvers`.
+    policy_action TEXT,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
 );
@@ -307,6 +315,29 @@ CREATE TABLE approval_project_rules_protected_branches (
     PRIMARY KEY (rule_id, protected_branch_id)
 );
 
+-- EE approval policies, as labrat's test endpoint sets them (GitLab's policy schema, as JSON).
+CREATE TABLE security_policies (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL REFERENCES projects (id) ON DELETE CASCADE,
+    -- The policy's index in the policy file.
+    position INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    content TEXT NOT NULL
+);
+
+-- A policy's dismissal (warn mode) or bypass on one MR.
+CREATE TABLE security_policy_mr_states (
+    merge_request_id INTEGER NOT NULL REFERENCES merge_requests (id) ON DELETE CASCADE,
+    security_policy_id INTEGER NOT NULL REFERENCES security_policies (id) ON DELETE CASCADE,
+    dismissed INTEGER NOT NULL DEFAULT 0,
+    dismissal TEXT,
+    bypassed INTEGER NOT NULL DEFAULT 0,
+    bypass TEXT,
+    -- labrat's test endpoint: the policy's result on the MR (JSON; NULL: as evaluated).
+    result TEXT,
+    PRIMARY KEY (merge_request_id, security_policy_id)
+);
+
 CREATE TABLE approval_merge_request_rules (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     merge_request_id INTEGER NOT NULL REFERENCES merge_requests (id) ON DELETE CASCADE,
@@ -317,8 +348,22 @@ CREATE TABLE approval_merge_request_rules (
     -- The project rule this one was copied from (`approval_merge_request_rule_sources`).
     approval_project_rule_id INTEGER,
     modified_from_project_rule INTEGER NOT NULL DEFAULT 0,
+    -- Code owner rules: their CODEOWNERS section, and whether it is optional (`^[Section]`).
+    section TEXT,
+    code_owner_optional INTEGER NOT NULL DEFAULT 0,
+    -- Policy rules: the approval policy they come from.
+    security_policy_id INTEGER,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
+);
+
+-- EE code owners, as labrat's test endpoint sets them (labrat doesn't read CODEOWNERS files):
+-- per project and branch, the sections as JSON with owners resolved to user and group ids.
+CREATE TABLE code_owner_configs (
+    project_id INTEGER NOT NULL REFERENCES projects (id) ON DELETE CASCADE,
+    branch TEXT NOT NULL,
+    sections TEXT NOT NULL,
+    PRIMARY KEY (project_id, branch)
 );
 
 CREATE TABLE approval_merge_request_rules_users (
@@ -331,6 +376,16 @@ CREATE TABLE approval_merge_request_rules_groups (
     rule_id INTEGER NOT NULL REFERENCES approval_merge_request_rules (id) ON DELETE CASCADE,
     group_id INTEGER NOT NULL REFERENCES namespaces (id) ON DELETE CASCADE,
     PRIMARY KEY (rule_id, group_id)
+);
+
+-- EE merge request dependencies: `blocked` can't merge until `blocking` is merged.
+CREATE TABLE merge_request_blocks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    blocking_merge_request_id INTEGER NOT NULL REFERENCES merge_requests (id) ON DELETE CASCADE,
+    blocked_merge_request_id INTEGER NOT NULL REFERENCES merge_requests (id) ON DELETE CASCADE,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    UNIQUE (blocking_merge_request_id, blocked_merge_request_id)
 );
 
 CREATE TABLE labels (

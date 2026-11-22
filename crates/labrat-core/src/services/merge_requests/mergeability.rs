@@ -206,6 +206,18 @@ pub fn blocking_discussions_resolved(
     Ok(!unresolved_discussions(c, mr)?)
 }
 
+/// The GraphQL `DetailedMergeStatus` value of a REST `detailed_merge_status`.
+pub fn graphql_status(s: &str) -> String {
+    match s {
+        "merge_request_blocked" => "BLOCKED_STATUS".into(),
+        "security_policy_violations" => "SECURITY_POLICIES_VIOLATIONS".into(),
+        "jira_association_missing" => "JIRA_ASSOCIATION".into(),
+        "title_regex" => "TITLE_NOT_MATCHING".into(),
+        "status_checks_must_pass" => "EXTERNAL_STATUS_CHECKS".into(),
+        s => s.to_uppercase(),
+    }
+}
+
 /// `Mergeability::DetailedMergeStatusService`.
 pub fn detailed_status(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest) -> Result<String> {
     match mr.merge_status.as_str() {
@@ -264,9 +276,17 @@ pub fn first_failed_check(
     if super::merge_after(c, mr)?.is_some_and(|t| t > crate::time::now()) {
         return Ok(Some("merge_time".into()));
     }
+    // EE: an unmerged merge request this one depends on.
+    if config.is_ee() && crate::services::mr_blocks::is_blocked(c, mr)? {
+        return Ok(Some("merge_request_blocked".into()));
+    }
     // EE: a reviewer's "changes requested" blocks merging.
     if config.is_ee() && crate::services::reviews::changes_requested(c, mr)? {
         return Ok(Some("requested_changes".into()));
+    }
+    // EE: approval policies with violations that lack their approvals.
+    if config.is_ee() && crate::services::policies::blocks_merge(c, p, mr)? {
+        return Ok(Some("security_policy_violations".into()));
     }
     if p.only_allow_merge_if_all_discussions_are_resolved && unresolved_discussions(c, mr)? {
         return Ok(Some("discussions_not_resolved".into()));

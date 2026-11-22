@@ -31,7 +31,7 @@ pub struct ApprovalStateObj {
 /// A rule is invalid when it requires more approvals than it has eligible approvers; such a rule
 /// counts as approved (`allowMergeWhenInvalid`).
 fn invalid(w: &Wrapped) -> bool {
-    !w.rule.is_any_approver() && (w.approvers.len() as i64) < w.rule.approvals_required
+    !w.rule.is_any_approver() && (w.approvers.len() as i64) < w.required
 }
 
 impl Object for ApprovalStateObj {
@@ -55,7 +55,7 @@ impl Object for ApprovalStateObj {
                     .map(|w| Out::obj(ApprovalRuleObj { w: w.clone(), overwritten: st.overwritten, p: self.p.clone() }))
                     .collect(),
             ),
-            "suggestedApprovers" => user_conn(cx, &st.suggested_approvers(), "UserCoreConnection", "UserCore", None, args)?,
+            "suggestedApprovers" => user_conn(cx, &st.suggested_approvers(&st.hidden_groups(cx.c, cx.user())?), "UserCoreConnection", "UserCore", None, args)?,
             _ => return Err(super::resolvers::not_implemented("MergeRequestApprovalState", field)),
         })
     }
@@ -101,14 +101,24 @@ impl Object for ApprovalRuleObj {
             "id" => Out::val(rule_gid(&w.rule)),
             "name" => Out::val(w.name()),
             "type" => Out::val(rule_type(&w.rule)),
-            "approvalsRequired" => Out::val(w.rule.approvals_required),
+            "approvalsRequired" => Out::val(w.required),
             "approved" => Out::val(w.approved() || invalid(w)),
-            "overridden" => Out::val(self.overwritten && w.overridden()),
-            "section" => Out::Null,
+            "overridden" => Out::val((self.overwritten || w.rule.rule_type == "report_approver") && w.overridden()),
+            "section" => Out::val(w.rule.section.clone()),
             "containsHiddenGroups" => Out::val(hidden_groups(cx, &w.rule.group_ids)?),
             "invalid" => Out::val(invalid(w)),
-            "allowMergeWhenInvalid" => Out::val(true),
-            "scanResultPolicies" => Out::List(vec![]),
+            // Policy rules block merging even when they can't be satisfied, unless they fail open.
+            "allowMergeWhenInvalid" => Out::val(match w.rule.rule_type.as_str() {
+                "report_approver" => labrat_core::services::policies::rule_policy(cx.c, &w.rule)?.is_some_and(|p| p.fail_open()),
+                _ => true,
+            }),
+            "scanResultPolicies" if w.rule.rule_type != "report_approver" => Out::Null,
+            // A policy rule's policy, with the approvals the rule asks for (before any
+            // dismissal or bypass).
+            "scanResultPolicies" => Out::List(vec![Out::obj(super::resolvers::JsonObj::new(
+                "ApprovalScanResultPolicy",
+                json!({"name": w.rule.name, "approvalsRequired": w.rule.approvals_required, "reportType": w.rule.report_type.clone().unwrap_or_default().to_uppercase()}),
+            ))]),
             "eligibleApprovers" => {
                 let mut out = vec![];
                 for id in &w.approvers {
@@ -122,7 +132,7 @@ impl Object for ApprovalRuleObj {
             "groups" => groups_conn(cx, &w.rule.group_ids, args)?,
             "approvedBy" => user_conn(cx, &w.approved_by, "UserCoreConnection", "UserCore", None, args)?,
             "commentedBy" => user_conn(cx, &[], "UserCoreConnection", "UserCore", None, args)?,
-            "sourceRule" => match (&w.source, self.overwritten) {
+            "sourceRule" => match (&w.source, self.overwritten || w.rule.rule_type == "report_approver") {
                 (Some(s), true) => Out::obj(SourceRuleObj { r: s.clone(), p: self.p.clone() }),
                 _ => Out::Null,
             },
@@ -143,7 +153,7 @@ impl Object for SourceRuleObj {
     }
     fn resolve(&self, cx: &Ctx, field: &str, args: &Args) -> FResult<Out> {
         let approvers = ap::rule_approver_ids(cx.c, &self.r)?;
-        let w = Wrapped { rule: self.r.clone(), source: None, approvers, approved_by: vec![] };
+        let w = Wrapped { rule: self.r.clone(), source: None, approvers, group_members: vec![], approved_by: vec![], required: self.r.approvals_required };
         ApprovalRuleObj { w, overwritten: false, p: self.p.clone() }.resolve(cx, field, args).map(|o| match (field, o) {
             ("name", _) => Out::val(self.r.name.clone()),
             (_, o) => o,

@@ -20,7 +20,7 @@ static SSH: LazyLock<Regex> =
 static RUNNERS: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"GR1348941[A-Za-z0-9_\-]{20}").unwrap());
 static API_ID: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"/(projects|groups|users|namespaces|members|all|access_tokens|personal_access_tokens|award_emoji|draft_notes|suggestions|notes|versions|hooks|todos|discussions|milestones|pipelines|uploads|statuses|resource_label_events|resource_state_events|resource_milestone_events|resource_state_events|resource_label_events|resource_milestone_events|approval_rules)/(\d+)").unwrap()
+    Regex::new(r"/(projects|groups|users|namespaces|members|all|access_tokens|personal_access_tokens|award_emoji|draft_notes|suggestions|notes|versions|hooks|todos|discussions|milestones|pipelines|uploads|statuses|resource_label_events|resource_state_events|resource_milestone_events|resource_state_events|resource_label_events|resource_milestone_events|approval_rules|blocks)/(\d+)").unwrap()
 });
 /// Query params holding user, project or pipeline ids, possibly inside `not[...]`.
 static QUERY_REF_ID: LazyLock<Regex> = LazyLock::new(|| {
@@ -32,6 +32,7 @@ static UPLOAD_PROJECT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/-/projec
 /// Project bot usernames: `project_<project id>_bot_<random hex>`.
 static BOT_NAME: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(project|group)_(\d+)_bot_([0-9a-f]{32})").unwrap());
 static DIFF_ID: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"diff_id=(\d+)").unwrap());
+static USER_AVATAR: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/system/user/avatar/(\d+)/").unwrap());
 /// `id=N` in query strings of URLs whose path names the resource kind.
 static QUERY_ID: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"/(projects|groups|users)/<(\w+):(\d+)>((?:[^?\s<>]|<\w+(?::\d+)?>)*)\?((?:[^<>\s]|<\w+>)*?)\bid=(\d+)").unwrap()
@@ -285,6 +286,12 @@ impl Normalizer {
             let ph = self.id("project", id);
             out = out.replacen(&format!("/-/project/{id}/"), &format!("/-/project/{ph}/"), 1);
         }
+        // Uploaded user avatars (bot users): `/uploads/-/system/user/avatar/<user id>/`.
+        let avatars: Vec<i64> = USER_AVATAR.captures_iter(&out).map(|c| c[1].parse().unwrap()).collect();
+        for id in avatars {
+            let ph = self.id("user", id);
+            out = out.replacen(&format!("/system/user/avatar/{id}/"), &format!("/system/user/avatar/{ph}/"), 1);
+        }
         let diff_ids: Vec<i64> = DIFF_ID
             .captures_iter(&out)
             .map(|c| c[1].parse().unwrap())
@@ -315,6 +322,7 @@ impl Normalizer {
                 "versions" => "version",
                 "uploads" => "upload",
                 "approval_rules" => "rule",
+                "blocks" => "block",
                 k => k,
             };
             let ph = self.id(id_kind, id);
@@ -446,6 +454,14 @@ impl Normalizer {
                             *entry = Value::String(self.id(&idk, i));
                             continue;
                         }
+                    // EE policy violations name policies by their numeric id, as a string; it
+                    // is the id in `gid://gitlab/Security::Policy/N`.
+                    if k == "securityPolicyId"
+                        && let Some(i) = entry.as_str().and_then(|x| x.parse::<i64>().ok())
+                    {
+                        *entry = Value::String(self.id("Security::Policy", i));
+                        continue;
+                    }
                     // `changes` entries: {"previous": id, "current": id} under an id field.
                     if let Value::Object(pc) = entry
                         && pc.contains_key("previous") && pc.contains_key("current")

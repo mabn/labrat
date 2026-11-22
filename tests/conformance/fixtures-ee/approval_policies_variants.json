@@ -1,0 +1,2294 @@
+{
+  "scenario": "approval_policies_variants",
+  "base": "http://localhost:8929",
+  "ssh_port": 2224,
+  "run": "rb60fc4",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/polv-<RUN>",
+        "name": "polv-<RUN>",
+        "path": "polv-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "polv-<RUN>",
+        "full_path": "polv-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "ldap_cn": null,
+        "ldap_access": null,
+        "wiki_access_level": "enabled",
+        "repository_storage": null,
+        "duo_core_features_enabled": null,
+        "duo_features_enabled": true,
+        "lock_duo_features_enabled": false,
+        "duo_namespace_access_rules": [],
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false,
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "prevent_forking_outside_group": false,
+        "service_access_tokens_expiration_enforced": true,
+        "experiment_features_enabled": false,
+        "membership_lock": false,
+        "ip_restriction_ranges": null,
+        "allowed_email_domains_list": null,
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": false,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "unique_project_download_limit": 0,
+        "unique_project_download_limit_interval_in_seconds": 0,
+        "unique_project_download_limit_allowlist": [],
+        "unique_project_download_limit_alertlist": [
+          "<user:1>"
+        ],
+        "auto_ban_user_on_excessive_projects_download": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "polv-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "polv-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/polv-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/polv-<RUN>/app.git",
+        "web_url": "<BASE>/polv-<RUN>/app",
+        "readme_url": "<BASE>/polv-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "polv-<RUN>",
+          "path": "polv-<RUN>",
+          "kind": "group",
+          "full_path": "polv-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/polv-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null,
+        "approvals_before_merge": 0,
+        "mirror": false,
+        "external_authorization_classification_label": null,
+        "requirements_enabled": true,
+        "requirements_access_level": "enabled",
+        "security_and_compliance_enabled": true,
+        "secret_push_protection_enabled": false,
+        "pre_receive_secret_detection_enabled": false,
+        "compliance_frameworks": [],
+        "issues_template": null,
+        "merge_requests_template": null,
+        "ci_restrict_pipeline_cancellation_role": "developer",
+        "merge_pipelines_enabled": false,
+        "merge_trains_enabled": false,
+        "merge_trains_skip_train_allowed": false,
+        "only_allow_merge_if_all_status_checks_passed": false,
+        "allow_pipeline_trigger_approve_deployment": false,
+        "prevent_merge_without_jira_issue": false,
+        "duo_remote_flows_enabled": true,
+        "duo_foundational_flows_enabled": true,
+        "duo_sast_fp_detection_enabled": false,
+        "duo_secret_detection_fp_enabled": false,
+        "duo_sast_vr_workflow_enabled": false,
+        "spp_repository_pipeline_access": true,
+        "security_policy_pipeline_must_succeed": false,
+        "merge_request_title_regex": null,
+        "merge_request_title_regex_description": null
+      }
+    },
+    {
+      "label": "user author",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "author-<RUN>",
+        "public_email": null,
+        "name": "author",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/author-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "author-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "author-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token author",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-22",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "user rev",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "rev-<RUN>",
+        "public_email": null,
+        "name": "rev",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/rev-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "rev-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "rev-<RUN>@example.com",
+        "preferred_language": "en",
+        "shared_runners_minutes_limit": null,
+        "extra_shared_runners_minutes_limit": null,
+        "scim_identities": [],
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:3>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "using_license_seat": false,
+        "is_auditor": false,
+        "provisioned_by_group_id": null,
+        "enterprise_group_id": null,
+        "enterprise_group_associated_at": null
+      }
+    },
+    {
+      "label": "token rev",
+      "request": "POST /users/<user:3>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:2>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:3>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-22",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "author member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "author-<RUN>",
+        "public_email": null,
+        "name": "author",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/author-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "author-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "rev member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:3>",
+        "username": "rev-<RUN>",
+        "public_email": null,
+        "name": "rev",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/rev-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null,
+        "email": "rev-<RUN>@example.com",
+        "membership_state": "active"
+      }
+    },
+    {
+      "label": "commit 1",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Add 1",
+        "message": "Add 1",
+        "author_name": "author",
+        "author_email": "author-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "author",
+        "committer_email": "author-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/polv-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr 1",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "MR 1",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b1",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "author-<RUN>",
+          "public_email": null,
+          "name": "author",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/author-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA1>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "polv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/polv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "mr 1",
+      "request": "GET /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "MR 1",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b1",
+        "user_notes_count": 1,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "author-<RUN>",
+          "public_email": null,
+          "name": "author",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/author-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "security_policy_violations",
+        "merge_after": null,
+        "sha": "<SHA1>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "polv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/polv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA1>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "mr 1 notes",
+      "request": "GET /projects/<project:1>/merge_requests/1/notes",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/1/notes?activity_filter=all_notes&id=<project:1>&noteable_id=1&order_by=created_at&page=1&per_page=20&sort=desc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/1/notes?activity_filter=all_notes&id=<project:1>&noteable_id=1&order_by=created_at&page=1&per_page=20&sort=desc>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<note:1>",
+          "type": null,
+          "body": "<!-- policy_violation_comment -->\n<!-- violated_reports: any_merge_request -->\n\n\nauthor, this merge request has policy violations and errors.\n**To unblock this merge request, fix these items:**\n\n- Resolve all violations in the following merge request approval policies: Warn any.\n- Acquire approvals from eligible approvers defined in the following merge request approval policies: Warn any.\nIf you think these items shouldn't be violations, ask eligible approvers of each policy to approve this merge request.\n\n**Note:** The following policies are in warn mode and can be bypassed to make approvals optional: \n- Warn any\n\n\n\n### :construction: **Violations from warn mode policies that users can bypass**\n\n#### `any_merge_request` violations that users can bypass\nThe following policies require either approval or bypass:\n\n* Warn any: any commits\n\n\n\n\n---\n\n",
+          "author": {
+            "id": "<user:4>",
+            "username": "GitLab-Security-Bot",
+            "public_email": null,
+            "name": "GitLab Security Bot",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "<BASE>/uploads/-/system/user/avatar/<user:4>/security-bot.png",
+            "web_url": "<BASE>/GitLab-Security-Bot"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:1>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 1,
+          "commands_changes": {}
+        }
+      ]
+    },
+    {
+      "label": "graphql 1",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": false,
+              "approvalsRequired": 1,
+              "approvalsLeft": 1,
+              "detailedMergeStatus": "SECURITY_POLICIES_VIOLATIONS",
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "FAILED"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "FAILED"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "rules": [
+                  {
+                    "name": "Warn any",
+                    "type": "REPORT_APPROVER",
+                    "approvalsRequired": 1,
+                    "approved": false
+                  }
+                ]
+              },
+              "policyViolations": {
+                "violationsCount": 1,
+                "policies": [
+                  {
+                    "name": "Warn any",
+                    "reportType": "ANY_MERGE_REQUEST",
+                    "status": "FAILED",
+                    "dismissed": false,
+                    "enforcementType": "WARN",
+                    "securityPolicyId": "<Security::Policy:1>"
+                  }
+                ],
+                "anyMergeRequest": [
+                  {
+                    "name": "Warn any",
+                    "commits": true
+                  }
+                ],
+                "errors": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "dismiss",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "dismissPolicyViolations": {
+            "errors": [],
+            "mergeRequest": {
+              "detailedMergeStatus": "MERGEABLE"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "mr 1 dismissed",
+      "request": "GET /projects/<project:1>/merge_requests/1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "title": "MR 1",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b1",
+        "user_notes_count": 1,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "author-<RUN>",
+          "public_email": null,
+          "name": "author",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/author-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "merge_after": null,
+        "sha": "<SHA1>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!1",
+        "references": {
+          "short": "!1",
+          "relative": "!1",
+          "full": "polv-<RUN>/app!1"
+        },
+        "web_url": "<BASE>/polv-<RUN>/app/-/merge_requests/1",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA1>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "graphql 1 dismissed",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": true,
+              "approvalsRequired": 0,
+              "approvalsLeft": 0,
+              "detailedMergeStatus": "MERGEABLE",
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "WARNING"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "rules": [
+                  {
+                    "name": "Warn any",
+                    "type": "REPORT_APPROVER",
+                    "approvalsRequired": 0,
+                    "approved": true
+                  }
+                ]
+              },
+              "policyViolations": {
+                "violationsCount": 1,
+                "policies": [
+                  {
+                    "name": "Warn any",
+                    "reportType": "ANY_MERGE_REQUEST",
+                    "status": "FAILED",
+                    "dismissed": true,
+                    "enforcementType": "WARN",
+                    "securityPolicyId": "<Security::Policy:1>"
+                  }
+                ],
+                "anyMergeRequest": [
+                  {
+                    "name": "Warn any",
+                    "commits": true
+                  }
+                ],
+                "errors": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "commit 2",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Add 2",
+        "message": "Add 2",
+        "author_name": "author",
+        "author_email": "author-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "author",
+        "committer_email": "author-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/polv-<RUN>/app/-/commit/<SHA3>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr 2",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:2>",
+        "iid": 2,
+        "project_id": "<project:1>",
+        "title": "MR 2",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b2",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "author-<RUN>",
+          "public_email": null,
+          "name": "author",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/author-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA3>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!2",
+        "references": {
+          "short": "!2",
+          "relative": "!2",
+          "full": "polv-<RUN>/app!2"
+        },
+        "web_url": "<BASE>/polv-<RUN>/app/-/merge_requests/2",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "mr 2",
+      "request": "GET /projects/<project:1>/merge_requests/2",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:2>",
+        "iid": 2,
+        "project_id": "<project:1>",
+        "title": "MR 2",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b2",
+        "user_notes_count": 1,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "author-<RUN>",
+          "public_email": null,
+          "name": "author",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/author-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "merge_after": null,
+        "sha": "<SHA3>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!2",
+        "references": {
+          "short": "!2",
+          "relative": "!2",
+          "full": "polv-<RUN>/app!2"
+        },
+        "web_url": "<BASE>/polv-<RUN>/app/-/merge_requests/2",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA3>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "mr 2 notes",
+      "request": "GET /projects/<project:1>/merge_requests/2/notes",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/2/notes?activity_filter=all_notes&id=<project:1>&noteable_id=2&order_by=created_at&page=1&per_page=20&sort=desc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/2/notes?activity_filter=all_notes&id=<project:1>&noteable_id=2&order_by=created_at&page=1&per_page=20&sort=desc>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<note:2>",
+          "type": null,
+          "body": "<!-- policy_violation_comment -->\n<!-- violated_reports: scan_finding -->\n<!-- optional_approvals: scan_finding -->\n\nauthor, this merge request has policy violations and errors.\n\n\nConsider including optional reviewers based on the policy rules in the MR widget.\n\n\nThe following policies enforced on your project were skipped because they are configured to fail open: Scan open.\n\n- Confirm that scanners are properly configured and producing results. Vulnerability detection depends on successful execution of security scan jobs in the target and source branches.\n\n### :warning: **Violations blocking this merge request**\n\n\n\n---\n\n\n\n:exclamation: **Errors**\n\n- Pipeline configuration error: Security reports required by policy `Scan open` could not be found.\n",
+          "author": {
+            "id": "<user:4>",
+            "username": "GitLab-Security-Bot",
+            "public_email": null,
+            "name": "GitLab Security Bot",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "<BASE>/uploads/-/system/user/avatar/<user:4>/security-bot.png",
+            "web_url": "<BASE>/GitLab-Security-Bot"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:2>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 2,
+          "commands_changes": {}
+        }
+      ]
+    },
+    {
+      "label": "graphql 2",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": true,
+              "approvalsRequired": 0,
+              "approvalsLeft": 0,
+              "detailedMergeStatus": "MERGEABLE",
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "rules": [
+                  {
+                    "name": "Scan open",
+                    "type": "REPORT_APPROVER",
+                    "approvalsRequired": 0,
+                    "approved": true
+                  }
+                ]
+              },
+              "policyViolations": {
+                "violationsCount": 0,
+                "policies": [
+                  {
+                    "name": "Scan open",
+                    "reportType": "SCAN_FINDING",
+                    "status": "WARNING",
+                    "dismissed": false,
+                    "enforcementType": "ENFORCE",
+                    "securityPolicyId": "<Security::Policy:2>"
+                  }
+                ],
+                "anyMergeRequest": [],
+                "errors": [
+                  {
+                    "error": "ARTIFACTS_MISSING",
+                    "reportType": "SCAN_FINDING",
+                    "message": "Pipeline configuration error: Security reports required by policy `Scan open` could not be found."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "commit 3",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA4>",
+        "short_id": "<SHA4:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Add 3",
+        "message": "Add 3",
+        "author_name": "author",
+        "author_email": "author-<RUN>@example.com",
+        "authored_date": "<TIME>",
+        "committer_name": "author",
+        "committer_email": "author-<RUN>@example.com",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/polv-<RUN>/app/-/commit/<SHA4>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "mr 3",
+      "request": "POST /projects/<project:1>/merge_requests",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:3>",
+        "iid": 3,
+        "project_id": "<project:1>",
+        "title": "MR 3",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b3",
+        "user_notes_count": 0,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "author-<RUN>",
+          "public_email": null,
+          "name": "author",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/author-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "checking",
+        "detailed_merge_status": "preparing",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": null,
+        "reference": "!3",
+        "references": {
+          "short": "!3",
+          "relative": "!3",
+          "full": "polv-<RUN>/app!3"
+        },
+        "web_url": "<BASE>/polv-<RUN>/app/-/merge_requests/3",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": true,
+        "changes_count": null,
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": null,
+        "merge_error": null,
+        "user": {
+          "can_merge": false
+        }
+      }
+    },
+    {
+      "label": "mr 3",
+      "request": "GET /projects/<project:1>/merge_requests/3",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:3>",
+        "iid": 3,
+        "project_id": "<project:1>",
+        "title": "MR 3",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b3",
+        "user_notes_count": 1,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "author-<RUN>",
+          "public_email": null,
+          "name": "author",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/author-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "security_policy_violations",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!3",
+        "references": {
+          "short": "!3",
+          "relative": "!3",
+          "full": "polv-<RUN>/app!3"
+        },
+        "web_url": "<BASE>/polv-<RUN>/app/-/merge_requests/3",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA4>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    },
+    {
+      "label": "mr 3 notes",
+      "request": "GET /projects/<project:1>/merge_requests/3/notes",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/3/notes?activity_filter=all_notes&id=<project:1>&noteable_id=3&order_by=created_at&page=1&per_page=20&sort=desc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/3/notes?activity_filter=all_notes&id=<project:1>&noteable_id=3&order_by=created_at&page=1&per_page=20&sort=desc>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<note:3>",
+          "type": null,
+          "body": "<!-- policy_violation_comment -->\n<!-- violated_reports: license_scanning -->\n\n\nauthor, this merge request has policy violations and errors.\n**To unblock this merge request, fix these items:**\n\n- Resolve all violations in the following merge request approval policies: License closed.\n- Resolve the errors and re-run the pipeline.\nIf you think these items shouldn't be violations, ask eligible approvers of each policy to approve this merge request.\n\n\n\n### :warning: **Violations blocking this merge request**\n\n\n\n---\n\n\n\n:exclamation: **Errors**\n\n- Pipeline configuration error: SBOM reports required by policy `License closed` could not be found.\n",
+          "author": {
+            "id": "<user:4>",
+            "username": "GitLab-Security-Bot",
+            "public_email": null,
+            "name": "GitLab Security Bot",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "<BASE>/uploads/-/system/user/avatar/<user:4>/security-bot.png",
+            "web_url": "<BASE>/GitLab-Security-Bot"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:3>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 3,
+          "commands_changes": {}
+        }
+      ]
+    },
+    {
+      "label": "graphql 3",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": false,
+              "approvalsRequired": 1,
+              "approvalsLeft": 1,
+              "detailedMergeStatus": "SECURITY_POLICIES_VIOLATIONS",
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "FAILED"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "FAILED"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "rules": [
+                  {
+                    "name": "License closed",
+                    "type": "REPORT_APPROVER",
+                    "approvalsRequired": 1,
+                    "approved": false
+                  }
+                ]
+              },
+              "policyViolations": {
+                "violationsCount": 0,
+                "policies": [
+                  {
+                    "name": "License closed",
+                    "reportType": "LICENSE_SCANNING",
+                    "status": "FAILED",
+                    "dismissed": false,
+                    "enforcementType": "ENFORCE",
+                    "securityPolicyId": "<Security::Policy:3>"
+                  }
+                ],
+                "anyMergeRequest": [],
+                "errors": [
+                  {
+                    "error": "ARTIFACTS_MISSING",
+                    "reportType": "LICENSE_SCANNING",
+                    "message": "Pipeline configuration error: SBOM reports required by policy `License closed` could not be found."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "mr 3 rules after removal",
+      "request": "GET /projects/<project:1>/merge_requests/3/approval_rules",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "0",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/3/approval_rules?id=<project:1>&merge_request_iid=3&page=1&per_page=20>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/3/approval_rules?id=<project:1>&merge_request_iid=3&page=1&per_page=20>; rel=\"last\""
+      },
+      "body": []
+    },
+    {
+      "label": "mr 3 notes after removal",
+      "request": "GET /projects/<project:1>/merge_requests/3/notes",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "1",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/merge_requests/3/notes?activity_filter=all_notes&id=<project:1>&noteable_id=3&order_by=created_at&page=1&per_page=20&sort=desc>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/merge_requests/3/notes?activity_filter=all_notes&id=<project:1>&noteable_id=3&order_by=created_at&page=1&per_page=20&sort=desc>; rel=\"last\""
+      },
+      "body": [
+        {
+          "id": "<note:3>",
+          "type": null,
+          "body": "<!-- policy_violation_comment -->\n<!-- violated_reports: license_scanning -->\n\n\nauthor, this merge request has policy violations and errors.\n**To unblock this merge request, fix these items:**\n\n- Resolve all violations in the following merge request approval policies: License closed.\n- Resolve the errors and re-run the pipeline.\nIf you think these items shouldn't be violations, ask eligible approvers of each policy to approve this merge request.\n\n\n\n### :warning: **Violations blocking this merge request**\n\n\n\n---\n\n\n\n:exclamation: **Errors**\n\n- Pipeline configuration error: SBOM reports required by policy `License closed` could not be found.\n",
+          "author": {
+            "id": "<user:4>",
+            "username": "GitLab-Security-Bot",
+            "public_email": null,
+            "name": "GitLab Security Bot",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "<BASE>/uploads/-/system/user/avatar/<user:4>/security-bot.png",
+            "web_url": "<BASE>/GitLab-Security-Bot"
+          },
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "system": false,
+          "noteable_id": "<other:noteable_id:3>",
+          "noteable_type": "MergeRequest",
+          "project_id": "<project:1>",
+          "resolvable": false,
+          "confidential": false,
+          "internal": false,
+          "imported": false,
+          "imported_from": "none",
+          "noteable_iid": 3,
+          "commands_changes": {}
+        }
+      ]
+    },
+    {
+      "label": "graphql 3 after removal",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "mergeRequest": {
+              "approved": true,
+              "approvalsRequired": 0,
+              "approvalsLeft": 0,
+              "detailedMergeStatus": "MERGEABLE",
+              "mergeabilityChecks": [
+                {
+                  "identifier": "NOT_OPEN",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DRAFT_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "STATUS_CHECKS_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "JIRA_ASSOCIATION_MISSING",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_TIME",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "MERGE_REQUEST_BLOCKED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "REQUESTED_CHANGES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "TITLE_REGEX",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_VIOLATIONS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "LOCKED_LFS_FILES",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "DISCUSSIONS_NOT_RESOLVED",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CI_MUST_PASS",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "COMMITS_STATUS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "LOCKED_PATHS",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "NOT_APPROVED",
+                  "status": "SUCCESS"
+                },
+                {
+                  "identifier": "SECURITY_POLICY_PIPELINE_CHECK",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "NEED_REBASE",
+                  "status": "INACTIVE"
+                },
+                {
+                  "identifier": "CONFLICT",
+                  "status": "SUCCESS"
+                }
+              ],
+              "approvalState": {
+                "rules": []
+              },
+              "policyViolations": {
+                "violationsCount": 0,
+                "policies": [],
+                "anyMergeRequest": [],
+                "errors": []
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "mr 3 after removal",
+      "request": "GET /projects/<project:1>/merge_requests/3",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<mr:3>",
+        "iid": 3,
+        "project_id": "<project:1>",
+        "title": "MR 3",
+        "description": null,
+        "state": "opened",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "merged_by": null,
+        "merge_user": null,
+        "merged_at": null,
+        "closed_by": null,
+        "closed_at": null,
+        "target_branch": "main",
+        "source_branch": "b3",
+        "user_notes_count": 1,
+        "upvotes": 0,
+        "downvotes": 0,
+        "author": {
+          "id": "<user:2>",
+          "username": "author-<RUN>",
+          "public_email": null,
+          "name": "author",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/author-<RUN>"
+        },
+        "assignees": [],
+        "assignee": null,
+        "reviewers": [],
+        "source_project_id": "<project:1>",
+        "target_project_id": "<project:1>",
+        "labels": [],
+        "draft": false,
+        "imported": false,
+        "imported_from": "none",
+        "work_in_progress": false,
+        "milestone": null,
+        "merge_when_pipeline_succeeds": false,
+        "merge_status": "can_be_merged",
+        "detailed_merge_status": "mergeable",
+        "merge_after": null,
+        "sha": "<SHA4>",
+        "merge_commit_sha": null,
+        "squash_commit_sha": null,
+        "discussion_locked": null,
+        "should_remove_source_branch": null,
+        "force_remove_source_branch": true,
+        "prepared_at": "<TIME>",
+        "reference": "!3",
+        "references": {
+          "short": "!3",
+          "relative": "!3",
+          "full": "polv-<RUN>/app!3"
+        },
+        "web_url": "<BASE>/polv-<RUN>/app/-/merge_requests/3",
+        "time_stats": {
+          "time_estimate": 0,
+          "total_time_spent": 0,
+          "human_time_estimate": null,
+          "human_total_time_spent": null
+        },
+        "squash": false,
+        "squash_on_merge": false,
+        "task_completion_status": {
+          "count": 0,
+          "completed_count": 0
+        },
+        "has_conflicts": false,
+        "blocking_discussions_resolved": true,
+        "approvals_before_merge": null,
+        "subscribed": false,
+        "changes_count": "1",
+        "latest_build_started_at": null,
+        "latest_build_finished_at": null,
+        "first_deployed_to_production_at": null,
+        "pipeline": null,
+        "head_pipeline": null,
+        "diff_refs": {
+          "base_sha": "<SHA2>",
+          "head_sha": "<SHA4>",
+          "start_sha": "<SHA2>"
+        },
+        "merge_error": null,
+        "first_contribution": true,
+        "user": {
+          "can_merge": true
+        }
+      }
+    }
+  ],
+  "times": [
+    0,
+    218,
+    6581,
+    7196,
+    7253,
+    7833,
+    7909,
+    8011,
+    42922,
+    53019,
+    73011,
+    73146,
+    73296,
+    73431,
+    83098,
+    83203,
+    113095,
+    123158,
+    143124,
+    143238,
+    143301,
+    176703,
+    183162,
+    203211,
+    203319,
+    203384,
+    223075,
+    223140,
+    223211,
+    223305
+  ],
+  "done_times": [
+    217,
+    933,
+    7194,
+    7252,
+    7831,
+    7908,
+    8009,
+    8099,
+    43343,
+    53165,
+    73146,
+    73296,
+    73429,
+    73534,
+    83203,
+    83323,
+    113455,
+    123341,
+    143238,
+    143301,
+    143451,
+    177027,
+    183307,
+    203319,
+    203384,
+    203502,
+    223140,
+    223211,
+    223303,
+    223388
+  ],
+  "ci_times": [],
+  "ci_picks": [],
+  "started_at": 1795327640497
+}

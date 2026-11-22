@@ -456,9 +456,7 @@ impl UserObj {
 }
 
 fn avatar(u: &User) -> String {
-    use sha2::{Digest, Sha256};
-    let hash = hex::encode(Sha256::digest(u.email.trim().to_lowercase().as_bytes()));
-    format!("https://www.gravatar.com/avatar/{hash}?s=80&d=identicon")
+    u.avatar_url()
 }
 
 impl Object for UserObj {
@@ -1387,7 +1385,7 @@ impl Object for MrObj {
             // `public_merge_status`: preparing and rechecking show as checking.
             "mergeStatus" => Out::val(mergeability::public_status(&mr.merge_status)),
             "mergeStatusEnum" => Out::val(mergeability::public_status(&mr.merge_status).to_uppercase()),
-            "detailedMergeStatus" => Out::val(mergeability::detailed_status(c, &cx.req.app.config, p, mr)?.to_uppercase()),
+            "detailedMergeStatus" => Out::val(mergeability::graphql_status(&mergeability::detailed_status(c, &cx.req.app.config, p, mr)?)),
             "mergeable" => Out::val(mergeability::mergeable(c, &cx.req.app.config, p, mr)?),
             "conflicts" => Out::val(mr.merge_status == "cannot_be_merged"),
             "mergeableDiscussionsState" => Out::val(mergeability::blocking_discussions_resolved(c, p, mr)?),
@@ -1607,11 +1605,17 @@ impl Object for MrObj {
                 Out::obj(Conn::new("DiscussionConnection", objs, args)?)
             }
             "userPermissions" => Out::obj(MrPermissions { p: p.clone(), mr: mr.clone() }),
+            "policyViolations" if cx.req.app.config.is_ee() => super::policies::violations(cx, p, mr)?,
+            "policiesOverridingApprovalSettings" if cx.req.app.config.is_ee() => super::policies::overriding(cx, p)?,
+            "policyBypassStatuses" if cx.req.app.config.is_ee() => super::policies::bypass_statuses(cx, p, mr)?,
+            "blockingMergeRequests" if cx.req.app.config.is_ee() => Out::obj(super::mr_blocks::BlockingObj { mr: mr.clone() }),
             "approvalState" if cx.req.app.config.is_ee() => Out::obj(super::approvals::ApprovalStateObj { p: p.clone(), mr: mr.clone() }),
             "approvalsRequired" if cx.req.app.config.is_ee() => Out::val(labrat_core::services::approvals::state(c, p, mr)?.approvals_required()),
             "approvalsLeft" if cx.req.app.config.is_ee() => Out::val(labrat_core::services::approvals::state(c, p, mr)?.approvals_left()),
             // `MergeRequest#mergeability_checks`: every check in GitLab's order with its status.
             "mergeabilityChecks" => {
+                // A `mergeable` resolved earlier in the query may have rechecked the MR.
+                let mr = &mr.reload(c)?;
                 let ci_active = mr.merge_when_pipeline_succeeds || p.only_allow_merge_if_pipeline_succeeds;
                 let ci = if !ci_active {
                     "INACTIVE"
@@ -1656,22 +1660,25 @@ impl Object for MrObj {
                 if cx.req.app.config.is_ee() {
                     // EE 18.11's list, with the EE checks labrat has no feature for inactive.
                     let requested = reviews::changes_requested(c, mr)?;
-                    let approved = labrat_core::services::approvals::state(c, p, mr)?.approved();
+                    let st = labrat_core::services::approvals::state(c, p, mr)?;
+                    let approved = st.approved();
+                    let policy_check = labrat_core::services::policies::check_status(c, p, mr, &st)?;
                     let checks = [
                         ("NOT_OPEN", pass(mr.is_open())),
                         ("DRAFT_STATUS", pass(!mr.is_draft())),
                         ("STATUS_CHECKS_MUST_PASS", "INACTIVE"),
                         ("JIRA_ASSOCIATION_MISSING", "INACTIVE"),
                         ("MERGE_TIME", merge_time),
-                        ("MERGE_REQUEST_BLOCKED", "SUCCESS"),
+                        ("MERGE_REQUEST_BLOCKED", pass(!labrat_core::services::mr_blocks::is_blocked(c, mr)?)),
                         ("REQUESTED_CHANGES", pass(!requested)),
                         ("TITLE_REGEX", "INACTIVE"),
-                        ("SECURITY_POLICY_VIOLATIONS", "INACTIVE"),
+                        ("SECURITY_POLICY_VIOLATIONS", policy_check),
                         ("LOCKED_LFS_FILES", if labrat_core::repo::lfs_enabled(p) { "SUCCESS" } else { "INACTIVE" }),
                         ("DISCUSSIONS_NOT_RESOLVED", discussions),
                         ("CI_MUST_PASS", ci),
                         ("COMMITS_STATUS", pass(!mergeability::broken(c, p, mr)?)),
-                        ("LOCKED_PATHS", "SUCCESS"),
+                        // Path locks only guard the default branch.
+                        ("LOCKED_PATHS", if mr.target_branch == labrat_core::repo::default_branch(p) { "SUCCESS" } else { "INACTIVE" }),
                         ("NOT_APPROVED", pass(approved)),
                         ("SECURITY_POLICY_PIPELINE_CHECK", "INACTIVE"),
                         ("NEED_REBASE", rebase),
@@ -2965,6 +2972,13 @@ impl Mutation {
                 let title = if draft { mrs::draft_title(&mr.title) } else { mrs::draftless_title(&mr.title) };
                 update(mrs::MrParams { title: Some(title), ..Default::default() }, &mut pl)?;
             }
+            "mergeRequestSetBlockingMergeRequests" if config.is_ee() => {
+                if !can_update {
+                    return Err(unavailable());
+                }
+                let refs: Vec<String> = input.get("blockingMergeRequestReferences").and_then(Value::as_array).map(|a| a.iter().filter_map(|x| x.as_str().map(str::to_string)).collect()).unwrap_or_default();
+                pl.errors = super::mr_blocks::set_blocking(cx, &user, &p, &mr, &refs)?;
+            }
             "mergeRequestSetLocked" => {
                 if !can_update {
                     return Err(unavailable());
@@ -3326,6 +3340,27 @@ impl Object for Mutation {
             "projectCiCdSettingsUpdate" => {
                 let p = super::merge_trains::settings_update(cx, &input)?;
                 Payload { ty: "ProjectCiCdSettingsUpdatePayload".into(), client_id: input.str("clientMutationId"), ci_settings: Some(p), ..Default::default() }
+            }
+            "dismissPolicyViolations" | "mergeRequestBypassSecurityPolicy" if cx.req.app.config.is_ee() => {
+                let user = me(cx)?.clone();
+                let (p, mr) = find_mr(cx, &input)?;
+                if !mrs::can_update(cx.c, &p, &mr, &user)? && field == "dismissPolicyViolations" {
+                    return Err(unavailable());
+                }
+                let ids = super::policies::policy_ids(&input);
+                let ty = if field == "dismissPolicyViolations" { "DismissPolicyViolationsPayload" } else { "MergeRequestBypassSecurityPolicyPayload" };
+                let mut pl = Payload { ty: ty.into(), client_id: input.str("clientMutationId"), ..Default::default() };
+                if field == "dismissPolicyViolations" {
+                    let types: Vec<String> = input.get("dismissalTypes").and_then(Value::as_array).map(|a| a.iter().filter_map(|x| x.as_str().map(str::to_string)).collect()).unwrap_or_default();
+                    pl.errors = labrat_core::services::policies::dismiss(cx.c, &p, &mr, &user, &ids, &types, &input.str("comment").unwrap_or_default())?;
+                    pl.mr = Some((p.clone(), mr.reload(cx.c)?));
+                } else {
+                    match labrat_core::services::policies::bypass(cx.c, &p, &mr, &user, &ids, &input.str("reason").unwrap_or_default())? {
+                        Some(e) => pl.errors = vec![e],
+                        None => pl.mr = Some((p.clone(), mr.reload(cx.c)?)),
+                    }
+                }
+                pl
             }
             f if f.starts_with("mergeRequest") => self.mr_mutation(cx, field, args, &input)?,
             "commitCreate" => commit_create(cx, &input)?,
