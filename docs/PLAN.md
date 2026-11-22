@@ -491,9 +491,76 @@ that the conformance suite catches.
   `approvalProjectRuleUpdate` and `approvalProjectRuleDelete` mutations.
 - Not covered:
   - group approval rules, which stay behind a feature flag that is off in 18.11;
-  - code owners;
-  - re-authentication to approve;
-  - approval policies, which are security policies and depend on CI scans.
+  - re-authentication to approve.
+
+**EE: code owners** (EE mode only; the merge request side)
+- labrat doesn't read `CODEOWNERS` files. The test endpoint `/-/labrat/projects/:id/code_owners`
+  sets a branch's code owners as the file's sections: a name, an approval count (`[N]`),
+  whether the section is optional (`^[Section]`), and entries of a pattern and owners
+  (`@user`, `@group/path`). Patterns match like CODEOWNERS patterns: `*`, `/` anchoring,
+  directories, `*` and `**`.
+- MRs get `code_owner` approval rules from the target branch's code owners, as EE derives them:
+  - one rule per pattern that owns a changed file (the last match in each section), named
+    after the pattern, with its section (`codeowners` for the unnamed one) and count;
+  - synced after the open hook, after a push, and when the code owners change, keeping ids;
+  - they count only when the target branch requires code owner approval
+    (`code_owner_approval_required`), then for at least one approval unless the section is
+    optional;
+  - they can't be changed through the MR rule endpoints (`403 Prohibited`);
+  - with `selective_code_owner_removals`, a push takes back only the approvals of the changed
+    files' owners (an `unapproved`/`unapproval` hook, `code_owner_approvals_reset_on_push`).
+- They show wherever approval rules do: `/approval_rules`, `/approval_state`,
+  `/approval_settings`, `/approvals` (counts, rules left, suggested approvers), the merge
+  status, GraphQL `approvalState` and `mergeabilityChecks`, and the hooks' `approval_rules`.
+
+**EE: approval policies** (EE mode only; the merge request side)
+- labrat runs no security scans and links no security policy project. The test endpoint
+  `/-/labrat/projects/:id/approval_policies` takes a policy file's `approval_policy` list, in
+  GitLab's schema as JSON. labrat uses:
+  - rules: `any_merge_request` (`commits: any` or `unsigned`), `scan_finding` and
+    `license_finding`, with `branches` or `branch_type`;
+  - `require_approval` actions with `user_approvers(_ids)`, `group_approvers(_ids)` and
+    `role_approvers` (members with exactly that role, the MR's author excepted);
+  - `enforcement_type` (`warn`), `fallback_behavior` (`fail: open`) and `bypass_settings`
+    (users, groups and roles);
+  - `approval_settings`, while violated on an MR: `prevent_approval_by_author`,
+    `require_password_to_approve` (`approval_password`) and `remove_approvals_with_new_commit`;
+    while in force, on the protected branches the policy covers: `block_branch_modification`
+    (no changing or removing their protection, deleting them or moving the default branch
+    away) and `prevent_pushing_and_force_pushing` (API commits and git pushes refused). Like
+    the EE reference, `prevent_approval_by_commit_author` is reported but doesn't stop
+    committers (the project's own committer setting does). `block_group_branch_modification`
+    is reported only: labrat has no group-level protected branches.
+- Evaluation is EE's without CI reports: `any_merge_request` rules are violated (every labrat
+  commit is unsigned); scan and license rules can't be evaluated (`ARTIFACTS_MISSING`) and fail
+  closed or open. `/-/labrat/projects/:id/merge_requests/:iid/policy_results` sets a policy as
+  violated or not on one MR, to stand for scan results, with finding details in GraphQL's
+  shapes (`newScanFinding`, `previousScanFinding`, `licenseScanning`, `errors`,
+  `comparisonPipelines`) and a `status`. These details aren't compared with the EE
+  reference, and the security bot's comment doesn't list them.
+- The MR side:
+  - `report_approver` rules with their policy's project rule as `source_rule`, asking for
+    approvals once evaluated (after the open hook), and not editable;
+  - the `security_policy_violations` status and `SECURITY_POLICY_VIOLATIONS` check (`FAILED`,
+    or `WARNING` when the MR is approved anyway);
+  - GraphQL `policyViolations`, `policiesOverridingApprovalSettings` and `policyBypassStatuses`;
+  - warn mode dismissals (`dismissPolicyViolations`) and bypasses
+    (`mergeRequestBypassSecurityPolicy`): the policy's rule then asks for no approvals;
+  - the GitLab Security Bot's comment, created and updated as EE words it;
+  - the policy fields of the hooks' `approval_rules`.
+- Not covered: `send_bot_message`, policy scopes, and the security policy project APIs.
+
+**EE: merge request dependencies** (EE mode only)
+- REST `/merge_requests/:iid/blocks` (list, create by `blocking_merge_request_iid` with
+  `blocking_project_id`, or by `blocking_merge_request_id`; delete) and `/blockees`, with
+  EE's errors and permissions; blockers the user can't see are left out.
+- System notes on both MRs ("marked this merge request as blocked by", "as blocking",
+  "removed the relation with").
+- The `merge_request_blocked` status and `MERGE_REQUEST_BLOCKED` check: any blocker that isn't
+  merged blocks, closed ones included. Auto-merge waits for the blockers to merge.
+- GraphQL `blockingMergeRequests` and `mergeRequestSetBlockingMergeRequests`.
+
+**EE, later:** external status checks (`STATUS_CHECKS_MUST_PASS`).
 
 **EE: merge trains** (EE mode only)
 - Settings: `merge_pipelines_enabled`, `merge_trains_enabled` and

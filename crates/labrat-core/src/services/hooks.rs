@@ -174,15 +174,11 @@ fn opt_ar_time(ms: Option<i64>) -> Value {
 
 /// `User#hook_attrs`.
 pub fn user_attrs(u: &User) -> Value {
-    let hash = {
-        use sha2::{Digest, Sha256};
-        hex::encode(Sha256::digest(u.email.trim().to_lowercase().as_bytes()))
-    };
     json!({
         "id": u.id,
         "name": u.name,
         "username": u.username,
-        "avatar_url": format!("https://www.gravatar.com/avatar/{hash}?s=80&d=identicon"),
+        "avatar_url": u.avatar_url(),
         "email": u.public_email.clone().filter(|e| !e.is_empty()).unwrap_or("[REDACTED]".into()),
     })
 }

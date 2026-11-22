@@ -22,5 +22,6 @@ pub mod users;
 pub mod access_tokens;
 pub mod approvals;
 pub mod merge_trains;
+pub mod mr_blocks;
 pub mod namespaces;
 pub mod repo_extras;

@@ -229,6 +229,8 @@ async fn start_labrat(external_url: &str, ssh_port: u16) -> Target {
     // EE: the cherry-pick note follows the commit's cross-references.
     per_kind.insert("cherry_pick_note".to_string(), 400);
     per_kind.insert("note_event".to_string(), 300);
+    // EE evaluates approval policies on a new MR after its mergeability check.
+    per_kind.insert("policies_evaluate".to_string(), 600);
     // EE fake CI: Sidekiq creates MR pipelines and train car pipelines a moment later.
     per_kind.insert("mr_create_pipeline".to_string(), 1000);
     per_kind.insert("merge_train_refresh".to_string(), 380);
@@ -422,6 +424,159 @@ impl Scenario {
             assert!(r.status().is_success(), "enabling labrat's fake CI failed: {}", r.status());
         }
         res
+    }
+
+    /// EE code owners: commits a `CODEOWNERS` file built from `sections` to `branch` (a recorded
+    /// step; `create` picks the file action). When replaying, labrat's code owners test endpoint
+    /// gets the same sections too, since labrat doesn't read the file.
+    ///
+    /// `sections` is a list of `{"name": null | "Section", "approvals": N?, "optional": bool?,
+    /// "entries": [{"pattern": "/docs/", "owners": ["@user", "@group/path"]}]}`; the unnamed
+    /// section, if any, comes first.
+    pub async fn code_owners(&mut self, label: &str, project: i64, token: &str, branch: &str, sections: Value, create: bool) -> Res {
+        let mut text = String::new();
+        for s in sections.as_array().expect("sections") {
+            if let Some(name) = s["name"].as_str() {
+                if !text.is_empty() {
+                    text.push('\n');
+                }
+                let caret = if s["optional"].as_bool() == Some(true) { "^" } else { "" };
+                let n = s["approvals"].as_i64().map(|n| format!("[{n}]")).unwrap_or_default();
+                text.push_str(&format!("{caret}[{name}]{n}\n"));
+            }
+            for e in s["entries"].as_array().expect("entries") {
+                let owners: Vec<&str> = e["owners"].as_array().expect("owners").iter().filter_map(Value::as_str).collect();
+                text.push_str(&format!("{} {}\n", e["pattern"].as_str().expect("pattern"), owners.join(" ")));
+            }
+        }
+        let action = if create { "create" } else { "update" };
+        let res = self
+            .step(
+                label,
+                Method::POST,
+                &format!("/projects/{project}/repository/commits"),
+                Some(token),
+                json!({"branch": branch, "commit_message": "Update CODEOWNERS", "actions": [{"action": action, "file_path": "CODEOWNERS", "content": text}]}),
+                "commit",
+            )
+            .await;
+        if !self.target.recording {
+            let url = format!("{}/-/labrat/projects/{project}/code_owners", self.target.base);
+            let r = self.http.put(&url).json(&json!({"branch": branch, "sections": sections})).send().await.expect("code owners request failed");
+            assert!(r.status().is_success(), "setting labrat's code owners failed: {}", r.status());
+        }
+        res
+    }
+
+    /// EE approval policies: `policies` is the `approval_policy` list of a security policy file
+    /// (GitLab's policy schema, as JSON). When recording, the project gets a security policy
+    /// project (once) whose policy file is replaced through a merged MR, none of it recorded,
+    /// and the call waits until the project lists the policies. When replaying, labrat's
+    /// approval policies test endpoint gets the same list.
+    pub async fn approval_policies(&mut self, project_path: &str, policies: Value) {
+        if !self.target.recording {
+            let url = format!("{}/-/labrat/projects/{}/approval_policies", self.target.base, project_path.replace('/', "%2F"));
+            let r = self.http.put(&url).json(&json!({"approval_policy": policies})).send().await.expect("approval policies request failed");
+            assert!(r.status().is_success(), "setting labrat's approval policies failed: {} {}", r.status(), r.text().await.unwrap_or_default());
+            return;
+        }
+        let token = self.target.admin_token.clone();
+        let api = |p: &str| format!("{}/api/v4{p}", self.target.base);
+        let gql = format!("{}/api/graphql", self.target.base);
+        let q = |query: &str, vars: Value| json!({"query": query, "variables": vars});
+        let r: Value = self
+            .http
+            .post(&gql)
+            .header("PRIVATE-TOKEN", &token)
+            .json(&q("query($p: ID!) { project(fullPath: $p) { securityPolicyProject { id fullPath } } }", json!({"p": project_path})))
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+        let spp = match r["data"]["project"]["securityPolicyProject"]["fullPath"].as_str() {
+            Some(p) => p.to_string(),
+            None => {
+                let r: Value = self
+                    .http
+                    .post(&gql)
+                    .header("PRIVATE-TOKEN", &token)
+                    .json(&q("mutation($p: String!) { securityPolicyProjectCreate(input: {fullPath: $p}) { project { fullPath } errors } }", json!({"p": project_path})))
+                    .send()
+                    .await
+                    .unwrap()
+                    .json()
+                    .await
+                    .unwrap();
+                r["data"]["securityPolicyProjectCreate"]["project"]["fullPath"].as_str().unwrap_or_else(|| panic!("no security policy project: {r}")).to_string()
+            }
+        };
+        let enc = spp.replace('/', "%2F");
+        // The policy file, as JSON (which YAML reads as it is), through an MR: the policy
+        // project's default branch is protected.
+        let branch = format!("p{:06x}", rand::random::<u32>() & 0xffffff);
+        let file = "/repository/files/.gitlab%2Fsecurity-policies%2Fpolicy.yml?ref=main";
+        let exists = self.http.get(api(&format!("/projects/{enc}{file}"))).header("PRIVATE-TOKEN", &token).send().await.unwrap().status().is_success();
+        let content = serde_json::to_string_pretty(&json!({"approval_policy": policies})).unwrap();
+        let action = if exists { "update" } else { "create" };
+        let r = self
+            .http
+            .post(api(&format!("/projects/{enc}/repository/commits")))
+            .header("PRIVATE-TOKEN", &token)
+            .json(&json!({"branch": branch, "start_branch": "main", "commit_message": "Update policies", "actions": [{"action": action, "file_path": ".gitlab/security-policies/policy.yml", "content": content}]}))
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(r.status().as_u16(), 201, "policy commit: {}", r.text().await.unwrap_or_default());
+        let mr: Value = self
+            .http
+            .post(api(&format!("/projects/{enc}/merge_requests")))
+            .header("PRIVATE-TOKEN", &token)
+            .json(&json!({"source_branch": branch, "target_branch": "main", "title": "Update policies", "remove_source_branch": true}))
+            .send()
+            .await
+            .unwrap()
+            .json()
+            .await
+            .unwrap();
+        let iid = mr["iid"].as_i64().unwrap_or_else(|| panic!("policy MR: {mr}"));
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(90);
+        loop {
+            let r = self.http.put(api(&format!("/projects/{enc}/merge_requests/{iid}/merge"))).header("PRIVATE-TOKEN", &token).send().await.unwrap();
+            if r.status().is_success() {
+                break;
+            }
+            assert!(std::time::Instant::now() < deadline, "merging the policy MR: {}", r.text().await.unwrap_or_default());
+            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+        }
+        // Wait for the project to list exactly these policies.
+        let want: Vec<String> = policies.as_array().unwrap().iter().filter_map(|p| p["name"].as_str().map(str::to_string)).collect();
+        loop {
+            let r: Value = self
+                .http
+                .post(&gql)
+                .header("PRIVATE-TOKEN", &token)
+                .json(&q("query($p: ID!) { project(fullPath: $p) { approvalPolicies { nodes { name } } } }", json!({"p": project_path})))
+                .send()
+                .await
+                .unwrap()
+                .json()
+                .await
+                .unwrap();
+            let mut have: Vec<String> = r["data"]["project"]["approvalPolicies"]["nodes"].as_array().map(|a| a.iter().filter_map(|n| n["name"].as_str().map(str::to_string)).collect()).unwrap_or_default();
+            have.sort();
+            let mut w = want.clone();
+            w.sort();
+            if have == w {
+                break;
+            }
+            assert!(std::time::Instant::now() < deadline, "the policies didn't show up: {r}");
+            tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+        }
+        // Their rules are synced in the background.
+        tokio::time::sleep(std::time::Duration::from_secs(10)).await;
+        self.settle().await;
     }
 
     /// Fake CI: a runner picks up `count` pending jobs of the project, which start running.
@@ -626,6 +781,11 @@ impl Scenario {
 
     pub fn admin(&self) -> String {
         self.target.admin_token.clone()
+    }
+
+    /// The instance's URL as it appears in responses (and in references like MR URLs).
+    pub fn public_base(&self) -> String {
+        self.target.public_base.clone()
     }
 
     /// Waits for background work: GitLab's Sidekiq when recording, labrat's job queue otherwise.
@@ -957,6 +1117,12 @@ impl Scenario {
                         sort_reviewers(&mut a);
                         forget_admin_sign_in(&mut e);
                         forget_admin_sign_in(&mut a);
+                        forget_code_owner_reset_status(&mut e);
+                        forget_code_owner_reset_status(&mut a);
+                        sort_policy_violations(&mut e);
+                        sort_policy_violations(&mut a);
+                        forget_policy_rule_modified(&mut e);
+                        forget_policy_rule_modified(&mut a);
                         normalize::diff(&e, &a, "")
                     } else {
                         normalize::diff(exp, &step, "")
@@ -1258,6 +1424,108 @@ fn forget_admin_sign_in(v: &mut Value) {
             m.values_mut().for_each(forget_admin_sign_in);
         }
         Value::Array(a) => a.iter_mut().for_each(forget_admin_sign_in),
+        _ => {}
+    }
+}
+
+/// EE flips a policy approval rule's `modified_from_project_rule` while it evaluates the
+/// policies again (one push's two hooks disagree). Replays leave it out of the comparison for
+/// policy rules.
+fn forget_policy_rule_modified(v: &mut Value) {
+    match v {
+        Value::Object(m) => {
+            if m.get("rule_type").and_then(Value::as_str) == Some("report_approver")
+                && let Some(x) = m.get_mut("modified_from_project_rule")
+            {
+                *x = Value::Null;
+            }
+            m.values_mut().for_each(forget_policy_rule_modified);
+        }
+        Value::Array(a) => a.iter_mut().for_each(forget_policy_rule_modified),
+        _ => {}
+    }
+}
+
+/// EE lists an MR's policy violations (`policyViolations.policies`) in an order that changes
+/// from one query to the next. Replays compare them sorted by name, and name each policy's id
+/// placeholder (`securityPolicyId`, `gid://gitlab/Security::Policy/...`) after the policy, since
+/// the placeholders' numbering follows that order.
+fn sort_policy_violations(v: &mut Value) {
+    let mut names: Vec<(String, String)> = vec![];
+    collect_policy_names(v, &mut names);
+    sort_policies(v);
+    if !names.is_empty() {
+        rename_policy_ids(v, &names);
+    }
+}
+
+fn collect_policy_names(v: &Value, out: &mut Vec<(String, String)>) {
+    match v {
+        Value::Object(m) => {
+            if let (Some(id), Some(name)) = (m.get("securityPolicyId").and_then(Value::as_str), m.get("name").and_then(Value::as_str)) {
+                out.push((id.to_string(), format!("<policy:{name}>")));
+            }
+            m.values().for_each(|x| collect_policy_names(x, out));
+        }
+        Value::Array(a) => a.iter().for_each(|x| collect_policy_names(x, out)),
+        _ => {}
+    }
+}
+
+fn rename_policy_ids(v: &mut Value, names: &[(String, String)]) {
+    match v {
+        Value::String(s) => {
+            for (id, name) in names {
+                if s == id {
+                    *s = name.clone();
+                } else if let Some(rest) = s.strip_prefix("gid://gitlab/Security::Policy/")
+                    && rest == id
+                {
+                    *s = format!("gid://gitlab/Security::Policy/{name}");
+                }
+            }
+        }
+        Value::Object(m) => m.values_mut().for_each(|x| rename_policy_ids(x, names)),
+        Value::Array(a) => a.iter_mut().for_each(|x| rename_policy_ids(x, names)),
+        _ => {}
+    }
+}
+
+fn sort_policies(v: &mut Value) {
+    match v {
+        Value::Object(m) => {
+            if let Some(Value::Array(a)) = m.get_mut("policies")
+                && a.iter().all(|x| x.get("securityPolicyId").is_some() || x.get("enforcementType").is_some())
+            {
+                a.sort_by(|p, q| p["name"].as_str().cmp(&q["name"].as_str()));
+            }
+            m.values_mut().for_each(sort_policies);
+        }
+        Value::Array(a) => a.iter_mut().for_each(sort_policies),
+        _ => {}
+    }
+}
+
+/// EE takes back code owner approvals after a push while the push's mergeability check runs:
+/// the hook it sends (`system_action: code_owner_approvals_reset_on_push`) carries a
+/// `merge_status` of `unchecked` or `can_be_merged` (and a matching `detailed_merge_status`)
+/// depending on which finished first (both show in one recording). Replays leave those fields
+/// out of the comparison.
+fn forget_code_owner_reset_status(v: &mut Value) {
+    match v {
+        Value::Object(m) => {
+            if let Some(Value::Object(oa)) = m.get_mut("object_attributes")
+                && oa.get("system_action").and_then(Value::as_str) == Some("code_owner_approvals_reset_on_push")
+            {
+                for k in ["merge_status", "detailed_merge_status"] {
+                    if let Some(x) = oa.get_mut(k) {
+                        *x = Value::Null;
+                    }
+                }
+            }
+            m.values_mut().for_each(forget_code_owner_reset_status);
+        }
+        Value::Array(a) => a.iter_mut().for_each(forget_code_owner_reset_status),
         _ => {}
     }
 }

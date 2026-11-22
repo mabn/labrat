@@ -86,6 +86,8 @@ pub struct User {
     pub current_sign_in_at: Option<i64>,
     pub last_activity_on: Option<String>,
     pub sign_in_count: i64,
+    /// An uploaded avatar's URL, if any (see `avatar_url`).
+    pub avatar: Option<String>,
 }
 
 pub mod user_type {
@@ -95,7 +97,18 @@ pub mod user_type {
 }
 
 impl User {
-    pub const COLUMNS: &'static str = "id, username, name, email, public_email, commit_email, encrypted_password, state, admin, user_type, external, private_profile, projects_limit, can_create_group, bio, location, linkedin, twitter, discord, website_url, github, job_title, organization, pronouns, note, theme_id, color_scheme_id, preferred_language, timezone, namespace_id, created_by_id, created_at, updated_at, confirmed_at, last_sign_in_at, current_sign_in_at, last_activity_on, sign_in_count";
+    /// The avatar URL GitLab shows: an uploaded avatar, or the Gravatar URL from the SHA-256
+    /// of the lowercased email.
+    pub fn avatar_url(&self) -> String {
+        if let Some(a) = &self.avatar {
+            return a.clone();
+        }
+        use sha2::{Digest, Sha256};
+        let hash = hex::encode(Sha256::digest(self.email.trim().to_lowercase().as_bytes()));
+        format!("https://www.gravatar.com/avatar/{hash}?s=80&d=identicon")
+    }
+
+    pub const COLUMNS: &'static str = "id, username, name, email, public_email, commit_email, encrypted_password, state, admin, user_type, external, private_profile, projects_limit, can_create_group, bio, location, linkedin, twitter, discord, website_url, github, job_title, organization, pronouns, note, theme_id, color_scheme_id, preferred_language, timezone, namespace_id, created_by_id, created_at, updated_at, confirmed_at, last_sign_in_at, current_sign_in_at, last_activity_on, sign_in_count, avatar_url";
 
     pub fn from_row(r: &Row) -> rusqlite::Result<User> {
         Ok(User {
@@ -137,6 +150,7 @@ impl User {
             current_sign_in_at: r.get(35)?,
             last_activity_on: r.get(36)?,
             sign_in_count: r.get(37)?,
+            avatar: r.get(38)?,
         })
     }
 

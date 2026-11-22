@@ -360,9 +360,9 @@ fn source_rule(c: &Connection, p: &Project, r: &Rule) -> labrat_core::Result<Opt
 fn mr_rule_json(c: &Connection, req: &Req, p: &Project, r: &Rule) -> Result<Value, ApiError> {
     let mut m = base_rule_json(c, req, r, true)?;
     let source = source_rule(c, p, r)?;
-    m.insert("section".into(), Value::Null);
+    m.insert("section".into(), json!(r.section));
     m.insert("source_rule".into(), source.as_ref().map(|s| json!({"approvals_required": s.approvals_required})).unwrap_or(Value::Null));
-    let w = ap::Wrapped { rule: r.clone(), source, approvers: vec![], approved_by: vec![] };
+    let w = ap::Wrapped { rule: r.clone(), source, approvers: vec![], group_members: vec![], approved_by: vec![], required: r.approvals_required };
     m.insert("overridden".into(), json!(w.overridden()));
     Ok(Value::Object(m))
 }
@@ -375,6 +375,11 @@ fn read_project(c: &Connection, req: &Req) -> Result<Project, ApiError> {
 
 fn rule_id(req: &Req) -> Result<i64, ApiError> {
     req.path_param("approval_rule_id").parse().map_err(|_| Error::Param("approval_rule_id is invalid".into()).into())
+}
+
+/// Code owner and policy rules can't be changed through the API.
+fn prohibited() -> ApiError {
+    Error::Api(403, json!(["Prohibited"])).into()
 }
 
 fn rule_not_found() -> ApiError {
@@ -506,6 +511,9 @@ async fn update_mr_rule(req: Req) -> ApiResult {
     let body = app.db.tx(|c| {
         let (p, mr) = edit_mr_rules(c, &req)?;
         let r = ap::mr_rule(c, &mr, id)?.ok_or_else(rule_not_found)?;
+        if !r.is_user_defined() {
+            return Err(prohibited());
+        }
         let rp = rule_params(c, &req, &p, Scope::MergeRequest)?;
         match ap::update_rule(c, &r, &rp)? {
             Ok(r) => mr_rule_json(c, &req, &p, &r),
@@ -521,6 +529,9 @@ async fn delete_mr_rule(req: Req) -> ApiResult {
     app.db.tx(|c| {
         let (_, mr) = edit_mr_rules(c, &req)?;
         let r = ap::mr_rule(c, &mr, id)?.ok_or_else(rule_not_found)?;
+        if !r.is_user_defined() {
+            return Err(prohibited());
+        }
         ap::delete_rule(c, &r)?;
         Ok::<_, ApiError>(())
     })?;
@@ -543,17 +554,18 @@ fn state_json(c: &Connection, req: &Req, p: &Project, mr: &MergeRequest, setting
         if !settings_shape {
             m.insert("eligible_approvers".into(), json!(users_json(c, &ctx, &w.approvers)?));
         }
-        m.insert("approvals_required".into(), json!(w.rule.approvals_required));
+        m.insert("approvals_required".into(), json!(w.required));
         m.insert("users".into(), json!(users_json(c, &ctx, &w.rule.user_ids)?));
         let (groups, hidden) = groups_json(c, req, &w.rule.group_ids)?;
         m.insert("groups".into(), json!(groups));
         m.insert("contains_hidden_groups".into(), json!(hidden));
         m.insert("report_type".into(), json!(w.rule.report_type));
-        m.insert("section".into(), Value::Null);
-        let source = if st.overwritten { w.source.as_ref() } else { None };
+        m.insert("section".into(), json!(w.rule.section));
+        let policy = w.rule.rule_type == "report_approver";
+        let source = if st.overwritten || policy { w.source.as_ref() } else { None };
         m.insert("source_rule".into(), source.map(|s| json!({"approvals_required": s.approvals_required})).unwrap_or(Value::Null));
-        m.insert("overridden".into(), json!(st.overwritten && w.overridden()));
-        m.insert("code_owner".into(), json!(false));
+        m.insert("overridden".into(), json!((st.overwritten || policy) && w.overridden()));
+        m.insert("code_owner".into(), json!(w.rule.is_code_owner()));
         m.insert("approved_by".into(), json!(users_json(c, &ctx, &w.approved_by)?));
         m.insert("approved".into(), json!(w.approved()));
         if settings_shape {
@@ -627,16 +639,32 @@ pub fn approvals_json(c: &Connection, ctx: &Ctx, config: &Config, p: &Project, m
     m.insert("approvals_left".into(), json!(st.approvals_left()));
     m.insert("require_password_to_approve".into(), json!(ap::effective(c, p)?.require_password_to_approve.value));
     m.insert("approved_by".into(), json!(approved_by));
-    m.insert("suggested_approvers".into(), json!(users_json(c, ctx, &st.suggested_approvers())?));
-    m.insert("approvers".into(), json!([]));
-    m.insert("approver_groups".into(), json!([]));
+    m.insert("suggested_approvers".into(), json!(users_json(c, ctx, &st.suggested_approvers(&st.hidden_groups(c, current)?))?));
+    // The approvers of the regular rules in force, as the pre-rules API listed them: none when
+    // an any-approver rule applies.
+    let (mut approvers, mut approver_groups) = (vec![], vec![]);
+    if !st.rules.iter().any(|w| w.rule.is_any_approver()) {
+        for w in st.rules.iter().filter(|w| w.rule.rule_type == "regular") {
+            for uid in &w.rule.user_ids {
+                if let Some(u) = User::find(c, *uid)? {
+                    approvers.push(json!({"user": user_entity::basic_value(&u, ctx)}));
+                }
+            }
+            for gid in &w.rule.group_ids {
+                if let Some(g) = labrat_core::model::Namespace::find(c, *gid)? {
+                    approver_groups.push(json!({"group": crate::entities::group::group_with(&g, config, false)}));
+                }
+            }
+        }
+    }
+    m.insert("approvers".into(), json!(approvers));
+    m.insert("approver_groups".into(), json!(approver_groups));
     m.insert("user_has_approved".into(), json!(has));
     m.insert("user_can_approve".into(), json!(can));
     m.insert("approval_rules_left".into(), json!(left));
-    m.insert("has_approval_rules".into(), json!(!st.rules.is_empty()));
+    m.insert("has_approval_rules".into(), json!(st.has_user_rules()));
     m.insert("merge_request_approvers_available".into(), json!(true));
     m.insert("multiple_approval_rules_available".into(), json!(true));
     m.insert("invalid_approvers_rules".into(), json!([]));
-    let _ = config;
     Ok(Value::Object(m))
 }

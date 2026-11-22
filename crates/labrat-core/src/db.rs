@@ -6,7 +6,7 @@ use parking_lot::Mutex;
 use rusqlite::Connection;
 
 /// Bump when the schema changes; a database with another version is rejected.
-pub const SCHEMA_VERSION: i64 = 22;
+pub const SCHEMA_VERSION: i64 = 23;
 
 pub struct Db {
     conn: Mutex<Connection>,

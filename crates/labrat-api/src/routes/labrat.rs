@@ -20,6 +20,9 @@ pub fn routes() -> Router<Arc<App>> {
         .route("/-/labrat/projects/{id}/ci/jobs", get(ci_jobs))
         .route("/-/labrat/ci/pick", post(ci_pick))
         .route("/-/labrat/ci/finish", post(ci_finish))
+        .route("/-/labrat/projects/{id}/code_owners", get(get_code_owners).put(put_code_owners).delete(delete_code_owners))
+        .route("/-/labrat/projects/{id}/approval_policies", get(get_policies).put(put_policies).delete(delete_policies))
+        .route("/-/labrat/projects/{id}/merge_requests/{merge_request_iid}/policy_results", axum::routing::put(put_policy_results))
 }
 
 fn ci_project(c: &rusqlite::Connection, id: &str) -> Result<labrat_core::model::Project, crate::ctx::ApiError> {
@@ -50,6 +53,147 @@ async fn put_ci(req: Req) -> ApiResult {
         Ok::<_, crate::ctx::ApiError>(cfg.as_ref().map(|f| f.to_json()).unwrap_or(json!({"enabled": false})))
     })?;
     Ok(Resp::ok(body))
+}
+
+fn code_owners_json(c: &rusqlite::Connection, p: &labrat_core::model::Project, branch: &str) -> labrat_core::Result<serde_json::Value> {
+    use labrat_core::model::{Namespace, User};
+    let Some(sections) = labrat_core::services::code_owners::config(c, p.id, branch)? else {
+        return Ok(json!({"branch": branch, "sections": []}));
+    };
+    let mut out = vec![];
+    for s in sections {
+        let mut entries = vec![];
+        for e in &s.entries {
+            let mut owners = vec![];
+            for u in &e.user_ids {
+                if let Some(u) = User::find(c, *u)? {
+                    owners.push(format!("@{}", u.username));
+                }
+            }
+            for g in &e.group_ids {
+                if let Some(g) = Namespace::find(c, *g)? {
+                    owners.push(format!("@{}", g.full_path));
+                }
+            }
+            entries.push(json!({"pattern": e.pattern, "owners": owners}));
+        }
+        let name = (s.name != labrat_core::services::code_owners::DEFAULT_SECTION).then_some(s.name.clone());
+        out.push(json!({"name": name, "approvals": s.approvals, "optional": s.optional, "entries": entries}));
+    }
+    Ok(json!({"branch": branch, "sections": out}))
+}
+
+/// EE code owners (labrat doesn't read `CODEOWNERS` files). `GET` shows a branch's
+/// (`?branch=`, default: the default branch).
+async fn get_code_owners(req: Req) -> ApiResult {
+    let id = req.path_param("id").to_string();
+    let branch = req.params.str("branch");
+    let body = req.app.db.read(|c| {
+        let p = ci_project(c, &id)?;
+        let branch = branch.unwrap_or_else(|| labrat_core::repo::default_branch(&p));
+        Ok::<_, crate::ctx::ApiError>(code_owners_json(c, &p, &branch)?)
+    })?;
+    Ok(Resp::ok(body))
+}
+
+/// Sets a branch's code owners, as the sections of a `CODEOWNERS` file: `{"branch": "main",
+/// "sections": [{"name": null, "entries": [{"pattern": "*", "owners": ["@alice"]}]},
+/// {"name": "Backend", "approvals": 2, "optional": false, "entries": [{"pattern": "/app/",
+/// "owners": ["@bob", "@group/path"]}]}]}`. The open MRs targeting the branch get their code
+/// owner rules synced at once.
+async fn put_code_owners(req: Req) -> ApiResult {
+    let id = req.path_param("id").to_string();
+    let raw = req.params.raw_all();
+    let body = req.app.db.tx(|c| {
+        let p = ci_project(c, &id)?;
+        let branch = raw["branch"].as_str().map(str::to_string).unwrap_or_else(|| labrat_core::repo::default_branch(&p));
+        let sections = labrat_core::services::code_owners::parse(c, &raw["sections"])?.map_err(|m| labrat_core::Error::message(400, m))?;
+        labrat_core::services::code_owners::set_config(c, &p, &branch, Some(&sections))?;
+        Ok::<_, crate::ctx::ApiError>(code_owners_json(c, &p, &branch)?)
+    })?;
+    Ok(Resp::ok(body))
+}
+
+/// Removes a branch's code owners (`?branch=`, default: the default branch).
+async fn delete_code_owners(req: Req) -> ApiResult {
+    let id = req.path_param("id").to_string();
+    let branch = req.params.str("branch");
+    req.app.db.tx(|c| {
+        let p = ci_project(c, &id)?;
+        let branch = branch.unwrap_or_else(|| labrat_core::repo::default_branch(&p));
+        labrat_core::services::code_owners::set_config(c, &p, &branch, None)?;
+        Ok::<_, crate::ctx::ApiError>(())
+    })?;
+    Ok(Resp::no_content())
+}
+
+fn policies_json(c: &rusqlite::Connection, p: &labrat_core::model::Project) -> labrat_core::Result<serde_json::Value> {
+    let list: Vec<serde_json::Value> = labrat_core::services::policies::project_policies(c, p.id)?.into_iter().map(|p| p.content).collect();
+    Ok(json!({"approval_policy": list}))
+}
+
+/// EE approval policies (labrat links no security policy project): `GET` shows the project's.
+async fn get_policies(req: Req) -> ApiResult {
+    let id = req.path_param("id").to_string();
+    let body = req.app.db.read(|c| {
+        let p = ci_project(c, &id)?;
+        Ok::<_, crate::ctx::ApiError>(policies_json(c, &p)?)
+    })?;
+    Ok(Resp::ok(body))
+}
+
+/// Replaces the project's approval policies: `{"approval_policy": [...]}`, the list of a
+/// security policy file in GitLab's schema (as JSON). Open MRs get their policy rules and are
+/// evaluated at once.
+async fn put_policies(req: Req) -> ApiResult {
+    let id = req.path_param("id").to_string();
+    let raw = req.params.raw_all();
+    let list = raw["approval_policy"].clone();
+    labrat_core::services::policies::validate(&list).map_err(|m| labrat_core::Error::message(400, m))?;
+    let app = req.app.clone();
+    let body = app.db.tx(|c| {
+        let p = ci_project(c, &id)?;
+        labrat_core::services::policies::set_policies(c, &app.config, &p, &list)?;
+        Ok::<_, crate::ctx::ApiError>(policies_json(c, &p)?)
+    })?;
+    Ok(Resp::ok(body))
+}
+
+/// Sets approval policies' results on one MR, by policy name (`null`: evaluated as labrat does
+/// by default): `{"policies": {"No critical vulns": {"violated": true, "status": "FAILED",
+/// "newScanFinding": [{"name": "SQL injection", "path": "app.rb", "reportType": "SAST",
+/// "severity": "CRITICAL", "location": {}}]}, "Licenses": {"violated": false}}}`. The lists
+/// take GraphQL's `PolicyViolationDetails` shapes (`newScanFinding`, `previousScanFinding`,
+/// `licenseScanning`, `errors`, `comparisonPipelines`). A policy that isn't violated asks for
+/// no approvals and isn't reported; `FAILED` and `RUNNING` policies ask for theirs.
+async fn put_policy_results(req: Req) -> ApiResult {
+    let id = req.path_param("id").to_string();
+    let iid: i64 = req.path_param("merge_request_iid").parse().map_err(|_| labrat_core::Error::message(400, "merge_request_iid is invalid"))?;
+    let raw = req.params.raw_all();
+    let Some(map) = raw["policies"].as_object() else {
+        return Err(labrat_core::Error::message(400, "policies must be an object").into());
+    };
+    let results: Vec<(String, Option<serde_json::Value>)> = map.iter().map(|(k, v)| (k.clone(), (!v.is_null()).then(|| v.clone()))).collect();
+    let app = req.app.clone();
+    app.db.tx(|c| {
+        let p = ci_project(c, &id)?;
+        let mr = labrat_core::services::merge_requests::MergeRequest::find_by_iid(c, p.id, iid)?.ok_or(labrat_core::Error::not_found("Merge request"))?;
+        labrat_core::services::policies::set_results(c, &app.config, &p, &mr, &results)?.map_err(|m| labrat_core::Error::message(400, m))?;
+        Ok::<_, crate::ctx::ApiError>(())
+    })?;
+    Ok(Resp::no_content())
+}
+
+/// Removes the project's approval policies.
+async fn delete_policies(req: Req) -> ApiResult {
+    let id = req.path_param("id").to_string();
+    let app = req.app.clone();
+    app.db.tx(|c| {
+        let p = ci_project(c, &id)?;
+        labrat_core::services::policies::set_policies(c, &app.config, &p, &json!([]))?;
+        Ok::<_, crate::ctx::ApiError>(())
+    })?;
+    Ok(Resp::no_content())
 }
 
 async fn ci_jobs(req: Req) -> ApiResult {
