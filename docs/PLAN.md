@@ -507,7 +507,11 @@ that the conformance suite catches.
   - the front car merges when its pipeline passes;
   - a failed car is dropped and the cars behind it restart;
   - a push, a draft or closing the MR drops its car;
-  - merging past the train restarts it, and an allowed skip records a `skip_merged` car.
+  - merging past the train restarts it, and an allowed skip records a `skip_merged` car;
+  - `PUT /merge` with `auto_merge` (or `merge_when_pipeline_succeeds`) is refused while the
+    MR's pipeline runs and merges at once after it passed.
+- Webhooks: pipeline hooks (pending, running, finished) for MR and train pipelines, with their
+  MR, fake CI jobs and runner, and the merge hook's `merge_params.train_ref`.
 - GraphQL: `Project.mergeTrains` with cars; the MR's `mergeTrainCar`, `mergeTrainIndex`,
   `mergeTrainsCount` and train auto-merge strategies; `mergeRequestAccept` with
   `MERGE_TRAIN` and `ADD_TO_MERGE_TRAIN_WHEN_CHECKS_PASS`; `mergeTrainsDeleteCar`.

@@ -58,7 +58,9 @@ async fn merge_train_hooks() {
     s.settle().await;
     s.deliveries("mr 1 merge", &mut rx, 1).await;
 
-    // MR 2 goes through the train: its train pipeline's hooks, then the merge.
+    // MR 2 goes through the train: its train pipeline's hooks, then the merge. MR 1's merge left
+    // it unchecked, so it is added once its check is done.
+    s.poll_mr(pid, 2).await;
     s.step("add 2", POST, &format!("{trains}/merge_requests/2"), Some(&admin), json!({}), "car").await;
     s.settle().await;
     s.deliveries("train pipeline pending", &mut rx, 1).await;

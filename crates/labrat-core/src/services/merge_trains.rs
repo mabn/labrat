@@ -480,6 +480,17 @@ pub fn refresh(c: &Connection, config: &Config, project_id: i64, target_branch: 
 /// Merges the front car's MR.
 fn merge_car(c: &Connection, config: &Config, p: &Project, car: &Car, mr: &MergeRequest, user: &User) -> Result<()> {
     touch(c, car, "merging")?;
+    // The merge takes the train commit (its pipeline's): `merge_params.train_ref` records it.
+    let train_sha: Option<String> = match car.pipeline_id {
+        Some(id) => Pipeline::find(c, id)?.map(|pl| pl.sha),
+        None => None,
+    };
+    if let Some(sha) = &train_sha {
+        let mut mp = mr.merge_params.clone();
+        mp.insert("train_ref".into(), json!({"commit_sha": sha, "merge_commit_sha": sha}));
+        c.execute("UPDATE merge_requests SET merge_params = ?1 WHERE id = ?2", params![Value::Object(mp).to_string(), mr.id])?;
+    }
+    let mr = &mr.reload(c)?;
     let mp = mrmerge::MergeParams { sha: mr.merge_params.get("sha").and_then(Value::as_str).map(String::from), ..Default::default() };
     let merged = mrmerge::merge(c, config, p, mr, user, &mp)?;
     if !merged {

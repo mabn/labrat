@@ -831,7 +831,7 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
     } else {
         json!([])
     };
-    let ref_status = if builds.is_empty() { Value::Null } else { json!(pl.status) };
+    let ref_status = if builds.is_empty() { Value::Null } else { json!(ci_ref_status(c, pl, hook_ref.as_deref())?) };
     // `hook_attrs(backward: false)`: without the legacy URL keys.
     let mut pipeline_project = project_attrs(c, config, p)?;
     if let Some(o) = pipeline_project.as_object_mut() {
@@ -877,6 +877,37 @@ fn fake_runner_attrs() -> Value {
     json!({"id": 1, "description": "labrat-fake-runner", "runner_type": "instance_type", "active": true, "is_shared": true, "tags": []})
 }
 
+/// The status of the pipeline's CI ref (its branch; the source branch for MR pipelines): set
+/// as each fake CI pipeline of the ref finishes, `unknown` before any did. On the EE
+/// reference a merge train pipeline reported the source branch's earlier `success` while it
+/// was still pending.
+fn ci_ref_status(c: &Connection, pl: &crate::services::ci::Pipeline, branch: Option<&str>) -> Result<&'static str> {
+    let mut status = "unknown";
+    let mut all = crate::services::ci::Pipeline::list(c, pl.project_id)?;
+    all.reverse();
+    for other in all.iter().filter(|o| o.id <= pl.id && matches!(o.status.as_str(), "success" | "failed")) {
+        let has_builds: bool = c.query_row("SELECT EXISTS(SELECT 1 FROM commit_statuses WHERE pipeline_id = ?1 AND build = 1)", [other.id], |r| r.get(0))?;
+        if !has_builds {
+            continue;
+        }
+        let other_branch = match other.merge_request_id {
+            Some(id) => crate::services::merge_requests::MergeRequest::find(c, id)?.map(|m| m.source_branch),
+            None => other.ref_.clone(),
+        };
+        if other_branch.as_deref() != branch {
+            continue;
+        }
+        status = match (other.status.as_str(), status) {
+            ("success", "failed" | "broken" | "still_failing") => "fixed",
+            ("success", _) => "success",
+            ("failed", "success" | "fixed") => "broken",
+            ("failed", "failed" | "broken" | "still_failing") => "still_failing",
+            _ => "failed",
+        };
+    }
+    Ok(status)
+}
+
 /// `builds` of a pipeline hook: the fake CI jobs, newest first.
 fn build_attrs(c: &Connection, pl: &crate::services::ci::Pipeline) -> Result<Vec<Value>> {
     let mut st = c.prepare(
@@ -899,7 +930,8 @@ fn build_attrs(c: &Connection, pl: &crate::services::ci::Pipeline) -> Result<Vec
             "created_at": ar_time(created),
             "started_at": opt_ar_time(started),
             "finished_at": opt_ar_time(finished),
-            "duration": started.zip(finished).map(|(s, f)| secs(f - s)),
+            // A running job reports the time it has run so far.
+            "duration": started.map(|s| secs(finished.unwrap_or_else(time::now) - s)),
             "queued_duration": started.map(|s| secs(s - queued.unwrap_or(created))),
             "failure_reason": if status == "failed" { json!("script_failure") } else { Value::Null },
             "when": "on_success",

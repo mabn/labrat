@@ -756,10 +756,20 @@ pub fn after_create(c: &Connection, config: &Config, mr_id: i64, user_id: i64) -
         },
         None => None,
     };
-    // Fake CI: the MR's pipeline (`create_pipeline_for`, which GitLab runs in its own job).
+    // Fake CI: the MR's pipeline. On the EE reference the open hook already names it as the
+    // head pipeline.
     if crate::services::fake_ci::config(c, p.id)?.is_some() {
-        jobs::enqueue(c, "mr_create_pipeline", json!({"merge_request_id": mr_id, "user_id": user_id}))?;
+        // A merged results pipeline runs on the merge ref, so the MR is checked first.
+        if config.is_ee() && crate::services::merge_trains::merge_pipelines_enabled(&p) && mr.merge_status == "preparing" {
+            c.execute("UPDATE merge_requests SET merge_status = 'unchecked' WHERE id = ?1", [mr_id])?;
+            mergeability::check(c, config, mr_id)?;
+            // That takes long enough for the approvals sync begun at creation to finish first.
+            c.execute("DELETE FROM jobs WHERE kind = 'approvals_sync' AND json_extract(payload, '$.merge_request_id') = ?1", [mr_id])?;
+            crate::services::approvals::finish_sync(c, mr_id)?;
+        }
+        crate::services::fake_ci::create_mr_pipeline(c, config, mr_id, user_id)?;
     }
+    let mr = MergeRequest::get(c, mr_id)?;
     if mr.merge_status == "preparing" {
         c.execute(
             "UPDATE merge_requests SET merge_status = 'unchecked' WHERE id = ?1",
