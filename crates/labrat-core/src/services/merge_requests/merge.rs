@@ -440,6 +440,17 @@ pub fn merge(
     );
     super::refresh::DEFER_REFRESH.with(|d| d.set(false));
     pushed?;
+    // EE: the other open MRs into the target branch read as unchecked right after the merge
+    // (the EE reference shows `checking` on them a moment later); CE waits for the refresh job.
+    if config.is_ee() {
+        for other in MergeRequest::list_where(
+            c,
+            "target_project_id = ?1 AND target_branch = ?2 AND state = 'opened' AND id != ?3",
+            params![p.id, mr.target_branch, mr.id],
+        )? {
+            mergeability::mark_as_unchecked(c, other.id)?;
+        }
+    }
     crate::services::hooks::merge_request_event(c, config, p, &merged, Some(user), "merge", Some(&before))?;
     // `cancel_auto_merges_targeting_source_branch`: MRs stacked on the removed branch lose their
     // auto-merge, and their merge participants get an unmergeable to-do.

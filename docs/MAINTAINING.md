@@ -87,10 +87,10 @@ Fixing a difference:
 
 1. Find what GitLab does in its source (see [Reading GitLab's source](#reading-gitlabs-source)) and
    what the fixture shows.
-2. Change labrat to match. Comments in labrat name the GitLab class or method they follow, such as
-   ``// `MergeRequests::RefreshService#abort_auto_merges`: ...``. Keep doing that.
+2. Change labrat to match. Comments in labrat name the GitLab CE class or method they follow,
+   such as ``// `MergeRequests::RefreshService#abort_auto_merges`: ...``. Keep doing that. Never
+   name GitLab EE code (see "The EE reference").
 3. Run the failing scenario, then `cargo test`, and commit only when everything passes.
-4. Add an entry to [LOG.md](LOG.md) (newest first) after each significant step.
 
 ## Setting up a reference instance
 
@@ -446,7 +446,7 @@ Do it on a branch, and plan for several days on a minor or major version.
    ```
 
    Update README.md, AGENTS.md, docs/PLAN.md, this file, and comments that say "recorded on
-   18.11". Add a LOG.md entry describing the move.
+   18.11".
 
 8. **Commit** when `cargo test` passes completely, and open a pull request.
 

@@ -894,8 +894,23 @@ async fn batch_apply(req: Req) -> ApiResult {
 
 async fn approvals(req: Req) -> ApiResult {
     let app = req.app.clone();
-    let body = app.db.read(|c| {
+    if !app.config.is_ee() {
+        let body = app.db.read(|c| {
+            let (p, _, mr) = load(c, &req)?;
+            Ok::<_, ApiError>(approvals_body(c, &req, &p, &mr, req.user.as_ref())?)
+        })?;
+        return Ok(Resp::ok(body));
+    }
+    let body = app.db.tx(|c| {
         let (p, _, mr) = load(c, &req)?;
+        // EE's `/approvals` never answered `checking` in the recordings, even right after a
+        // read had started a check: a pending check is settled before it answers.
+        let mr = if matches!(mr.merge_status.as_str(), "unchecked" | "checking") && mr.is_open() {
+            labrat_core::services::merge_requests::mergeability::check(c, &app.config, mr.id)?;
+            mr.reload(c)?
+        } else {
+            mr
+        };
         Ok::<_, ApiError>(approvals_body(c, &req, &p, &mr, req.user.as_ref())?)
     })?;
     Ok(Resp::ok(body))

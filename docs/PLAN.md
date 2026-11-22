@@ -557,8 +557,7 @@ Items marked **done** are implemented and covered by conformance scenarios.
 
 The UI grows with each phase rather than being a phase of its own.
 
-**Status (2026-11-07):** phases 0 to 6 are delivered. Phase 5 continues as demand appears;
-`docs/LOG.md` has the details.
+**Status (2026-11-07):** phases 0 to 6 are delivered. Phase 5 continues as demand appears.
 
 | Phase | Delivers | Done when |
 |-------|----------|-----------|

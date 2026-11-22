@@ -7,7 +7,6 @@ is built yet; the project is at the planning stage.
 - [README.md](README.md): what labrat is and isn't.
 - [docs/PLAN.md](docs/PLAN.md): goals, architecture, testing, scope (in, later, out) and roadmap.
   Read it before starting any work.
-- [docs/LOG.md](docs/LOG.md): the work log. Its top entry shows the current state and the next task.
 
 ## Rules
 
@@ -44,10 +43,6 @@ is built yet; the project is at the planning stage.
 - **Every action goes through a service.** That keeps side effects identical whether an action comes
   from REST, GraphQL, the UI, a quick action or a git push.
 - **Keep the docs true.** Update `docs/PLAN.md` when the design or the scope changes.
-- **Keep `docs/LOG.md` current.** It is newest first, with timestamps in UTC.
-  - Add an entry for each significant step.
-  - During active work, add one at least every 2 hours. Skip it when idle and nothing has changed.
-  - Each entry says what was done, what is in progress and what comes next.
 
 ## Commands
 

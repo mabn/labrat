@@ -446,7 +446,7 @@ fn set_assignees(c: &Connection, mr_id: i64, ids: &[i64]) -> Result<()> {
     Ok(())
 }
 
-fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64], ee: bool) -> Result<()> {
+fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64], _ee: bool) -> Result<()> {
     let old: Vec<i64> = {
         let mut st = c.prepare("SELECT user_id FROM merge_request_reviewers WHERE merge_request_id = ?1")?;
         st.query_map([mr_id], |r| r.get(0))?.collect::<rusqlite::Result<_>>()?
@@ -468,21 +468,8 @@ fn set_reviewers(c: &Connection, mr_id: i64, ids: &[i64], ee: bool) -> Result<()
             .join(",")
     };
     c.execute(&format!("DELETE FROM merge_request_reviewers WHERE merge_request_id = ?1 AND user_id NOT IN ({list})"), [mr_id])?;
-    // EE (several reviewers): the list takes the order given. The rows are recreated in that
-    // order, keeping each reviewer's state.
-    if ee && ids.len() > 1 {
-        let mut st = c.prepare("SELECT user_id, state, created_at FROM merge_request_reviewers WHERE merge_request_id = ?1")?;
-        let kept: Vec<(i64, i64, i64)> = st.query_map([mr_id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<rusqlite::Result<_>>()?;
-        c.execute("DELETE FROM merge_request_reviewers WHERE merge_request_id = ?1", [mr_id])?;
-        for id in ids {
-            if let Some((_, state, at)) = kept.iter().find(|(u, _, _)| u == id) {
-                c.execute(
-                    "INSERT INTO merge_request_reviewers (merge_request_id, user_id, state, created_at) VALUES (?1, ?2, ?3, ?4)",
-                    params![mr_id, id, state, at],
-                )?;
-            }
-        }
-    }
+    // The reviewers kept stay in their order and new ones follow (EE answers in no fixed
+    // order; the replays compare its reviewer lists as sets).
     for id in ids {
         c.execute(
             // `set_reviewers_approved`: a reviewer who already approved comes back `approved`.

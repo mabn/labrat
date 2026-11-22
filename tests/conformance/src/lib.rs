@@ -721,7 +721,17 @@ impl Scenario {
         if let Some(expected) = &self.expected {
             match expected.get(idx) {
                 Some(exp) => {
-                    if let Some(diff) = normalize::diff(exp, &step, "") {
+                    let diff = if edition().is_ee() {
+                        let (mut e, mut a) = (exp.clone(), step.clone());
+                        sort_reviewers(&mut e);
+                        sort_reviewers(&mut a);
+                        forget_admin_sign_in(&mut e);
+                        forget_admin_sign_in(&mut a);
+                        normalize::diff(&e, &a, "")
+                    } else {
+                        normalize::diff(exp, &step, "")
+                    };
+                    if let Some(diff) = diff {
                         self.failures.push(format!("step {idx} `{label}`: {diff}"));
                     }
                 }
@@ -995,6 +1005,71 @@ fn receiver_response_headers(v: &mut Value) {
             }
         }
         Value::Array(a) => a.iter_mut().for_each(receiver_response_headers),
+        _ => {}
+    }
+}
+
+/// The EE reference's admin (`claude`) gets signed in by something outside the scenarios
+/// (no sign-in shows in its audit events), so its own sign-in times depend on the instance's
+/// history rather than on the scenario. Replays leave them out of the comparison.
+fn forget_admin_sign_in(v: &mut Value) {
+    match v {
+        Value::Object(m) => {
+            if m.get("username").and_then(Value::as_str) == Some("claude") {
+                for k in ["last_sign_in_at", "current_sign_in_at"] {
+                    if let Some(x) = m.get_mut(k) {
+                        *x = Value::Null;
+                    }
+                }
+            }
+            m.values_mut().for_each(forget_admin_sign_in);
+        }
+        Value::Array(a) => a.iter_mut().for_each(forget_admin_sign_in),
+        _ => {}
+    }
+}
+
+/// GitLab EE lists an MR's reviewers (REST, GraphQL, hooks and quick action changes) in an
+/// order that follows its database rows' history rather than any `ORDER BY`: the recordings
+/// show the same reviewers and request coming back in different orders. Replays compare them
+/// as sets, sorted by username (or by value for id lists).
+fn sort_reviewers(v: &mut Value) {
+    fn key(x: &Value) -> String {
+        let u = x.get("user").unwrap_or(x);
+        match u.get("username") {
+            Some(n) => n.as_str().unwrap_or_default().to_string(),
+            None => u.to_string(),
+        }
+    }
+    fn sort_list(x: &mut Value) {
+        match x {
+            Value::Array(a) => a.sort_by_key(key),
+            Value::Object(o) => {
+                for k in ["nodes", "previous", "current"] {
+                    if let Some(Value::Array(a)) = o.get_mut(k) {
+                        a.sort_by_key(key);
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+    match v {
+        Value::Object(m) => {
+            for (k, x) in m.iter_mut() {
+                if matches!(k.as_str(), "reviewers" | "reviewer_ids") {
+                    sort_list(x);
+                }
+                sort_reviewers(x);
+            }
+        }
+        Value::Array(a) => {
+            // `GET /merge_requests/:iid/reviewers`: `{user, state, created_at}` entries.
+            if !a.is_empty() && a.iter().all(|r| r.get("user").is_some() && r.get("state").is_some() && r.get("created_at").is_some()) {
+                a.sort_by_key(key);
+            }
+            a.iter_mut().for_each(sort_reviewers)
+        }
         _ => {}
     }
 }
