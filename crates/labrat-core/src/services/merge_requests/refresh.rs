@@ -157,9 +157,18 @@ pub fn refresh(
             }
         mergeability::mark_as_unchecked(c, mr.id)?;
         let mr = mr.reload(c)?;
+        // EE: an MR waiting to join a merge train is checked again at once.
+        if !is_source
+            && config.is_ee()
+            && crate::services::merge_trains::strategy(&mr).as_deref() == Some("add_to_merge_train_when_checks_pass")
+        {
+            mergeability::check_async(c, &mr)?;
+        }
         if is_source && !removed {
             if let Some(pl) = crate::services::ci::create_skipped_mr_pipeline(c, p, &mr, user)? {
                 crate::services::hooks::pipeline_event(c, config, p, &pl)?;
+            } else if crate::services::fake_ci::config(c, p.id)?.is_some() {
+                crate::jobs::enqueue(c, "mr_create_pipeline", serde_json::json!({"merge_request_id": mr.id, "user_id": user.id}))?;
             }
         }
         // `mark_pending_todos_done`: the pusher's pending to-dos on MRs from this branch.
@@ -174,7 +183,7 @@ pub fn refresh(
             && matches!(p.merge_method.as_str(), "ff" | "rebase_merge")
             && mergeability::should_be_rebased(c, p, &mr)?
         {
-            super::merge::abort_auto_merge(c, p, &mr, user, "target branch was updated")?;
+            super::merge::abort_auto_merge(c, config, p, &mr, user, "target branch was updated")?;
             let mr = mr.reload(c)?;
             if let Some(author) = User::find(c, mr.author_id)?
                 && crate::perms::ProjectPerms::load(c, Some(&author), p)?.read_merge_request(p)
@@ -186,9 +195,21 @@ pub fn refresh(
         if is_source {
             if mr.merge_when_pipeline_succeeds
                 && mr.merge_params.get("sha").and_then(|v| v.as_str()) != Some(&u.new.hex())
+                && !(config.is_ee()
+                    && crate::services::merge_trains::abort_now(
+                        c,
+                        config,
+                        &mr,
+                        user,
+                        &format!(
+                            "the source branch was updated. [Learn more]({}).",
+                            config.url("/help/ci/pipelines/merge_trains.md#merge-request-dropped-from-the-merge-train")
+                        ),
+                    )?)
             {
                 super::merge::abort_auto_merge(
                     c,
+                    config,
                     p,
                     &mr,
                     user,
@@ -229,6 +250,13 @@ pub fn refresh(
                 auto_draft_from_commits(c, p, &mr, user, &pushed)?;
                 crate::services::approvals::reset_on_push(c, config, p, &mr, user, &before.mr.merge_status)?;
                 crate::services::approvals::start_sync(c, config, &mr)?;
+                // With CI, EE keeps syncing until the MR's new pipeline finishes.
+                // With CI, EE's sync starts once the MR's new pipeline runs (2: waiting for it
+                // to start).
+                if crate::services::fake_ci::config(c, p.id)?.is_some() {
+                    c.execute("DELETE FROM jobs WHERE kind = 'approvals_sync' AND json_extract(payload, '$.merge_request_id') = ?1", [mr.id])?;
+                    c.execute("UPDATE merge_requests SET approvals_syncing = 2 WHERE id = ?1", [mr.id])?;
+                }
             }
             let mr = mr.reload(c)?;
             if reloaded {

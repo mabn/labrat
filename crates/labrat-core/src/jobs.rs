@@ -45,6 +45,15 @@ pub fn enqueue(c: &Connection, kind: &str, payload: Value) -> Result<()> {
     Ok(())
 }
 
+/// Like `enqueue`, due `after_ms` later than the kind's delay (fake CI durations).
+pub fn enqueue_after(c: &Connection, kind: &str, payload: Value, after_ms: i64) -> Result<()> {
+    c.execute(
+        "INSERT INTO jobs (kind, payload, run_at) VALUES (?1, ?2, ?3)",
+        params![kind, payload.to_string(), time::now() + delay_for(kind) + after_ms.max(0)],
+    )?;
+    Ok(())
+}
+
 #[derive(Debug, Clone)]
 pub struct Job {
     pub id: i64,
@@ -126,6 +135,17 @@ pub fn run(c: &Connection, config: &Config, job: &Job) -> Result<()> {
         "commit_cross_references" => crate::services::cross_refs::process_commits(c, config, &p),
         "update_merge_requests" => crate::services::merge_requests::refresh::refresh_job(c, config, &p),
         "approvals_sync" => crate::services::approvals::finish_sync(c, id("merge_request_id")),
+        "merge_train_abort" => crate::services::merge_trains::abort_job(c, config, id("car_id"), id("user_id"), p["reason"].as_str().unwrap_or("")),
+        "merge_train_refresh" | "merge_train_process" => crate::services::merge_trains::refresh(c, config, id("project_id"), p["target_branch"].as_str().unwrap_or("")),
+        "merge_train_auto_add" => match crate::services::merge_requests::MergeRequest::find(c, id("merge_request_id"))? {
+            Some(mr) => crate::services::merge_trains::auto_add(c, config, &mr).map(|_| ()),
+            None => Ok(()),
+        },
+        "mr_create_pipeline" => crate::services::fake_ci::create_mr_pipeline(c, config, id("merge_request_id"), id("user_id")),
+        "fake_ci_enqueue" => crate::services::fake_ci::enqueue(c, config, id("pipeline_id")),
+        "fake_ci_process" => crate::services::ci::recompute(c, config, id("pipeline_id")),
+        "fake_ci_run" => crate::services::fake_ci::auto_run(c, config, id("pipeline_id")),
+        "fake_ci_finish" => crate::services::fake_ci::auto_finish(c, config, id("pipeline_id")),
         "cherry_pick_note" => {
             let user = crate::model::User::get(c, id("user_id"))?;
             crate::services::notes::system_note(c, id("merge_request_id"), id("project_id"), &user, p["body"].as_str().unwrap_or(""), "cherry_pick")

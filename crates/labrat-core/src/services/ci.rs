@@ -28,9 +28,14 @@ pub struct Pipeline {
     pub queued_duration: Option<i64>,
     pub name: Option<String>,
     pub before_sha: Option<String>,
+    /// Merge request pipelines: the MR, and for merged results and train pipelines the MR
+    /// head and the target commit.
+    pub merge_request_id: Option<i64>,
+    pub source_sha: Option<String>,
+    pub target_sha: Option<String>,
 }
 
-const PIPELINE_COLS: &str = "id, iid, project_id, sha, ref, tag, status, source, user_id, created_at, updated_at, started_at, finished_at, duration, queued_duration, name, before_sha";
+const PIPELINE_COLS: &str = "id, iid, project_id, sha, ref, tag, status, source, user_id, created_at, updated_at, started_at, finished_at, duration, queued_duration, name, before_sha, merge_request_id, source_sha, target_sha";
 
 fn pipeline_row(r: &Row) -> rusqlite::Result<Pipeline> {
     Ok(Pipeline {
@@ -51,6 +56,9 @@ fn pipeline_row(r: &Row) -> rusqlite::Result<Pipeline> {
         queued_duration: r.get(14)?,
         name: r.get(15)?,
         before_sha: r.get(16)?,
+        merge_request_id: r.get(17)?,
+        source_sha: r.get(18)?,
+        target_sha: r.get(19)?,
     })
 }
 
@@ -71,6 +79,21 @@ impl Pipeline {
 
     pub fn is_complete(&self) -> bool {
         matches!(self.status.as_str(), "success" | "failed" | "canceled" | "skipped")
+    }
+
+    /// Still to run or running (a pipeline being canceled no longer counts).
+    pub fn is_unfinished(&self) -> bool {
+        matches!(self.status.as_str(), "created" | "pending" | "running" | "preparing" | "waiting_for_resource" | "scheduled")
+    }
+
+    /// Merged results and merge train pipelines: built on a merge with the target.
+    pub fn is_merged_result(&self) -> bool {
+        self.source == "merge_request_event" && self.target_sha.is_some()
+    }
+
+    /// `matches_sha_or_source_sha?`
+    pub fn matches_sha_or_source_sha(&self, sha: &str) -> bool {
+        self.sha == sha || self.source_sha.as_deref() == Some(sha)
     }
 }
 
@@ -419,7 +442,7 @@ pub fn metrics(c: &Connection, mr: &MergeRequest) -> Result<(Option<Pipeline>, O
 /// `diff_head_pipeline`: the head pipeline only while it is for the MR's current head.
 pub fn diff_head_pipeline(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<Option<Pipeline>> {
     let head = mr.diff_head_sha(c, p)?;
-    Ok(head_pipeline(c, mr)?.filter(|pl| Some(&pl.sha) == head.as_ref()))
+    Ok(head_pipeline(c, mr)?.filter(|pl| head.as_deref().is_some_and(|h| pl.matches_sha_or_source_sha(h))))
 }
 
 /// Pipelines listed for the MR (`Ci::PipelinesForMergeRequestFinder`): its detached pipelines,
@@ -431,7 +454,11 @@ pub fn mr_pipelines(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<Ve
         .collect();
     let all = Pipeline::list(c, p.id)?;
     let mr_ref = format!("refs/merge-requests/{}/head", mr.iid);
-    let mut out: Vec<Pipeline> = all.iter().filter(|pl| pl.source == "merge_request_event" && pl.ref_.as_deref() == Some(mr_ref.as_str())).cloned().collect();
+    let mut out: Vec<Pipeline> = all
+        .iter()
+        .filter(|pl| pl.source == "merge_request_event" && (pl.merge_request_id == Some(mr.id) || pl.ref_.as_deref() == Some(mr_ref.as_str())))
+        .cloned()
+        .collect();
     out.extend(
         all.into_iter()
             .filter(|pl| pl.source != "merge_request_event" && pl.ref_.as_deref() == Some(mr.source_branch.as_str()) && !pl.tag && heads.contains(&pl.sha)),
@@ -442,7 +469,7 @@ pub fn mr_pipelines(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<Ve
 /// `MergeRequest#update_head_pipeline`.
 pub fn update_head_pipeline(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<()> {
     let head = mr.diff_head_sha(c, p)?;
-    let found = mr_pipelines(c, p, mr)?.into_iter().find(|pl| Some(&pl.sha) == head.as_ref());
+    let found = mr_pipelines(c, p, mr)?.into_iter().find(|pl| head.as_deref().is_some_and(|h| pl.matches_sha_or_source_sha(h)));
     if let Some(pl) = found {
         c.execute(
             "INSERT INTO merge_request_pipelines (merge_request_id, head_pipeline_id) VALUES (?1, ?2)
@@ -459,6 +486,10 @@ fn composite(statuses: &[String]) -> &'static str {
     let subset = |allowed: &[&str]| set.iter().all(|s| allowed.contains(s));
     if set.is_empty() {
         return "success";
+    }
+    // Jobs a runner still has to acknowledge as canceled.
+    if set.contains("canceling") {
+        return "canceling";
     }
     if subset(&["skipped"]) {
         "skipped"
@@ -496,7 +527,12 @@ pub fn recompute(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()
     let started = if target == "running" && pl.started_at.is_none() { Some(now) } else { pl.started_at };
     let finished = if matches!(target.as_str(), "success" | "failed" | "canceled") { Some(now) } else { pl.finished_at };
     let duration = if matches!(target.as_str(), "success" | "failed" | "canceled") {
-        started.map(|_| 0)
+        // Fake CI pipelines last as long as their jobs ran; external ones report 0.
+        let builds: i64 = c.query_row("SELECT count(*) FROM commit_statuses WHERE pipeline_id = ?1 AND build = 1", [pl.id], |r| r.get(0))?;
+        match (started, finished) {
+            (Some(s), Some(f)) if builds > 0 => Some((f - s) / 1000),
+            _ => started.map(|_| 0),
+        }
     } else {
         pl.duration
     };
@@ -524,7 +560,17 @@ pub fn recompute(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()
             )?;
         }
     }
+    if target == "running"
+        && let Some(mr_id) = pl.merge_request_id
+    {
+        crate::services::approvals::pipeline_running(c, mr_id)?;
+    }
     crate::services::hooks::pipeline_event(c, config, &p, &pl)?;
+    // EE merge trains: a car's pipeline moves its train on; a passing MR pipeline adds an MR
+    // waiting to join.
+    if pl.is_complete() && config.is_ee() {
+        crate::services::merge_trains::on_pipeline_complete(c, config, &pl)?;
+    }
     // Completed pipelines let armed auto-merges proceed.
     if pl.is_complete() {
         for mr in all_merge_requests(c, &p, &pl)? {
@@ -545,7 +591,10 @@ pub fn has_ci(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<bool> {
 /// inactive, else `ci_still_running` or `ci_must_pass`.
 pub fn ci_check(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<Option<&'static str>> {
     let setting = p.only_allow_merge_if_pipeline_succeeds;
-    if !setting && !mr.merge_when_pipeline_succeeds {
+    // EE merge train strategies run their own pipelines: they don't make CI a merge check.
+    let auto_ci = mr.merge_when_pipeline_succeeds
+        && !matches!(mr.merge_params.get("auto_merge_strategy").and_then(|v| v.as_str()), Some("merge_train" | "add_to_merge_train_when_checks_pass"));
+    if !setting && !auto_ci {
         return Ok(None);
     }
     let must = setting || has_ci(c, p, mr)?;

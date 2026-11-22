@@ -179,20 +179,24 @@ a newer GitLab version.
 | `--noee` | `LABRAT_NOEE` | off | Behave like GitLab Community Edition instead of Enterprise Edition |
 
 **Editions.** By default labrat answers like GitLab Enterprise Edition 18.11. EE support covers
-the features labrat supports on CE, plus merge request approval rules. Nothing else from EE is
-included.
+the features labrat supports on CE, plus merge request approval rules and merge trains. Nothing
+else from EE is included.
 
 - **CE features:** these answer as EE answers them. That means EE's extra JSON fields, its GraphQL
   schema, and its defaults where they differ (for example, authors can't approve their own merge
   requests, and approvals reset on push).
 - **Approval rules:** project and merge request approval rules, approval settings and approval
   state, over REST and GraphQL.
+- **Merge trains:** the merge train settings, adding and removing merge requests, the train
+  listings, and the train's pipelines, merges and restarts, over REST and GraphQL. labrat runs
+  no real CI. Pipelines come from labrat's fake CI, which is set up through the test endpoints
+  below.
 - **Other EE-only features:** their endpoints and fields don't exist, as on an instance without
   the feature. That includes code owners, approval policies, epics, and security and compliance
   features.
 
-With `--noee` labrat answers exactly like the Community Edition, and the approval endpoints don't
-exist.
+With `--noee` labrat answers exactly like the Community Edition, and the approval and merge
+train endpoints don't exist.
 
 The database schema version is checked on start. After an upgrade that changes it, delete the
 database file.
@@ -210,6 +214,10 @@ it.
 | `GET /-/labrat/idle` | Returns once every background job and webhook delivery has finished |
 | `POST /-/labrat/time` | Shifts labrat's clock |
 | `GET /-/labrat/requests.json` | The last 500 API calls with requests and responses (also in the UI at `/-/labrat/requests`) |
+| `PUT /-/labrat/projects/:id/ci` | Fake CI for a project (EE merge trains): `{"enabled": true, "jobs": ["test"], "runner": {"mode": "manual"}}`, or `"mode": "auto"` with `"status"` (`success`, `failed` or `canceled`), `"duration_ms"` and per-ref `"overrides"`. `{"enabled": false}` turns it off. `GET` shows it. |
+| `GET /-/labrat/projects/:id/ci/jobs` | The project's fake CI jobs |
+| `POST /-/labrat/ci/pick` | `{"project_id": 1}`: the fake runner starts the project's pending jobs |
+| `POST /-/labrat/ci/finish` | `{"project_id": 1, "ref": "refs/merge-requests/1/train", "status": "failed"}`: finishes the running jobs on that ref (`"include_pending": true` for pending ones too) |
 
 ## Documentation
 

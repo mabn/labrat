@@ -463,9 +463,10 @@ fn ee_fields(c: &Connection, p: &Project, perms: &ProjectPerms, m: &mut Map<Stri
     if perms.admin_project() {
         m.insert("ci_restrict_pipeline_cancellation_role".into(), json!("developer"));
     }
-    m.insert("merge_pipelines_enabled".into(), setting_bool(p, "merge_pipelines_enabled", false));
-    m.insert("merge_trains_enabled".into(), setting_bool(p, "merge_trains_enabled", false));
-    m.insert("merge_trains_skip_train_allowed".into(), setting_bool(p, "merge_trains_skip_train_allowed", false));
+    // Trains read as off while merged results pipelines are, and skipping them while they are.
+    m.insert("merge_pipelines_enabled".into(), json!(labrat_core::services::merge_trains::merge_pipelines_enabled(p)));
+    m.insert("merge_trains_enabled".into(), json!(labrat_core::services::merge_trains::merge_trains_enabled(p)));
+    m.insert("merge_trains_skip_train_allowed".into(), json!(labrat_core::services::merge_trains::skip_train_allowed(p)));
     m.insert(
         "only_allow_merge_if_all_status_checks_passed".into(),
         setting_bool(p, "only_allow_merge_if_all_status_checks_passed", false),

@@ -460,7 +460,7 @@ pub fn merge(
             "target_project_id = ?1 AND target_branch = ?2 AND state = 'opened' AND merge_when_pipeline_succeeds = 1",
             params![p.id, mr.source_branch],
         )? {
-            abort_auto_merge(c, p, &d, user, &format!("target branch was merged in !{}", mr.iid))?;
+            abort_auto_merge(c, config, p, &d, user, &format!("target branch was merged in !{}", mr.iid))?;
             let d = d.reload(c)?;
             if let Some(author) = User::find(c, d.author_id)?
                 && crate::perms::ProjectPerms::load(c, Some(&author), p)?.read_merge_request(p)
@@ -742,12 +742,17 @@ pub fn cancel_auto_merge(
 
 pub fn abort_auto_merge(
     c: &Connection,
+    config: &Config,
     p: &Project,
     mr: &MergeRequest,
     user: &User,
     reason: &str,
 ) -> Result<()> {
     if !mr.merge_when_pipeline_succeeds {
+        return Ok(());
+    }
+    // EE: an MR on a merge train leaves the train instead.
+    if config.is_ee() && crate::services::merge_trains::abort_for_mr(c, config, mr, user, reason, true)? {
         return Ok(());
     }
     clear_auto_merge(c, mr)?;
@@ -769,6 +774,15 @@ pub fn auto_merge_process(c: &Connection, config: &Config, mr_id: i64) -> Result
     };
     if !mr.merge_when_pipeline_succeeds || !mr.is_open() {
         return Ok(());
+    }
+    // EE merge train strategies: the train merges the MR (or adds it once its checks pass).
+    match mr.merge_params.get("auto_merge_strategy").and_then(Value::as_str) {
+        Some("merge_train") => return Ok(()),
+        Some("add_to_merge_train_when_checks_pass") => {
+            crate::services::merge_trains::auto_add(c, config, &mr)?;
+            return Ok(());
+        }
+        _ => {}
     }
     let p = Project::find(c, mr.target_project_id)?.expect("project exists");
     // `mwcp_skip_ci_guard` is off in 18.11: with CI, wait for a green head pipeline.

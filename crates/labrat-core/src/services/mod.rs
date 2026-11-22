@@ -5,6 +5,8 @@ pub mod approvals;
 pub mod protected_tags;
 pub mod user_counts;
 pub mod ci;
+pub mod fake_ci;
+pub mod merge_trains;
 pub mod comments;
 pub mod cross_refs;
 pub mod discussions;

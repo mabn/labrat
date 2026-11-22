@@ -203,6 +203,25 @@ Recording settings, all read from the environment:
 | `GITLAB_SSH_PORT` | The port in its `ssh_url_to_repo` (default 2424) |
 | `GITLAB_EXTRA_HEADERS` | `Name: value; Name: value`: headers an access proxy in front of the instance needs |
 | `HOOK_PUBLIC_URL`, `HOOK_LISTEN_PORT` | A tunnel URL that forwards to this local port, for webhook deliveries |
+| `GITLAB_RUNNER_TOKEN` | The token of the fake runner (merge train scenarios) |
+
+**The fake runner (merge trains).** The merge train scenarios need CI on the instance:
+
+- **Register the runner:** an instance runner, registered once with
+  `POST /user/runners {"runner_type": "instance_type", "run_untagged": true}`. Keep its token
+  outside the repository.
+- **During recording:**
+  - the harness commits a one-job `.gitlab-ci.yml` (`ci_enable`);
+  - it plays the runner through the runner API: `POST /jobs/request` picks jobs and
+    `PUT /jobs/:id` finishes them;
+  - jobs left over from other scenarios are finished at once;
+  - fixtures keep when each job was picked and finished, and replays move labrat's clock to
+    those moments.
+- **When replaying:** labrat's fake CI stands in for both (`/-/labrat/projects/:id/ci`,
+  `/-/labrat/ci/pick`, `/-/labrat/ci/finish`).
+
+A job request must announce a current runner's features (the harness's `runner_info`), or
+GitLab drops the job as `runner_unsupported`.
 
 How the proxy and the tunnel are handled:
 - **Proxy headers** go to every API call, to `git` (`http.extraHeader`), and to every webhook the

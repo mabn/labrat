@@ -57,6 +57,24 @@ pub struct Scenario {
     ssh_port: u16,
     /// `GITLAB_EXTRA_HEADERS` while recording; empty otherwise.
     extra_headers: Vec<(String, String)>,
+    /// Fake CI while recording: the jobs the runner picked and hasn't finished, by ref, as
+    /// `(job id, job token)`.
+    ci_running: std::collections::HashMap<String, Vec<(i64, String)>>,
+    /// The project whose jobs the runner keeps; other projects' jobs are finished at once.
+    ci_project: Option<i64>,
+    /// When each recorded step was sent (replaying): fake CI actions happen just before the
+    /// next step, so labrat's clock moves there first.
+    send_times: Option<Vec<i64>>,
+    /// Fake CI action times: recorded ones (recording), the recording's (replaying), and how
+    /// many actions replayed so far.
+    ci_times: Vec<i64>,
+    expected_ci_times: Option<Vec<i64>>,
+    ci_done: usize,
+    /// Each picked job's ref and pick time (recording), the recording's (replaying), and how
+    /// many were replayed.
+    ci_picks: Vec<Value>,
+    expected_ci_picks: Option<Vec<Value>>,
+    ci_picks_done: usize,
 }
 
 /// One HTTP response with its parsed JSON body.
@@ -122,6 +140,23 @@ fn fixture_path(name: &str) -> PathBuf {
 /// (`Name: value` pairs separated by `;`). They are for a proxy in front of the instance, such
 /// as an access gateway. They are sent only while recording and are never recorded: every
 /// mention of them is removed from the fixture, and the fixture isn't written if one remains.
+/// The `.gitlab-ci.yml` fake CI scenarios commit: one job, for merge request pipelines only.
+pub const CI_CONFIG: &str = "test:\n  script: echo ok\n  rules:\n    - if: $CI_PIPELINE_SOURCE == \"merge_request_event\"\n";
+
+/// What the fake runner reports about itself: GitLab drops jobs (`runner_unsupported`) for
+/// runners that don't announce the features a current runner has.
+fn runner_info() -> Value {
+    let features = [
+        "variables", "image", "services", "artifacts", "cache", "fallback_cache_keys", "shared", "upload_multiple_artifacts",
+        "upload_raw_artifacts", "session", "terminal", "refspecs", "masking", "proxy", "raw_variables", "artifacts_exclude",
+        "multi_build_steps", "trace_reset", "trace_checksum", "trace_size", "vault_secrets", "cancelable", "return_exit_code",
+        "service_variables", "service_multiple_aliases", "image_executor_opts", "service_executor_opts", "cancel_gracefully",
+        "native_steps_integration", "two_phase_job_commit", "job_inputs",
+    ];
+    let f: serde_json::Map<String, Value> = features.iter().map(|k| (k.to_string(), Value::Bool(true))).collect();
+    json!({"name": "gitlab-runner", "version": "18.11.0", "revision": "fake", "platform": "linux", "architecture": "amd64", "executor": "shell", "shell": "bash", "features": f})
+}
+
 pub fn extra_headers() -> Vec<(String, String)> {
     std::env::var("GITLAB_EXTRA_HEADERS")
         .unwrap_or_default()
@@ -194,6 +229,13 @@ async fn start_labrat(external_url: &str, ssh_port: u16) -> Target {
     // EE: the cherry-pick note follows the commit's cross-references.
     per_kind.insert("cherry_pick_note".to_string(), 400);
     per_kind.insert("note_event".to_string(), 300);
+    // EE fake CI: Sidekiq creates MR pipelines and train car pipelines a moment later.
+    per_kind.insert("mr_create_pipeline".to_string(), 1000);
+    per_kind.insert("merge_train_refresh".to_string(), 380);
+    per_kind.insert("fake_ci_enqueue".to_string(), 1000);
+    per_kind.insert("merge_train_process".to_string(), 1000);
+    // EE updates a pipeline's status from its jobs a moment after they change.
+    per_kind.insert("fake_ci_process".to_string(), 700);
     // `PostReceive` -> `ProcessCommitWorker`: two Sidekiq hops before "mentioned in commit".
     per_kind.insert("commit_cross_references".to_string(), 750);
     // `PostReceive` -> `UpdateMergeRequestsWorker`: the MR refresh after a push.
@@ -322,6 +364,9 @@ impl Scenario {
             let r = reqwest::Client::new().post(&url).send().await.expect("clock request failed");
             assert!(r.status().is_success(), "setting the labrat clock failed: {}", r.status());
         }
+        let send_times = fixture.as_ref().and_then(|v| v["times"].as_array()).map(|a| a.iter().filter_map(Value::as_i64).collect());
+        let expected_ci_times = fixture.as_ref().and_then(|v| v["ci_times"].as_array()).map(|a| a.iter().filter_map(Value::as_i64).collect());
+        let expected_ci_picks = fixture.as_ref().and_then(|v| v["ci_picks"].as_array()).cloned();
         let expected = fixture.map(|v| v["steps"].as_array().unwrap().clone());
         let mut norm = Normalizer::new(&target.public_base, &run);
         norm.set_today(&days_to_date(started_at.div_euclid(86_400_000)));
@@ -344,7 +389,160 @@ impl Scenario {
             base_offset,
             ssh_port,
             extra_headers,
+            ci_running: Default::default(),
+            ci_project: None,
+            send_times,
+            ci_times: vec![],
+            expected_ci_times,
+            ci_done: 0,
+            ci_picks: vec![],
+            expected_ci_picks,
+            ci_picks_done: 0,
         }
+    }
+
+    /// Fake CI: gives the project a `.gitlab-ci.yml` with one `test` job for merge request
+    /// pipelines (a recorded commit to `main`). When replaying, labrat's fake CI is switched on
+    /// for the project too (labrat doesn't read the file), with jobs that wait for `ci_finish`.
+    pub async fn ci_enable(&mut self, label: &str, project: i64, token: &str) -> Res {
+        let res = self
+            .step(
+                label,
+                Method::POST,
+                &format!("/projects/{project}/repository/commits"),
+                Some(token),
+                json!({"branch": "main", "commit_message": "Add CI", "actions": [{"action": "create", "file_path": ".gitlab-ci.yml", "content": CI_CONFIG}]}),
+                "commit",
+            )
+            .await;
+        self.ci_project = Some(project);
+        if !self.target.recording {
+            let url = format!("{}/-/labrat/projects/{project}/ci", self.target.base);
+            let r = self.http.put(&url).json(&json!({"enabled": true, "jobs": ["test"], "runner": {"mode": "manual"}})).send().await.expect("ci request failed");
+            assert!(r.status().is_success(), "enabling labrat's fake CI failed: {}", r.status());
+        }
+        res
+    }
+
+    /// Fake CI: a runner picks up `count` pending jobs of the project, which start running.
+    /// Recording waits until that many were picked (finishing other projects' jobs at once);
+    /// replaying picks them at the recorded times and fails the scenario when the count
+    /// differs. Both wait for things to settle, so the pipelines read as running.
+    pub async fn ci_pick(&mut self, count: usize) {
+        let project = self.ci_project.expect("ci_enable first");
+        if self.target.recording {
+            let mut first_at: Option<i64> = None;
+            let token = std::env::var("GITLAB_RUNNER_TOKEN").expect("GITLAB_RUNNER_TOKEN (a runner registered on the reference instance)");
+            let url = format!("{}/api/v4/jobs/request", self.target.base);
+            let mut got = 0;
+            let deadline = std::time::Instant::now() + std::time::Duration::from_secs(90);
+            while got < count {
+                let r = self.http.post(&url).json(&json!({"token": token, "info": runner_info()})).send().await.expect("job request failed");
+                if r.status().as_u16() != 201 {
+                    assert!(std::time::Instant::now() < deadline, "only {got} of {count} jobs were picked");
+                    tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+                    continue;
+                }
+                let job: Value = r.json().await.unwrap();
+                let id = job["id"].as_i64().unwrap();
+                let jtoken = job["token"].as_str().unwrap().to_string();
+                let pid = job["variables"].as_array().and_then(|v| v.iter().find(|x| x["key"] == "CI_PROJECT_ID")).and_then(|x| x["value"].as_str()).and_then(|v| v.parse::<i64>().ok());
+                if pid != Some(project) {
+                    // A leftover job of another scenario: finish it so it doesn't come back.
+                    self.ci_put_job(id, &jtoken, "success").await;
+                    continue;
+                }
+                let r#ref = job["git_info"]["ref"].as_str().unwrap_or("").to_string();
+                let at = self.started.elapsed().as_millis() as i64;
+                self.ci_picks.push(json!([r#ref, at]));
+                self.ci_running.entry(r#ref).or_default().push((id, jtoken));
+                first_at.get_or_insert(at);
+                got += 1;
+            }
+            self.ci_times.push(first_at.unwrap_or(self.started.elapsed().as_millis() as i64));
+            // The pipelines move to `running` in the background: wait for that.
+            self.settle().await;
+        } else if let Some(picks) = self.expected_ci_picks.clone() {
+            // Each job starts when the recording's runner picked it.
+            self.ci_done += 1;
+            let url = format!("{}/-/labrat/ci/pick", self.target.base);
+            let mut got = 0;
+            for p in picks.iter().skip(self.ci_picks_done).take(count) {
+                let (r#ref, at) = (p[0].as_str().unwrap_or("").to_string(), p[1].as_i64().unwrap_or(0));
+                let _ = self.http.get(format!("{}/-/labrat/idle", self.target.base)).send().await;
+                self.advance_clock_to(at).await;
+                let r: Value = self.http.post(&url).json(&json!({"project_id": project, "ref": r#ref})).send().await.expect("ci request failed").json().await.unwrap();
+                got += r["picked"].as_array().map(|a| a.len()).unwrap_or(0);
+            }
+            self.ci_picks_done += count;
+            if got != count {
+                self.failures.push(format!("ci_pick: labrat had {got} of the {count} jobs the recording picked"));
+            }
+        } else {
+            let url = format!("{}/-/labrat/ci/pick", self.target.base);
+            let _ = self.http.get(format!("{}/-/labrat/idle", self.target.base)).send().await;
+            self.sync_ci_clock(true).await;
+            let r: Value = self.http.post(&url).json(&json!({"project_id": project})).send().await.expect("ci request failed").json().await.unwrap();
+            let got = r["picked"].as_array().map(|a| a.len()).unwrap_or(0);
+            if got != count {
+                self.failures.push(format!("ci_pick: labrat had {got} pending jobs, the recording picked {count}"));
+            }
+        }
+        if !self.target.recording {
+            self.settle().await;
+        }
+    }
+
+    /// Replaying: moves labrat's clock forward to `want` (ms since the start), if behind.
+    async fn advance_clock_to(&mut self, want: i64) {
+        let have = self.started.elapsed().as_millis() as i64 + self.clock_offset;
+        if want > have {
+            self.clock_offset += want - have;
+            let url = format!("{}/-/labrat/time?offset_ms={}", self.target.base, self.base_offset + self.clock_offset);
+            let r = self.http.post(&url).send().await.expect("clock request failed");
+            assert!(r.status().is_success(), "setting the labrat clock failed: {}", r.status());
+        }
+    }
+
+    /// Fake CI: the running jobs of the pipeline on `ref` finish with `status` (`success` or
+    /// `failed`).
+    pub async fn ci_finish(&mut self, r#ref: &str, status: &str) {
+        let project = self.ci_project.expect("ci_enable first");
+        if self.target.recording {
+            let jobs = self.ci_running.remove(r#ref).unwrap_or_default();
+            assert!(!jobs.is_empty(), "no running job on {}", r#ref);
+            self.sync_ci_clock(false).await;
+            for (id, token) in jobs {
+                self.ci_put_job(id, &token, status).await;
+            }
+        } else {
+            self.sync_ci_clock(false).await;
+            let url = format!("{}/-/labrat/ci/finish", self.target.base);
+            let r = self.http.post(&url).json(&json!({"project_id": project, "ref": r#ref, "status": status})).send().await.expect("ci request failed");
+            assert!(r.status().is_success(), "finishing labrat jobs failed: {}", r.status());
+        }
+    }
+
+    /// Fake CI while recording: finishes the running jobs no step finished (pipelines that
+    /// GitLab canceled meanwhile answer 403, which is fine).
+    pub async fn ci_drain(&mut self) {
+        if self.target.recording {
+            for (_, jobs) in std::mem::take(&mut self.ci_running) {
+                for (id, token) in jobs {
+                    self.ci_put_job(id, &token, "success").await;
+                }
+            }
+        }
+    }
+
+    async fn ci_put_job(&mut self, id: i64, token: &str, status: &str) {
+        let mut body = json!({"token": token, "state": status});
+        if status == "failed" {
+            body["failure_reason"] = json!("script_failure");
+        }
+        let url = format!("{}/api/v4/jobs/{id}", self.target.base);
+        let r = self.http.put(&url).json(&body).send().await.expect("job update failed");
+        assert!(matches!(r.status().as_u16(), 200 | 403), "finishing job {id}: {}", r.status());
     }
 
     /// A name unique to this run: `alice` becomes `alice-r1a2b3c`.
@@ -613,6 +811,38 @@ impl Scenario {
     /// Before a recorded step: remember when it was sent (recording), or move labrat's clock so
     /// at least as much time has passed as when GitLab answered it (checking). GitLab writes near
     /// the end of a request, so labrat handles the step at GitLab's completion time.
+    /// Replaying: before a fake CI action, moves labrat's clock to just before the next step
+    /// was sent in the recording, when the reference instance's runner acted.
+    /// `pick`: a pick ends right before the next step; a finish follows the previous step.
+    /// Recordings that kept their CI action times (`ci_times`) use those instead.
+    async fn sync_ci_clock(&mut self, pick: bool) {
+        let elapsed = self.started.elapsed().as_millis() as i64;
+        if self.target.recording {
+            self.ci_times.push(elapsed);
+            return;
+        }
+        let n = self.ci_done;
+        self.ci_done += 1;
+        let want = match self.expected_ci_times.as_ref().and_then(|t| t.get(n).copied()) {
+            Some(t) => t,
+            None if pick => match self.send_times.as_ref().and_then(|t| t.get(self.steps.len()).copied()) {
+                Some(t) => t - 1,
+                None => return,
+            },
+            None => match self.steps.len().checked_sub(1).and_then(|i| self.expected_times.as_ref().and_then(|t| t.get(i).copied())) {
+                Some(t) => t,
+                None => return,
+            },
+        };
+        let have = elapsed + self.clock_offset;
+        if want > have {
+            self.clock_offset += want - have;
+            let url = format!("{}/-/labrat/time?offset_ms={}", self.target.base, self.base_offset + self.clock_offset);
+            let r = self.http.post(&url).send().await.expect("clock request failed");
+            assert!(r.status().is_success(), "setting the labrat clock failed: {}", r.status());
+        }
+    }
+
     async fn sync_clock(&mut self) {
         let elapsed = self.started.elapsed().as_millis() as i64;
         if self.target.recording {
@@ -747,10 +977,13 @@ impl Scenario {
     pub fn finish(self) {
         if self.target.recording {
             let path = fixture_path(&self.name);
-            let data = json!({"scenario": self.name, "base": self.target.public_base, "ssh_port": self.ssh_port, "run": self.run, "steps": self.steps, "times": self.times, "done_times": self.done_times, "started_at": self.started_at});
+            let data = json!({"scenario": self.name, "base": self.target.public_base, "ssh_port": self.ssh_port, "run": self.run, "steps": self.steps, "times": self.times, "done_times": self.done_times, "ci_times": self.ci_times, "ci_picks": self.ci_picks, "started_at": self.started_at});
             let text = serde_json::to_string_pretty(&data).unwrap() + "\n";
             let lower = text.to_ascii_lowercase();
-            for marker in ["CF_Authorization", "Cf-Ray", "cloudflareaccess"] {
+            if let Ok(t) = std::env::var("GITLAB_RUNNER_TOKEN") {
+                assert!(t.is_empty() || !text.contains(&t), "not writing {}: it contains the runner token", path.display());
+            }
+            for marker in ["CF_Authorization", "Cf-Ray", "cloudflareaccess", "glcbt-"] {
                 assert!(!text.contains(marker), "not writing {}: it mentions {marker}", path.display());
             }
             for (k, v) in &self.extra_headers {

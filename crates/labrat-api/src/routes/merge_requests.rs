@@ -1243,6 +1243,7 @@ async fn do_merge(req: Req) -> ApiResult {
     let auto =
         p.bool_or("merge_when_pipeline_succeeds", false)? || p.bool_or("auto_merge", false)?;
     let squash = p.bool("squash")?;
+    let skip_train = p.bool_or("skip_merge_train", false)?;
     let app = req.app.clone();
     // Permission and sha checks, then the `squash` flag, which GitLab saves before deciding
     // whether the MR can be merged (so it sticks even when the merge is refused).
@@ -1279,7 +1280,21 @@ async fn do_merge(req: Req) -> ApiResult {
         let mr = mr.reload(c)?;
         let not_allowed = || Error::message(405, "405 Method Not Allowed").into();
         let cannot = || Error::message(422, "Branch cannot be merged").into();
-        if auto {
+        // EE with merge trains: plain merge-when-checks-pass isn't offered (only the train
+        // strategies are, and this endpoint doesn't use them). An MR that can merge now merges;
+        // anything else is refused.
+        let trains = cfg.is_ee() && labrat_core::services::merge_trains::merge_trains_enabled(&proj);
+        if auto && trains {
+            let dhp = labrat_core::services::ci::diff_head_pipeline(c, &proj, &mr)?;
+            if !can_merge_now || dhp.as_ref().is_some_and(|pl| pl.is_unfinished()) {
+                return Ok(Err(not_allowed()));
+            }
+            merge::merge(c, cfg, &proj, &mr, &me, &mp)?;
+            if mr.reload(c)?.state != "merged" {
+                return Ok(Err(cannot()));
+            }
+            labrat_core::services::merge_trains::merged_past_train(c, cfg, &proj, &mr.reload(c)?, &me, false)?;
+        } else if auto {
             // `MergeWhenChecksPassService#availability_details`: the non-CI checks pass (drafts and
             // threads may wait), and the MR either cannot merge yet or its pipeline is still
             // running.
@@ -1305,6 +1320,10 @@ async fn do_merge(req: Req) -> ApiResult {
             merge::merge(c, cfg, &proj, &mr, &me, &mp)?;
             if mr.reload(c)?.state != "merged" {
                 return Ok(Err(cannot()));
+            }
+            // EE: merging past a merge train restarts it.
+            if cfg.is_ee() {
+                labrat_core::services::merge_trains::merged_past_train(c, cfg, &proj, &mr.reload(c)?, &me, skip_train)?;
             }
         } else {
             return Ok(Err(not_allowed()));
@@ -1361,12 +1380,15 @@ async fn cancel_auto_merge(req: Req) -> ApiResult {
         if !(mrs::can_be_merged_by(c, &p, &mr, &me)? || mr.author_id == me.id) {
             return Err(Error::Unauthorized(None).into());
         }
-        if merge::cancel_auto_merge(c, &p, &mr, &me)? {
+        // EE: an MR on a merge train leaves it.
+        let removed = req.app.config.is_ee() && labrat_core::services::merge_trains::remove(c, &req.app.config, &mr, &me)?;
+        if removed || merge::cancel_auto_merge(c, &p, &mr, &me)? {
             Ok::<_, ApiError>(json!({"status": "success"}))
         } else {
             Ok(json!({"message": "Can't cancel the automatic merge", "status": "error", "http_status": 406}))
         }
     })?;
+    crate::jobs::kick(&req.app);
     Ok(Resp::created(body))
 }
 

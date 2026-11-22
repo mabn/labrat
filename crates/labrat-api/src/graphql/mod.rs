@@ -4,6 +4,7 @@ mod analysis;
 pub mod approvals;
 mod did_you_mean;
 pub mod exec;
+pub mod merge_trains;
 pub mod mr_filters;
 pub mod resolvers;
 pub mod schema;

@@ -771,8 +771,17 @@ pub fn finish_sync(c: &Connection, mr_id: i64) -> Result<()> {
     Ok(())
 }
 
+/// A pipeline of the MR started running: a sync waiting for it begins, and ends a moment
+/// later, as without CI.
+pub fn pipeline_running(c: &Connection, mr_id: i64) -> Result<()> {
+    if c.execute("UPDATE merge_requests SET approvals_syncing = 1 WHERE id = ?1 AND approvals_syncing = 2", [mr_id])? > 0 {
+        crate::jobs::enqueue(c, "approvals_sync", json!({"merge_request_id": mr_id}))?;
+    }
+    Ok(())
+}
+
 pub fn syncing(c: &Connection, mr: &MergeRequest) -> Result<bool> {
-    Ok(c.query_row("SELECT approvals_syncing FROM merge_requests WHERE id = ?1", [mr.id], |r| r.get::<_, i64>(0))? != 0)
+    Ok(c.query_row("SELECT approvals_syncing FROM merge_requests WHERE id = ?1", [mr.id], |r| r.get::<_, i64>(0))? == 1)
 }
 
 /// Ruby's `Array#to_sentence`.
