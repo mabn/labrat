@@ -5,7 +5,7 @@ edition.workspace = true
 publish.workspace = true
 description = "A fast, lightweight GitLab simulator for testing anything that talks to GitLab"
 repository = "https://github.com/mabn/labrat"
-homepage = "https://github.com/mabn/labrat"
+homepage = "https://github.com/mabn/labrat#readme"
 
 [dependencies]
 anyhow = "1.0.104"
