@@ -87,15 +87,6 @@ Or run it in Docker, for example as a service container in CI:
 docker run --rm -p 8080:8080 ghcr.io/mabn/labrat --db :memory: --root-token glpat-test-token
 ```
 
-To build it from source instead (tested with Rust 1.99; it needs at least 1.88):
-
-```sh
-git clone https://github.com/mabn/labrat.git
-cd labrat
-cargo build --release   # also builds the web UI when pnpm (and Node.js 20.19+) is installed
-./target/release/labrat --db :memory: --root-token glpat-test-token
-```
-
 labrat listens on `127.0.0.1:8080`. To look around the web UI, click "Generate demo data" in its
 sidebar (or `POST /-/labrat/demo`): it adds demo projects whose merge requests each show one feature.
 `scripts/seed-demo.sh` resets labrat and fills it with a smaller demo. Use it as you would use GitLab:
@@ -107,9 +98,7 @@ git clone http://root:glpat-test-token@localhost:8080/root/demo.git
 ```
 
 The web UI is at <http://localhost:8080/>. Sign in as `root` with the root password
-(`labrat-root-password` unless set), or with a personal access token. The UI is a React app in
-[`web/`](web/README.md) that `cargo build` embeds from `web/dist`; a binary built without it serves
-a page that says how to build it.
+(`labrat-root-password` unless set), or with a personal access token.
 
 <p align="center">
   <img src="docs/assets/web-ui-merge-request.png" alt="labrat's web UI showing an open merge request: the description, an approve and merge widget, a review thread with a suggested change, and a sidebar with reviewers and labels." width="760">
