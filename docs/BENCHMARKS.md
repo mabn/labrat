@@ -21,7 +21,7 @@ in one process. These numbers show what that costs when all a test needs is the 
 | Memory when idle | 3.03 GiB | 15 MB | 200× less |
 | Peak memory during the workload | 3.55 GiB | 28 MB | 135× less |
 | Data on disk after the runs | 475 MB (after 59 merge requests in total) | 4.8 MB SQLite file and its WAL (after 20) | |
-| Workload: 20 merge requests, created to merged | 187 s and 191 s (two runs) | 0.68 s (median of five runs, 0.64 s to 0.74 s) | 280× faster |
+| Workload: 20 merge requests, created to merged, one after another | 187 s and 191 s (two runs) | 0.68 s (median of five runs, 0.64 s to 0.74 s) | 280× faster |
 
 Median latency of each call in the workload:
 
@@ -79,13 +79,16 @@ SQLite on an empty database, and it starts serving right after.
 - **labrat:** a release build (`cargo build --release`), run with `--db :memory:` and with a file
   database. Both gave the same results.
 - **Workload:** [`scripts/bench/workload.py`](../scripts/bench/workload.py), 20 iterations, one
-  client making one request at a time. Each iteration:
+  client making one request at a time. It is sequential: each iteration finishes before the next
+  starts, so the total is the sum of 20 merge requests' times, not the time to process 20 at once.
+  Each iteration:
   - creates a project with a README;
   - commits a file to a new branch;
   - opens a merge request;
   - polls it every 10 ms until it is mergeable;
   - comments;
-  - merges;
+  - merges: `PUT /merge` merges before it answers, on GitLab and on labrat. Work queued after a
+    merge, such as webhooks and to-dos, isn't waited for on either;
   - lists merged merge requests;
   - reads the merge request over GraphQL.
 - **Memory:** `docker stats` for GitLab, sampled every second during the workload. `VmRSS` and

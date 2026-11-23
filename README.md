@@ -49,7 +49,7 @@ This is not a GitLab replacement:
 | Reset to an empty state | About 5 minutes: recreate the instance | 6 ms |
 | Memory when idle | 3.0 GB | 15 MB |
 | Peak memory during the workload | 3.5 GB | 28 MB |
-| 20 merge requests, created to merged | 189 s | 0.68 s |
+| 20 merge requests, created to merged, one after another | 189 s | 0.68 s |
 | Processes | 89 | 1 |
 
 Details, the workload and the machine are in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
