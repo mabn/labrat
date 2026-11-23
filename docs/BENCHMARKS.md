@@ -1,7 +1,8 @@
 # Benchmarks
 
 labrat compared with the GitLab instance it imitates: GitLab Community Edition 18.11.14 in its
-official Docker image. Both were measured on the same machine, on 2026-11-11.
+official Docker image. Both were measured on the same machine: GitLab on 2026-11-11, labrat again
+on 2026-11-23.
 
 The comparison is lopsided by design. GitLab is a complete DevOps platform with PostgreSQL, Redis,
 Gitaly, Sidekiq, Puma and nginx. labrat imitates the part of GitLab's API that integrations use,
@@ -11,33 +12,35 @@ in one process. These numbers show what that costs when all a test needs is the 
 
 | | GitLab CE 18.11 (Docker) | labrat | Difference |
 |---|---|---|---|
-| Download | 1.83 GB (compressed image) | 8.7 MB (binary, gzipped) | 210× smaller |
-| Size on disk | 6.25 GB image | 22.5 MB binary (stripped) | 280× smaller |
+| Download | 1.83 GB (compressed image) | 10.1 MB (binary, gzipped) | 180× smaller |
+| Size on disk | 6.25 GB image | 25.3 MB binary (stripped) | 250× smaller |
 | Processes | 89 | 1 | |
-| Install: first start from an empty data directory | 242 s until healthy (203 s until the sign-in page loads) | 0: nothing to install; the first start takes 27 ms | |
-| Start with existing data | 84 s | 27 ms | |
-| Reset to an empty state | No built-in way; recreate the instance | 7 ms (`POST /-/labrat/reset`) | |
+| Install: first start from an empty data directory | 242 s until healthy (203 s until the sign-in page loads) | 0: nothing to install; the first start takes 11 ms | |
+| Start with existing data | 84 s | 11 ms | |
+| Reset to an empty state | No built-in way: recreating the instance takes about 5 minutes (a first start, 242 s, then creating a user and token, 52 s) | 6 ms (`POST /-/labrat/reset`), and the root token still works | |
 | Memory when idle | 3.03 GiB | 15 MB | 200× less |
-| Peak memory during the workload | 3.55 GiB | 80 MB | 45× less |
-| Data on disk after the runs | 475 MB (after 59 merge requests in total) | 4.6 MB SQLite file (after 20) | |
-| Workload: 20 merge requests, created to merged | 187 s and 191 s (two runs) | 1.66 s | 114× faster |
+| Peak memory during the workload | 3.55 GiB | 28 MB | 135× less |
+| Data on disk after the runs | 475 MB (after 59 merge requests in total) | 4.8 MB SQLite file and its WAL (after 20) | |
+| Workload: 20 merge requests, created to merged, one after another | 187 s and 191 s (two runs) | 0.68 s (median of five runs, 0.64 s to 0.74 s) | 280× faster |
 
 Median latency of each call in the workload:
 
 | Call | GitLab | labrat |
 |---|---|---|
-| Create a project with a README | 2,749 ms | 3.0 ms |
-| Commit a file to a new branch | 1,413 ms | 2.2 ms |
+| Create a project with a README | 2,749 ms | 2.8 ms |
+| Commit a file to a new branch | 1,413 ms | 2.1 ms |
 | Open a merge request | 154 ms | 2.7 ms |
-| Get a merge request | 95 ms | 3.2 ms |
-| Wait until the merge request is mergeable | 3,097 ms | 55 ms |
-| Comment | 104 ms | 2.1 ms |
-| Merge | 1,114 ms | 4.3 ms |
-| List merged merge requests | 101 ms | 2.3 ms |
-| GraphQL query | 97 ms | 1.8 ms |
+| Get a merge request | 95 ms | 3.1 ms |
+| Wait until the merge request is mergeable | 3,097 ms | 16 ms |
+| Comment | 104 ms | 2.3 ms |
+| Merge | 1,114 ms | 6.1 ms |
+| List merged merge requests | 101 ms | 2.4 ms |
+| GraphQL query | 97 ms | 1.6 ms |
 
-The GitLab column shows the first of its two runs. The labrat "wait until mergeable" time is mostly
-the 100 ms polling interval of the workload script.
+The GitLab column shows the first of its two runs. GitLab was measured while the workload polled every
+100 ms; polling every 10 ms, as now, would save it at most 90 ms per merge request (1.8 s of 189 s).
+The labrat "wait until mergeable" time is mostly the 10 ms polling interval: the merge request is
+mergeable on the second poll.
 
 One more result: during the first GitLab run, one call failed. Gitaly took 10.9 seconds to create a
 repository, past GitLab's 10-second deadline, so `POST /projects` returned
@@ -76,13 +79,16 @@ SQLite on an empty database, and it starts serving right after.
 - **labrat:** a release build (`cargo build --release`), run with `--db :memory:` and with a file
   database. Both gave the same results.
 - **Workload:** [`scripts/bench/workload.py`](../scripts/bench/workload.py), 20 iterations, one
-  client making one request at a time. Each iteration:
+  client making one request at a time. It is sequential: each iteration finishes before the next
+  starts, so the total is the sum of 20 merge requests' times, not the time to process 20 at once.
+  Each iteration:
   - creates a project with a README;
   - commits a file to a new branch;
   - opens a merge request;
-  - polls it every 100 ms until it is mergeable;
+  - polls it every 10 ms until it is mergeable;
   - comments;
-  - merges;
+  - merges: `PUT /merge` merges before it answers, on GitLab and on labrat. Work queued after a
+    merge, such as webhooks and to-dos, isn't waited for on either;
   - lists merged merge requests;
   - reads the merge request over GraphQL.
 - **Memory:** `docker stats` for GitLab, sampled every second during the workload. `VmRSS` and

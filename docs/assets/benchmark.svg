@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 322" width="760" height="322" role="img" aria-labelledby="t d">
 <title id="t">labrat compared with GitLab</title>
-<desc id="d">Run 20 merge requests from creation to merge: labrat 1.7 s, GitLab 189 s; Memory when idle: labrat 15 MB, GitLab 3.0 GB; Start from an empty data directory: labrat 0.03 s, GitLab 4 min</desc>
+<desc id="d">Run 20 merge requests from creation to merge: labrat 0.68 s, GitLab 189 s; Memory when idle: labrat 15 MB, GitLab 3.0 GB; Start from an empty data directory: labrat 0.01 s, GitLab 4 min</desc>
 <style>
   .surface { fill: none; }
   .title { font: 600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: #0b0b0b; }
@@ -20,8 +20,8 @@
 <text class="title" x="0" y="18">Run 20 merge requests from creation to merge</text>
 <line class="track" x1="112" y1="30" x2="112" y2="78"/>
 <text class="name" x="102" y="44" text-anchor="end">labrat</text>
-<path class="labrat" d="M112,30 H114.3 Q116.6,30 116.6,32.283597883597885 V45.716402116402115 Q116.6,48 114.3,48 H112 Z"/>
-<text class="value" x="124.6" y="44">1.7 s</text>
+<path class="labrat" d="M112,30 H113.5 Q115.0,30 115.0,31.50 V46.50 Q115.0,48 113.5,48 H112 Z"/>
+<text class="value" x="123.0" y="44">0.68 s</text>
 <text class="name" x="102" y="74" text-anchor="end">GitLab</text>
 <path class="gitlab" d="M112,60 H628.0 Q632.0,60 632.0,64 V74 Q632.0,78 628.0,78 H112 Z"/>
 <text class="value" x="640.0" y="74">189 s</text>
@@ -37,7 +37,7 @@
 <line class="track" x1="112" y1="254" x2="112" y2="302"/>
 <text class="name" x="102" y="268" text-anchor="end">labrat</text>
 <path class="labrat" d="M112,254 H113.5 Q115.0,254 115.0,255.5 V270.5 Q115.0,272 113.5,272 H112 Z"/>
-<text class="value" x="123.0" y="268">0.03 s</text>
+<text class="value" x="123.0" y="268">0.01 s</text>
 <text class="name" x="102" y="298" text-anchor="end">GitLab</text>
 <path class="gitlab" d="M112,284 H628.0 Q632.0,284 632.0,288 V298 Q632.0,302 628.0,302 H112 Z"/>
 <text class="value" x="640.0" y="298">4 min</text>

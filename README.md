@@ -3,27 +3,25 @@
 **A fast, lightweight GitLab simulator for testing anything that talks to GitLab.**
 
 labrat answers GitLab's REST API, GraphQL API, webhooks and Git over HTTP the way GitLab 18.11
-does, from a single 22 MB binary. Point your bot, CLI, code-review tool or sync job at it instead of
+does, from a single 25 MB binary. Point your bot, CLI, code-review tool or sync job at it instead of
 a real GitLab, and your tests start in milliseconds instead of minutes.
 
 <p align="center">
-  <img src="docs/assets/benchmark.svg" alt="labrat compared with GitLab: 20 merge requests from creation to merge take 1.7 s instead of 189 s; idle memory is 15 MB instead of 3.0 GB; starting from an empty data directory takes 0.03 s instead of 4 minutes." width="760">
+  <img src="docs/assets/benchmark.svg" alt="labrat compared with GitLab: 20 merge requests from creation to merge take 0.68 s instead of 189 s; idle memory is 15 MB instead of 3.0 GB; starting from an empty data directory takes 0.01 s instead of 4 minutes." width="760">
 </p>
 
 <p align="center">
   <i>labrat compared with GitLab CE 18.11 in Docker, on the same laptop. <a href="docs/BENCHMARKS.md">How this was measured</a>.</i>
 </p>
 
-## Highlights
+## Features
 
-- **Fast:** a merge request workload runs [114× faster](docs/BENCHMARKS.md) than on GitLab. labrat
-  starts in about 30 ms and wipes all its data in 7 ms, so every test can start from a clean state.
+- **Fast:** a merge request workload runs [100× faster](docs/BENCHMARKS.md) than on GitLab. labrat
+  starts in about 10 ms and wipes all its data in 6 ms, so every test can start from a clean state.
 - **Small:** one binary and one SQLite file. No Docker, PostgreSQL, Redis or Sidekiq, and about
   15 MB of memory when idle instead of 3 GB.
-- **Faithful:** checked against 7,838 responses and 689 webhook deliveries recorded from a real
-  GitLab instance. The check compares status codes, headers, bodies and even key order.
-- **Merge requests end to end:** branches and pushes, diffs, comments and threads, reviews,
-  approvals, suggestions, mergeability checks, every merge method, auto-merge and webhooks.
+- **Accurate:** checked against 16,504 responses and 1,428 webhook deliveries recorded from real
+  GitLab CE and EE instances. The check compares status codes, headers, bodies and even key order.
 - **Built for tests:** endpoints to reset, snapshot and restore, to wait until background work is
   done, and to move the clock. A request log shows every call your code made.
 - **Works with real clients:** it is tested with the Rust `gitlab` crate, `curl` and
@@ -31,18 +29,27 @@ a real GitLab, and your tests start in milliseconds instead of minutes.
 - **Simple web UI:** a GitLab-style web UI to browse projects, review merge requests and change
   settings while you develop or debug.
 
+## Limitations
+
+This is not a GitLab replacement:
+
+- git storage and database is a single sqlite DB
+- Single process, no support for scaling
+- Test endpoints which bypass all security
+- Only functionality related to git hosting and Merge Requests is supported, there is no CI or Issues
+
 ## labrat and GitLab at a glance
 
 | | GitLab CE 18.11 (Docker) | labrat |
 |---|---|---|
-| Download | 1.83 GB image | 8.7 MB binary (gzipped) |
-| Size on disk | 6.25 GB | 22.5 MB |
+| Download | 1.83 GB image | 10.1 MB binary (gzipped) |
+| Size on disk | 6.25 GB | 25.3 MB |
 | Install | 4 minutes: the first start sets GitLab up | 0: nothing to install |
-| Start | 84 s | 27 ms |
-| Reset to an empty state | Recreate the instance | 7 ms |
+| Start | 84 s | 11 ms |
+| Reset to an empty state | About 5 minutes: recreate the instance | 6 ms |
 | Memory when idle | 3.0 GB | 15 MB |
-| Peak memory during the workload | 3.5 GB | 80 MB |
-| 20 merge requests, created to merged | 189 s | 1.7 s |
+| Peak memory during the workload | 3.5 GB | 28 MB |
+| 20 merge requests, created to merged, one after another | 189 s | 0.68 s |
 | Processes | 89 | 1 |
 
 Details, the workload and the machine are in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).
@@ -140,7 +147,8 @@ is in [docs/PLAN.md](docs/PLAN.md).
 
 labrat is checked against a real GitLab, not against its documentation. `tests/conformance`
 holds 154 scenarios: sequences of API calls, GraphQL queries, git pushes and webhook deliveries,
-recorded against GitLab 18.11. `cargo test` runs each scenario against labrat and compares every response
+recorded against GitLab CE 18.11. EE mode is checked against 168 scenarios recorded against GitLab
+EE 18.11. `cargo test` runs each scenario against labrat and compares every response
 with the recording, after replacing ids, times and tokens with placeholders. It compares status,
 headers, body and key order.
 
@@ -224,6 +232,7 @@ it.
 | `GET /-/labrat/idle` | Returns once every background job and webhook delivery has finished |
 | `POST /-/labrat/time` | Shifts labrat's clock |
 | `GET /-/labrat/requests.json` | The last 500 API calls with requests and responses (also in the UI at `/-/labrat/requests`) |
+| `POST /-/labrat/demo` | Adds a `demo` group of projects whose merge requests each show one feature, and the users they need (also "Generate demo data" in the UI). Returns 409 if the group exists |
 | `PUT /-/labrat/projects/:id/ci` | Fake CI for a project (EE merge trains): `{"enabled": true, "jobs": ["test"], "runner": {"mode": "manual"}}`, or `"mode": "auto"` with `"status"` (`success`, `failed` or `canceled`), `"duration_ms"` and per-ref `"overrides"`. `{"enabled": false}` turns it off. `GET` shows it. |
 | `GET /-/labrat/projects/:id/ci/jobs` | The project's fake CI jobs |
 | `POST /-/labrat/ci/pick` | `{"project_id": 1}`: the fake runner starts the project's pending jobs |
