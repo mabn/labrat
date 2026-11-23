@@ -17,6 +17,8 @@ import { Webhooks } from '../../components/Webhooks';
 import { MrListPage } from '../mr/MrListPage';
 import { NewMr } from '../mr/NewMr';
 import { MrPage } from '../mr/MrPage';
+import { MergeTrains } from './MergeTrains';
+import { TestSetup } from './TestSetup';
 
 interface ProjectCtx {
   project: Project;
@@ -79,7 +81,16 @@ export function ProjectRoutes({ project: initial, rest }: { project: Project; re
           { label: 'Tags', to: `${p}/-/tags` },
         ],
       },
-      { label: 'Merge requests', to: `${p}/-/merge_requests`, icon: 'mr', count: counts.data ?? undefined },
+      {
+        label: 'Merge requests',
+        to: `${p}/-/merge_requests`,
+        icon: 'mr',
+        count: counts.data ?? undefined,
+        sub: [
+          { label: 'Merge requests', to: `${p}/-/merge_requests` },
+          { label: 'Merge trains', to: `${p}/-/merge_trains` },
+        ],
+      },
       {
         label: 'Manage',
         to: `${p}/-/project_members`,
@@ -102,6 +113,7 @@ export function ProjectRoutes({ project: initial, rest }: { project: Project; re
                 { label: 'Merge requests', to: `${p}/-/settings/merge_requests` },
                 { label: 'Webhooks', to: `${p}/-/settings/webhooks` },
                 { label: 'Access tokens', to: `${p}/-/settings/access_tokens` },
+                { label: 'labrat test setup', to: `${p}/-/settings/labrat` },
               ],
             },
           ]
@@ -151,6 +163,8 @@ function Page({ parts }: { parts: string[] }) {
       if (!tail.length) return <MrListPage />;
       if (tail[0] === 'new') return <NewMr />;
       return <MrPage key={tail[0]} iid={Number(tail[0])} tab={tail[1] ?? ''} />;
+    case 'merge_trains':
+      return <MergeTrains />;
     case 'project_members':
       return (
         <Simple title="Members">
@@ -182,6 +196,8 @@ function Page({ parts }: { parts: string[] }) {
           return <Simple title="Webhooks"><Webhooks base={base} /></Simple>;
         case 'access_tokens':
           return <ProjectAccessTokens />;
+        case 'labrat':
+          return <TestSetup />;
         default:
           return <GeneralSettings />;
       }

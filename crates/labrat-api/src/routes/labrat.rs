@@ -11,6 +11,7 @@ use std::sync::Arc;
 pub fn routes() -> Router<Arc<App>> {
     Router::new()
         .route("/-/labrat/reset", post(reset))
+        .route("/-/labrat/demo", post(demo))
         .route("/-/labrat/snapshot", post(snapshot))
         .route("/-/labrat/restore", post(restore))
         .route("/-/labrat/idle", get(idle))
@@ -258,6 +259,12 @@ async fn requests(req: Req) -> ApiResult {
 async fn clear_requests(req: Req) -> ApiResult {
     crate::request_log::clear(&req.app);
     Ok(Resp::no_content())
+}
+
+/// Adds demo projects, merge requests and users (see `crate::demo`).
+async fn demo(req: Req) -> ApiResult {
+    let body = crate::demo::generate(req.app.clone()).await?;
+    Ok(Resp::created(body))
 }
 
 /// Wipes all data and recreates the root user (and its token, if configured).

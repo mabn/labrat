@@ -88,6 +88,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 16px 0; }
   content: ''; position: absolute; left: 2px; top: 6px; bottom: 6px; width: 3px; border-radius: 2px; background: var(--blue-500);
 }
 .nav-item.sub { padding-left: 36px; }
+button.nav-item { width: 100%; border: 0; background: none; font: inherit; text-align: left; cursor: pointer; }
 .nav-item .count {
   margin-left: auto; background: var(--gray-50); border-radius: 999px; padding: 0 6px; font-size: 12px; font-weight: 400;
 }
@@ -431,3 +432,10 @@ table.diff tr.comments .note-body-wrap { margin-bottom: 8px; }
 }
 .system-note-inline .md { display: inline; }
 .system-note-inline .md p { display: inline; margin: 0; }
+
+/* EE-only controls: disabled in CE mode (`--noee`). */
+fieldset.ee-only { border: 0; padding: 0; margin: 0; min-width: 0; }
+.ee-off { opacity: 0.55; }
+.ee-note { margin-bottom: 8px; }
+.ee-badge { font-size: 10px; padding: 0 5px; margin-left: 6px; vertical-align: middle; font-weight: 600; }
+.sidebar-block-head fieldset.ee-only { margin-left: auto; }

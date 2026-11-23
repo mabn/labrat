@@ -347,6 +347,13 @@ impl FromRequest<Arc<App>> for Req {
             token: None,
             auth_error: None,
         };
+        if let Some(crate::demo::InternalUser(id)) = parts.extensions.get::<crate::demo::InternalUser>() {
+            // A request labrat makes to itself (demo data), acting as this user. Outside clients
+            // can't set request extensions.
+            let id = *id;
+            r.user = app.db.read(|c| User::find(c, id))?;
+            return Ok(r);
+        }
         r.authenticate()?;
         Ok(r)
     }

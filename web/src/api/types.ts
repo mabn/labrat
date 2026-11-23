@@ -53,6 +53,10 @@ export interface Project {
   only_allow_merge_if_pipeline_succeeds?: boolean;
   only_allow_merge_if_all_discussions_are_resolved?: boolean;
   remove_source_branch_after_merge?: boolean;
+  /** EE: merged results pipelines and merge trains. */
+  merge_pipelines_enabled?: boolean;
+  merge_trains_enabled?: boolean;
+  merge_trains_skip_train_allowed?: boolean;
   merge_requests_enabled?: boolean;
   merge_commit_template?: string | null;
   squash_commit_template?: string | null;
@@ -313,6 +317,65 @@ export interface Approvals {
   user_can_approve: boolean;
   approved: boolean;
   approved_by: { user: UserBasic; approved_at?: string }[];
+  // EE only:
+  approvals_required?: number;
+  approvals_left?: number;
+  require_password_to_approve?: boolean;
+  approval_rules_left?: { id: number; name: string; rule_type: string }[];
+}
+
+export interface GroupBasic {
+  id: number;
+  name: string;
+  full_path: string;
+}
+
+/** EE: a project's or a merge request's approval rule. */
+export interface ApprovalRule {
+  id: number;
+  name: string;
+  rule_type: string;
+  report_type?: string | null;
+  section?: string | null;
+  approvals_required: number;
+  eligible_approvers: UserBasic[];
+  users: UserBasic[];
+  groups: GroupBasic[];
+  protected_branches?: { id: number; name: string }[];
+  applies_to_all_protected_branches?: boolean;
+  code_owner?: boolean;
+  approved?: boolean;
+  approved_by?: UserBasic[];
+}
+
+/** EE: `/projects/:id/approvals`. */
+export interface ProjectApprovalSettings {
+  reset_approvals_on_push: boolean;
+  selective_code_owner_removals: boolean;
+  disable_overriding_approvers_per_merge_request: boolean;
+  merge_requests_author_approval: boolean;
+  merge_requests_disable_committers_approval: boolean;
+  require_password_to_approve: boolean;
+}
+
+/** EE: a merge train car. */
+export interface MergeTrainCar {
+  id: number;
+  merge_request: { id: number; iid: number; project_id: number; title: string; state: string; web_url: string };
+  user: UserBasic | null;
+  pipeline: Pipeline | null;
+  created_at: string;
+  target_branch: string;
+  status: string;
+  merged_at: string | null;
+  duration: number | null;
+}
+
+/** EE: a merge request dependency (`/blocks`). */
+export interface MrBlock {
+  id: number;
+  blocking_merge_request?: MergeRequest;
+  blocked_merge_request?: MergeRequest;
 }
 
 export interface FileDiff {

@@ -22,6 +22,8 @@ export default defineConfig({
       '/uploads': backend,
       '/-/labrat/requests.json': backend,
       '/-/labrat/reset': backend,
+      '/-/labrat/projects': backend,
+      '/-/labrat/ci': backend,
       // Sign-in and sign-out are form posts handled by labrat; their GET pages are the app's.
       '/users/sign_in': { ...backend, bypass: (req) => (req.method === 'GET' ? '/index.html' : undefined) },
       '/users/sign_out': backend,

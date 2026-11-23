@@ -63,8 +63,9 @@ Run it with an in-memory database and a known token for `root`:
 ./target/release/labrat --db :memory: --root-token glpat-test-token
 ```
 
-labrat listens on `127.0.0.1:8080`. `scripts/seed-demo.sh` resets it and fills it with demo users, a
-project and a merge request under review, to look at in the web UI. Use it as you would use GitLab:
+labrat listens on `127.0.0.1:8080`. To look around the web UI, click "Generate demo data" in its
+sidebar (or `POST /-/labrat/demo`): it adds demo projects whose merge requests each show one feature.
+`scripts/seed-demo.sh` resets labrat and fills it with a smaller demo. Use it as you would use GitLab:
 
 ```sh
 curl -H "PRIVATE-TOKEN: glpat-test-token" -X POST localhost:8080/api/v4/projects \

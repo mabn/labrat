@@ -2,7 +2,8 @@
 
 A single-page app (React, Vite, TypeScript) that looks and works like GitLab's UI for the parts
 labrat implements. It talks to labrat only through the GitLab APIs (`/api/v4` and `/api/graphql`),
-so everything it shows or does is also available to any other client.
+so everything it shows or does is also available to any other client. The exceptions are labrat's
+own tools: the request log and the test setup page, which use `/-/labrat/`.
 
 ## Build
 
@@ -36,6 +37,10 @@ to labrat (`LABRAT_URL` overrides `http://127.0.0.1:8080`).
   responses open the right page.
 - **Request log**: the app sends `X-Labrat-UI: 1`, and labrat keeps those calls out of
   `/-/labrat/requests`, which stays a log of the clients under test.
+- **EE or CE**: the app reads `enterprise` from `/api/v4/version` (`src/edition.tsx`). EE features
+  stay visible in CE mode but are disabled (`<EeOnly>`), and the app makes no EE-only calls then.
+- **Test setup**: Settings › labrat test setup uses labrat's own `/-/labrat/` endpoints (fake CI,
+  code owners, approval policies, policy results), the one place the app goes beyond GitLab's APIs.
 - **Markdown** is rendered in the browser (marked and DOMPurify), close to but not exactly GitLab's.
 
 ## Layout
