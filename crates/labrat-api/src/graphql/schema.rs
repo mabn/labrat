@@ -1,6 +1,5 @@
 //! GitLab's 18.11 GraphQL schema, loaded from its introspection result (embedded, gzipped).
 
-use serde_json::Value;
 use std::collections::HashMap;
 use std::io::Read;
 use std::sync::LazyLock;
@@ -26,15 +25,12 @@ pub fn introspection_bytes() -> &'static [u8] {
     if current_edition().is_ee() { &STATIC_RAW } else { &RAW }
 }
 
-static SCHEMA_CE: LazyLock<Schema> = LazyLock::new(|| {
-    let v: Value = serde_json::from_slice(&RAW).expect("introspection json");
-    Schema::from_introspection(v)
-});
+/// The schemas in the compact form `build.rs` makes from the two files above.
+static SCHEMA_CE_GZ: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/graphql-schema-ce.gz"));
+static SCHEMA_EE_GZ: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/graphql-schema-ee.gz"));
 
-static SCHEMA_EE: LazyLock<Schema> = LazyLock::new(|| {
-    let v: Value = serde_json::from_slice(&STATIC_RAW).expect("introspection json");
-    Schema::from_introspection(v)
-});
+static SCHEMA_CE: LazyLock<Schema> = LazyLock::new(|| Schema::from_compact(&gunzip(SCHEMA_CE_GZ)));
+static SCHEMA_EE: LazyLock<Schema> = LazyLock::new(|| Schema::from_compact(&gunzip(SCHEMA_EE_GZ)));
 
 thread_local! {
     static EDITION: std::cell::Cell<labrat_core::Edition> = const { std::cell::Cell::new(labrat_core::Edition::Ce) };
@@ -66,11 +62,14 @@ pub enum TypeRef {
 }
 
 impl TypeRef {
-    fn from_json(v: &Value) -> TypeRef {
-        match v["kind"].as_str() {
-            Some("NON_NULL") => TypeRef::NonNull(Box::new(TypeRef::from_json(&v["ofType"]))),
-            Some("LIST") => TypeRef::List(Box::new(TypeRef::from_json(&v["ofType"]))),
-            _ => TypeRef::Named(v["name"].as_str().unwrap_or_default().to_string()),
+    /// Parses GraphQL notation: `[String!]!`.
+    fn parse(s: &str) -> TypeRef {
+        if let Some(inner) = s.strip_suffix('!') {
+            TypeRef::NonNull(Box::new(TypeRef::parse(inner)))
+        } else if let Some(inner) = s.strip_prefix('[').and_then(|r| r.strip_suffix(']')) {
+            TypeRef::List(Box::new(TypeRef::parse(inner)))
+        } else {
+            TypeRef::Named(s.to_string())
         }
     }
 
@@ -131,77 +130,86 @@ impl TypeDef {
 }
 
 pub struct Schema {
-    pub raw: Value,
+    /// (kind, name) of every type, in introspection order.
+    order: Vec<(String, String)>,
     pub types: HashMap<String, TypeDef>,
     pub query_type: String,
     pub mutation_type: String,
 }
 
-fn inputs(v: &Value) -> Vec<InputDef> {
-    v.as_array()
-        .map(|a| {
-            a.iter()
-                .map(|x| InputDef {
-                    name: x["name"].as_str().unwrap_or_default().to_string(),
-                    ty: TypeRef::from_json(&x["type"]),
-                    default: x["defaultValue"].as_str().map(str::to_string),
-                })
-                .collect()
-        })
-        .unwrap_or_default()
+fn unescape(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut chars = s.chars();
+    while let Some(c) = chars.next() {
+        if c != '\\' {
+            out.push(c);
+            continue;
+        }
+        match chars.next() {
+            Some('t') => out.push('\t'),
+            Some('n') => out.push('\n'),
+            Some(other) => out.push(other),
+            None => {}
+        }
+    }
+    out
+}
+
+/// An `A` or `I` record: name, type, `=default` or nothing.
+fn input(mut parts: std::str::Split<'_, char>) -> InputDef {
+    let name = parts.next().unwrap_or_default().to_string();
+    let ty = TypeRef::parse(parts.next().unwrap_or_default());
+    let default = parts.next().and_then(|d| d.strip_prefix('=')).map(unescape);
+    InputDef { name, ty, default }
 }
 
 impl Schema {
     /// Type names of the given kinds, in introspection order.
     pub fn type_names(&self, kinds: &[&str]) -> Vec<String> {
-        self.raw["__schema"]["types"]
-            .as_array()
-            .map(|a| {
-                a.iter()
-                    .filter(|t| kinds.contains(&t["kind"].as_str().unwrap_or_default()))
-                    .filter_map(|t| t["name"].as_str().map(str::to_string))
-                    .collect()
-            })
-            .unwrap_or_default()
+        self.order.iter().filter(|(k, _)| kinds.contains(&k.as_str())).map(|(_, n)| n.clone()).collect()
     }
 
-    fn from_introspection(v: Value) -> Schema {
-        let root = v.get("data").cloned().unwrap_or(v);
-        let schema = &root["__schema"];
-        let mut types = HashMap::new();
-        for t in schema["types"].as_array().into_iter().flatten() {
-            let name = t["name"].as_str().unwrap_or_default().to_string();
-            let fields = t["fields"]
-                .as_array()
-                .map(|a| {
-                    a.iter()
-                        .map(|f| FieldDef {
-                            name: f["name"].as_str().unwrap_or_default().to_string(),
-                            args: inputs(&f["args"]),
-                            ty: TypeRef::from_json(&f["type"]),
-                        })
-                        .collect()
-                })
-                .unwrap_or_default();
-            let def = TypeDef {
-                kind: t["kind"].as_str().unwrap_or_default().to_string(),
-                name: name.clone(),
-                fields,
-                input_fields: inputs(&t["inputFields"]),
-                possible_types: t["possibleTypes"]
-                    .as_array()
-                    .map(|a| a.iter().filter_map(|p| p["name"].as_str().map(str::to_string)).collect())
-                    .unwrap_or_default(),
-                enum_values: t["enumValues"]
-                    .as_array()
-                    .map(|a| a.iter().filter_map(|p| p["name"].as_str().map(str::to_string)).collect())
-                    .unwrap_or_default(),
-            };
-            types.insert(name, def);
+    /// Loads the compact form `build.rs` writes (described there).
+    fn from_compact(bytes: &[u8]) -> Schema {
+        let text = std::str::from_utf8(bytes).expect("compact schema");
+        let mut order: Vec<(String, String)> = vec![];
+        let mut defs: Vec<TypeDef> = vec![];
+        let (mut query_type, mut mutation_type) = (String::from("Query"), String::from("Mutation"));
+        for line in text.lines() {
+            let mut parts = line.split('\t');
+            let tag = parts.next().unwrap_or_default();
+            match tag {
+                "Q" => query_type = parts.next().unwrap_or_default().to_string(),
+                "M" => mutation_type = parts.next().unwrap_or_default().to_string(),
+                "T" => {
+                    let kind = parts.next().unwrap_or_default().to_string();
+                    let name = parts.next().unwrap_or_default().to_string();
+                    order.push((kind.clone(), name.clone()));
+                    defs.push(TypeDef { kind, name, fields: vec![], input_fields: vec![], possible_types: vec![], enum_values: vec![] });
+                }
+                _ => {
+                    let Some(t) = defs.last_mut() else { continue };
+                    match tag {
+                        "F" => {
+                            let name = parts.next().unwrap_or_default().to_string();
+                            let ty = TypeRef::parse(parts.next().unwrap_or_default());
+                            t.fields.push(FieldDef { name, args: vec![], ty });
+                        }
+                        "A" => {
+                            if let Some(f) = t.fields.last_mut() {
+                                f.args.push(input(parts));
+                            }
+                        }
+                        "I" => t.input_fields.push(input(parts)),
+                        "P" => t.possible_types.push(parts.next().unwrap_or_default().to_string()),
+                        "E" => t.enum_values.push(parts.next().unwrap_or_default().to_string()),
+                        _ => {}
+                    }
+                }
+            }
         }
-        let query_type = schema["queryType"]["name"].as_str().unwrap_or("Query").to_string();
-        let mutation_type = schema["mutationType"]["name"].as_str().unwrap_or("Mutation").to_string();
-        Schema { raw: root, types, query_type, mutation_type }
+        let types = defs.into_iter().map(|t| (t.name.clone(), t)).collect();
+        Schema { order, types, query_type, mutation_type }
     }
 
     pub fn get(&self, name: &str) -> Option<&TypeDef> {
@@ -215,9 +223,53 @@ impl Schema {
         }
         self.get(cond).is_some_and(|t| t.possible_types.iter().any(|p| p == concrete))
     }
+}
 
-    /// The raw introspection object of a type (for `__type(name:)`).
-    pub fn raw_type(&self, name: &str) -> Option<&Value> {
-        self.raw["__schema"]["types"].as_array()?.iter().find(|t| t["name"] == name)
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::Value;
+
+    fn type_ref(v: &Value) -> TypeRef {
+        match v["kind"].as_str() {
+            Some("NON_NULL") => TypeRef::NonNull(Box::new(type_ref(&v["ofType"]))),
+            Some("LIST") => TypeRef::List(Box::new(type_ref(&v["ofType"]))),
+            _ => TypeRef::Named(v["name"].as_str().unwrap().to_string()),
+        }
+    }
+
+    fn inputs(v: &Value) -> Vec<(String, TypeRef, Option<String>)> {
+        v.as_array().into_iter().flatten().map(|i| (i["name"].as_str().unwrap().to_string(), type_ref(&i["type"]), i["defaultValue"].as_str().map(String::from))).collect()
+    }
+
+    fn names(v: &Value) -> Vec<String> {
+        v.as_array().into_iter().flatten().map(|x| x["name"].as_str().unwrap().to_string()).collect()
+    }
+
+    /// The compact schema `build.rs` makes holds everything labrat reads from the introspection
+    /// file, unchanged.
+    #[test]
+    fn compact_schema_matches_introspection() {
+        for (json, schema) in [(&*RAW, &*SCHEMA_CE), (&*STATIC_RAW, &*SCHEMA_EE)] {
+            let v: Value = serde_json::from_slice(json).unwrap();
+            let root = if v.get("data").is_some() { &v["data"] } else { &v };
+            let types = root["__schema"]["types"].as_array().unwrap();
+            assert_eq!(schema.types.len(), types.len());
+            assert_eq!(schema.query_type, root["__schema"]["queryType"]["name"].as_str().unwrap());
+            assert_eq!(schema.mutation_type, root["__schema"]["mutationType"]["name"].as_str().unwrap());
+            let order: Vec<(String, String)> = types.iter().map(|t| (t["kind"].as_str().unwrap().to_string(), t["name"].as_str().unwrap().to_string())).collect();
+            assert_eq!(schema.order, order);
+            for t in types {
+                let def = schema.get(t["name"].as_str().unwrap()).unwrap();
+                assert_eq!(def.kind, t["kind"].as_str().unwrap());
+                let fields: Vec<_> = t["fields"].as_array().into_iter().flatten().map(|f| (f["name"].as_str().unwrap().to_string(), type_ref(&f["type"]), inputs(&f["args"]))).collect();
+                let got: Vec<_> = def.fields.iter().map(|f| (f.name.clone(), f.ty.clone(), f.args.iter().map(|a| (a.name.clone(), a.ty.clone(), a.default.clone())).collect::<Vec<_>>())).collect();
+                assert_eq!(got, fields, "{}", def.name);
+                let got: Vec<_> = def.input_fields.iter().map(|a| (a.name.clone(), a.ty.clone(), a.default.clone())).collect();
+                assert_eq!(got, inputs(&t["inputFields"]), "{}", def.name);
+                assert_eq!(def.possible_types, names(&t["possibleTypes"]), "{}", def.name);
+                assert_eq!(def.enum_values, names(&t["enumValues"]), "{}", def.name);
+            }
+        }
     }
 }
