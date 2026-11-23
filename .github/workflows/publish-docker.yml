@@ -1,0 +1,65 @@
+# Packages the Linux release binaries into ghcr.io/mabn/labrat (linux/amd64 and linux/arm64).
+#
+# Runs after the Release workflow (release.yml) succeeds, and downloads the binaries it published,
+# so the image holds exactly what the GitHub Release holds; nothing is compiled here. It can also
+# be run by hand from the Actions tab to (re)build the image of an existing release.
+name: Publish Docker image
+
+on:
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to package, e.g. v0.1.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  docker:
+    # For a tag push, the Release run's head_branch is the tag.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+      TAG: ${{ inputs.tag || github.event.workflow_run.head_branch }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          ref: ${{ env.TAG }}
+      - name: Get the binaries from the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern 'labrat-*-unknown-linux-musl.tar.xz' --dir artifacts
+      - run: ls -l artifacts/labrat-*-unknown-linux-musl.tar.xz
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # v1.2.3 -> 1.2.3, 1.2 and latest. A prerelease (v1.2.3-rc.1) gets only its own version.
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=semver,pattern={{version}},value=${{ env.TAG }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.TAG }}
+          flavor: |
+            latest=auto
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          build-contexts: artifacts=artifacts
+          build-args: BINARY_SOURCE=prebuilt
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

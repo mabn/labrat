@@ -515,8 +515,11 @@ Releases are built by two GitHub Actions workflows, and only when you ask for on
   GitHub Release with the archives and `labrat-installer.sh`, and pushes the Homebrew formula to
   `mabn/homebrew-tap`. Don't edit it by hand: change `dist-workspace.toml` and run `dist generate`
   (install dist with `cargo install --locked cargo-dist`).
-- `.github/workflows/docker.yml` builds the `Dockerfile` for linux/amd64 and linux/arm64 and pushes
-  `ghcr.io/mabn/labrat`. It can also be started by hand from the Actions tab.
+- `.github/workflows/publish-docker.yml` runs once a Release run succeeds. It packages that
+  release's two Linux binaries into `ghcr.io/mabn/labrat` (linux/amd64 and linux/arm64) with the
+  `Dockerfile`'s `BINARY_SOURCE=prebuilt` path, so the image holds the released binaries and
+  nothing is compiled twice. To rebuild the image of an existing release, run it by hand from the
+  Actions tab with the tag. A plain `docker build .` builds labrat from source instead.
 
 To release:
 
@@ -525,8 +528,10 @@ To release:
 2. Tag the commit with the same version and push the tag:
    `git tag v0.2.0 && git push origin v0.2.0`.
 
-Both workflows start from the tag. A tag with a suffix such as `v0.2.0-rc.1` makes a prerelease
-and doesn't move the `latest` Docker tag.
+The tag starts the Release workflow. It must match the version in `Cargo.toml` exactly, or the
+Release workflow stops at its first step without publishing anything. To make a prerelease, set the
+version to one with a suffix, such as `0.2.0-rc.1`, and tag `v0.2.0-rc.1`. A prerelease isn't pushed
+to Homebrew and doesn't move the `latest` Docker tag.
 
 One-time setup: the Homebrew publish step needs the `mabn/homebrew-tap` repository and a
 `HOMEBREW_TAP_TOKEN` secret in this repository, holding a token that can push to the tap. After

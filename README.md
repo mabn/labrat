@@ -69,7 +69,7 @@ brew install mabn/tap/labrat
 Or with the install script (macOS and Linux; it puts `labrat` in `~/.cargo/bin`):
 
 ```sh
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/mabn/labrat/releases/latest/download/labrat-installer.sh | sh
+curl -LsSf https://github.com/mabn/labrat/releases/latest/download/labrat-installer.sh | sh
 ```
 
 Prebuilt binaries for macOS (Apple Silicon and Intel), Linux (x86_64 and arm64, static) and Windows
