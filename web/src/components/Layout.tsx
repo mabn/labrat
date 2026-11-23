@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Icon, Logo } from './Icon';
 import { Avatar, Dropdown, UserAvatar } from './ui';
 import { useSession } from '../session';
+import { DemoDataButton } from './DemoData';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client';
 
@@ -202,6 +203,7 @@ export function Layout({ context, children, wide }: { context?: SidebarContext; 
               )}
               <div className="sidebar-heading">labrat</div>
               <NavItem e={{ label: 'Request log', to: '/-/labrat/requests', icon: 'activity' }} />
+              <DemoDataButton />
             </nav>
           )}
           <div className="sidebar-footer small subtle">GitLab-compatible test server</div>

@@ -2,6 +2,7 @@
 
 pub mod cache;
 pub mod ctx;
+pub mod demo;
 pub mod entities;
 pub mod find;
 pub mod git_http;
@@ -78,6 +79,11 @@ pub fn router(app: Arc<App>) -> Router {
     if tokio::runtime::Handle::try_current().is_ok() {
         tokio::spawn(jobs::scheduled_merges(Arc::downgrade(&app)));
     }
+    routes(app.clone()).layer(axum::middleware::from_fn_with_state(app, request_log::record))
+}
+
+/// Every route, without the request log; [`demo`] calls these in-process.
+pub(crate) fn routes(app: Arc<App>) -> Router {
     let api = Router::new()
         .merge(routes::meta::routes())
         .merge(routes::users::routes())
@@ -113,7 +119,6 @@ pub fn router(app: Arc<App>) -> Router {
         .merge(graphql::routes())
         .fallback(fallback)
         .layer(axum::middleware::from_fn_with_state(app.clone(), kick_jobs))
-        .layer(axum::middleware::from_fn_with_state(app.clone(), request_log::record))
         .with_state(app)
 }
 

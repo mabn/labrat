@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { api, ApiError, enc } from '../../api/client';
-import type { Approvals, MergeRequest, Project } from '../../api/types';
+import type { ApprovalRule, Approvals, MergeRequest, MergeTrainCar, Project, UserBasic } from '../../api/types';
 import { CiStatus, ErrorBox, Loading, TimeAgo, UserAvatar, useToast, errorText } from '../../components/ui';
 import { Icon } from '../../components/Icon';
 import { useSession } from '../../session';
+import { EeBadge, useEdition } from '../../edition';
 import { mrBase, useMrRefresh } from './data';
 
 const BLOCKED: Record<string, string> = {
@@ -47,44 +48,215 @@ function StatusDot({ kind, icon }: { kind: string; icon: string }) {
   );
 }
 
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+function ruleLabel(r: ApprovalRule) {
+  if (r.rule_type === 'any_approver') return <span className="subtle">All eligible users</span>;
+  return (
+    <>
+      {r.name}
+      {r.section && r.section !== 'codeowners' && <span className="subtle small"> ({r.section})</span>}
+      {r.rule_type === 'code_owner' && <span className="badge badge-neutral" style={{ marginLeft: 6 }}>Code owner</span>}
+      {r.rule_type === 'report_approver' && <span className="badge badge-warning" style={{ marginLeft: 6 }}>Policy</span>}
+    </>
+  );
+}
+
+const Avatars = ({ users }: { users: UserBasic[] }) => (
+  <span className="avatar-stack">
+    {users.map((u) => (
+      <UserAvatar key={u.id} user={u} size={20} />
+    ))}
+  </span>
+);
+
+/** EE: the MR's approval rules, from `/approval_state`. */
+function ApprovalRulesTable({ project, mr }: { project: Project; mr: MergeRequest }) {
+  const q = useQuery({
+    queryKey: ['mr', project.id, mr.iid, 'approval_state'],
+    queryFn: () => api.get<{ rules: ApprovalRule[] }>(`${mrBase(project.id, mr.iid)}/approval_state`),
+  });
+  if (q.isLoading) return <Loading />;
+  if (q.error) return <ErrorBox error={q.error} />;
+  const rules = q.data?.rules ?? [];
+  if (!rules.length) return <div className="small subtle" style={{ marginTop: 8 }}>No approval rules.</div>;
+  return (
+    <div className="table-wrap" style={{ marginTop: 8 }}>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Approvers</th>
+            <th>Approvals</th>
+            <th>Eligible</th>
+            <th>Approved by</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rules.map((r) => (
+            <tr key={r.id}>
+              <td>{ruleLabel(r)}</td>
+              <td>
+                {r.approved ? <Icon name="check" size={14} /> : null} {r.approvals_required ? `${(r.approved_by ?? []).length} of ${r.approvals_required}` : 'Optional'}
+              </td>
+              <td>
+                <Avatars users={r.eligible_approvers} />
+              </td>
+              <td>
+                <Avatars users={r.approved_by ?? []} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function ApprovalSection({ project, mr, approvals }: { project: Project; mr: MergeRequest; approvals?: Approvals }) {
   const refresh = useMrRefresh(project, mr.iid);
   const toast = useToast();
+  const { ee } = useEdition();
+  const [showRules, setShowRules] = useState(false);
+  const [password, setPassword] = useState('');
   const base = mrBase(project.id, mr.iid);
+  const needsPassword = !!approvals?.require_password_to_approve;
   const m = useMutation({
-    mutationFn: (approve: boolean) => api.post(`${base}/${approve ? 'approve' : 'unapprove'}`, approve ? { sha: mr.sha } : {}),
-    onSuccess: refresh,
+    mutationFn: (approve: boolean) =>
+      api.post(`${base}/${approve ? 'approve' : 'unapprove'}`, approve ? { sha: mr.sha, ...(needsPassword ? { approval_password: password } : {}) } : {}),
+    onSuccess: () => {
+      setPassword('');
+      refresh();
+    },
     onError: (e) => toast(errorText(e), true),
   });
   if (!approvals) return null;
   const by = approvals.approved_by;
+  const left = approvals.approvals_left ?? 0;
+  const rulesLeft = (approvals.approval_rules_left ?? []).filter((r) => r.rule_type !== 'any_approver').map((r) => r.name);
+  const open = mr.state === 'opened';
   return (
-    <Section icon={<StatusDot kind={by.length ? 'success' : 'neutral'} icon={by.length ? 'check' : 'approve'} />}>
+    <Section icon={<StatusDot kind={left > 0 ? 'neutral' : by.length ? 'success' : 'neutral'} icon={left === 0 && by.length ? 'check' : 'approve'} />}>
       <div className="row wrap">
-        {approvals.user_can_approve && mr.state === 'opened' && (
-          <button className="btn btn-confirm btn-sm" disabled={m.isPending} onClick={() => m.mutate(true)}>
-            Approve
-          </button>
+        {approvals.user_can_approve && open && (
+          <>
+            {needsPassword && (
+              <input type="password" placeholder="Your password" value={password} onChange={(e) => setPassword(e.target.value)} style={{ width: 160 }} aria-label="Password to approve" />
+            )}
+            <button className="btn btn-confirm btn-sm" disabled={m.isPending || (needsPassword && !password)} onClick={() => m.mutate(true)}>
+              Approve
+            </button>
+          </>
         )}
-        {approvals.user_has_approved && mr.state === 'opened' && (
+        {approvals.user_has_approved && open && (
           <button className="btn btn-sm" disabled={m.isPending} onClick={() => m.mutate(false)}>
             Revoke approval
           </button>
         )}
+        {left > 0 && (
+          <strong>
+            Requires {plural(left, 'approval')}
+            {rulesLeft.length ? ` from ${rulesLeft.join(', ')}` : ' from eligible users'}.
+          </strong>
+        )}
         {by.length ? (
           <>
             <strong>Approved by</strong>
-            <span className="avatar-stack">
-              {by.map((a) => (
-                <UserAvatar key={a.user.id} user={a.user} size={22} />
-              ))}
-            </span>
+            <Avatars users={by.map((a) => a.user)} />
             <span className="subtle small">{by.map((a) => a.user.name).join(', ')}</span>
           </>
         ) : (
-          <span className="subtle">Approval is optional</span>
+          left === 0 && <span className="subtle">Approval is optional</span>
         )}
+        <span className="spacer" />
+        <button
+          className="btn btn-tertiary btn-sm"
+          disabled={ee !== true}
+          title={ee === false ? 'Approval rules are available in EE mode only' : undefined}
+          onClick={() => setShowRules((x) => !x)}
+        >
+          {showRules ? 'Hide' : 'Show'} approval rules <EeBadge />
+        </button>
       </div>
+      {showRules && ee && <ApprovalRulesTable project={project} mr={mr} />}
+    </Section>
+  );
+}
+
+interface PolicyData {
+  project: {
+    mergeRequest: {
+      policyViolations: { policies: { name: string; status: string; dismissed: boolean; enforcementType: string; securityPolicyId: string; reportType: string }[] } | null;
+      policyBypassStatuses: { id: string; name: string; allowBypass: boolean; bypassed: boolean }[] | null;
+    } | null;
+  } | null;
+}
+
+/** EE: approval policies this MR violates, with warn mode dismissals and bypasses. */
+function PolicySection({ project, mr }: { project: Project; mr: MergeRequest }) {
+  const refresh = useMrRefresh(project, mr.iid);
+  const toast = useToast();
+  const vars = { path: project.path_with_namespace, iid: String(mr.iid) };
+  const q = useQuery({
+    queryKey: ['mr', project.id, mr.iid, 'policies'],
+    queryFn: () =>
+      api.graphql<PolicyData>(
+        `query($path: ID!, $iid: String!) { project(fullPath: $path) { mergeRequest(iid: $iid) {
+          policyViolations { policies { name status dismissed enforcementType securityPolicyId reportType } }
+          policyBypassStatuses { id name allowBypass bypassed }
+        } } }`,
+        vars,
+      ),
+    retry: false,
+  });
+  const act = useMutation({
+    mutationFn: async ({ kind, id }: { kind: 'dismiss' | 'bypass'; id: string }) => {
+      const text = prompt(kind === 'dismiss' ? 'Why is this violation dismissed?' : 'Why is this policy bypassed?');
+      if (!text) return;
+      const r = await api.graphql<Record<string, { errors: string[] }>>(
+        kind === 'dismiss'
+          ? `mutation($path: ID!, $iid: String!, $ids: [ID!]!, $text: String!) { r: dismissPolicyViolations(input: {projectPath: $path, iid: $iid, securityPolicyIds: $ids, dismissalTypes: [OTHER], comment: $text}) { errors } }`
+          : `mutation($path: ID!, $iid: String!, $ids: [ID!]!, $text: String!) { r: mergeRequestBypassSecurityPolicy(input: {projectPath: $path, iid: $iid, securityPolicyIds: $ids, reason: $text}) { errors } }`,
+        { ...vars, ids: [id], text },
+      );
+      if (r.r.errors.length) throw new Error(r.r.errors.join(', '));
+    },
+    onSuccess: refresh,
+    onError: (e) => toast(errorText(e), true),
+  });
+  const data = q.data?.project?.mergeRequest;
+  const policies = data?.policyViolations?.policies ?? [];
+  const bypass = new Map((data?.policyBypassStatuses ?? []).map((b) => [b.id, b]));
+  if (!policies.length && !bypass.size) return null;
+  const open = mr.state === 'opened';
+  const failing = policies.filter((p) => p.status === 'FAILED' && !p.dismissed);
+  return (
+    <Section icon={<StatusDot kind={failing.length ? 'failed' : policies.length ? 'warning' : 'success'} icon={failing.length ? 'close' : 'lock'} />}>
+      <div>
+        <strong>{policies.length ? `Policy violations detected (${policies.length})` : 'Security policies'}</strong>
+      </div>
+      <ul className="small" style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+        {policies.map((p) => {
+          const b = bypass.get(p.securityPolicyId);
+          return (
+            <li key={p.securityPolicyId} style={{ marginBottom: 4 }}>
+              {p.name} <span className={`badge ${p.status === 'FAILED' ? 'badge-danger' : 'badge-warning'}`}>{p.status.toLowerCase()}</span>
+              {p.enforcementType === 'WARN' && <span className="badge badge-neutral" style={{ marginLeft: 4 }}>warn mode</span>}
+              {p.dismissed && <span className="badge badge-muted" style={{ marginLeft: 4 }}>dismissed</span>}
+              {b?.bypassed && <span className="badge badge-muted" style={{ marginLeft: 4 }}>bypassed</span>}
+              {open && p.enforcementType === 'WARN' && !p.dismissed && (
+                <button className="btn btn-tertiary btn-sm" disabled={act.isPending} onClick={() => act.mutate({ kind: 'dismiss', id: p.securityPolicyId })}>
+                  Dismiss
+                </button>
+              )}
+              {open && b?.allowBypass && !b.bypassed && (
+                <button className="btn btn-tertiary btn-sm" disabled={act.isPending} onClick={() => act.mutate({ kind: 'bypass', id: p.securityPolicyId })}>
+                  Bypass
+                </button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </Section>
   );
 }
@@ -171,6 +343,33 @@ function MergeSection({ project, mr }: { project: Project; mr: MergeRequest }) {
     onSuccess: refresh,
     onError: (e) => toast(errorText(e), true),
   });
+  const { ee } = useEdition();
+  const trains = ee === true && !!project.merge_trains_enabled;
+  const addToTrain = useMutation({
+    mutationFn: (auto: boolean) =>
+      api.post(`/projects/${project.id}/merge_trains/merge_requests/${mr.iid}`, { sha: mr.sha, squash: squashOpt === 'never' ? undefined : squash, auto_merge: auto || undefined }),
+    onSuccess: refresh,
+  });
+  const skipTrain = useMutation({
+    mutationFn: () => api.put(`${base}/merge`, { sha: mr.sha, squash: squashOpt === 'never' ? undefined : squash, should_remove_source_branch: removeSource, skip_merge_train: true }),
+    onSuccess: refresh,
+  });
+  const car = useQuery({
+    queryKey: ['mr', project.id, mr.iid, 'train'],
+    queryFn: async () => {
+      let mine: MergeTrainCar;
+      try {
+        mine = await api.get<MergeTrainCar>(`/projects/${project.id}/merge_trains/merge_requests/${mr.iid}`);
+      } catch (e) {
+        if (e instanceof ApiError && e.status === 404) return null;
+        throw e;
+      }
+      const cars = await api.get<MergeTrainCar[]>(`/projects/${project.id}/merge_trains/${enc(mr.target_branch)}`, { scope: 'active', sort: 'asc', per_page: 100 });
+      return { car: mine, ahead: Math.max(0, cars.findIndex((c) => c.id === mine.id)) };
+    },
+    enabled: trains && mr.merge_when_pipeline_succeeds,
+    refetchInterval: 5000,
+  });
   const cancelAuto = useMutation({
     mutationFn: () => api.post(`${base}/cancel_merge_when_pipeline_succeeds`),
     onSuccess: refresh,
@@ -180,11 +379,41 @@ function MergeSection({ project, mr }: { project: Project; mr: MergeRequest }) {
   const pipelineRunning = !!mr.head_pipeline && ['running', 'pending', 'created', 'waiting_for_resource', 'preparing', 'scheduled'].includes(mr.head_pipeline.status);
   const canMerge = mr.user?.can_merge;
 
+  if (mr.merge_when_pipeline_succeeds && car.data) {
+    const { car: c, ahead } = car.data;
+    return (
+      <Section icon={<StatusDot kind="info" icon="history" />}>
+        <div>
+          <strong>
+            Added to the merge train by {c.user?.name ?? 'someone'}.{' '}
+            {ahead === 0 ? 'It is first in line.' : `There ${ahead === 1 ? 'is 1 merge request' : `are ${ahead} merge requests`} ahead of it.`}
+          </strong>
+        </div>
+        <div className="small subtle">
+          {c.pipeline ? (
+            <>
+              Train pipeline #{c.pipeline.id}: {c.pipeline.status}.
+            </>
+          ) : (
+            'Waiting for its pipeline.'
+          )}{' '}
+          <Link to={`/${project.path_with_namespace}/-/merge_trains`}>View merge trains</Link>
+        </div>
+        {canMerge && (
+          <button className="btn btn-sm" style={{ marginTop: 8 }} disabled={cancelAuto.isPending} onClick={() => cancelAuto.mutate()}>
+            Remove from merge train
+          </button>
+        )}
+      </Section>
+    );
+  }
   if (mr.merge_when_pipeline_succeeds) {
     return (
       <Section icon={<StatusDot kind="info" icon="history" />}>
         <div>
-          <strong>Set by {mr.merge_user?.name ?? 'someone'} to be merged automatically when all merge checks pass</strong>
+          <strong>
+            Set by {mr.merge_user?.name ?? 'someone'} to {trains ? 'be added to the merge train' : 'be merged automatically'} when all merge checks pass
+          </strong>
         </div>
         <div className="small subtle">{mr.should_remove_source_branch || mr.force_remove_source_branch ? 'Deletes the source branch.' : 'Does not delete the source branch.'}</div>
         {canMerge && (
@@ -207,12 +436,23 @@ function MergeSection({ project, mr }: { project: Project; mr: MergeRequest }) {
   const behind = (mr.diverged_commits_count ?? 0) > 0;
   return (
     <Section icon={<StatusDot kind={mergeable ? 'success' : autoMergeable ? 'info' : 'failed'} icon={mergeable ? 'check' : autoMergeable ? 'history' : 'close'} />}>
-      <ErrorBox error={merge.error} />
+      <ErrorBox error={merge.error || addToTrain.error || skipTrain.error} />
       {mr.merge_error && <div className="alert alert-danger">{mr.merge_error}</div>}
       {mergeable || autoMergeable ? (
         <>
           <div className="row wrap">
-            {canMerge ? (
+            {canMerge && trains ? (
+              <>
+                <button className="btn btn-confirm" disabled={addToTrain.isPending} onClick={() => addToTrain.mutate(autoMergeable)}>
+                  {autoMergeable ? 'Set to auto-merge' : 'Add to merge train'}
+                </button>
+                {project.merge_trains_skip_train_allowed && !autoMergeable && (
+                  <button className="btn btn-danger-secondary" disabled={skipTrain.isPending} onClick={() => confirm('Merge immediately, skipping the merge train?') && skipTrain.mutate()}>
+                    Merge immediately
+                  </button>
+                )}
+              </>
+            ) : canMerge ? (
               autoMergeable ? (
                 <button className="btn btn-confirm" disabled={merge.isPending} onClick={() => merge.mutate(true)}>
                   Set to auto-merge
@@ -225,7 +465,7 @@ function MergeSection({ project, mr }: { project: Project; mr: MergeRequest }) {
             ) : (
               <span className="subtle">Ready to merge by members who can write to the target branch.</span>
             )}
-            {canMerge && <strong>{autoMergeable ? 'Merge when all checks pass' : 'Ready to merge!'}</strong>}
+            {canMerge && <strong>{trains ? (autoMergeable ? 'Add to merge train when all checks pass' : 'Ready to merge!') : autoMergeable ? 'Merge when all checks pass' : 'Ready to merge!'}</strong>}
           </div>
           {canMerge && (
             <>
@@ -290,6 +530,7 @@ function MergeSection({ project, mr }: { project: Project; mr: MergeRequest }) {
 
 export function MergeWidget({ project, mr, approvals }: { project: Project; mr: MergeRequest; approvals?: Approvals }) {
   const { user } = useSession();
+  const { ee } = useEdition();
   const refresh = useMrRefresh(project, mr.iid);
   const toast = useToast();
   const reopen = useMutation({
@@ -307,6 +548,7 @@ export function MergeWidget({ project, mr, approvals }: { project: Project; mr: 
         </Section>
       )}
       <ApprovalSection project={project} mr={mr} approvals={approvals} />
+      {ee && <PolicySection project={project} mr={mr} />}
       {mr.state === 'merged' && <MergedSection project={project} mr={mr} />}
       {mr.state === 'closed' && (
         <Section icon={<StatusDot kind="failed" icon="close" />}>

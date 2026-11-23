@@ -7,6 +7,8 @@ import { Empty, ErrorBox, Loading, useToast, errorText } from '../../components/
 import { useProject, useProjectCrumbs } from './ProjectRoutes';
 import { useRefs } from './refs';
 import { TokenForm, TokenTable } from '../AccessTokens';
+import { EeBadge, EeOnly, useEdition } from '../../edition';
+import { ProjectApprovals } from './Approvals';
 
 function useSaveProject() {
   const { project } = useProject();
@@ -22,10 +24,13 @@ function useSaveProject() {
   });
 }
 
-function Section({ title, help, children }: { title: string; help?: string; children: ReactNode }) {
+function Section({ title, help, ee, children }: { title: string; help?: string; ee?: boolean; children: ReactNode }) {
   return (
     <section style={{ padding: '16px 0 24px', borderBottom: '1px solid var(--border)' }}>
-      <h2 style={{ fontSize: '1.15rem' }}>{title}</h2>
+      <h2 style={{ fontSize: '1.15rem' }}>
+        {title}
+        {ee && <EeBadge />}
+      </h2>
       {help && <p className="subtle" style={{ marginTop: 4 }}>{help}</p>}
       <div style={{ marginTop: 12 }}>{children}</div>
     </section>
@@ -131,6 +136,12 @@ export function MergeRequestSettings() {
   const { project } = useProject();
   useProjectCrumbs([{ label: 'Settings' }, { label: 'Merge requests' }]);
   const save = useSaveProject();
+  const { ee } = useEdition();
+  const [trains, setTrains] = useState({
+    merge_pipelines_enabled: !!project.merge_pipelines_enabled,
+    merge_trains_enabled: !!project.merge_trains_enabled,
+    merge_trains_skip_train_allowed: !!project.merge_trains_skip_train_allowed,
+  });
   const [f, setF] = useState({
     merge_method: project.merge_method ?? 'merge',
     squash_option: project.squash_option ?? 'default_off',
@@ -153,6 +164,7 @@ export function MergeRequestSettings() {
           e.preventDefault();
           save.mutate({
             ...f,
+            ...(ee ? trains : {}),
             merge_commit_template: f.merge_commit_template || null,
             squash_commit_template: f.squash_commit_template || null,
             merge_requests_template: f.merge_requests_template || null,
@@ -180,6 +192,25 @@ export function MergeRequestSettings() {
             <input type="checkbox" checked={f.remove_source_branch_after_merge} onChange={(e) => set('remove_source_branch_after_merge', e.target.checked)} />
             <span>Enable “Delete source branch” option by default</span>
           </label>
+        </Section>
+        <Section title="Merge trains" ee help="Merged results pipelines test the merged result; merge trains queue merges so each one is tested against the ones ahead of it.">
+          <EeOnly>
+            <label className="check">
+              <input type="checkbox" checked={trains.merge_pipelines_enabled} onChange={(e) => setTrains({ ...trains, merge_pipelines_enabled: e.target.checked })} />
+              <span>Enable merged results pipelines</span>
+            </label>
+            <label className="check">
+              <input type="checkbox" checked={trains.merge_trains_enabled} disabled={!trains.merge_pipelines_enabled} onChange={(e) => setTrains({ ...trains, merge_trains_enabled: e.target.checked })} />
+              <span>
+                Enable merge trains
+                <div className="help">Needs merged results pipelines.</div>
+              </span>
+            </label>
+            <label className="check">
+              <input type="checkbox" checked={trains.merge_trains_skip_train_allowed} disabled={!trains.merge_trains_enabled} onChange={(e) => setTrains({ ...trains, merge_trains_skip_train_allowed: e.target.checked })} />
+              <span>Allow skipping the merge train</span>
+            </label>
+          </EeOnly>
         </Section>
         <Section title="Squash commits when merging">
           {[
@@ -227,6 +258,9 @@ export function MergeRequestSettings() {
           </button>
         </div>
       </form>
+      <Section title="Merge request approvals" ee>
+        <ProjectApprovals project={project} />
+      </Section>
     </>
   );
 }
@@ -250,8 +284,17 @@ export function RepositorySettings() {
   const [push, setPush] = useState(40);
   const [merge, setMerge] = useState(40);
   const [force, setForce] = useState(false);
+  const [codeOwners, setCodeOwners] = useState(false);
+  const { ee } = useEdition();
   const protect = useMutation({
-    mutationFn: () => api.post(`/projects/${project.id}/protected_branches`, { name: pName, push_access_level: push, merge_access_level: merge, allow_force_push: force }),
+    mutationFn: () =>
+      api.post(`/projects/${project.id}/protected_branches`, {
+        name: pName,
+        push_access_level: push,
+        merge_access_level: merge,
+        allow_force_push: force,
+        ...(ee ? { code_owner_approval_required: codeOwners } : {}),
+      }),
     onSuccess: () => {
       setPName('');
       qc.invalidateQueries({ queryKey: ['protected', project.id] });
@@ -266,8 +309,8 @@ export function RepositorySettings() {
     },
     onError: (e) => toast(errorText(e), true),
   });
-  const toggleForce = useMutation({
-    mutationFn: (b: ProtectedBranch) => api.patch(`/projects/${project.id}/protected_branches/${enc(b.name)}`, { allow_force_push: !b.allow_force_push }),
+  const patchBranch = useMutation({
+    mutationFn: ({ b, body }: { b: ProtectedBranch; body: Partial<ProtectedBranch> }) => api.patch(`/projects/${project.id}/protected_branches/${enc(b.name)}`, body),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['protected', project.id] }),
     onError: (e) => toast(errorText(e), true),
   });
@@ -332,6 +375,12 @@ export function RepositorySettings() {
               <label className="row" style={{ height: 32 }}>
                 <input type="checkbox" checked={force} onChange={(e) => setForce(e.target.checked)} /> Allow force push
               </label>
+              <EeOnly note={false}>
+                <label className="row" style={{ height: 32 }} title={ee === false ? 'Available in EE mode only' : undefined}>
+                  <input type="checkbox" checked={codeOwners} onChange={(e) => setCodeOwners(e.target.checked)} /> Require approval from code owners
+                  <EeBadge />
+                </label>
+              </EeOnly>
               <button className="btn btn-confirm" disabled={!pName || protect.isPending} onClick={() => protect.mutate()}>
                 Protect
               </button>
@@ -349,6 +398,10 @@ export function RepositorySettings() {
                   <th>Allowed to merge</th>
                   <th>Allowed to push and merge</th>
                   <th>Allowed to force push</th>
+                  <th>
+                    Code owner approval
+                    <EeBadge />
+                  </th>
                   <th />
                 </tr>
               </thead>
@@ -359,7 +412,16 @@ export function RepositorySettings() {
                     <td>{b.merge_access_levels.map((l) => l.access_level_description).join(', ')}</td>
                     <td>{b.push_access_levels.map((l) => l.access_level_description).join(', ')}</td>
                     <td>
-                      <input type="checkbox" checked={b.allow_force_push} onChange={() => toggleForce.mutate(b)} />
+                      <input type="checkbox" checked={b.allow_force_push} onChange={() => patchBranch.mutate({ b, body: { allow_force_push: !b.allow_force_push } })} />
+                    </td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        disabled={ee !== true}
+                        title={ee === false ? 'Available in EE mode only' : undefined}
+                        checked={!!b.code_owner_approval_required}
+                        onChange={() => patchBranch.mutate({ b, body: { code_owner_approval_required: !b.code_owner_approval_required } })}
+                      />
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <button className="btn btn-sm btn-danger-secondary" onClick={() => unprotect.mutate(b.name)}>

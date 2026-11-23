@@ -449,18 +449,26 @@ that the conformance suite catches.
 - MR page:
   - description, reactions and the activity timeline with threads, replies and resolving;
   - the merge widget: approvals, mergeability, merge options, auto-merge, rebase, mark as ready;
+    in EE mode also approval rules, approving with a password, policy violations (dismissing and
+    bypassing them) and merge trains (adding, skipping and leaving a train);
   - the sidebar: assignees, reviewers with their review state, labels, milestone, time tracking,
-    lock, notifications and to-dos;
+    lock, notifications and to-dos; in EE mode also merge request dependencies;
   - commits, pipelines (from commit statuses) and changes with versions, inline comments and
     suggestions;
   - draft comments and review submission (with an optional summary and approval).
+- Merge trains (EE): the project's active and merged cars, per target branch.
 - Settings:
   - project general, repository (default branch, protected branches) and merge request settings;
+  - EE: approval rules and approval settings, merge train settings, and code owner approval on
+    protected branches;
+  - labrat test setup, through the `/-/labrat/` test endpoints: fake CI (with finishing jobs by
+    hand) and, for EE, code owners, approval policies and policy results;
   - webhooks with delivery history, test deliveries and resends;
   - project access tokens and personal access tokens;
   - group settings;
   - admin area: users, system hooks and network settings.
 - The same URL paths as GitLab, so `web_url` in an API response opens the right page.
+- EE features show in CE mode (`--noee`) too, disabled, with a note.
 
 **labrat-only test tooling** (under `/-/labrat/`, which can't collide with GitLab routes)
 - A seed file (YAML) that declares users, tokens, groups, projects, files and MRs at startup.
@@ -469,6 +477,9 @@ that the conformance suite catches.
 - A configurable delay for background jobs, so clients can see intermediate states (see
   Architecture).
 - A request log in the UI with every API call, its request and its response.
+- Demo data (`POST /-/labrat/demo`, "Generate demo data" in the UI): a `demo` group whose
+  projects each have merge requests showing one feature, made through the API as demo users.
+  EE-only projects are left out in CE mode.
 - A fixed root token from a CLI flag or environment variable, so tests can start immediately.
 
 **EE: merge request approvals** (EE mode only)

@@ -169,5 +169,27 @@ export const api = {
   },
 };
 
+/**
+ * labrat's own test endpoints under `/-/labrat/` (no authentication; not part of GitLab's API).
+ * Errors come back as `ApiError`s, as the API's do.
+ */
+export async function labrat<T>(method: string, path: string, body?: unknown, query?: Query): Promise<T> {
+  const res = await fetch(`/-/labrat${path}${qs(query)}`, {
+    method,
+    headers: { Accept: 'application/json', 'X-Labrat-UI': '1', ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) },
+    body: body === undefined ? undefined : JSON.stringify(body),
+    credentials: 'same-origin',
+  });
+  const text = await res.text();
+  let parsed: unknown = text;
+  try {
+    parsed = text ? JSON.parse(text) : undefined;
+  } catch {
+    /* not JSON */
+  }
+  if (!res.ok) throw new ApiError(res.status, parsed);
+  return parsed as T;
+}
+
 /** `/projects/:id` path segment for a numeric id or a full path. */
 export const enc = (idOrPath: string | number) => encodeURIComponent(String(idOrPath));
