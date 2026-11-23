@@ -1,0 +1,8 @@
+.git
+target
+tests/conformance/target-actual
+web/node_modules
+web/dist
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm

@@ -1,7 +1,8 @@
 [package]
 name = "labrat-api"
-version = "0.1.0"
-edition = "2024"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
 
 [dependencies]
 async-graphql-parser = "7.2.1"
@@ -12,8 +13,8 @@ bytes = "1.12.1"
 chrono = "0.4.45"
 comrak = "0.59.0"
 flate2 = "1.1.11"
-labrat-core = { version = "0.1.0", path = "../labrat-core" }
-labrat-git = { version = "0.1.0", path = "../labrat-git" }
+labrat-core = { path = "../labrat-core" }
+labrat-git = { path = "../labrat-git" }
 hex = "0.4.3"
 http = "1.5.0"
 parking_lot = "0.13.0"

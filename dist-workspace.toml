@@ -1,0 +1,34 @@
+# Release config for dist (https://axodotdev.github.io/cargo-dist/). Pushing a `v*` tag builds
+# labrat for every target below and publishes a GitHub Release with the binaries, a
+# `curl | sh` installer and a Homebrew formula. After changing this file run `dist generate`
+# to update .github/workflows/release.yml.
+[workspace]
+members = ["cargo:."]
+
+[dist]
+cargo-dist-version = "0.34.0"
+ci = "github"
+installers = ["shell", "homebrew"]
+tap = "mabn/homebrew-tap"
+formula = "labrat"
+publish-jobs = ["homebrew"]
+# musl builds are static, so one Linux binary runs on any distribution (and in a scratch image).
+targets = [
+  "aarch64-apple-darwin",
+  "x86_64-apple-darwin",
+  "aarch64-unknown-linux-musl",
+  "x86_64-unknown-linux-musl",
+  "x86_64-pc-windows-msvc",
+]
+install-path = "CARGO_HOME"
+install-updater = false
+# Release only when a tag is pushed: no workflow runs on pull requests.
+pr-run-mode = "skip"
+# The build embeds the web UI, which needs Node.js and pnpm.
+github-build-setup = "../build-setup.yml"
+
+[dist.github-custom-runners]
+aarch64-unknown-linux-musl = "ubuntu-24.04-arm"
+x86_64-unknown-linux-musl = "ubuntu-24.04"
+aarch64-apple-darwin = "macos-15"
+x86_64-apple-darwin = "macos-15"

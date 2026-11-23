@@ -14,3 +14,9 @@ incremental = false
 
 [profile.dev.package."*"]
 debug = false
+
+# The profile release binaries are built with (`dist build`); see dist-workspace.toml.
+[profile.dist]
+inherits = "release"
+lto = "thin"
+strip = true

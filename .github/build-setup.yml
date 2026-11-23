@@ -1,0 +1,13 @@
+- name: Install pnpm
+  uses: pnpm/action-setup@v4
+  with:
+    package_json_file: web/package.json
+- name: Install Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version: 22
+    cache: pnpm
+    cache-dependency-path: web/pnpm-lock.yaml
+- name: Require the embedded web UI
+  shell: bash
+  run: echo "LABRAT_REQUIRE_WEB_UI=1" >> "$GITHUB_ENV"
