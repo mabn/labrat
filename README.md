@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/logo.png" alt="labrat logo" width="128">
+</p>
+
 # labrat
 
 **A fast, lightweight GitLab simulator for testing anything that talks to GitLab.**
