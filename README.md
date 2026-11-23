@@ -48,7 +48,7 @@ This is not a GitLab replacement:
 |---|---|---|
 | Download | 1.83 GB image | 10.1 MB binary (gzipped) |
 | Size on disk | 6.25 GB | 25.3 MB |
-| Install | 4 minutes: the first start sets GitLab up | 0: nothing to install |
+| Install | 4 minutes: the first start sets GitLab up | `brew install`: one binary, nothing to set up |
 | Start | 84 s | 11 ms |
 | Reset to an empty state | About 5 minutes: recreate the instance | 6 ms |
 | Memory when idle | 3.0 GB | 15 MB |
@@ -60,17 +60,39 @@ Details, the workload and the machine are in [docs/BENCHMARKS.md](docs/BENCHMARK
 
 ## Quick start
 
-Build it (tested with Rust 1.99; it needs at least 1.88):
+Install it with Homebrew (macOS and Linux):
+
+```sh
+brew install mabn/tap/labrat
+```
+
+Or with the install script (macOS and Linux; it puts `labrat` in `~/.cargo/bin`):
+
+```sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/mabn/labrat/releases/latest/download/labrat-installer.sh | sh
+```
+
+Prebuilt binaries for macOS (Apple Silicon and Intel), Linux (x86_64 and arm64, static) and Windows
+are also on the [releases page](https://github.com/mabn/labrat/releases).
+
+Run it with an in-memory database and a known token for `root`:
+
+```sh
+labrat --db :memory: --root-token glpat-test-token
+```
+
+Or run it in Docker, for example as a service container in CI:
+
+```sh
+docker run --rm -p 8080:8080 ghcr.io/mabn/labrat --db :memory: --root-token glpat-test-token
+```
+
+To build it from source instead (tested with Rust 1.99; it needs at least 1.88):
 
 ```sh
 git clone https://github.com/mabn/labrat.git
 cd labrat
 cargo build --release   # also builds the web UI when pnpm (and Node.js 20.19+) is installed
-```
-
-Run it with an in-memory database and a known token for `root`:
-
-```sh
 ./target/release/labrat --db :memory: --root-token glpat-test-token
 ```
 

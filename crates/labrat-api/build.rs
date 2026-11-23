@@ -4,7 +4,8 @@
 //!
 //! The UI is rebuilt only when its sources change. Without pnpm on `PATH`, or with
 //! `LABRAT_SKIP_WEB_BUILD=1`, whatever is already in `web/dist` is embedded; when that is empty the
-//! binary serves a page that says how to build the UI.
+//! binary serves a page that says how to build the UI, unless `LABRAT_REQUIRE_WEB_UI=1` is set, which
+//! release builds use to fail instead.
 
 use serde_json::Value;
 use std::fmt::Write;
@@ -138,6 +139,12 @@ fn main() {
     let mut files = vec![];
     collect(&dist, &dist, &mut files);
     files.sort();
+    // Release builds set this so that a missing UI fails the build instead of shipping without it.
+    println!("cargo:rerun-if-env-changed=LABRAT_REQUIRE_WEB_UI");
+    let require = std::env::var_os("LABRAT_REQUIRE_WEB_UI").is_some_and(|v| !v.is_empty() && v != "0");
+    if require && !files.iter().any(|(rel, _)| rel == "index.html") {
+        panic!("LABRAT_REQUIRE_WEB_UI is set but web/dist has no index.html: install pnpm or build the UI first");
+    }
     let mut code = String::from("pub static ASSETS: &[(&str, &[u8])] = &[\n");
     for (rel, path) in &files {
         let abs = path.canonicalize().unwrap();

@@ -2,6 +2,9 @@
 name = "labrat"
 version = "0.1.0"
 edition = "2024"
+description = "A fast, lightweight GitLab simulator for testing anything that talks to GitLab"
+repository = "https://github.com/mabn/labrat"
+homepage = "https://github.com/mabn/labrat"
 
 [dependencies]
 anyhow = "1.0.104"
