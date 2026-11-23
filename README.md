@@ -7,7 +7,7 @@ does, from a single 25 MB binary. Point your bot, CLI, code-review tool or sync 
 a real GitLab, and your tests start in milliseconds instead of minutes.
 
 <p align="center">
-  <img src="docs/assets/benchmark.svg" alt="labrat compared with GitLab: 20 merge requests from creation to merge take 2.3 s instead of 189 s; idle memory is 15 MB instead of 3.0 GB; starting from an empty data directory takes 0.01 s instead of 4 minutes." width="760">
+  <img src="docs/assets/benchmark.svg" alt="labrat compared with GitLab: 20 merge requests from creation to merge take 0.68 s instead of 189 s; idle memory is 15 MB instead of 3.0 GB; starting from an empty data directory takes 0.01 s instead of 4 minutes." width="760">
 </p>
 
 <p align="center">
@@ -16,8 +16,8 @@ a real GitLab, and your tests start in milliseconds instead of minutes.
 
 ## Features
 
-- **Fast:** a merge request workload runs [82× faster](docs/BENCHMARKS.md) than on GitLab. labrat
-  starts in about 10 ms and wipes all its data in 7 ms, so every test can start from a clean state.
+- **Fast:** a merge request workload runs [280× faster](docs/BENCHMARKS.md) than on GitLab. labrat
+  starts in about 10 ms and wipes all its data in 6 ms, so every test can start from a clean state.
 - **Small:** one binary and one SQLite file. No Docker, PostgreSQL, Redis or Sidekiq, and about
   15 MB of memory when idle instead of 3 GB.
 - **Accurate:** checked against 16,504 responses and 1,428 webhook deliveries recorded from real
@@ -42,14 +42,14 @@ This is not a GitLab replacement:
 
 | | GitLab CE 18.11 (Docker) | labrat |
 |---|---|---|
-| Download | 1.83 GB image | 9.9 MB binary (gzipped) |
-| Size on disk | 6.25 GB | 25.0 MB |
+| Download | 1.83 GB image | 10.1 MB binary (gzipped) |
+| Size on disk | 6.25 GB | 25.3 MB |
 | Install | 4 minutes: the first start sets GitLab up | 0: nothing to install |
-| Start | 84 s | 12 ms |
-| Reset to an empty state | Recreate the instance | 7 ms |
+| Start | 84 s | 11 ms |
+| Reset to an empty state | Recreate the instance | 6 ms |
 | Memory when idle | 3.0 GB | 15 MB |
-| Peak memory during the workload | 3.5 GB | 144 MB |
-| 20 merge requests, created to merged | 189 s | 2.3 s |
+| Peak memory during the workload | 3.5 GB | 28 MB |
+| 20 merge requests, created to merged | 189 s | 0.68 s |
 | Processes | 89 | 1 |
 
 Details, the workload and the machine are in [docs/BENCHMARKS.md](docs/BENCHMARKS.md).

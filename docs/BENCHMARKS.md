@@ -12,16 +12,16 @@ in one process. These numbers show what that costs when all a test needs is the 
 
 | | GitLab CE 18.11 (Docker) | labrat | Difference |
 |---|---|---|---|
-| Download | 1.83 GB (compressed image) | 9.9 MB (binary, gzipped) | 185× smaller |
-| Size on disk | 6.25 GB image | 25.0 MB binary (stripped) | 250× smaller |
+| Download | 1.83 GB (compressed image) | 10.1 MB (binary, gzipped) | 180× smaller |
+| Size on disk | 6.25 GB image | 25.3 MB binary (stripped) | 250× smaller |
 | Processes | 89 | 1 | |
-| Install: first start from an empty data directory | 242 s until healthy (203 s until the sign-in page loads) | 0: nothing to install; the first start takes 12 ms | |
-| Start with existing data | 84 s | 12 ms | |
-| Reset to an empty state | No built-in way; recreate the instance | 7 ms (`POST /-/labrat/reset`) | |
+| Install: first start from an empty data directory | 242 s until healthy (203 s until the sign-in page loads) | 0: nothing to install; the first start takes 11 ms | |
+| Start with existing data | 84 s | 11 ms | |
+| Reset to an empty state | No built-in way; recreate the instance | 6 ms (`POST /-/labrat/reset`) | |
 | Memory when idle | 3.03 GiB | 15 MB | 200× less |
-| Peak memory during the workload | 3.55 GiB | 144 MB | 26× less |
+| Peak memory during the workload | 3.55 GiB | 28 MB | 135× less |
 | Data on disk after the runs | 475 MB (after 59 merge requests in total) | 4.8 MB SQLite file and its WAL (after 20) | |
-| Workload: 20 merge requests, created to merged | 187 s and 191 s (two runs) | 2.3 s (median of five runs, 1.8 s to 2.4 s) | 82× faster |
+| Workload: 20 merge requests, created to merged | 187 s and 191 s (two runs) | 0.68 s (median of five runs, 0.64 s to 0.74 s) | 280× faster |
 
 Median latency of each call in the workload:
 
@@ -29,16 +29,18 @@ Median latency of each call in the workload:
 |---|---|---|
 | Create a project with a README | 2,749 ms | 2.8 ms |
 | Commit a file to a new branch | 1,413 ms | 2.1 ms |
-| Open a merge request | 154 ms | 2.6 ms |
-| Get a merge request | 95 ms | 3.2 ms |
-| Wait until the merge request is mergeable | 3,097 ms | 106 ms |
-| Comment | 104 ms | 2.2 ms |
-| Merge | 1,114 ms | 5.8 ms |
-| List merged merge requests | 101 ms | 2.2 ms |
+| Open a merge request | 154 ms | 2.7 ms |
+| Get a merge request | 95 ms | 3.1 ms |
+| Wait until the merge request is mergeable | 3,097 ms | 16 ms |
+| Comment | 104 ms | 2.3 ms |
+| Merge | 1,114 ms | 6.1 ms |
+| List merged merge requests | 101 ms | 2.4 ms |
 | GraphQL query | 97 ms | 1.6 ms |
 
-The GitLab column shows the first of its two runs. The labrat "wait until mergeable" time is mostly
-the 100 ms polling interval of the workload script: the merge request is mergeable on the second poll.
+The GitLab column shows the first of its two runs. GitLab was measured while the workload polled every
+100 ms; polling every 10 ms, as now, would save it at most 90 ms per merge request (1.8 s of 189 s).
+The labrat "wait until mergeable" time is mostly the 10 ms polling interval: the merge request is
+mergeable on the second poll.
 
 One more result: during the first GitLab run, one call failed. Gitaly took 10.9 seconds to create a
 repository, past GitLab's 10-second deadline, so `POST /projects` returned
@@ -81,7 +83,7 @@ SQLite on an empty database, and it starts serving right after.
   - creates a project with a README;
   - commits a file to a new branch;
   - opens a merge request;
-  - polls it every 100 ms until it is mergeable;
+  - polls it every 10 ms until it is mergeable;
   - comments;
   - merges;
   - lists merged merge requests;

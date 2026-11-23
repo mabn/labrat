@@ -69,7 +69,7 @@ def iteration(i: int) -> float:
     # Mergeability is computed in the background on GitLab.
     wait_start = time.perf_counter()
     while call("get merge request", "GET", mr_path)["detailed_merge_status"] != "mergeable":
-        time.sleep(0.1)
+        time.sleep(0.01)
     latencies.setdefault("wait until mergeable", []).append((time.perf_counter() - wait_start) * 1000)
     call("comment", "POST", f"{mr_path}/notes", {"body": "Looks good"})
     call("merge", "PUT", f"{mr_path}/merge")
