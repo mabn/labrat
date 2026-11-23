@@ -16,7 +16,7 @@ a real GitLab, and your tests start in milliseconds instead of minutes.
 
 ## Features
 
-- **Fast:** a merge request workload runs [280× faster](docs/BENCHMARKS.md) than on GitLab. labrat
+- **Fast:** a merge request workload runs [100× faster](docs/BENCHMARKS.md) than on GitLab. labrat
   starts in about 10 ms and wipes all its data in 6 ms, so every test can start from a clean state.
 - **Small:** one binary and one SQLite file. No Docker, PostgreSQL, Redis or Sidekiq, and about
   15 MB of memory when idle instead of 3 GB.
