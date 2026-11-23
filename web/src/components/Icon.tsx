@@ -1,4 +1,5 @@
 // A small set of 16px line icons in the spirit of GitLab's.
+import logoUrl from '../assets/logo.png';
 
 const paths: Record<string, string> = {
   project: 'M2.5 3.5h4l1.5 1.5h5.5v7.5h-11z',
@@ -76,13 +77,5 @@ export function Icon({ name, size = 16, className, title }: { name: IconName | s
 
 /** The labrat mark. */
 export function Logo({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden>
-      <rect width="32" height="32" rx="7" fill="#6b4fbb" />
-      <path d="M9 22c0-5 3-9 7-9s7 4 7 9" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" />
-      <circle cx="12" cy="10" r="2.5" fill="#fca326" />
-      <circle cx="20" cy="10" r="2.5" fill="#fca326" />
-      <circle cx="16" cy="19" r="1.8" fill="#fff" />
-    </svg>
-  );
+  return <img src={logoUrl} width={size} height={size} alt="" aria-hidden />;
 }
