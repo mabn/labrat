@@ -17,7 +17,7 @@ in one process. These numbers show what that costs when all a test needs is the 
 | Processes | 89 | 1 | |
 | Install: first start from an empty data directory | 242 s until healthy (203 s until the sign-in page loads) | 0: nothing to install; the first start takes 11 ms | |
 | Start with existing data | 84 s | 11 ms | |
-| Reset to an empty state | No built-in way; recreate the instance | 6 ms (`POST /-/labrat/reset`) | |
+| Reset to an empty state | No built-in way: recreating the instance takes about 5 minutes (a first start, 242 s, then creating a user and token, 52 s) | 6 ms (`POST /-/labrat/reset`), and the root token still works | |
 | Memory when idle | 3.03 GiB | 15 MB | 200× less |
 | Peak memory during the workload | 3.55 GiB | 28 MB | 135× less |
 | Data on disk after the runs | 475 MB (after 59 merge requests in total) | 4.8 MB SQLite file and its WAL (after 20) | |
