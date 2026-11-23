@@ -2,6 +2,7 @@
 name = "labrat"
 version = "0.1.0"
 edition = "2024"
+publish = false
 description = "A fast, lightweight GitLab simulator for testing anything that talks to GitLab"
 repository = "https://github.com/mabn/labrat"
 homepage = "https://github.com/mabn/labrat"
@@ -16,3 +17,7 @@ tokio = { version = "1.54.1", features = ["full"] }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 url = "2.5.8"
+
+# publish = false keeps labrat off crates.io; dist would skip it too unless told otherwise.
+[package.metadata.dist]
+dist = true
