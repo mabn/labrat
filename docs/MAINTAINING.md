@@ -520,7 +520,8 @@ Releases are built by two GitHub Actions workflows, and only when you ask for on
 
 To release:
 
-1. Set the new version in `crates/labrat/Cargo.toml` and commit it.
+1. Set the new version in the root `Cargo.toml` (`[workspace.package]`; every crate inherits it)
+   and commit it together with the updated `Cargo.lock`.
 2. Tag the commit with the same version and push the tag:
    `git tag v0.2.0 && git push origin v0.2.0`.
 

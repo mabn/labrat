@@ -8,8 +8,8 @@ publish.workspace = true
 rusqlite = { version = "0.41.1", features = ["bundled", "backup"] }
 axum = "0.8.9"
 base64 = "0.23.1"
-labrat-api = { version = "0.1.0", path = "../../crates/labrat-api" }
-labrat-core = { version = "0.1.0", path = "../../crates/labrat-core" }
+labrat-api = { path = "../../crates/labrat-api" }
+labrat-core = { path = "../../crates/labrat-core" }
 rand = "0.10.3"
 regex = "1.13.1"
 reqwest = { version = "0.13.5", default-features = false, features = ["json", "form", "query", "multipart"] }
