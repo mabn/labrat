@@ -88,7 +88,7 @@ docker run --rm -p 8080:8080 ghcr.io/mabn/labrat --db :memory: --root-token glpa
 ```
 
 labrat listens on `127.0.0.1:8080`. To look around the web UI, click "Generate demo data" in its
-sidebar (or `POST /-/labrat/demo`): it adds demo projects whose merge requests each show one feature.
+sidebar (or `POST /-/labrat/demo`): it populates labrat with example projects.
 `scripts/seed-demo.sh` resets labrat and fills it with a smaller demo. Use it as you would use GitLab:
 
 ```sh
