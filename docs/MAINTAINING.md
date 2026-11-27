@@ -524,8 +524,16 @@ Releases are built by two GitHub Actions workflows, and only when you ask for on
 To release:
 
 1. Set the new version in the root `Cargo.toml` (`[workspace.package]`; every crate inherits it)
-   and commit it together with the updated `Cargo.lock`.
-2. Tag the commit with the same version and push the tag:
+   and in `web/package.json`, and commit both together with the updated `Cargo.lock`.
+2. Check the top of `README.md` in the same commit:
+   - the badges: the release badge reads the latest GitHub Release by itself, but the GitLab
+     compatibility badge (`GitLab-18.11 CE & EE`) and the license badge are fixed text. Update
+     them when the reference GitLab version or the license changes;
+   - the numbers the README quotes: the CE and EE scenario counts (the files in
+     `tests/conformance/fixtures` and `fixtures-ee`), the recorded API responses (the steps in
+     all fixtures) and webhook deliveries, and the binary sizes (from the release archives).
+     Then read the rest of the README for claims the release made untrue.
+3. Tag the commit with the same version and push the tag:
    `git tag v0.2.0 && git push origin v0.2.0`.
 
 The tag starts the Release workflow. It must match the version in `Cargo.toml` exactly, or the
