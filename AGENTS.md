@@ -51,6 +51,8 @@ is built yet; the project is at the planning stage.
 - **Every action goes through a service.** That keeps side effects identical whether an action comes
   from REST, GraphQL, the UI, a quick action or a git push.
 - **Keep the docs true.** Update `docs/PLAN.md` when the design or the scope changes.
+- **Squash pull requests before merging.** Squash a PR's commits into one (and update its
+  description to match) before merging it, unless you're explicitly asked not to.
 
 ## Commands
 

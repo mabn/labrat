@@ -36,7 +36,7 @@
 
 - **100× faster:** Runs a 20-MR workload in **0.68 s** instead of 189 s. Starts in ~11 ms and resets to a clean state in 6 ms.
 - **Zero dependencies:** One 25 MB binary and one SQLite file (or `:memory:`). No Docker, PostgreSQL, Redis, or Sidekiq—just **15 MB** of idle RAM instead of 3 GB.
-- **Verified against real GitLab:** Tested against **16,504 API responses** and **1,428 webhook deliveries** recorded from real GitLab CE & EE 18.11 instances—comparing status codes, headers, bodies, and JSON key order.
+- **Verified against real GitLab:** Tested against **17,076 API responses** and **1,428 webhook deliveries** recorded from real GitLab CE & EE 18.11 instances—comparing status codes, headers, bodies, and JSON key order.
 - **Built for test suites:** Dedicated test endpoints to reset, snapshot/restore, wait for background jobs (`/-/labrat/idle`), shift the clock, and inspect a live request log.
 - **Drop-in compatibility:** Tested with the Rust `gitlab` crate, `curl`, and standard `git clone`/`git push`.
 - **Built-in Web UI:** A GitLab-style interface to browse projects, review merge requests, and inspect requests while developing or debugging.
@@ -115,7 +115,7 @@ curl localhost:8080/-/labrat/idle            # Blocks until background jobs & we
 
 | Metric | GitLab CE 18.11 (Docker) | **labrat** |
 | :--- | :--- | :--- |
-| **Download size** | 1.83 GB image | **10.1 MB** (gzipped) |
+| **Download size** | 1.83 GB image | **~7 MB** (release archive) |
 | **Size on disk** | 6.25 GB | **25.3 MB** |
 | **First-time setup** | ~4 minutes | **`brew install` (instant)** |
 | **Startup time** | 84 s | **11 ms** |
@@ -169,9 +169,9 @@ See [docs/PLAN.md](docs/PLAN.md) for the complete architectural scope.
 
 labrat is verified against **real GitLab instances**, not just documentation.
 
-- **Conformance suite:** `tests/conformance` contains **154 CE scenarios** and **168 EE scenarios** recorded against GitLab 18.11. `cargo test` replays every API call, GraphQL query, git push, and webhook against labrat and diffs status codes, headers, bodies, and JSON key order.
+- **Conformance suite:** `tests/conformance` contains **156 CE scenarios** and **175 EE scenarios** recorded against GitLab 18.11. `cargo test` replays every API call, GraphQL query, git push, and webhook against labrat and diffs status codes, headers, bodies, and JSON key order.
 - **Deterministic time:** Recordings capture timestamps and shift labrat's clock to match, accurately reproducing time-gated behaviors (such as GitLab touching an MR at most once per minute).
-- **Random walks:** Fixed-seed `random_walk*` scenarios simulate two concurrent users on merge requests and diff every webhook delivery to catch edge-case interactions.
+- **Random walks:** Fixed-seed `random_walk*` scenarios run long random sequences of operations and compare every response along the way, catching interactions that hand-written scenarios miss.
 - **Behavior over docs:** Where GitLab's documentation and actual behavior disagree, labrat matches the behavior ([see docs/discrepancies.md](docs/discrepancies.md)).
 
 ```sh
