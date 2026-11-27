@@ -4,7 +4,7 @@ members = ["crates/*", "tests/conformance", "tests/client"]
 
 [workspace.package]
 edition = "2024"
-version = "0.1.0"
+version = "0.2.0"
 publish = false
 
 # Keep build output small: full debug info for every test binary used ~10 GB.
