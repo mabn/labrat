@@ -170,6 +170,14 @@ pub fn ff_required(p: &Project) -> bool {
     p.merge_method == "ff" || p.merge_method == "rebase_merge"
 }
 
+/// EE merge trains rebase MRs that are behind their target: in fast-forward and rebase-merge
+/// projects with trains on, the EE reference still reports `shouldBeRebased` (and GraphQL
+/// `mergeable: false`) for them, but `detailed_merge_status` is `mergeable` and the train takes
+/// them.
+pub fn train_rebases(p: &Project) -> bool {
+    ff_required(p) && crate::services::merge_trains::merge_trains_enabled(p)
+}
+
 /// `should_be_rebased?`: fast-forward required but the target head isn't in the source.
 pub fn should_be_rebased(c: &Connection, p: &Project, mr: &MergeRequest) -> Result<bool> {
     if !ff_required(p) {
@@ -249,7 +257,7 @@ pub fn auto_merge_blocking(c: &Connection, p: &Project, mr: &MergeRequest) -> Re
     if broken(c, p, mr)? {
         return Ok(Some("commits_status".into()));
     }
-    if should_be_rebased(c, p, mr)? {
+    if !train_rebases(p) && should_be_rebased(c, p, mr)? {
         return Ok(Some("need_rebase".into()));
     }
     let recheck = matches!(mr.merge_status.as_str(), "unchecked" | "checking" | "cannot_be_merged_recheck" | "cannot_be_merged_rechecking");
@@ -302,7 +310,7 @@ pub fn first_failed_check(
     if config.is_ee() && (crate::services::approvals::syncing(c, mr)? || !crate::services::approvals::state(c, p, mr)?.approved()) {
         return Ok(Some("not_approved".into()));
     }
-    if should_be_rebased(c, p, mr)? {
+    if !train_rebases(p) && should_be_rebased(c, p, mr)? {
         return Ok(Some("need_rebase".into()));
     }
     let source = mr.source_branch_sha(c, p)?;

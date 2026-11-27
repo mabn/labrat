@@ -1239,6 +1239,7 @@ async fn do_merge(req: Req) -> ApiResult {
         squash_commit_message: p.str("squash_commit_message"),
         should_remove_source_branch: p.bool("should_remove_source_branch")?,
         sha: p.str("sha"),
+        ..Default::default()
     };
     let auto =
         p.bool_or("merge_when_pipeline_succeeds", false)? || p.bool_or("auto_merge", false)?;

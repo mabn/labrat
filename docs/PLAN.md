@@ -586,6 +586,15 @@ that the conformance suite catches.
   - a failed car is dropped and the cars behind it restart;
   - a push, a draft or closing the MR drops its car;
   - merging past the train restarts it, and an allowed skip records a `skip_merged` car;
+  - a push to the target branch (not a merge) restarts the train on top of it;
+  - in fast-forward and rebase-merge projects an MR behind its target needs no rebase: the
+    train rebases it (a fast-forward train ref has no merge commit), squashing it first when
+    the MR squashes; GraphQL doesn't ask for a rebase while the MR is on a train or waits to
+    join one;
+  - an MR without a pipeline is offered no train strategy; adding one straight on needs a
+    passed pipeline, and "when checks pass" a running one (or an MR behind its target). A
+    refused add still keeps its `squash`;
+  - `mergeRequestAccept`'s branch removal and commit messages apply when the train merges;
   - `PUT /merge` with `auto_merge` (or `merge_when_pipeline_succeeds`) is refused while the
     MR's pipeline runs and merges at once after it passed.
 - Webhooks: pipeline hooks (pending, running, finished) for MR and train pipelines, with their
@@ -598,7 +607,10 @@ that the conformance suite catches.
   - a project's fake CI is set up through `/-/labrat/projects/:id/ci`;
   - with it on, MRs get detached or merged results pipelines, and trains get car pipelines;
   - jobs are finished by a fake runner, by hand (`/-/labrat/ci/pick`, `/-/labrat/ci/finish`)
-    or automatically, with a given result after a given duration.
+    or automatically, with a given result after a given duration;
+  - `POST /projects/:id/pipelines/:pipeline_id/retry` reruns a fake CI pipeline's failed and
+    canceled jobs in the same pipeline, which is `running` again at once; an armed auto-merge
+    merges when the rerun passes.
 
 ### Later (candidates, by demand)
 

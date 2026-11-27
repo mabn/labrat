@@ -20,6 +20,14 @@ is built yet; the project is at the planning stage.
 
   When GitLab's docs and the reference instance disagree, the instance wins. Record every such case
   in `docs/discrepancies.md` (the format is in `docs/PLAN.md` under "Reference version").
+- **Observe before you implement.** Every behaviour labrat implements must come from what a real
+  GitLab instance returns: record it in conformance scenarios, and probe it through the API until
+  it is pinned down. That is the whole premise of labrat.
+  - Docs, bug reports, the CE source and your own guesses show where to look. They are never
+    enough on their own, and none of them replaces a recording.
+  - Record the scenario first, then write the code that makes it pass. Probe every detail the
+    change touches: status codes, fields, notes, refs and commits, edge cases and error paths.
+  - If you can't reach the instance, stop and say so. Don't implement on a guess meanwhile.
 - **Check against the reference instance.** It is a GitLab CE 18.11 instance, locally at
   `http://localhost:8929` and set up in `~/dev/gitlab-run-ce`. The exact Rails source is in its
   container at `/opt/gitlab/embedded/service/gitlab-rails`. `docs/MAINTAINING.md` explains how
@@ -32,9 +40,9 @@ is built yet; the project is at the planning stage.
   - Don't reference EE code either, even code you recall from training. That rules out EE Ruby
     class and module names (`EE::API::Entities::...`, EE services and workers), `ee/` file
     paths and EE-only method names, in code, comments, docs and commit messages.
-  - Base EE behaviour on GitLab's public documentation and on what the EE instance's API
-    returns (the `fixtures-ee` recordings). Names the API itself exposes are fine, such as
-    GraphQL types and global IDs.
+  - Base EE behaviour on what the EE instance's API returns (the `fixtures-ee` recordings).
+    Public documentation only suggests what to probe. Names the API itself exposes are fine,
+    such as GraphQL types and global IDs.
 - **Stay in scope.** Check the scope lists in `docs/PLAN.md` before adding a feature, and ask before
   building anything listed as out of scope.
 - **Test at the HTTP level.** Most tests compare HTTP responses precisely against recorded GitLab

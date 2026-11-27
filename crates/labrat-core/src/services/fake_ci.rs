@@ -16,6 +16,9 @@
 //!   `/-/labrat/ci/finish` finishes them;
 //! - in `auto` mode each job starts at once and finishes after `duration_ms` with `status`
 //!   (or the status `overrides` gives for its ref).
+//!
+//! Retrying a pipeline (`POST /projects/:id/pipelines/:pipeline_id/retry`) gives its failed and
+//! canceled jobs pending copies in the same pipeline.
 
 use crate::model::{Project, User};
 use crate::services::ci::{self, Pipeline};
@@ -307,6 +310,33 @@ pub fn cancel_pipeline(c: &Connection, config: &Config, pipeline_id: i64) -> Res
         c.execute("UPDATE commit_statuses SET status = 'canceling', updated_at = ?1 WHERE id = ?2", params![time::now(), id])?;
     }
     ci::recompute(c, config, pipeline_id)
+}
+
+/// `POST /projects/:id/pipelines/:pipeline_id/retry` (`Ci::RetryPipelineService`): each failed
+/// or canceled job is replaced by a pending copy in the same pipeline, and the old one is marked
+/// retried. The pipeline is `running` again at once, with `finished_at` cleared; its
+/// `started_at` stays. Returns whether any job was retried.
+pub fn retry_pipeline(c: &Connection, config: &Config, pipeline_id: i64, user: &User) -> Result<bool> {
+    let Some(pl) = Pipeline::find(c, pipeline_id)? else { return Ok(false) };
+    let ids = job_ids(c, pipeline_id, &["failed", "canceled"])?;
+    if ids.is_empty() {
+        return Ok(false);
+    }
+    let now = time::now();
+    for id in ids {
+        c.execute("UPDATE commit_statuses SET retried = 1, updated_at = ?1 WHERE id = ?2", params![now, id])?;
+        c.execute(
+            "INSERT INTO commit_statuses (pipeline_id, project_id, name, ref, sha, status, user_id, created_at, updated_at, queued_at, build, stage)
+             SELECT pipeline_id, project_id, name, ref, sha, 'pending', ?1, ?2, ?2, ?2, 1, stage FROM commit_statuses WHERE id = ?3",
+            params![user.id, now, id],
+        )?;
+    }
+    c.execute("UPDATE ci_pipelines SET finished_at = NULL WHERE id = ?1", [pipeline_id])?;
+    ci::recompute(c, config, pipeline_id)?;
+    if self::config(c, pl.project_id)?.is_some_and(|f| f.mode == "auto") {
+        jobs::enqueue(c, "fake_ci_run", json!({"pipeline_id": pipeline_id}))?;
+    }
+    Ok(true)
 }
 
 /// Auto mode: the runner starts the pipeline's jobs, and finishes them after the duration.

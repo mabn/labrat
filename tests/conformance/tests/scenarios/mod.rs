@@ -5,6 +5,8 @@ mod approval_persistence;
 mod archived_projects;
 mod archived_readonly;
 mod auto_merge_abort;
+mod auto_merge_triggers;
+mod auto_merge_pipeline_events;
 mod audit_followups;
 mod audit_followups_2;
 mod audit_followups_3;

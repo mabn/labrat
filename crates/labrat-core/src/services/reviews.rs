@@ -125,7 +125,12 @@ pub fn approval_events_job(
     crate::services::todos::resolve_for_target(c, &mr, Some(user.id))?;
     // EE reports a partial approval as `approval` and the final one as `approved`.
     let action = if config.is_ee() && !crate::services::approvals::state(c, &p, &mr)?.approved() { "approval" } else { "approved" };
-    crate::services::hooks::merge_request_event(c, config, &p, &mr, Some(&user), action, None)
+    crate::services::hooks::merge_request_event(c, config, &p, &mr, Some(&user), action, None)?;
+    // EE: approvals are a merge check, so an approval lets an armed auto-merge go ahead.
+    if config.is_ee() && mr.merge_when_pipeline_succeeds && mr.is_open() {
+        crate::jobs::enqueue(c, "mr_auto_merge", json!({"merge_request_id": mr.id}))?;
+    }
+    Ok(())
 }
 
 /// `MergeRequests::RemoveApprovalService`. Returns false when there was nothing to remove.

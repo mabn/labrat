@@ -34,9 +34,18 @@ pub fn can_read(c: &Connection, req: &Req, mr: &MergeRequest) -> labrat_core::Re
     Ok(perms.read_merge_request(&p))
 }
 
+/// The basic MR entity: reading `merge_status` as a user who can update the MR queues an async
+/// mergeability recheck first.
 fn mr_json(c: &Connection, req: &Req, mr: &MergeRequest) -> Result<Value, ApiError> {
     let p = Project::find(c, mr.target_project_id)?.expect("project exists");
-    Ok(Value::Object(ent::basic(c, &req.app.config, req.user.as_ref(), &p, mr, &Opts::default())?))
+    let mut mr = mr.clone();
+    if let Some(u) = &req.user
+        && labrat_core::services::merge_requests::can_update(c, &p, &mr, u)?
+        && labrat_core::services::merge_requests::mergeability::check_async(c, &mr)?
+    {
+        mr = mr.reload(c)?;
+    }
+    Ok(Value::Object(ent::basic(c, &req.app.config, req.user.as_ref(), &p, &mr, &Opts::default())?))
 }
 
 /// A block; the blocker is left out when the user can't read it. `project_id` is the

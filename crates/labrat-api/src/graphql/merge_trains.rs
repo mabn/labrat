@@ -188,19 +188,22 @@ pub fn mr_field(cx: &Ctx, p: &Project, mr: &MergeRequest, field: &str) -> FResul
 }
 
 /// `availableAutoMergeStrategies` with trains on: adding once checks pass while the pipeline
-/// runs, adding now when the MR could merge.
+/// runs, adding now when the MR could merge (and both for a behind MR), nothing without a
+/// pipeline.
 pub fn available_strategies(cx: &Ctx, p: &Project, mr: &MergeRequest) -> FResult<Out> {
     let c = cx.c;
     let Some(u) = cx.user() else { return Ok(Out::val(Vec::<String>::new())) };
     if !mr.is_open() || !labrat_core::services::merge_requests::can_be_merged_by(c, p, mr, u)? || mergeability::auto_merge_blocking(c, p, mr)?.is_some() {
         return Ok(Out::val(Vec::<String>::new()));
     }
-    let dhp = ci::diff_head_pipeline(c, p, mr)?;
-    let running = dhp.as_ref().is_some_and(|pl| pl.is_unfinished());
+    // Without a pipeline for its head the MR can't join a train: no strategy is offered.
+    let Some(dhp) = ci::diff_head_pipeline(c, p, mr)? else { return Ok(Out::val(Vec::<String>::new())) };
+    let running = dhp.is_unfinished();
     Ok(Out::val(if running {
         vec!["add_to_merge_train_when_checks_pass"]
     } else if mergeability::mergeable(c, &cx.req.app.config, p, mr)? {
-        vec!["merge_train"]
+        // A behind MR (rebased by the train) can also wait for its checks.
+        if mergeability::should_be_rebased(c, p, mr)? { vec!["merge_train", "add_to_merge_train_when_checks_pass"] } else { vec!["merge_train"] }
     } else {
         vec![]
     }))

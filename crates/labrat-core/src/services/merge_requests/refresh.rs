@@ -120,6 +120,11 @@ pub fn refresh(
         }
     }
 
+    // EE: a train built on the old target restarts.
+    if !removed && config.is_ee() {
+        crate::services::merge_trains::target_moved(c, config, p, branch, &u.new.hex())?;
+    }
+
     // Reload diffs and mark unchecked.
     let open = MergeRequest::list_where(
         c,
@@ -164,11 +169,19 @@ pub fn refresh(
         {
             mergeability::check_async(c, &mr)?;
         }
+        // EE: a car's MR gets its new pipeline after the car is dropped (and the cars behind it
+        // have restarted).
+        let on_train = config.is_ee() && crate::services::merge_trains::Car::active_for_mr(c, mr.id)?.is_some();
+        let mut create_pipeline = false;
         if is_source && !removed {
             if let Some(pl) = crate::services::ci::create_skipped_mr_pipeline(c, p, &mr, user)? {
                 crate::services::hooks::pipeline_event(c, config, p, &pl)?;
             } else if crate::services::fake_ci::config(c, p.id)?.is_some() {
-                crate::jobs::enqueue(c, "mr_create_pipeline", serde_json::json!({"merge_request_id": mr.id, "user_id": user.id}))?;
+                if on_train {
+                    create_pipeline = true;
+                } else {
+                    crate::jobs::enqueue(c, "mr_create_pipeline", serde_json::json!({"merge_request_id": mr.id, "user_id": user.id}))?;
+                }
             }
         }
         // `mark_pending_todos_done`: the pusher's pending to-dos on MRs from this branch.
@@ -180,6 +193,8 @@ pub fn refresh(
         if !is_source
             && !removed
             && mr.merge_when_pipeline_succeeds
+            // A car stays on its train: the EE reference keeps it when the car ahead merges.
+            && crate::services::merge_trains::strategy(&mr).as_deref() != Some("merge_train")
             && matches!(p.merge_method.as_str(), "ff" | "rebase_merge")
             && mergeability::should_be_rebased(c, p, &mr)?
         {
@@ -218,6 +233,9 @@ pub fn refresh(
                         config.url("/help/ci/pipelines/merge_trains.md#merge-request-dropped-from-the-merge-train")
                     ),
                 )?;
+            }
+            if create_pipeline {
+                crate::jobs::enqueue(c, "mr_create_pipeline", serde_json::json!({"merge_request_id": mr.id, "user_id": user.id}))?;
             }
             if created {
                 notes::system_note(

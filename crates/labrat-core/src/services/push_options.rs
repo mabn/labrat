@@ -273,6 +273,7 @@ fn enable_auto_merge(c: &Connection, _config: &Config, p: &Project, mr: &MergeRe
         squash_commit_message: None,
         should_remove_source_branch: None,
         sha: Some(sha.to_string()),
+        ..Default::default()
     };
     crate::services::merge_requests::merge::enable_auto_merge(c, p, &mr.reload(c)?, user, &mp)
 }
