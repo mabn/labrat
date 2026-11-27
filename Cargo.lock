@@ -1395,7 +1395,7 @@ dependencies = [
 
 [[package]]
 name = "labrat"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -1410,7 +1410,7 @@ dependencies = [
 
 [[package]]
 name = "labrat-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "async-graphql-parser",
  "async-graphql-value",
@@ -1442,7 +1442,7 @@ dependencies = [
 
 [[package]]
 name = "labrat-client-tests"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "axum",
  "gitlab",
@@ -1455,7 +1455,7 @@ dependencies = [
 
 [[package]]
 name = "labrat-conformance"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "axum",
  "base64 0.23.1",
@@ -1471,7 +1471,7 @@ dependencies = [
 
 [[package]]
 name = "labrat-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "chrono",
@@ -1492,7 +1492,7 @@ dependencies = [
 
 [[package]]
 name = "labrat-git"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "flate2",
  "hex",
