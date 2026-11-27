@@ -233,6 +233,9 @@ pub struct MergeParams {
     pub squash_commit_message: Option<String>,
     pub should_remove_source_branch: Option<bool>,
     pub sha: Option<String>,
+    /// A merge train's commit for the MR: fast-forward and rebase-merge projects move the target
+    /// branch to it (the EE reference does).
+    pub train_sha: Option<String>,
 }
 
 /// `MergeRequests::MergeService#execute`. On failure the MR stays open with `merge_error` set and
@@ -264,7 +267,11 @@ pub fn merge(
         return fail("No source for merge");
     };
     let head = Oid::from_hex(&head_hex).map_err(Error::from)?;
-    if p.merge_method == "ff" && mergeability::should_be_rebased(c, p, &mr)? {
+    let train_tip = match &mp.train_sha {
+        Some(t) if mergeability::ff_required(p) => Some(Oid::from_hex(t).map_err(Error::from)?),
+        _ => None,
+    };
+    if train_tip.is_none() && p.merge_method == "ff" && mergeability::should_be_rebased(c, p, &mr)? {
         return fail(
             "Only fast-forward merge is allowed for your project. Please update your source branch",
         );
@@ -343,7 +350,24 @@ pub fn merge(
 
     let new_target;
     let mut merge_commit = None;
-    if p.merge_method == "ff" {
+    if let Some(tip) = train_tip {
+        // The train's commit already sits on top of the target.
+        if !walk::is_ancestor(&r, &target, &tip)? {
+            c.execute("UPDATE merge_requests SET state = 'opened' WHERE id = ?1", [mr.id])?;
+            return fail("An error occurred while merging");
+        }
+        new_target = tip;
+        if p.merge_method == "rebase_merge" {
+            merge_commit = Some(tip);
+            // The squash commit is the one the train merged: the merge commit's second parent.
+            if squash {
+                squash_sha = r.commit(&tip)?.parents.get(1).copied();
+            }
+        } else if squash {
+            // Fast-forward: the train's commit is the squash commit.
+            squash_sha = Some(tip);
+        }
+    } else if p.merge_method == "ff" {
         if !walk::is_ancestor(&r, &target, &source_tip)? {
             c.execute(
                 "UPDATE merge_requests SET state = 'opened' WHERE id = ?1",
@@ -586,6 +610,14 @@ pub fn request_rebase(c: &Connection, mr: &MergeRequest, user: &User, skip_ci: b
     Ok(())
 }
 
+/// Replays the commits of `tip` that `onto` lacks on top of `onto`; `None` on conflicts.
+pub fn rebase_onto(r: &labrat_git::Repo, onto: &Oid, tip: &Oid, user: &User) -> Result<Option<Oid>> {
+    let base = walk::merge_base(r, tip, onto)?;
+    let mut commits = walk::rev_list(r, &[*tip], &base.into_iter().chain([*onto]).collect::<Vec<_>>())?;
+    commits.reverse();
+    Ok(rebase(r, onto, &commits, &repo::signature(user))?.ok())
+}
+
 /// `RebaseService#execute`.
 pub fn rebase_job(
     c: &Connection,
@@ -817,6 +849,7 @@ pub fn auto_merge_process(c: &Connection, config: &Config, mr_id: i64) -> Result
             .get("sha")
             .and_then(Value::as_str)
             .map(str::to_string),
+        ..Default::default()
     };
     merge(c, config, &p, &mr, &user, &mp)?;
     Ok(())

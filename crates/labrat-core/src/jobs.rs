@@ -204,6 +204,7 @@ pub fn run(c: &Connection, config: &Config, job: &Job) -> Result<()> {
                 squash_commit_message: s("squash_commit_message"),
                 should_remove_source_branch: p["should_remove_source_branch"].as_bool(),
                 sha: s("sha"),
+                ..Default::default()
             };
             crate::services::merge_requests::merge::merge(c, config, &proj, &mr, &user, &mp)?;
             Ok(())

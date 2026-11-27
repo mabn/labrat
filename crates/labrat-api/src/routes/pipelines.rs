@@ -246,6 +246,12 @@ async fn list_pipelines(req: Req) -> ApiResult {
                 && sha.as_ref().is_none_or(|x| &pl.sha == x)
                 && source.as_ref().is_none_or(|x| &pl.source == x)
         });
+        // Newest first unless `sort=asc` (by id, the default `order_by`).
+        if req.params.str("sort").as_deref() == Some("asc") {
+            list.sort_by_key(|pl| pl.id);
+        } else {
+            list.sort_by_key(|pl| std::cmp::Reverse(pl.id));
+        }
         paginate(&req, list, &[("order_by", "id"), ("sort", "desc")], |pl| {
             let mut m = pipeline_basic(&req.app.config, &p, pl);
             m.insert("name".into(), Value::Null);
@@ -431,6 +437,11 @@ async fn retry_pipeline(req: Req) -> ApiResult {
         if !level(c, &req, &p)?.0 {
             return Err(Error::forbidden().into());
         }
+        // Only fake CI jobs can be retried; commit statuses stay as they are.
+        if labrat_core::services::fake_ci::retry_pipeline(c, &req.app.config, pl.id, req.user()?)? {
+            crate::jobs::kick(&req.app);
+        }
+        let pl = Pipeline::find(c, pl.id)?.ok_or_else(not_found_pipeline)?;
         Ok(Resp::created(Value::Object(pipeline_detailed(c, &req, &p, &pl)?)))
     })
 }

@@ -170,6 +170,26 @@ pub struct AddOpts {
     pub auto_merge: bool,
     pub sha: Option<String>,
     pub squash: Option<bool>,
+    /// `mergeRequestAccept`'s merge options, kept for when the train merges the MR.
+    pub commit_message: Option<String>,
+    pub squash_commit_message: Option<String>,
+    pub should_remove_source_branch: Option<bool>,
+}
+
+impl AddOpts {
+    fn merge_options(&self) -> Vec<(&'static str, Value)> {
+        let mut v = vec![];
+        if let Some(m) = &self.commit_message {
+            v.push(("commit_message", json!(m)));
+        }
+        if let Some(m) = &self.squash_commit_message {
+            v.push(("squash_commit_message", json!(m)));
+        }
+        if let Some(b) = self.should_remove_source_branch {
+            v.push(("should_remove_source_branch", json!(b)));
+        }
+        v
+    }
 }
 
 pub enum Added {
@@ -177,6 +197,9 @@ pub enum Added {
     Now,
     /// The MR joins when its checks pass (202).
     WhenChecksPass,
+    /// Neither (400 "Failed to merge"). GitLab keeps the `squash` it was given all the same,
+    /// so this isn't an error that would roll it back.
+    Refused,
 }
 
 fn train_link(config: &Config, p: &Project) -> String {
@@ -186,6 +209,11 @@ fn train_link(config: &Config, p: &Project) -> String {
 /// Whether the MR could join the train right now: mergeable, with a finished pipeline (a
 /// failed one too: the train runs its own).
 fn ready(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest) -> Result<bool> {
+    // An MR whose mergeability still has to be checked isn't taken (the EE reference answers
+    // "Failed to merge"); `mergeable` alone would recheck it on the spot.
+    if matches!(mr.merge_status.as_str(), "unchecked" | "checking" | "cannot_be_merged_recheck" | "cannot_be_merged_rechecking") {
+        return Ok(false);
+    }
     let finished = crate::services::ci::diff_head_pipeline(c, p, mr)?.is_some_and(|pl| !pl.is_unfinished());
     Ok(finished && mergeability::mergeable(c, config, p, mr)?)
 }
@@ -212,16 +240,41 @@ pub fn add(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest, user
         c.execute("UPDATE merge_requests SET squash = ?1 WHERE id = ?2", params![sq, mr.id])?;
     }
     let mr = mr.reload(c)?;
+    // Waiting for the checks needs a pipeline that is still running (or an MR behind its
+    // target, which the train rebases); an MR whose pipeline passed can only go straight on.
+    if opts.auto_merge {
+        let waitable = match crate::services::ci::diff_head_pipeline(c, p, &mr)? {
+            None => false,
+            Some(pl) => pl.is_unfinished() || mergeability::should_be_rebased(c, p, &mr)?,
+        };
+        if !waitable {
+            return Ok(Added::Refused);
+        }
+    }
     if ready(c, config, p, &mr)? {
-        start_car(c, config, p, &mr, user)?;
+        set_merge_options(c, &mr, &opts.merge_options())?;
+        start_car(c, config, p, &mr.reload(c)?, user)?;
         return Ok(Added::Now);
     }
     if !opts.auto_merge {
-        return Err(Error::BadRequest(Some("Failed to merge".into())));
+        return Ok(Added::Refused);
     }
-    set_strategy(c, &mr, user, "add_to_merge_train_when_checks_pass", &head)?;
+    set_merge_options(c, &mr, &opts.merge_options())?;
+    set_strategy(c, &mr.reload(c)?, user, "add_to_merge_train_when_checks_pass", &head)?;
     notes::system_note(c, mr.id, p.id, user, "enabled automatic add to merge train when checks pass", "merge")?;
     Ok(Added::WhenChecksPass)
+}
+
+fn set_merge_options(c: &Connection, mr: &MergeRequest, options: &[(&str, Value)]) -> Result<()> {
+    if options.is_empty() {
+        return Ok(());
+    }
+    let mut mp = mr.merge_params.clone();
+    for (k, v) in options {
+        mp.insert((*k).into(), v.clone());
+    }
+    c.execute("UPDATE merge_requests SET merge_params = ?1 WHERE id = ?2", params![Value::Object(mp).to_string(), mr.id])?;
+    Ok(())
 }
 
 fn set_strategy(c: &Connection, mr: &MergeRequest, user: &User, strategy: &str, sha: &str) -> Result<()> {
@@ -339,6 +392,30 @@ fn restart(c: &Connection, config: &Config, cars: &[Car]) -> Result<()> {
     Ok(())
 }
 
+/// The target branch moved to `tip` (a push, not the train's own merge): the cars were built on
+/// an older target, so the whole train restarts on top of the new one.
+pub fn target_moved(c: &Connection, config: &Config, p: &Project, target_branch: &str, tip: &str) -> Result<()> {
+    if !merge_trains_enabled(p) {
+        return Ok(());
+    }
+    let cars = Car::train(c, p.id, target_branch)?;
+    let Some(front) = cars.first() else { return Ok(()) };
+    if front.status == "stale" || front.previous_ref_sha.is_none() || front.previous_ref_sha.as_deref() == Some(tip) {
+        return Ok(());
+    }
+    // A merge moved it: the train's own merges keep the cars, and merges past the train restart
+    // it themselves (`merged_past_train`).
+    let merged: i64 = c.query_row(
+        "SELECT count(*) FROM merge_requests WHERE target_project_id = ?1 AND state = 'merged' AND (merge_commit_sha = ?2 OR squash_commit_sha = ?2)",
+        params![p.id, tip],
+        |r| r.get(0),
+    )?;
+    if merged > 0 {
+        return Ok(());
+    }
+    restart_train(c, config, p.id, target_branch)
+}
+
 /// Restarts a whole train (after an MR merged past it).
 pub fn restart_train(c: &Connection, config: &Config, project_id: i64, target_branch: &str) -> Result<()> {
     let cars = Car::train(c, project_id, target_branch)?;
@@ -389,7 +466,46 @@ pub fn remove(c: &Connection, config: &Config, mr: &MergeRequest, user: &User) -
 /// Builds the train ref of `mr` on `base`: a merge of the MR head into it. `None` on conflicts.
 fn build_train_ref(c: &Connection, config: &Config, p: &Project, mr: &MergeRequest, base: &Oid) -> Result<Option<Oid>> {
     let r = repo::repo(c, p);
-    let Some(head) = mr.diff_head_sha(c, p)?.and_then(|h| Oid::from_hex(&h).ok()) else { return Ok(None) };
+    let Some(mut head) = mr.diff_head_sha(c, p)?.and_then(|h| Oid::from_hex(&h).ok()) else { return Ok(None) };
+    // Fast-forward and rebase-merge projects: the MR's commits rebased onto the car ahead (a
+    // fast-forward train ref has no merge commit).
+    if mergeability::ff_required(p) {
+        if !labrat_git::walk::is_ancestor(&r, base, &head)? {
+            let Some(tip) = mrmerge::rebase_onto(&r, base, &head, &User::get(c, mr.author_id)?)? else { return Ok(None) };
+            head = tip;
+        }
+        // Squashing MRs go on as one commit on `base` (unless they are one commit with the
+        // squash message already), with the squash commit message.
+        if mr.squash {
+            let author = User::get(c, mr.author_id)?;
+            let message = match mr.merge_params.get("squash_commit_message").and_then(Value::as_str) {
+                Some(m) => m.to_string(),
+                None => mrmerge::default_squash_commit_message(c, config, p, mr, Some(&author))?,
+            };
+            let commits = match mr.latest_diff(c)? {
+                Some(d) => d.commits(&r)?,
+                None => vec![],
+            };
+            let single_same = commits.len() == 1 && r.commit(&commits[0])?.message == message;
+            if !single_same {
+                let sig = repo::signature(&author);
+                let tree = r.commit(&head)?.tree;
+                head = r.write_commit(&labrat_git::Commit {
+                    tree,
+                    parents: vec![*base],
+                    author: sig.clone(),
+                    committer: sig,
+                    extra: vec![],
+                    // Squashes end the message with a newline, as `git commit` does.
+                    message: if message.ends_with('\n') { message } else { format!("{message}\n") },
+                })?;
+            }
+        }
+        if p.merge_method == "ff" {
+            r.set_ref(&format!("refs/merge-requests/{}/train", mr.iid), &head)?;
+            return Ok(Some(head));
+        }
+    }
     let mb = labrat_git::walk::merge_base(&r, base, &head)?;
     let base_tree = match mb {
         Some(b) => Some(r.commit(&b)?.tree),
@@ -401,7 +517,10 @@ fn build_train_ref(c: &Connection, config: &Config, p: &Project, mr: &MergeReque
     }
     let author = User::get(c, mr.author_id)?;
     let sig = repo::signature(&author);
-    let message = mrmerge::default_merge_commit_message(c, config, p, mr, Some(&author))?;
+    let message = match mr.merge_params.get("commit_message").and_then(Value::as_str) {
+        Some(m) => m.to_string(),
+        None => mrmerge::default_merge_commit_message(c, config, p, mr, Some(&author))?,
+    };
     let oid = r.write_commit(&labrat_git::Commit { tree: merged.tree, parents: vec![*base, head], author: sig.clone(), committer: sig, extra: vec![], message })?;
     r.set_ref(&format!("refs/merge-requests/{}/train", mr.iid), &oid)?;
     Ok(Some(oid))
@@ -491,7 +610,14 @@ fn merge_car(c: &Connection, config: &Config, p: &Project, car: &Car, mr: &Merge
         c.execute("UPDATE merge_requests SET merge_params = ?1 WHERE id = ?2", params![Value::Object(mp).to_string(), mr.id])?;
     }
     let mr = &mr.reload(c)?;
-    let mp = mrmerge::MergeParams { sha: mr.merge_params.get("sha").and_then(Value::as_str).map(String::from), ..Default::default() };
+    let text = |k: &str| mr.merge_params.get(k).and_then(Value::as_str).map(String::from);
+    let mp = mrmerge::MergeParams {
+        sha: text("sha"),
+        commit_message: text("commit_message"),
+        squash_commit_message: text("squash_commit_message"),
+        should_remove_source_branch: mr.merge_params.get("should_remove_source_branch").and_then(Value::as_bool),
+        train_sha: train_sha.clone(),
+    };
     let merged = mrmerge::merge(c, config, p, mr, user, &mp)?;
     if !merged {
         let reason = mr.reload(c)?.merge_error.unwrap_or_else(|| "the merge failed".into());

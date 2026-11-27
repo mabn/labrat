@@ -1386,7 +1386,8 @@ impl Object for MrObj {
             "mergeStatus" => Out::val(mergeability::public_status(&mr.merge_status)),
             "mergeStatusEnum" => Out::val(mergeability::public_status(&mr.merge_status).to_uppercase()),
             "detailedMergeStatus" => Out::val(mergeability::graphql_status(&mergeability::detailed_status(c, &cx.req.app.config, p, mr)?)),
-            "mergeable" => Out::val(mergeability::mergeable(c, &cx.req.app.config, p, mr)?),
+            // A behind MR that a merge train would rebase still reads as not mergeable.
+            "mergeable" => Out::val(mergeability::mergeable(c, &cx.req.app.config, p, mr)? && !should_be_rebased_shown(c, p, mr)?),
             "conflicts" => Out::val(mr.merge_status == "cannot_be_merged"),
             "mergeableDiscussionsState" => Out::val(mergeability::blocking_discussions_resolved(c, p, mr)?),
             // EE: the approval rules are satisfied (true with no rules); CE: someone approved.
@@ -1713,7 +1714,7 @@ impl Object for MrObj {
             "hasCi" => Out::val(labrat_core::services::ci::has_ci(c, p, mr)?),
             "allowCollaboration" => Out::val(false),
             "rebaseInProgress" => Out::val(mr.rebase_in_progress),
-            "shouldBeRebased" => Out::val(mergeability::should_be_rebased(c, p, mr)?),
+            "shouldBeRebased" => Out::val(should_be_rebased_shown(c, p, mr)?),
             "defaultMergeCommitMessage" => Out::val(labrat_core::services::merge_requests::merge::default_merge_commit_message(c, &cx.req.app.config, p, mr, cx.req.user.as_ref())?),
             "defaultSquashCommitMessage" => Out::val(labrat_core::services::merge_requests::merge::default_squash_commit_message(c, &cx.req.app.config, p, mr, cx.req.user.as_ref())?),
             "taskCompletionStatus" => {
@@ -2057,6 +2058,24 @@ impl Object for PipelineObj {
             // `Ci::PipelinePresenter#ref_text` for a branch pipeline with related merge requests.
             "refText" => {
                 let mrs = labrat_core::services::ci::all_merge_requests(cx.c, p, pl)?;
+                if pl.source == "merge_request_event" {
+                    // Detached and merged results pipelines name their MR and its branches.
+                    let Some(m) = mrs.first() else { return Ok(Out::Null) };
+                    let r = labrat_core::repo::repo(cx.c, p);
+                    let branch_link = |b: &str| -> FResult<String> {
+                        Ok(if r.branch(b)?.is_some() {
+                            format!("<a class=\"ref-container gl-link\" href=\"/{}/-/commits/{b}\">{b}</a>", p.full_path)
+                        } else {
+                            format!("<span class=\"ref-name\">{b}</span>")
+                        })
+                    };
+                    let mr_link = format!("<a class=\"mr-iid ref-container\" href=\"/{}/-/merge_requests/{}\">!{}</a>", p.full_path, m.iid, m.iid);
+                    let source = branch_link(&m.source_branch)?;
+                    return Ok(Out::val(match &pl.target_sha {
+                        None => format!("Related merge request {mr_link} to merge {source}"),
+                        Some(_) => format!("Related merge request {mr_link} to merge {source} into {}", branch_link(&m.target_branch)?),
+                    }));
+                }
                 if mrs.is_empty() {
                     let r = pl.ref_.clone().unwrap_or_default();
                     Out::val(format!("For <a class=\"ref-container gl-link\" href=\"/{}/-/commits/{r}\">{r}</a>", p.full_path))
@@ -3090,9 +3109,13 @@ impl Mutation {
                         let opts = labrat_core::services::merge_trains::AddOpts {
                             auto_merge: strategy.as_deref() == Some("ADD_TO_MERGE_TRAIN_WHEN_CHECKS_PASS"),
                             sha: input.str("sha"),
-                            squash: input.bool("squash"),
+                            // Without `squash`, the MR stops squashing.
+                            squash: Some(input.bool("squash").unwrap_or(false)),
+                            commit_message: input.str("commitMessage"),
+                            squash_commit_message: input.str("squashCommitMessage"),
+                            should_remove_source_branch: input.bool("shouldRemoveSourceBranch"),
                         };
-                        if labrat_core::services::merge_trains::add(c, config, &p, &mr, &user, &opts).is_err() {
+                        if !matches!(labrat_core::services::merge_trains::add(c, config, &p, &mr, &user, &opts), Ok(labrat_core::services::merge_trains::Added::Now | labrat_core::services::merge_trains::Added::WhenChecksPass)) {
                             pl.errors = vec!["The merge failed".into()];
                         }
                         pl.mr = Some((p.clone(), mr.reload(c)?));
@@ -4108,4 +4131,13 @@ fn language_of(path: &str) -> Option<(&'static str, &'static str)> {
         "vue" => ("Vue", "#41b883"),
         _ => return None,
     })
+}
+
+/// `shouldBeRebased` as GraphQL shows it: never while the MR is on a merge train or waits to
+/// join one, as the train rebases it.
+fn should_be_rebased_shown(c: &rusqlite::Connection, p: &Project, mr: &MergeRequest) -> labrat_core::Result<bool> {
+    use labrat_core::services::merge_trains as mt;
+    let training = mt::Car::active_for_mr(c, mr.id)?.is_some()
+        || matches!(mt::strategy(mr).as_deref(), Some("merge_train" | "add_to_merge_train_when_checks_pass"));
+    Ok(!training && mergeability::should_be_rebased(c, p, mr)?)
 }

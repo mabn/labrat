@@ -590,11 +590,16 @@ impl Scenario {
             let token = std::env::var("GITLAB_RUNNER_TOKEN").expect("GITLAB_RUNNER_TOKEN (a runner registered on the reference instance)");
             let url = format!("{}/api/v4/jobs/request", self.target.base);
             let mut got = 0;
+            let mut skipped: Vec<(Option<i64>, String)> = vec![];
             let deadline = std::time::Instant::now() + std::time::Duration::from_secs(90);
             while got < count {
                 let r = self.http.post(&url).json(&json!({"token": token, "info": runner_info()})).send().await.expect("job request failed");
                 if r.status().as_u16() != 201 {
-                    assert!(std::time::Instant::now() < deadline, "only {got} of {count} jobs were picked");
+                    assert!(
+                        std::time::Instant::now() < deadline,
+                        "only {got} of {count} jobs were picked (picked so far: {:?}; others finished: {:?})",
+                        self.ci_picks, skipped
+                    );
                     tokio::time::sleep(std::time::Duration::from_millis(500)).await;
                     continue;
                 }
@@ -603,6 +608,7 @@ impl Scenario {
                 let jtoken = job["token"].as_str().unwrap().to_string();
                 let pid = job["variables"].as_array().and_then(|v| v.iter().find(|x| x["key"] == "CI_PROJECT_ID")).and_then(|x| x["value"].as_str()).and_then(|v| v.parse::<i64>().ok());
                 if pid != Some(project) {
+                    skipped.push((pid, job["git_info"]["ref"].as_str().unwrap_or("").to_string()));
                     // A leftover job of another scenario: finish it so it doesn't come back.
                     self.ci_put_job(id, &jtoken, "success").await;
                     continue;

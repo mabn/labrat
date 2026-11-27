@@ -131,6 +131,7 @@ async fn add(req: Req) -> ApiResult {
             auto_merge: req.params.bool("auto_merge")?.or(req.params.bool("when_pipeline_succeeds")?).unwrap_or(false),
             sha: req.params.str("sha"),
             squash: req.params.bool("squash")?,
+            ..Default::default()
         };
         // The links of the paginated answer carry the declared params that were given.
         let given: Vec<(String, String)> = ["auto_merge", "sha", "squash", "when_pipeline_succeeds"]
@@ -144,14 +145,17 @@ async fn add(req: Req) -> ApiResult {
             .collect();
         let defaults: Vec<(&str, &str)> = given.iter().map(|(k, v)| (k.as_str(), v.as_str())).collect();
         let (cars, status) = match mt::add(c, &config, &p, &mr, &me, &opts)? {
-            // Every car of the target branch, merged ones too.
+            // Answered after the transaction commits, keeping what `add` saved.
+            mt::Added::Refused => return Ok(Err(ApiError::from(labrat_core::Error::BadRequest(Some("Failed to merge".into()))))),
+            // Every car of the target branch, merged ones too (also when the MR only waits to
+            // join).
             mt::Added::Now => (Car::list(c, p.id, Some(&mr.target_branch), None, true)?, axum::http::StatusCode::CREATED),
-            mt::Added::WhenChecksPass => (vec![], axum::http::StatusCode::ACCEPTED),
+            mt::Added::WhenChecksPass => (Car::list(c, p.id, Some(&mr.target_branch), None, true)?, axum::http::StatusCode::ACCEPTED),
         };
         let mut resp = paginate(&req, cars, &defaults, |car| car_json(c, &req, &p, car))?;
         resp.status = status;
-        Ok::<_, ApiError>(resp)
+        Ok::<_, ApiError>(Ok(resp))
     })?;
     crate::jobs::kick(&req.app);
-    Ok(res)
+    res
 }

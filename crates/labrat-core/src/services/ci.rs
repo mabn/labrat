@@ -399,9 +399,15 @@ pub fn create_skipped_mr_pipeline(c: &Connection, p: &Project, mr: &MergeRequest
     Ok(Some(pl))
 }
 
-/// `Pipeline#all_merge_requests` for branch pipelines: open MRs from that branch whose latest
-/// diff contains the pipeline's commit.
+/// `Pipeline#all_merge_requests`: an MR pipeline's own MR; for branch pipelines, open MRs from
+/// that branch whose latest diff contains the pipeline's commit.
 pub fn all_merge_requests(c: &Connection, p: &Project, pl: &Pipeline) -> Result<Vec<MergeRequest>> {
+    if pl.source == "merge_request_event" {
+        return Ok(match pl.merge_request_id {
+            Some(id) => MergeRequest::find(c, id)?.into_iter().collect(),
+            None => vec![],
+        });
+    }
     let Some(branch) = &pl.ref_ else { return Ok(vec![]) };
     let r = repo::repo(c, p);
     let mut out = vec![];
@@ -527,11 +533,32 @@ pub fn recompute(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()
     let started = if target == "running" && pl.started_at.is_none() { Some(now) } else { pl.started_at };
     let finished = if matches!(target.as_str(), "success" | "failed" | "canceled") { Some(now) } else { pl.finished_at };
     let duration = if matches!(target.as_str(), "success" | "failed" | "canceled") {
-        // Fake CI pipelines last as long as their jobs ran; external ones report 0.
+        // Fake CI pipelines last as long as their latest jobs ran (a retried pipeline counts
+        // only the new jobs); external ones report 0.
+        let mut st = c.prepare(
+            "SELECT started_at, coalesce(finished_at, ?2) FROM commit_statuses WHERE pipeline_id = ?1 AND build = 1 AND retried = 0 AND started_at IS NOT NULL ORDER BY started_at",
+        )?;
+        let periods: Vec<(i64, i64)> = st.query_map(params![pl.id, now], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<rusqlite::Result<_>>()?;
         let builds: i64 = c.query_row("SELECT count(*) FROM commit_statuses WHERE pipeline_id = ?1 AND build = 1", [pl.id], |r| r.get(0))?;
-        match (started, finished) {
-            (Some(s), Some(f)) if builds > 0 => Some((f - s) / 1000),
-            _ => started.map(|_| 0),
+        if builds > 0 && started.is_some() {
+            // The union of the jobs' run periods (`Gitlab::Ci::Pipeline::Duration`).
+            let (mut total, mut cur): (i64, Option<(i64, i64)>) = (0, None);
+            for (s, f) in periods {
+                cur = match cur {
+                    Some((cs, cf)) if s <= cf => Some((cs, cf.max(f))),
+                    Some((cs, cf)) => {
+                        total += cf - cs;
+                        Some((s, f))
+                    }
+                    None => Some((s, f)),
+                };
+            }
+            if let Some((cs, cf)) = cur {
+                total += cf - cs;
+            }
+            Some(total / 1000)
+        } else {
+            started.map(|_| 0)
         }
     } else {
         pl.duration

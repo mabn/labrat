@@ -13,3 +13,7 @@ mod code_owners;
 mod approval_policies;
 mod approval_policies_variants;
 mod approval_policy_settings;
+mod auto_merge_approval;
+mod merge_train_gaps;
+mod merge_train_gaps_2;
+mod random_walk_trains;

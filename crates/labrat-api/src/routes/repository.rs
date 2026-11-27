@@ -783,6 +783,20 @@ async fn commit_merge_requests(req: Req) -> ApiResult {
     })
 }
 
+/// `CommitDetail`'s `status` and `last_pipeline`: the project's latest pipeline (highest id)
+/// for the commit, on any ref.
+fn with_last_pipeline(c: &rusqlite::Connection, config: &labrat_core::Config, p: &labrat_core::model::Project, oid: &labrat_git::Oid, mut v: serde_json::Value) -> Result<serde_json::Value, ApiError> {
+    let id: Option<i64> = c
+        .query_row("SELECT max(id) FROM ci_pipelines WHERE project_id = ?1 AND sha = ?2", rusqlite::params![p.id, oid.hex()], |r| r.get(0))?;
+    if let Some(pl) = id.map(|id| labrat_core::services::ci::Pipeline::find(c, id)).transpose()?.flatten()
+        && let Some(m) = v.as_object_mut()
+    {
+        m.insert("status".into(), serde_json::json!(pl.status));
+        m.insert("last_pipeline".into(), serde_json::Value::Object(crate::routes::pipelines::pipeline_basic(config, p, &pl)));
+    }
+    Ok(v)
+}
+
 async fn show_commit(req: Req) -> ApiResult {
     let sha = req.path_param("sha").to_string();
     let with_stats = req.params.bool_or("stats", true)?;
@@ -792,14 +806,8 @@ async fn show_commit(req: Req) -> ApiResult {
         let r = repo::repo(c, &p);
         let oid = resolve_commit(&r, &sha)?;
         let commit = r.commit(&oid)?;
-        Ok::<_, ApiError>(ent::commit_detail(
-            &req.app.config,
-            &r,
-            &p,
-            &oid,
-            &commit,
-            with_stats,
-        )?)
+        let v = ent::commit_detail(&req.app.config, &r, &p, &oid, &commit, with_stats)?;
+        with_last_pipeline(c, &req.app.config, &p, &oid, v)
     })?;
     Ok(Resp::ok(body))
 }
