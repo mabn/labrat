@@ -18,7 +18,11 @@
 
 <br />
 
-<img src="docs/assets/benchmark.svg" alt="labrat compared with GitLab: 20 merge requests from creation to merge take 0.68 s instead of 189 s; idle memory is 15 MB instead of 3.0 GB; starting from an empty data directory takes 0.01 s instead of 4 minutes." width="760">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/benchmark-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/benchmark-light.svg">
+  <img src="docs/assets/benchmark-light.svg" alt="labrat compared with GitLab: 20 merge requests from creation to merge take 0.68 s instead of 189 s; idle memory is 15 MB instead of 3.0 GB; starting from an empty data directory takes 0.01 s instead of 4 minutes." width="760">
+</picture>
 
 *labrat compared with GitLab CE 18.11 in Docker on the same laptop. [See how this was measured →](docs/BENCHMARKS.md)*
 
