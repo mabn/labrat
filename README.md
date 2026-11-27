@@ -66,7 +66,7 @@ curl -LsSf https://github.com/mabn/labrat/releases/latest/download/labrat-instal
 docker run --rm -p 8080:8080 ghcr.io/mabn/labrat --db :memory: --root-token glpat-test-token
 ```
 
-Prebuilt binaries for macOS (Apple Silicon & Intel), Linux (`x86_64` & `arm64`, static), and Windows are available on the [Releases page](https://github.com/mabn/labrat/releases).
+Prebuilt binaries for macOS (Apple Silicon & Intel), Linux (x86_64 & arm64, static), and Windows are available on the [Releases page](https://github.com/mabn/labrat/releases).
 
 ### 2. Run & Connect
 
