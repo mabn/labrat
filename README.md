@@ -8,7 +8,7 @@
 [![GitLab 18.11](https://img.shields.io/badge/GitLab-18.11%20CE%20%26%20EE-FC6D26?style=flat-square&logo=gitlab&logoColor=white)](#-how-faithful-is-it)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-*REST API • GraphQL • Webhooks • Git over HTTP • Web UI — in a single 25 MB binary.*
+*REST API • GraphQL • Webhooks • Git hosting • Web UI — in a single 25 MB binary.*
 
 [Quick Start](#-quick-start) •
 [Benchmarks](#-labrat-vs-gitlab) •
