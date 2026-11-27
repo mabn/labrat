@@ -88,7 +88,7 @@ curl -H "PRIVATE-TOKEN: glpat-test-token" -X POST localhost:8080/api/v4/projects
 git clone http://root:glpat-test-token@localhost:8080/root/demo.git
 ```
 
-Open **<http://localhost:8080/>** in your browser and sign in as `root` (default password: `labrat-root-password`, or use your token). Click **"Generate demo data"** in the sidebar (or `POST /-/labrat/demo`) to populate example projects, or run `scripts/seed-demo.sh` for a smaller dataset.
+Open **<http://localhost:8080/>** in your browser and sign in as `root` (default password: `labrat-root-password`, or use your token). Click **"Generate demo data"** in the sidebar (or `POST /-/labrat/demo`) to populate example projects.
 
 <p align="center">
   <img src="docs/assets/web-ui-merge-request.png" alt="labrat's web UI showing an open merge request: the description, an approve and merge widget, a review thread with a suggested change, and a sidebar with reviewers and labels." width="760">
