@@ -20,11 +20,11 @@ static SSH: LazyLock<Regex> =
 static RUNNERS: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"GR1348941[A-Za-z0-9_\-]{20}").unwrap());
 static API_ID: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"/(projects|groups|users|namespaces|members|all|access_tokens|personal_access_tokens|award_emoji|draft_notes|suggestions|notes|versions|hooks|todos|discussions|milestones|pipelines|uploads|statuses|resource_label_events|resource_state_events|resource_milestone_events|resource_state_events|resource_label_events|resource_milestone_events|approval_rules|blocks)/(\d+)").unwrap()
+    Regex::new(r"/(projects|groups|users|namespaces|members|all|access_tokens|personal_access_tokens|award_emoji|draft_notes|suggestions|notes|versions|hooks|todos|discussions|milestones|pipelines|uploads|statuses|resource_label_events|resource_state_events|resource_milestone_events|resource_state_events|resource_label_events|resource_milestone_events|approval_rules|blocks|jobs)/(\d+)").unwrap()
 });
 /// Query params holding user, project or pipeline ids, possibly inside `not[...]`.
 static QUERY_REF_ID: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"([?&]|%5B)(source_project_id|project_id|assignee_id|reviewer_id|author_id|merge_user_id|pipeline_id)((?:%5D)?)=(\d+)").unwrap()
+    Regex::new(r"([?&]|%5B)(source_project_id|project_id|assignee_id|reviewer_id|author_id|merge_user_id|pipeline_id|job_id)((?:%5D)?)=(\d+)").unwrap()
 });
 /// Upload secrets (`/uploads/<32 hex>/`) and project ids in upload paths.
 static UPLOAD_SECRET: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/uploads/([0-9a-f]{32})/").unwrap());
@@ -37,7 +37,7 @@ static USER_AVATAR: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/system/user
 static QUERY_ID: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"/(projects|groups|users)/<(\w+):(\d+)>((?:[^?\s<>]|<\w+(?::\d+)?>)*)\?((?:[^<>\s]|<\w+>)*?)\bid=(\d+)").unwrap()
 });
-static RUBY_OBJECT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"#<(\w+):0x[0-9a-f]{16}").unwrap());
+static RUBY_OBJECT: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"#<([\w:]+):0x[0-9a-f]{16}").unwrap());
 static DELETION: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"deletion_scheduled-\d+").unwrap());
 static QUERY_ID_PARAM: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"([?&])id=\d+").unwrap());
 static IP: LazyLock<Regex> =
@@ -217,6 +217,7 @@ impl Normalizer {
                 "MergeRequest" => "mr",
                 "Note" | "DiffNote" | "DiscussionNote" => "note",
                 "AwardEmoji" => "award",
+                "Ci::Build" => "job",
                 "ProjectLabel" | "GroupLabel" | "Label" => "label",
                 other => other,
             };
@@ -256,6 +257,8 @@ impl Normalizer {
                 "project"
             } else if key == "pipeline_id" {
                 "pipeline"
+            } else if key == "job_id" {
+                "job"
             } else {
                 "user"
             };
@@ -316,6 +319,7 @@ impl Normalizer {
                 "notes" | "discussions" => "note",
                 "milestones" => "milestone",
                 "pipelines" => "pipeline",
+                "jobs" => "job",
                 "resource_label_events" => "label_event",
                 "resource_state_events" => "state_event",
                 "resource_milestone_events" => "milestone_event",
@@ -412,6 +416,44 @@ impl Normalizer {
                 // job timing (merging takes 4 to 15 seconds after the pipeline passes).
                 if m.contains_key("merge_request") && m.contains_key("target_branch") && m.contains_key("merged_at") && m.get("duration").is_some_and(Value::is_number) {
                     m.insert("duration".to_string(), json!("<DURATION>"));
+                }
+                // CI detailed statuses: ids join the status, the subject's id and the parent's id
+                // (`success-12-12`, `pending-12-7-build`); actions name the presenter
+                // (`Ci::BuildPresenter-success-12`).
+                // The ids are those of the object the status belongs to, named by the field it
+                // was asked through: a pipeline, stage or job (a group's status is its job's,
+                // with the group's stage).
+                // (Recognised by the field they were asked through, or by fields only they have.)
+                let status_like = m.contains_key("hasDetails") || m.contains_key("buttonTitle") || kind.ends_with(".detailedStatus") || kind.ends_with("detailedStatus.action");
+                if status_like && m.get("id").is_some_and(Value::is_string) {
+                    let id = m["id"].as_str().unwrap_or("").to_string();
+                    let owner = kind.trim_end_matches(".action").trim_end_matches(".detailedStatus");
+                    let kinds: [&str; 2] = if owner.ends_with("pipeline") || owner.ends_with("Pipeline") || owner.ends_with("pipelines.nodes") {
+                        ["Ci::Pipeline", "Ci::Pipeline"]
+                    } else if owner.ends_with("stages.nodes") || owner.ends_with(".stage") {
+                        ["Ci::Stage", "Ci::Stage"]
+                    } else if owner.ends_with("groups.nodes") || owner.ends_with("namespace.nodes") {
+                        // (`groups` objects are named `namespace` here.)
+                        ["job", "Ci::Stage"]
+                    } else {
+                        ["job", "job"]
+                    };
+                    let re = Regex::new(r"\d+").unwrap();
+                    let mut out = String::new();
+                    let mut last = 0;
+                    // Only the subject's and the parent's ids: a group's name may hold digits too.
+                    for (i, mt) in re.find_iter(&id).take(2).enumerate() {
+                        out.push_str(&id[last..mt.start()]);
+                        out.push_str(&self.id(kinds[i.min(1)], mt.as_str().parse().unwrap_or(0)));
+                        last = mt.end();
+                    }
+                    out.push_str(&id[last..]);
+                    m.insert("id".to_string(), json!(out));
+                }
+                // CI artifacts: the size of an archive's metadata file depends on how GitLab
+                // Workhorse compressed it.
+                if m.get("file_type").or(m.get("fileType")).and_then(Value::as_str).is_some_and(|t| t.eq_ignore_ascii_case("metadata")) && m.contains_key("size") {
+                    m.insert("size".to_string(), json!("<SIZE>"));
                 }
                 let keys: Vec<String> = m.keys().cloned().collect();
                 for k in keys {
@@ -559,11 +601,11 @@ pub fn diff(expected: &Value, actual: &Value, path: &str) -> Option<String> {
             None
         }
         (a, b) if a == b => None,
-        // Durations (pipelines, merge train cars) are differences of timestamps, which are
+        // Durations (pipelines, jobs, merge train cars) are differences of timestamps, which are
         // compared as `<TIME>`: they follow the reference's background job timing, so they
         // only need to be close.
         (Value::Number(a), Value::Number(b))
-            if (path.ends_with(".duration") || path.ends_with(".queued_duration"))
+            if (path.ends_with("duration") || path.ends_with("Duration"))
                 && a.as_f64().zip(b.as_f64()).is_some_and(|(x, y)| (x - y).abs() <= DURATION_SLACK_S as f64) =>
         {
             None

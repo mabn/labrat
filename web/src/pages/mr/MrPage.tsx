@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import type { Commit, Discussion, MergeRequest, Pipeline, Project } from '../../api/types';
-import { CiStatus, CopyButton, Dropdown, Empty, ErrorBox, Loading, Markdown, MrStateBadge, TimeAgo, UserAvatar, useToast, errorText } from '../../components/ui';
+import { PipelineTable, RandomPipelineButton } from '../project/Pipelines';
+import { CopyButton, Dropdown, Empty, ErrorBox, Loading, Markdown, MrStateBadge, TimeAgo, UserAvatar, useToast, errorText } from '../../components/ui';
 import { Icon } from '../../components/Icon';
 import { useSession } from '../../session';
 import { useProject, useProjectCrumbs } from '../project/ProjectRoutes';
@@ -378,47 +379,30 @@ function MrCommits({ project, mr }: { project: Project; mr: MergeRequest }) {
 }
 
 function MrPipelines({ project, mr }: { project: Project; mr: MergeRequest }) {
-  const q = useQuery({ queryKey: ['mr', project.id, mr.iid, 'pipelines'], queryFn: () => api.get<Pipeline[]>(`${mrBase(project.id, mr.iid)}/pipelines`) });
+  const q = useQuery({ queryKey: ['mr', project.id, mr.iid, 'pipelines'], queryFn: () => api.get<Pipeline[]>(`${mrBase(project.id, mr.iid)}/pipelines`), refetchInterval: 5000 });
+  const head = (
+    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 8 }}>
+      <RandomPipelineButton project={project} mr={mr} />
+    </div>
+  );
   if (q.isLoading) return <Loading />;
   if (q.error) return <ErrorBox error={q.error} />;
   if (!q.data?.length)
     return (
-      <Empty title="There are no pipelines for this merge request">
-        <p>labrat has no CI runners. Pipelines appear when a client posts commit statuses (POST /projects/:id/statuses/:sha).</p>
-      </Empty>
+      <>
+        {head}
+        <Empty title="There are no pipelines for this merge request">
+          <p>
+            labrat runs no CI. Pipelines come from labrat&apos;s test endpoints (POST /-/labrat/projects/:id/pipelines, or the button above), the fake CI, and commit
+            statuses (POST /projects/:id/statuses/:sha).
+          </p>
+        </Empty>
+      </>
     );
   return (
-    <div className="table-wrap">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Status</th>
-            <th>Pipeline</th>
-            <th>Ref</th>
-            <th>Commit</th>
-            <th>Created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {q.data.map((p) => (
-            <tr key={p.id}>
-              <td>
-                <CiStatus pipeline={p} label />
-              </td>
-              <td>#{p.id}</td>
-              <td className="mono">{p.ref}</td>
-              <td>
-                <Link to={`/${project.path_with_namespace}/-/commit/${p.sha}`}>
-                  <code>{p.sha.slice(0, 8)}</code>
-                </Link>
-              </td>
-              <td>
-                <TimeAgo at={p.created_at} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <>
+      {head}
+      <PipelineTable project={project} pipelines={q.data} />
+    </>
   );
 }

@@ -10,6 +10,8 @@
 //! timestamps, tokens, SHAs and database ids with stable placeholders.
 
 pub mod normalize;
+mod pipelines;
+pub use pipelines::ci_yaml;
 
 use normalize::Normalizer;
 use reqwest::Method;
@@ -75,6 +77,13 @@ pub struct Scenario {
     ci_picks: Vec<Value>,
     expected_ci_picks: Option<Vec<Value>>,
     ci_picks_done: usize,
+    /// When GitLab had created each `ci_pipeline` pipeline (recording), the recording's
+    /// (replaying), and how many were replayed: labrat creates its pipeline at that time.
+    pub(crate) ci_created: Vec<i64>,
+    pub(crate) expected_ci_created: Option<Vec<i64>>,
+    pub(crate) ci_created_done: usize,
+    /// The pipeline `ci_pipeline` started.
+    ci_run: Option<pipelines::CiRun>,
 }
 
 /// One HTTP response with its parsed JSON body.
@@ -369,6 +378,7 @@ impl Scenario {
         let send_times = fixture.as_ref().and_then(|v| v["times"].as_array()).map(|a| a.iter().filter_map(Value::as_i64).collect());
         let expected_ci_times = fixture.as_ref().and_then(|v| v["ci_times"].as_array()).map(|a| a.iter().filter_map(Value::as_i64).collect());
         let expected_ci_picks = fixture.as_ref().and_then(|v| v["ci_picks"].as_array()).cloned();
+        let expected_ci_created = fixture.as_ref().and_then(|v| v["ci_created"].as_array()).map(|a| a.iter().filter_map(Value::as_i64).collect());
         let expected = fixture.map(|v| v["steps"].as_array().unwrap().clone());
         let mut norm = Normalizer::new(&target.public_base, &run);
         norm.set_today(&days_to_date(started_at.div_euclid(86_400_000)));
@@ -400,6 +410,10 @@ impl Scenario {
             ci_picks: vec![],
             expected_ci_picks,
             ci_picks_done: 0,
+            ci_created: vec![],
+            expected_ci_created,
+            ci_created_done: 0,
+            ci_run: None,
         }
     }
 
@@ -1009,6 +1023,18 @@ impl Scenario {
         }
     }
 
+    /// Replaying: moves labrat's clock forward to `want` (ms since the scenario started), if it
+    /// is behind.
+    pub(crate) async fn advance_clock(&mut self, want: i64) {
+        let have = self.started.elapsed().as_millis() as i64 + self.clock_offset;
+        if want > have {
+            self.clock_offset += want - have;
+            let url = format!("{}/-/labrat/time?offset_ms={}", self.target.base, self.base_offset + self.clock_offset);
+            let r = self.http.post(&url).send().await.expect("clock request failed");
+            assert!(r.status().is_success(), "setting the labrat clock failed: {}", r.status());
+        }
+    }
+
     async fn sync_clock(&mut self) {
         let elapsed = self.started.elapsed().as_millis() as i64;
         if self.target.recording {
@@ -1149,7 +1175,7 @@ impl Scenario {
     pub fn finish(self) {
         if self.target.recording {
             let path = fixture_path(&self.name);
-            let data = json!({"scenario": self.name, "base": self.target.public_base, "ssh_port": self.ssh_port, "run": self.run, "steps": self.steps, "times": self.times, "done_times": self.done_times, "ci_times": self.ci_times, "ci_picks": self.ci_picks, "started_at": self.started_at});
+            let data = json!({"scenario": self.name, "base": self.target.public_base, "ssh_port": self.ssh_port, "run": self.run, "steps": self.steps, "times": self.times, "done_times": self.done_times, "ci_times": self.ci_times, "ci_picks": self.ci_picks, "ci_created": self.ci_created, "started_at": self.started_at});
             let text = serde_json::to_string_pretty(&data).unwrap() + "\n";
             let lower = text.to_ascii_lowercase();
             if let Ok(t) = std::env::var("GITLAB_RUNNER_TOKEN") {
@@ -1296,12 +1322,18 @@ impl Scenario {
         tokio::time::sleep(std::time::Duration::from_millis(if self.target.recording { 3000 } else { 200 })).await;
         let mut got: Vec<Value> = rx.requests.lock().unwrap()[rx.seen..].to_vec();
         rx.seen += got.len();
+        // Pipeline hooks list their jobs in no particular order.
+        for d in got.iter_mut() {
+            if let Some(b) = d.get_mut("body").and_then(|b| b.get_mut("builds")).and_then(Value::as_array_mut) {
+                b.sort_by_key(|j| j["id"].as_i64().unwrap_or(0));
+            }
+        }
         got.sort_by_key(|d| {
             let b = &d["body"];
             let oa = &b["object_attributes"];
             format!(
-                "{}|{}|{}|{}|{}|{}",
-                d["headers"]["x-gitlab-event"], b["object_kind"], oa["action"], b["event_type"], b["ref"], oa["note"]
+                "{}|{}|{}|{}|{}|{}|{}|{}|{}",
+                d["headers"]["x-gitlab-event"], b["object_kind"], oa["action"], b["event_type"], b["ref"], oa["note"], oa["status"], b["build_name"], b["build_status"]
             )
         });
         let res = Res {

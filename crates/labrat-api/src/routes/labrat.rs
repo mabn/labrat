@@ -19,6 +19,8 @@ pub fn routes() -> Router<Arc<App>> {
         .route("/-/labrat/requests.json", get(requests).delete(clear_requests))
         .route("/-/labrat/projects/{id}/ci", get(get_ci).put(put_ci))
         .route("/-/labrat/projects/{id}/ci/jobs", get(ci_jobs))
+        .route("/-/labrat/projects/{id}/pipelines", get(list_runs).post(create_run))
+        .route("/-/labrat/projects/{id}/pipelines/{pipeline_id}", get(show_run).put(update_run).delete(delete_run))
         .route("/-/labrat/ci/pick", post(ci_pick))
         .route("/-/labrat/ci/finish", post(ci_finish))
         .route("/-/labrat/projects/{id}/code_owners", get(get_code_owners).put(put_code_owners).delete(delete_code_owners))
@@ -308,4 +310,89 @@ async fn set_time(req: Req) -> ApiResult {
     // due run before the next request, as Sidekiq would have run them meanwhile.
     crate::jobs::wait_due(&req.app).await;
     Ok(Resp::ok(json!({"offset_ms": offset, "now": labrat_core::time::iso(req.app.db.now())})))
+}
+
+fn run_pipeline(c: &rusqlite::Connection, p: &labrat_core::model::Project, id: &str) -> Result<labrat_core::services::ci::Pipeline, crate::ctx::ApiError> {
+    let id: i64 = id.parse().map_err(|_| labrat_core::Error::message(400, "pipeline_id is invalid"))?;
+    Ok(labrat_core::services::ci::Pipeline::find(c, id)?.filter(|pl| pl.project_id == p.id).ok_or(labrat_core::Error::not_found("Pipeline"))?)
+}
+
+/// The user a run is created as when the spec names none: the project's creator.
+fn run_user(c: &rusqlite::Connection, p: &labrat_core::model::Project) -> Result<labrat_core::model::User, crate::ctx::ApiError> {
+    let id: Option<i64> = c.query_row("SELECT creator_id FROM projects WHERE id = ?1", [p.id], |r| r.get(0)).unwrap_or(None);
+    let u = match id {
+        Some(i) => labrat_core::model::User::find(c, i)?,
+        None => None,
+    };
+    match u {
+        Some(u) => Ok(u),
+        None => Ok(labrat_core::model::User::find_by_username(c, "root")?.ok_or(labrat_core::Error::not_found("User"))?),
+    }
+}
+
+/// The project's pipeline runs, newest first, as the test endpoints describe them.
+async fn list_runs(req: Req) -> ApiResult {
+    let id = req.path_param("id").to_string();
+    let body = req.app.db.read(|c| {
+        let p = ci_project(c, &id)?;
+        let mut out = vec![];
+        for pl in labrat_core::services::ci::Pipeline::list(c, p.id)? {
+            out.push(labrat_core::services::pipelines::run_json(c, &pl)?);
+        }
+        Ok::<_, crate::ctx::ApiError>(serde_json::Value::Array(out))
+    })?;
+    Ok(Resp::ok(body))
+}
+
+async fn show_run(req: Req) -> ApiResult {
+    let (id, pid) = (req.path_param("id").to_string(), req.path_param("pipeline_id").to_string());
+    let body = req.app.db.read(|c| {
+        let p = ci_project(c, &id)?;
+        let pl = run_pipeline(c, &p, &pid)?;
+        Ok::<_, crate::ctx::ApiError>(labrat_core::services::pipelines::run_json(c, &pl)?)
+    })?;
+    Ok(Resp::ok(body))
+}
+
+/// Creates a pipeline run (see `labrat_core::services::pipelines::create_run`).
+async fn create_run(req: Req) -> ApiResult {
+    let id = req.path_param("id").to_string();
+    let spec = req.params.raw_all();
+    let body = req.app.db.tx(|c| {
+        let p = ci_project(c, &id)?;
+        let user = run_user(c, &p)?;
+        let pl = labrat_core::services::pipelines::create_run(c, &req.app.config, &p, &user, &spec)?;
+        Ok::<_, crate::ctx::ApiError>(labrat_core::services::pipelines::run_json(c, &pl)?)
+    })?;
+    crate::jobs::kick(&req.app);
+    Ok(Resp::created(body))
+}
+
+/// Moves a pipeline run on (see `labrat_core::services::pipelines::update_run`).
+async fn update_run(req: Req) -> ApiResult {
+    let (id, pid) = (req.path_param("id").to_string(), req.path_param("pipeline_id").to_string());
+    let spec = req.params.raw_all();
+    let body = req.app.db.tx(|c| {
+        let p = ci_project(c, &id)?;
+        let pl = run_pipeline(c, &p, &pid)?;
+        let pl = labrat_core::services::pipelines::update_run(c, &req.app.config, &pl, &spec)?;
+        Ok::<_, crate::ctx::ApiError>(labrat_core::services::pipelines::run_json(c, &pl)?)
+    })?;
+    crate::jobs::kick(&req.app);
+    Ok(Resp::ok(body))
+}
+
+async fn delete_run(req: Req) -> ApiResult {
+    let (id, pid) = (req.path_param("id").to_string(), req.path_param("pipeline_id").to_string());
+    req.app.db.tx(|c| {
+        let p = ci_project(c, &id)?;
+        let pl = run_pipeline(c, &p, &pid)?;
+        let mrs = labrat_core::services::ci::all_merge_requests(c, &p, &pl)?;
+        c.execute("DELETE FROM ci_pipelines WHERE id = ?1", [pl.id])?;
+        for mr in mrs {
+            labrat_core::services::ci::update_head_pipeline(c, &p, &mr)?;
+        }
+        Ok::<_, crate::ctx::ApiError>(())
+    })?;
+    Ok(Resp::no_content())
 }

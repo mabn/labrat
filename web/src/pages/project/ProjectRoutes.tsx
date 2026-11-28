@@ -19,6 +19,7 @@ import { NewMr } from '../mr/NewMr';
 import { MrPage } from '../mr/MrPage';
 import { MergeTrains } from './MergeTrains';
 import { TestSetup } from './TestSetup';
+import { ArtifactsBrowser, JobPage, JobsList, PipelinePage, PipelinesList } from './Pipelines';
 
 interface ProjectCtx {
   project: Project;
@@ -89,6 +90,15 @@ export function ProjectRoutes({ project: initial, rest }: { project: Project; re
         sub: [
           { label: 'Merge requests', to: `${p}/-/merge_requests` },
           { label: 'Merge trains', to: `${p}/-/merge_trains` },
+        ],
+      },
+      {
+        label: 'Build',
+        to: `${p}/-/pipelines`,
+        icon: 'rocket',
+        sub: [
+          { label: 'Pipelines', to: `${p}/-/pipelines` },
+          { label: 'Jobs', to: `${p}/-/jobs` },
         ],
       },
       {
@@ -165,6 +175,13 @@ function Page({ parts }: { parts: string[] }) {
       return <MrPage key={tail[0]} iid={Number(tail[0])} tab={tail[1] ?? ''} />;
     case 'merge_trains':
       return <MergeTrains />;
+    case 'pipelines':
+      if (!tail.length) return <PipelinesList />;
+      return <PipelinePage key={tail[0]} id={Number(tail[0])} tab={tail[1] ?? ''} />;
+    case 'jobs':
+      if (!tail.length) return <JobsList />;
+      if (tail[1] === 'artifacts' && tail[2] === 'browse') return <ArtifactsBrowser id={Number(tail[0])} path={tail.slice(3).join('/')} />;
+      return <JobPage key={tail[0]} id={Number(tail[0])} />;
     case 'project_members':
       return (
         <Simple title="Members">

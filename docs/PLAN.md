@@ -369,7 +369,7 @@ that the conformance suite catches.
   - retargeting dependent (stacked) MRs when their target branch is deleted on merge;
   - auto-merge, minus CI.
 - Rebasing: `PUT /rebase` and `rebase_in_progress`.
-- Pipeline endpoints return empty lists.
+- Pipelines: the MR's pipelines and head pipeline, as "CI pipelines and jobs" describes.
 
 **Reviews and discussions**
 - Comments and threads:
@@ -469,6 +469,84 @@ that the conformance suite catches.
   - admin area: users, system hooks and network settings.
 - The same URL paths as GitLab, so `web_url` in an API response opens the right page.
 - EE features show in CE mode (`--noee`) too, disabled, with a note.
+
+**CI pipelines and jobs** (roadmap phases 7 to 10; phase 7 is CE, the rest come later)
+
+labrat runs no CI and reads no CI configuration. A test describes a pipeline run through the
+labrat test endpoints, and GitLab's APIs report it exactly as GitLab reports a real one. The
+merge train fake CI (see "EE: merge trains") makes the same pipelines and jobs, so everything
+below applies to its pipelines too.
+
+- **Test endpoints** (phase 7):
+  - `POST /-/labrat/projects/:id/pipelines` creates a pipeline run as described:
+    - `ref` (a branch or tag), `sha` (the ref's head by default), `source` (`push` by
+      default), `user` (a username), `name`;
+    - or `merge_request_iid`: a detached merge request pipeline on
+      `refs/merge-requests/:iid/head` (`merge_request_event`);
+    - `stages` (the order of first use by default) and `jobs`, each with `name`, `stage`
+      (`test`), `status`, `when` (`on_success`, `manual`), `allow_failure`,
+      `manual_confirmation` (what playing a manual job asks first), `failure_reason`,
+      `queued_duration` and `duration` (seconds), `coverage`, `tags`, `log` (the job log
+      text, ANSI codes and section markers included) and `artifacts` (an `archive` of
+      `{path: content}` files, an `expire_in`, and report artifacts by `file_type`).
+  - `PUT /-/labrat/projects/:id/pipelines/:pipeline_id` moves it on: jobs matched by name
+    take the new status, log (`log` or `log_append`) and artifacts, and new names are added.
+    A job that starts running is stamped now, as is one that finishes (less `duration` when
+    given).
+  - The pipeline's status, times and durations follow from its jobs as in GitLab (composite
+    status, `allow_failure` warnings, manual jobs, skipped stages). Commit statuses posted to
+    a pipeline (`POST /statuses/:sha`) join it in its `external` stage, after all others.
+    Changing a job or the pipeline (cancel, retry, play, erase, keep artifacts) needs a
+    developer who can also update the ref: push or merge to the branch, or create the tag
+    (a Maintainer when the tag isn't protected). A new run cancels the ref's older
+    unfinished pipelines where no job has started, as GitLab's `auto_cancel_pending_pipelines`
+    does by default. Each status change sends
+    pipeline and job webhooks, recomputes the MRs' head pipeline and mergeability, and lets an
+    armed auto-merge merge.
+- **REST** (phase 7), as `lib/api/ci/` answers:
+  - pipelines: list with every filter, scope and ordering, show, latest, jobs (`scope`,
+    `include_retried`), bridges (none), variables (none), test report and summary, metadata,
+    cancel, retry, delete; the MR's pipelines and `head_pipeline`; commit `last_pipeline`
+    and statuses;
+  - jobs: `GET /projects/:id/jobs` (`scope`), show, `trace`, cancel, retry (a new job; the
+    old one is `retried`; a retried manual job is queued unless earlier stages skip it), erase
+    (maintainers, or the developer who ran the job on an unprotected ref), play (manual jobs
+    become pending);
+  - artifacts: download the archive (by job, or by ref and job name), one file from it (by
+    job or by ref), `artifacts/tree`, keep, delete (per job, which keeps the log and the
+    expiry date, and per project), and
+    `artifacts_file`, `artifacts` and `artifacts_expire_at` on jobs.
+- **Webhooks** (phase 7): pipeline events (`Pipeline Hook`, with `builds`) and job events
+  (`Job Hook`, `object_kind: build`) on every status change; test deliveries of both.
+- **GraphQL** (phase 7): `Pipeline` in full, with `stages`, `jobs` and `job`; `CiStage`,
+  `CiGroup` and `CiJob` with their `detailedStatus` (and its `action`, with the confirmation
+  a manual job or a blocked stage asks for), artifacts, log and permissions; commit statuses
+  as jobs (`GenericCommitStatus`) of the `external` stage, with their description and target
+  URL as their status's label and details; `Project.pipeline(s)`, `pipelineCounts`, `job(s)`, `MergeRequest.headPipeline`
+  and `pipelines`, `Commit.pipelines`; the `pipelineCancel`, `pipelineRetry`,
+  `pipelineDestroy`, `jobCancel`, `jobRetry`, `jobPlay`, `jobArtifactsDestroy` and
+  `artifactDestroy` mutations. The CI fields have GitLab's query complexity costs.
+- **Web UI** (phase 7): the project's pipelines list, a pipeline page (stages and their jobs,
+  with retry, cancel and play), a job page (log, artifacts to download and browse, keep and
+  delete, retry, cancel, erase), the MR's Pipelines tab and its widget. The MR page has a
+  "Randomize pipeline" button that sets a random pipeline for the MR's head; any other state
+  is set through the test endpoints.
+- **Phase 8:** the same for EE: EE's extra fields, statuses, GraphQL schema and webhooks.
+- **Phase 9** (CE): pipeline definitions. A project gets definitions of pipelines (stages and
+  jobs, each with a run time, a log, artifacts and an outcome, failing at a given time with a
+  given reason) and the events that create them, as GitLab's `rules` and `workflow` would:
+  branch and tag pushes, merge request events, merges, `POST /projects/:id/pipeline`. Jobs
+  then progress on their own at the given rate, as the merge train fake CI's auto mode does
+  now. Nothing executes.
+- **Phase 10:** phase 9 for EE: merge trains and merged results pipelines run the defined
+  pipelines, and a failing job drops the car.
+- **Recording:** the conformance harness gives the CE reference a `.gitlab-ci.yml` whose
+  scripts only `echo`, and plays the runner itself through the runner API (it picks jobs,
+  sends their logs, uploads artifacts and finishes them). Nothing runs on the reference
+  either. When replaying, the harness sets the same states through the test endpoints.
+- **Not covered:** runners and the runners API, CI variables, the job token API (`GET /job`),
+  child and multi-project pipelines, pipeline schedules and triggers, environments and
+  deployments, the CI lint and config APIs, and parsing test or coverage reports.
 
 **labrat-only test tooling** (under `/-/labrat/`, which can't collide with GitLab routes)
 - A seed file (YAML) that declares users, tokens, groups, projects, files and MRs at startup.
@@ -643,8 +721,9 @@ Items marked **done** are implemented and covered by conformance scenarios.
 
 - **Forks:** forks and cross-project MRs, where the source and target projects differ.
 - **Group webhooks.**
-- **CI/CD:** pipelines, jobs, runners, artifacts, CI variables, environments and deployments.
-  The only exception is the fake CI that merge trains need (see "EE: merge trains").
+- **Running CI:** labrat reads no `.gitlab-ci.yml` and runs nothing. Pipelines and jobs are
+  simulated (see "CI pipelines and jobs"). Runners and their API, CI variables, pipeline
+  schedules and triggers, environments and deployments stay out.
 - **Other GitLab products:** container and package registries, Pages, Releases, feature flags,
   Kubernetes and Terraform state.
 - **Planning:** issues, epics, boards, work items, incidents, Service Desk, requirements and
@@ -675,7 +754,10 @@ Items marked **done** are implemented and covered by conformance scenarios.
 
 The UI grows with each phase rather than being a phase of its own.
 
-**Status (2026-11-07):** phases 0 to 6 are delivered. Phase 5 continues as demand appears.
+**Status (2026-11-27):** phases 0 to 7 are delivered. Phase 5 continues as demand appears;
+phases 8 to 10 come later. A stage's "Run all manual" action is reported in its detailed
+status, but the action itself is a web route GitLab has no API for, so labrat doesn't serve
+it.
 
 | Phase | Delivers | Done when |
 |-------|----------|-----------|
@@ -686,6 +768,10 @@ The UI grows with each phase rather than being a phase of its own.
 | 4. GraphQL | <ul><li>Dynamic schema from the 18.11 SDL</li><li>MR queries and mutations</li></ul> | GraphQL scenarios match |
 | 5. Breadth | <ul><li>To-dos and resource events</li><li>Remaining settings UI</li><li>Then "Later" items as needed</li></ul> | Driven by the integrations being tested |
 | 6. Diff fidelity | <ul><li>Fixes for diff output that differs from Git's, postponed from earlier phases</li><li>For example, porting Git's xdiff</li></ul> | The scenarios marked as known diff differences pass |
+| 7. Pipelines (CE) | <ul><li>Test endpoints that create and move on pipeline runs</li><li>Pipelines, jobs, logs and artifacts in REST and GraphQL</li><li>Pipeline and job webhooks</li><li>Pipeline and job pages; random MR pipelines in the UI</li></ul> | Pipeline, job and artifact scenarios match CE |
+| 8. Pipelines (EE) | <ul><li>Phase 7 with EE's fields, schema and behaviour</li></ul> | The phase 7 scenarios match EE |
+| 9. Simulated runs (CE) | <ul><li>Pipeline definitions that run on push, MR and merge events</li><li>Jobs that progress, fail and finish on their own</li></ul> | Pipelines created by events match CE |
+| 10. Simulated runs (EE) | <ul><li>Phase 9 for merge trains and merged results pipelines</li></ul> | Train scenarios with defined pipelines match EE |
 
 ## Planned layout
 

@@ -19,7 +19,8 @@ says otherwise.
   behaves. When GitLab's documentation and the instance disagree, the instance wins; record such
   cases in [discrepancies.md](discrepancies.md).
 - **Scenarios** (`tests/conformance/tests/scenarios/*.rs`): sequences of API calls, GraphQL queries,
-  git pushes and webhook deliveries.
+  git pushes and webhook deliveries. Scenarios in `scenarios_ce/` are recorded against CE only
+  (the CI pipeline scenarios, until they are recorded against EE).
 - **Fixtures** (`tests/conformance/fixtures/<scenario>.json`): one recording per scenario, made by
   running the scenario against the reference instance. The harness normalizes ids, times, tokens,
   SHAs, the base URL and the per-run name suffix into placeholders such as `<project:1>`, `<TIME>`
@@ -221,6 +222,32 @@ Recording settings, all read from the environment:
     those moments.
 - **When replaying:** labrat's fake CI stands in for both (`/-/labrat/projects/:id/ci`,
   `/-/labrat/ci/pick`, `/-/labrat/ci/finish`).
+
+**CI pipelines and jobs.** The pipeline scenarios (`scenarios_ce/ci_*.rs`) use the same runner
+token, with no `.gitlab-ci.yml` that runs anything:
+
+- `ci_pipeline` commits a `.gitlab-ci.yml` built from the scenario's jobs (stages, `when`,
+  `allow_failure`, a `coverage` pattern, `manual_confirmation`; every script is an `echo`)
+  to a branch: a recorded step. GitLab creates a pipeline for the push. The recording keeps when GitLab had created
+  it (`ci_created`), and replaying creates labrat's pipeline at that time.
+- `ci_job_start`, `ci_job_log`, `ci_job_artifacts` and `ci_job_finish` play the runner: they
+  pick the named job (jobs come in GitLab's queue order), send its log (`PATCH /jobs/:id/trace`),
+  upload an artifacts archive (zipped by labrat's own zip writer, so the bytes match) and
+  finish it (`PUT /jobs/:id`).
+- When replaying, the same actions go to labrat's `/-/labrat/projects/:id/pipelines` test
+  endpoints, and labrat's clock moves to the recorded moment of each action.
+- Jobs report the runner's `job_execution_status`, which is `active` while any job on the
+  instance runs or is being canceled. Don't leave jobs running or canceling on the instance
+  (after probing by hand, for one): every later recording would show the runner as busy.
+- The `ci_random_walk*` scenarios (10 to 25 minutes each to record) choose from what the API
+  answers, so both targets take the same path; "start" takes the oldest pending job, the
+  runner queue's order. They wind each pipeline down job by job: cancelling a whole pipeline
+  of pending jobs races with GitLab's background processing (it may pass through `running`
+  or not), which no recording can pin down. For the same reason a walk never cancels a
+  pipeline whose jobs wait with none running. Changing a walk's choices changes the path of
+  every seed that reaches that choice, so re-record those walks afterwards.
+- More walks are another seed each. Add them in rounds until a round finds nothing new:
+  each round of three found fewer differences than the one before.
 
 **Approval policies.** `Scenario::approval_policies` gives the scenario's project a security
 policy project (`securityPolicyProjectCreate`) and replaces its policy file through a merged MR

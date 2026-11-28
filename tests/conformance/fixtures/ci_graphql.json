@@ -1,0 +1,3060 @@
+{
+  "scenario": "ci_graphql",
+  "base": "http://localhost:8929",
+  "ssh_port": 2424,
+  "run": "r276d23",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/cigq-<RUN>",
+        "name": "cigq-<RUN>",
+        "path": "cigq-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "cigq-<RUN>",
+        "full_path": "cigq-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "cigq-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "cigq-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/cigq-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/cigq-<RUN>/app.git",
+        "web_url": "<BASE>/cigq-<RUN>/app",
+        "readme_url": "<BASE>/cigq-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "cigq-<RUN>",
+          "path": "cigq-<RUN>",
+          "kind": "group",
+          "full_path": "cigq-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/cigq-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null
+      }
+    },
+    {
+      "label": "ci config",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Set CI",
+        "message": "Set CI",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/cigq-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 16,
+          "deletions": 0,
+          "total": 16
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "pipeline created",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "pipeline": {
+              "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>",
+              "iid": "1",
+              "status": "PENDING",
+              "active": true,
+              "complete": false,
+              "cancelable": true,
+              "retryable": false,
+              "duration": null,
+              "queuedDuration": null,
+              "startedAt": null,
+              "finishedAt": null,
+              "failedJobsCount": 0,
+              "totalJobs": 4,
+              "coverage": null,
+              "warnings": false,
+              "hasManualActions": false,
+              "path": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>",
+              "refPath": "refs/heads/main",
+              "source": "push",
+              "ref": "main",
+              "sha": "<SHA1>",
+              "detailedStatus": {
+                "id": "pending-<Ci::Pipeline:1>-<Ci::Pipeline:1>",
+                "name": "PENDING",
+                "label": "pending",
+                "text": "Pending",
+                "group": "pending",
+                "icon": "status_pending",
+                "tooltip": "pending",
+                "hasDetails": true,
+                "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>",
+                "favicon": "/assets/ci_favicons/favicon_status_pending-5bdf338420e5221ca24353b6bff1c9367189588750632e9a871b7af09ff6a2ae.png",
+                "deploymentDetailsPath": null,
+                "action": null
+              },
+              "stages": {
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:1>",
+                    "name": "build",
+                    "status": "pending",
+                    "detailedStatus": {
+                      "id": "pending-<Ci::Stage:1>-<Ci::Stage:1>",
+                      "name": "PENDING",
+                      "label": "pending",
+                      "text": "Pending",
+                      "group": "pending",
+                      "icon": "status_pending",
+                      "tooltip": "pending",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#build",
+                      "favicon": "/assets/ci_favicons/favicon_status_pending-5bdf338420e5221ca24353b6bff1c9367189588750632e9a871b7af09ff6a2ae.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:1>-build",
+                          "name": "build",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "pending-<job:1>-<Ci::Stage:1>-build",
+                            "name": "PENDING",
+                            "label": "pending",
+                            "text": "Pending",
+                            "group": "pending",
+                            "icon": "status_pending",
+                            "tooltip": "pending",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                            "favicon": "/assets/ci_favicons/favicon_status_pending-5bdf338420e5221ca24353b6bff1c9367189588750632e9a871b7af09ff6a2ae.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-pending-<job:1>",
+                              "buttonTitle": "Cancel this job",
+                              "icon": "cancel",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:1>/cancel",
+                              "title": "Cancel",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:1>",
+                                "name": "build",
+                                "status": "PENDING"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:1>",
+                          "name": "build",
+                          "status": "PENDING"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "created",
+                    "detailedStatus": {
+                      "id": "created-<Ci::Stage:2>-<Ci::Stage:2>",
+                      "name": "CREATED",
+                      "label": "created",
+                      "text": "Created",
+                      "group": "created",
+                      "icon": "status_created",
+                      "tooltip": "created",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#test",
+                      "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:2>-lint",
+                          "name": "lint",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "created-<job:2>-<Ci::Stage:2>-lint",
+                            "name": "CREATED",
+                            "label": "created",
+                            "text": "Created",
+                            "group": "created",
+                            "icon": "status_created",
+                            "tooltip": "created",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:2>",
+                            "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-created-<job:2>",
+                              "buttonTitle": "Cancel this job",
+                              "icon": "cancel",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:2>/cancel",
+                              "title": "Cancel",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:2>",
+                                "name": "lint",
+                                "status": "CREATED"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:2>-unit",
+                          "name": "unit",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "created-<job:3>-<Ci::Stage:2>-unit",
+                            "name": "CREATED",
+                            "label": "created",
+                            "text": "Created",
+                            "group": "created",
+                            "icon": "status_created",
+                            "tooltip": "created",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:3>",
+                            "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-created-<job:3>",
+                              "buttonTitle": "Cancel this job",
+                              "icon": "cancel",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:3>/cancel",
+                              "title": "Cancel",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:3>",
+                                "name": "unit",
+                                "status": "CREATED"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:2>",
+                          "name": "lint",
+                          "status": "CREATED"
+                        },
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:3>",
+                          "name": "unit",
+                          "status": "CREATED"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:3>",
+                    "name": "deploy",
+                    "status": "created",
+                    "detailedStatus": {
+                      "id": "created-<Ci::Stage:3>-<Ci::Stage:3>",
+                      "name": "CREATED",
+                      "label": "created",
+                      "text": "Created",
+                      "group": "created",
+                      "icon": "status_created",
+                      "tooltip": "created",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#deploy",
+                      "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:3>-deploy",
+                          "name": "deploy",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "created-<job:4>-<Ci::Stage:3>-deploy",
+                            "name": "CREATED",
+                            "label": "created",
+                            "text": "Created",
+                            "group": "created",
+                            "icon": "status_created",
+                            "tooltip": "created",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:4>",
+                            "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-created-<job:4>",
+                              "buttonTitle": "Cancel this job",
+                              "icon": "cancel",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:4>/cancel",
+                              "title": "Cancel",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:4>",
+                                "name": "deploy",
+                                "status": "CREATED"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:4>",
+                          "name": "deploy",
+                          "status": "CREATED"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "jobs": {
+                "count": 4,
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:4>",
+                    "name": "deploy",
+                    "status": "CREATED",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:2>",
+                    "name": "lint",
+                    "status": "CREATED",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:3>",
+                    "name": "unit",
+                    "status": "CREATED",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:1>",
+                    "name": "build",
+                    "status": "PENDING",
+                    "retried": false
+                  }
+                ]
+              },
+              "retriedJobs": {
+                "nodes": []
+              },
+              "manualJobs": {
+                "nodes": [
+                  {
+                    "name": "deploy"
+                  }
+                ]
+              },
+              "job": {
+                "id": "gid://gitlab/Ci::Build/<job:1>",
+                "name": "build"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline running",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "pipeline": {
+              "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>",
+              "iid": "1",
+              "status": "RUNNING",
+              "active": true,
+              "complete": false,
+              "cancelable": true,
+              "retryable": false,
+              "duration": null,
+              "queuedDuration": 9.0,
+              "startedAt": "<TIME>",
+              "finishedAt": null,
+              "failedJobsCount": 0,
+              "totalJobs": 4,
+              "coverage": null,
+              "warnings": false,
+              "hasManualActions": false,
+              "path": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>",
+              "refPath": "refs/heads/main",
+              "source": "push",
+              "ref": "main",
+              "sha": "<SHA1>",
+              "detailedStatus": {
+                "id": "running-<Ci::Pipeline:1>-<Ci::Pipeline:1>",
+                "name": "RUNNING",
+                "label": "running",
+                "text": "Running",
+                "group": "running",
+                "icon": "status_running",
+                "tooltip": "running",
+                "hasDetails": true,
+                "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>",
+                "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png",
+                "deploymentDetailsPath": null,
+                "action": null
+              },
+              "stages": {
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:1>",
+                    "name": "build",
+                    "status": "running",
+                    "detailedStatus": {
+                      "id": "running-<Ci::Stage:1>-<Ci::Stage:1>",
+                      "name": "RUNNING",
+                      "label": "running",
+                      "text": "Running",
+                      "group": "running",
+                      "icon": "status_running",
+                      "tooltip": "running",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#build",
+                      "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:1>-build",
+                          "name": "build",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "running-<job:1>-<Ci::Stage:1>-build",
+                            "name": "RUNNING",
+                            "label": "running",
+                            "text": "Running",
+                            "group": "running",
+                            "icon": "status_running",
+                            "tooltip": "running",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                            "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-running-<job:1>",
+                              "buttonTitle": "Cancel this job",
+                              "icon": "cancel",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:1>/cancel",
+                              "title": "Cancel",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:1>",
+                                "name": "build",
+                                "status": "RUNNING"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:1>",
+                          "name": "build",
+                          "status": "RUNNING"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "created",
+                    "detailedStatus": {
+                      "id": "created-<Ci::Stage:2>-<Ci::Stage:2>",
+                      "name": "CREATED",
+                      "label": "created",
+                      "text": "Created",
+                      "group": "created",
+                      "icon": "status_created",
+                      "tooltip": "created",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#test",
+                      "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:2>-lint",
+                          "name": "lint",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "created-<job:2>-<Ci::Stage:2>-lint",
+                            "name": "CREATED",
+                            "label": "created",
+                            "text": "Created",
+                            "group": "created",
+                            "icon": "status_created",
+                            "tooltip": "created",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:2>",
+                            "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-created-<job:2>",
+                              "buttonTitle": "Cancel this job",
+                              "icon": "cancel",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:2>/cancel",
+                              "title": "Cancel",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:2>",
+                                "name": "lint",
+                                "status": "CREATED"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:2>-unit",
+                          "name": "unit",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "created-<job:3>-<Ci::Stage:2>-unit",
+                            "name": "CREATED",
+                            "label": "created",
+                            "text": "Created",
+                            "group": "created",
+                            "icon": "status_created",
+                            "tooltip": "created",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:3>",
+                            "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-created-<job:3>",
+                              "buttonTitle": "Cancel this job",
+                              "icon": "cancel",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:3>/cancel",
+                              "title": "Cancel",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:3>",
+                                "name": "unit",
+                                "status": "CREATED"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:2>",
+                          "name": "lint",
+                          "status": "CREATED"
+                        },
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:3>",
+                          "name": "unit",
+                          "status": "CREATED"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:3>",
+                    "name": "deploy",
+                    "status": "created",
+                    "detailedStatus": {
+                      "id": "created-<Ci::Stage:3>-<Ci::Stage:3>",
+                      "name": "CREATED",
+                      "label": "created",
+                      "text": "Created",
+                      "group": "created",
+                      "icon": "status_created",
+                      "tooltip": "created",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#deploy",
+                      "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:3>-deploy",
+                          "name": "deploy",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "created-<job:4>-<Ci::Stage:3>-deploy",
+                            "name": "CREATED",
+                            "label": "created",
+                            "text": "Created",
+                            "group": "created",
+                            "icon": "status_created",
+                            "tooltip": "created",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:4>",
+                            "favicon": "/assets/ci_favicons/favicon_status_created-4b975aa976d24e5a3ea7cd9a5713e6ce2cd9afd08b910415e96675de35f64955.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-created-<job:4>",
+                              "buttonTitle": "Cancel this job",
+                              "icon": "cancel",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:4>/cancel",
+                              "title": "Cancel",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:4>",
+                                "name": "deploy",
+                                "status": "CREATED"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:4>",
+                          "name": "deploy",
+                          "status": "CREATED"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "jobs": {
+                "count": 4,
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:4>",
+                    "name": "deploy",
+                    "status": "CREATED",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:2>",
+                    "name": "lint",
+                    "status": "CREATED",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:3>",
+                    "name": "unit",
+                    "status": "CREATED",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:1>",
+                    "name": "build",
+                    "status": "RUNNING",
+                    "retried": false
+                  }
+                ]
+              },
+              "retriedJobs": {
+                "nodes": []
+              },
+              "manualJobs": {
+                "nodes": [
+                  {
+                    "name": "deploy"
+                  }
+                ]
+              },
+              "job": {
+                "id": "gid://gitlab/Ci::Build/<job:1>",
+                "name": "build"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "jobs running",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "\"jobs\" field can be requested only for 1 Project(s) at a time.",
+            "locations": [
+              {
+                "line": 15,
+                "column": 11
+              }
+            ],
+            "path": [
+              "project",
+              "failed"
+            ]
+          },
+          {
+            "message": "\"jobs\" field can be requested only for 1 Project(s) at a time.",
+            "locations": [
+              {
+                "line": 16,
+                "column": 11
+              }
+            ],
+            "path": [
+              "project",
+              "withArtifacts"
+            ]
+          }
+        ],
+        "data": {
+          "project": {
+            "pipelineCounts": {
+              "all": 1,
+              "finished": 0,
+              "pending": 0,
+              "running": 1
+            },
+            "pipelines": {
+              "count": 1,
+              "nodes": [
+                {
+                  "iid": "1",
+                  "status": "RUNNING"
+                }
+              ]
+            },
+            "jobs": {
+              "count": 1,
+              "nodes": [
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:1>",
+                  "name": "build",
+                  "status": "RUNNING",
+                  "kind": "BUILD",
+                  "active": true,
+                  "allowFailure": false,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:1>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": true,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": null,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": 19,
+                  "erasedAt": null,
+                  "exitCode": null,
+                  "failureMessage": null,
+                  "finishedAt": null,
+                  "manualJob": false,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:1>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 7.353947,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": false,
+                  "retryPath": null,
+                  "retryable": false,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": "<TIME>",
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:1>",
+                    "name": "build",
+                    "status": "running"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": {
+                    "id": "gid://gitlab/Ci::Runner/<Ci::Runner:1>",
+                    "description": "labrat-fake-runner"
+                  },
+                  "detailedStatus": {
+                    "id": "running-<job:1>-<job:1>",
+                    "name": "RUNNING",
+                    "label": "running",
+                    "text": "Running",
+                    "group": "running",
+                    "icon": "status_running",
+                    "tooltip": "running",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                    "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png",
+                    "deploymentDetailsPath": null,
+                    "action": {
+                      "id": "Ci::BuildPresenter-running-<job:1>",
+                      "buttonTitle": "Cancel this job",
+                      "icon": "cancel",
+                      "method": "post",
+                      "path": "/cigq-<RUN>/app/-/jobs/<job:1>/cancel",
+                      "title": "Cancel",
+                      "confirmationMessage": null
+                    }
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": {
+                    "htmlSummary": "<span>line 1<br/></span><span class=\"term-fg-green\">green</span><span> line 2<br/>line 3<br/></span>"
+                  },
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                }
+              ]
+            },
+            "failed": null,
+            "withArtifacts": null
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline with manual",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "pipeline": {
+              "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>",
+              "iid": "1",
+              "status": "SUCCESS",
+              "active": false,
+              "complete": true,
+              "cancelable": false,
+              "retryable": true,
+              "duration": 64,
+              "queuedDuration": 9.0,
+              "startedAt": "<TIME>",
+              "finishedAt": "<TIME>",
+              "failedJobsCount": 1,
+              "totalJobs": 4,
+              "coverage": 90.5,
+              "warnings": true,
+              "hasManualActions": true,
+              "path": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>",
+              "refPath": "refs/heads/main",
+              "source": "push",
+              "ref": "main",
+              "sha": "<SHA1>",
+              "detailedStatus": {
+                "id": "success-<Ci::Pipeline:1>-<Ci::Pipeline:1>",
+                "name": "SUCCESS_WITH_WARNINGS",
+                "label": "passed with warnings",
+                "text": "Warning",
+                "group": "success-with-warnings",
+                "icon": "status_warning",
+                "tooltip": "passed with warnings",
+                "hasDetails": true,
+                "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>",
+                "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                "deploymentDetailsPath": null,
+                "action": null
+              },
+              "stages": {
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:1>",
+                    "name": "build",
+                    "status": "success",
+                    "detailedStatus": {
+                      "id": "success-<Ci::Stage:1>-<Ci::Stage:1>",
+                      "name": "SUCCESS",
+                      "label": "passed",
+                      "text": "Passed",
+                      "group": "success",
+                      "icon": "status_success",
+                      "tooltip": "passed",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#build",
+                      "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:1>-build",
+                          "name": "build",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "success-<job:1>-<Ci::Stage:1>-build",
+                            "name": "SUCCESS",
+                            "label": "passed",
+                            "text": "Passed",
+                            "group": "success",
+                            "icon": "status_success",
+                            "tooltip": "passed",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                            "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-success-<job:1>",
+                              "buttonTitle": "Run this job again",
+                              "icon": "retry",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:1>/retry",
+                              "title": "Run again",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:1>",
+                                "name": "build",
+                                "status": "SUCCESS"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:1>",
+                          "name": "build",
+                          "status": "SUCCESS"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "success",
+                    "detailedStatus": {
+                      "id": "success-<Ci::Stage:2>-<Ci::Stage:2>",
+                      "name": "SUCCESS_WITH_WARNINGS",
+                      "label": "passed with warnings",
+                      "text": "Warning",
+                      "group": "success-with-warnings",
+                      "icon": "status_warning",
+                      "tooltip": "passed with warnings",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#test",
+                      "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:2>-lint",
+                          "name": "lint",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "failed-<job:2>-<Ci::Stage:2>-lint",
+                            "name": "FAILED",
+                            "label": "failed (allowed to fail)",
+                            "text": "Failed",
+                            "group": "failed-with-warnings",
+                            "icon": "status_warning",
+                            "tooltip": "Failed - (script failure) (allowed to fail)",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:2>",
+                            "favicon": "/assets/ci_favicons/favicon_status_failed-41304d7f7e3828808b0c26771f0309e55296819a9beea3ea9fbf6689d9857c12.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-failed-<job:2>",
+                              "buttonTitle": "Run this job again",
+                              "icon": "retry",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:2>/retry",
+                              "title": "Run again",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:2>",
+                                "name": "lint",
+                                "status": "FAILED"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:2>-unit",
+                          "name": "unit",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "success-<job:3>-<Ci::Stage:2>-unit",
+                            "name": "SUCCESS",
+                            "label": "passed",
+                            "text": "Passed",
+                            "group": "success",
+                            "icon": "status_success",
+                            "tooltip": "passed",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:3>",
+                            "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-success-<job:3>",
+                              "buttonTitle": "Run this job again",
+                              "icon": "retry",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:3>/retry",
+                              "title": "Run again",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:3>",
+                                "name": "unit",
+                                "status": "SUCCESS"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:2>",
+                          "name": "lint",
+                          "status": "FAILED"
+                        },
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:3>",
+                          "name": "unit",
+                          "status": "SUCCESS"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:3>",
+                    "name": "deploy",
+                    "status": "skipped",
+                    "detailedStatus": {
+                      "id": "skipped-<Ci::Stage:3>-<Ci::Stage:3>",
+                      "name": "SKIPPED",
+                      "label": "skipped",
+                      "text": "Skipped",
+                      "group": "skipped",
+                      "icon": "status_skipped",
+                      "tooltip": "skipped",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#deploy",
+                      "favicon": "/assets/ci_favicons/favicon_status_skipped-0b9c5e543588945e8c4ca57786bbf2d0c56631959c9f853300392d0315be829b.png",
+                      "deploymentDetailsPath": null,
+                      "action": {
+                        "id": "Ci::Stage-skipped-<Ci::Stage:3>",
+                        "buttonTitle": "Run all manual",
+                        "icon": "play",
+                        "method": "post",
+                        "path": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>/stages/deploy/play_manual",
+                        "title": "Run all manual",
+                        "confirmationMessage": null
+                      }
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:3>-deploy",
+                          "name": "deploy",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "manual-<job:4>-<Ci::Stage:3>-deploy",
+                            "name": "MANUAL",
+                            "label": "manual play action",
+                            "text": "Manual",
+                            "group": "manual",
+                            "icon": "status_manual",
+                            "tooltip": "manual action",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:4>",
+                            "favicon": "/assets/ci_favicons/favicon_status_manual-829a0804612cef47d9efc1618dba38325483657c847dba0546c3b9f0295bb36c.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-manual-<job:4>",
+                              "buttonTitle": "Run job",
+                              "icon": "play",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:4>/play",
+                              "title": "Run",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:4>",
+                                "name": "deploy",
+                                "status": "MANUAL"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:4>",
+                          "name": "deploy",
+                          "status": "MANUAL"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "jobs": {
+                "count": 4,
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:4>",
+                    "name": "deploy",
+                    "status": "MANUAL",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:2>",
+                    "name": "lint",
+                    "status": "FAILED",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:3>",
+                    "name": "unit",
+                    "status": "SUCCESS",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:1>",
+                    "name": "build",
+                    "status": "SUCCESS",
+                    "retried": false
+                  }
+                ]
+              },
+              "retriedJobs": {
+                "nodes": []
+              },
+              "manualJobs": {
+                "nodes": [
+                  {
+                    "name": "deploy"
+                  }
+                ]
+              },
+              "job": {
+                "id": "gid://gitlab/Ci::Build/<job:1>",
+                "name": "build"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "jobs with manual",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "\"jobs\" field can be requested only for 1 Project(s) at a time.",
+            "locations": [
+              {
+                "line": 15,
+                "column": 11
+              }
+            ],
+            "path": [
+              "project",
+              "failed"
+            ]
+          },
+          {
+            "message": "\"jobs\" field can be requested only for 1 Project(s) at a time.",
+            "locations": [
+              {
+                "line": 16,
+                "column": 11
+              }
+            ],
+            "path": [
+              "project",
+              "withArtifacts"
+            ]
+          }
+        ],
+        "data": {
+          "project": {
+            "pipelineCounts": {
+              "all": 1,
+              "finished": 1,
+              "pending": 0,
+              "running": 0
+            },
+            "pipelines": {
+              "count": 1,
+              "nodes": [
+                {
+                  "iid": "1",
+                  "status": "SUCCESS"
+                }
+              ]
+            },
+            "jobs": {
+              "count": 4,
+              "nodes": [
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:4>",
+                  "name": "deploy",
+                  "status": "MANUAL",
+                  "kind": "BUILD",
+                  "active": false,
+                  "allowFailure": true,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:4>/artifacts/browse",
+                  "canPlayJob": true,
+                  "cancelable": false,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": null,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": null,
+                  "erasedAt": null,
+                  "exitCode": null,
+                  "failureMessage": null,
+                  "finishedAt": null,
+                  "manualJob": true,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:4>/play",
+                  "playable": true,
+                  "queuedAt": null,
+                  "queuedDuration": null,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": false,
+                  "retryPath": null,
+                  "retryable": false,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": null,
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:4>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:3>",
+                    "name": "deploy",
+                    "status": "skipped"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": null,
+                  "detailedStatus": {
+                    "id": "manual-<job:4>-<job:4>",
+                    "name": "MANUAL",
+                    "label": "manual play action",
+                    "text": "Manual",
+                    "group": "manual",
+                    "icon": "status_manual",
+                    "tooltip": "manual action",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:4>",
+                    "favicon": "/assets/ci_favicons/favicon_status_manual-829a0804612cef47d9efc1618dba38325483657c847dba0546c3b9f0295bb36c.png",
+                    "deploymentDetailsPath": null,
+                    "action": {
+                      "id": "Ci::BuildPresenter-manual-<job:4>",
+                      "buttonTitle": "Run job",
+                      "icon": "play",
+                      "method": "post",
+                      "path": "/cigq-<RUN>/app/-/jobs/<job:4>/play",
+                      "title": "Run",
+                      "confirmationMessage": null
+                    }
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": null,
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:2>",
+                  "name": "lint",
+                  "status": "FAILED",
+                  "kind": "BUILD",
+                  "active": false,
+                  "allowFailure": true,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:2>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": false,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": null,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": 31,
+                  "erasedAt": null,
+                  "exitCode": 1,
+                  "failureMessage": null,
+                  "finishedAt": "<TIME>",
+                  "manualJob": false,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:2>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 12.933014,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": false,
+                  "retryPath": "/cigq-<RUN>/app/-/jobs/<job:2>/retry",
+                  "retryable": true,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": "<TIME>",
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:2>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "success"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": {
+                    "id": "gid://gitlab/Ci::Runner/<Ci::Runner:1>",
+                    "description": "labrat-fake-runner"
+                  },
+                  "detailedStatus": {
+                    "id": "failed-<job:2>-<job:2>",
+                    "name": "FAILED",
+                    "label": "failed (allowed to fail)",
+                    "text": "Failed",
+                    "group": "failed-with-warnings",
+                    "icon": "status_warning",
+                    "tooltip": "Failed - (script failure) (allowed to fail)",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:2>",
+                    "favicon": "/assets/ci_favicons/favicon_status_failed-41304d7f7e3828808b0c26771f0309e55296819a9beea3ea9fbf6689d9857c12.png",
+                    "deploymentDetailsPath": null,
+                    "action": {
+                      "id": "Ci::BuildPresenter-failed-<job:2>",
+                      "buttonTitle": "Run this job again",
+                      "icon": "retry",
+                      "method": "post",
+                      "path": "/cigq-<RUN>/app/-/jobs/<job:2>/retry",
+                      "title": "Run again",
+                      "confirmationMessage": null
+                    }
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": null,
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:3>",
+                  "name": "unit",
+                  "status": "SUCCESS",
+                  "kind": "BUILD",
+                  "active": false,
+                  "allowFailure": false,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:3>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": false,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": 90.5,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": 33,
+                  "erasedAt": null,
+                  "exitCode": null,
+                  "failureMessage": null,
+                  "finishedAt": "<TIME>",
+                  "manualJob": false,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:3>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 5.008629,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": false,
+                  "retryPath": "/cigq-<RUN>/app/-/jobs/<job:3>/retry",
+                  "retryable": true,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": "<TIME>",
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:3>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "success"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": {
+                    "id": "gid://gitlab/Ci::Runner/<Ci::Runner:1>",
+                    "description": "labrat-fake-runner"
+                  },
+                  "detailedStatus": {
+                    "id": "success-<job:3>-<job:3>",
+                    "name": "SUCCESS",
+                    "label": "passed",
+                    "text": "Passed",
+                    "group": "success",
+                    "icon": "status_success",
+                    "tooltip": "passed",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:3>",
+                    "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                    "deploymentDetailsPath": null,
+                    "action": {
+                      "id": "Ci::BuildPresenter-success-<job:3>",
+                      "buttonTitle": "Run this job again",
+                      "icon": "retry",
+                      "method": "post",
+                      "path": "/cigq-<RUN>/app/-/jobs/<job:3>/retry",
+                      "title": "Run again",
+                      "confirmationMessage": null
+                    }
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": {
+                    "htmlSummary": "<span>Coverage: 90.50%<br/></span>"
+                  },
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:1>",
+                  "name": "build",
+                  "status": "SUCCESS",
+                  "kind": "BUILD",
+                  "active": false,
+                  "allowFailure": false,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:1>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": false,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": null,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": 25,
+                  "erasedAt": null,
+                  "exitCode": null,
+                  "failureMessage": null,
+                  "finishedAt": "<TIME>",
+                  "manualJob": false,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:1>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 7.353947,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": false,
+                  "retryPath": "/cigq-<RUN>/app/-/jobs/<job:1>/retry",
+                  "retryable": true,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": "<TIME>",
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:1>",
+                    "name": "build",
+                    "status": "success"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": {
+                    "id": "gid://gitlab/Ci::Runner/<Ci::Runner:1>",
+                    "description": "labrat-fake-runner"
+                  },
+                  "detailedStatus": {
+                    "id": "success-<job:1>-<job:1>",
+                    "name": "SUCCESS",
+                    "label": "passed",
+                    "text": "Passed",
+                    "group": "success",
+                    "icon": "status_success",
+                    "tooltip": "passed",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                    "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                    "deploymentDetailsPath": null,
+                    "action": {
+                      "id": "Ci::BuildPresenter-success-<job:1>",
+                      "buttonTitle": "Run this job again",
+                      "icon": "retry",
+                      "method": "post",
+                      "path": "/cigq-<RUN>/app/-/jobs/<job:1>/retry",
+                      "title": "Run again",
+                      "confirmationMessage": null
+                    }
+                  },
+                  "artifacts": {
+                    "nodes": [
+                      {
+                        "id": "gid://gitlab/Ci::JobArtifact/<Ci::JobArtifact:1>",
+                        "name": "metadata.gz",
+                        "fileType": "METADATA",
+                        "size": "<SIZE>",
+                        "downloadPath": "/cigq-<RUN>/app/-/jobs/<job:1>/artifacts/download?file_type=metadata",
+                        "expireAt": "<TIME>",
+                        "expired": false
+                      },
+                      {
+                        "id": "gid://gitlab/Ci::JobArtifact/<Ci::JobArtifact:2>",
+                        "name": "artifacts.zip",
+                        "fileType": "ARCHIVE",
+                        "size": "126",
+                        "downloadPath": "/cigq-<RUN>/app/-/jobs/<job:1>/artifacts/download?file_type=archive",
+                        "expireAt": "<TIME>",
+                        "expired": false
+                      }
+                    ]
+                  },
+                  "trace": {
+                    "htmlSummary": "<span>line 1<br/></span><span class=\"term-fg-green\">green</span><span> line 2<br/>line 3<br/></span>"
+                  },
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                }
+              ]
+            },
+            "failed": null,
+            "withArtifacts": null
+          }
+        }
+      }
+    },
+    {
+      "label": "one job",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "job": {
+              "id": "gid://gitlab/Ci::Build/<job:1>",
+              "name": "build",
+              "status": "SUCCESS",
+              "artifacts": {
+                "nodes": [
+                  {
+                    "fileType": "METADATA",
+                    "name": "metadata.gz"
+                  },
+                  {
+                    "fileType": "ARCHIVE",
+                    "name": "artifacts.zip"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "play deploy",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "jobPlay": {
+            "job": {
+              "id": "gid://gitlab/Ci::Build/<job:4>",
+              "name": "deploy",
+              "status": "PENDING"
+            },
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "cancel deploy",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "jobCancel": {
+            "job": {
+              "id": "gid://gitlab/Ci::Build/<job:4>",
+              "name": "deploy",
+              "status": "CANCELED"
+            },
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "retry lint",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "jobRetry": {
+            "job": {
+              "id": "gid://gitlab/Ci::Build/<job:5>",
+              "name": "lint",
+              "status": "PENDING"
+            },
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "retry lint again",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "jobRetry": {
+            "job": null,
+            "errors": [
+              "Job is not retryable"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline after mutations",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "pipeline": {
+              "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>",
+              "iid": "1",
+              "status": "RUNNING",
+              "active": true,
+              "complete": false,
+              "cancelable": true,
+              "retryable": true,
+              "duration": 64,
+              "queuedDuration": 9.0,
+              "startedAt": "<TIME>",
+              "finishedAt": "<TIME>",
+              "failedJobsCount": 0,
+              "totalJobs": 5,
+              "coverage": 90.5,
+              "warnings": true,
+              "hasManualActions": true,
+              "path": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>",
+              "refPath": "refs/heads/main",
+              "source": "push",
+              "ref": "main",
+              "sha": "<SHA1>",
+              "detailedStatus": {
+                "id": "running-<Ci::Pipeline:1>-<Ci::Pipeline:1>",
+                "name": "RUNNING",
+                "label": "running",
+                "text": "Running",
+                "group": "running",
+                "icon": "status_running",
+                "tooltip": "running",
+                "hasDetails": true,
+                "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>",
+                "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png",
+                "deploymentDetailsPath": null,
+                "action": null
+              },
+              "stages": {
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:1>",
+                    "name": "build",
+                    "status": "success",
+                    "detailedStatus": {
+                      "id": "success-<Ci::Stage:1>-<Ci::Stage:1>",
+                      "name": "SUCCESS",
+                      "label": "passed",
+                      "text": "Passed",
+                      "group": "success",
+                      "icon": "status_success",
+                      "tooltip": "passed",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#build",
+                      "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:1>-build",
+                          "name": "build",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "success-<job:1>-<Ci::Stage:1>-build",
+                            "name": "SUCCESS",
+                            "label": "passed",
+                            "text": "Passed",
+                            "group": "success",
+                            "icon": "status_success",
+                            "tooltip": "passed",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                            "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-success-<job:1>",
+                              "buttonTitle": "Run this job again",
+                              "icon": "retry",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:1>/retry",
+                              "title": "Run again",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:1>",
+                                "name": "build",
+                                "status": "SUCCESS"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:1>",
+                          "name": "build",
+                          "status": "SUCCESS"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "running",
+                    "detailedStatus": {
+                      "id": "running-<Ci::Stage:2>-<Ci::Stage:2>",
+                      "name": "RUNNING",
+                      "label": "running",
+                      "text": "Running",
+                      "group": "running",
+                      "icon": "status_running",
+                      "tooltip": "running",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#test",
+                      "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:2>-lint",
+                          "name": "lint",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "pending-<job:5>-<Ci::Stage:2>-lint",
+                            "name": "PENDING",
+                            "label": "pending",
+                            "text": "Pending",
+                            "group": "pending",
+                            "icon": "status_pending",
+                            "tooltip": "pending",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:5>",
+                            "favicon": "/assets/ci_favicons/favicon_status_pending-5bdf338420e5221ca24353b6bff1c9367189588750632e9a871b7af09ff6a2ae.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-pending-<job:5>",
+                              "buttonTitle": "Cancel this job",
+                              "icon": "cancel",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:5>/cancel",
+                              "title": "Cancel",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:5>",
+                                "name": "lint",
+                                "status": "PENDING"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:2>-unit",
+                          "name": "unit",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "success-<job:3>-<Ci::Stage:2>-unit",
+                            "name": "SUCCESS",
+                            "label": "passed",
+                            "text": "Passed",
+                            "group": "success",
+                            "icon": "status_success",
+                            "tooltip": "passed",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:3>",
+                            "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-success-<job:3>",
+                              "buttonTitle": "Run this job again",
+                              "icon": "retry",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:3>/retry",
+                              "title": "Run again",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:3>",
+                                "name": "unit",
+                                "status": "SUCCESS"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:5>",
+                          "name": "lint",
+                          "status": "PENDING"
+                        },
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:3>",
+                          "name": "unit",
+                          "status": "SUCCESS"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:3>",
+                    "name": "deploy",
+                    "status": "success",
+                    "detailedStatus": {
+                      "id": "success-<Ci::Stage:3>-<Ci::Stage:3>",
+                      "name": "SUCCESS_WITH_WARNINGS",
+                      "label": "passed with warnings",
+                      "text": "Warning",
+                      "group": "success-with-warnings",
+                      "icon": "status_warning",
+                      "tooltip": "passed with warnings",
+                      "hasDetails": true,
+                      "detailsPath": "/cigq-<RUN>/app/-/pipelines/<pipeline:1>#deploy",
+                      "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                      "deploymentDetailsPath": null,
+                      "action": null
+                    },
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:3>-deploy",
+                          "name": "deploy",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "canceled-<job:4>-<Ci::Stage:3>-deploy",
+                            "name": "CANCELED",
+                            "label": "manual play action",
+                            "text": "Canceled",
+                            "group": "canceled",
+                            "icon": "status_canceled",
+                            "tooltip": "canceled",
+                            "hasDetails": true,
+                            "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:4>",
+                            "favicon": "/assets/ci_favicons/favicon_status_canceled-ca35321a6cda9943ebdf6631c8057ffd54064f3ba20cfe0ebc4b0b992041c430.png",
+                            "deploymentDetailsPath": null,
+                            "action": {
+                              "id": "Ci::BuildPresenter-canceled-<job:4>",
+                              "buttonTitle": "Run job",
+                              "icon": "play",
+                              "method": "post",
+                              "path": "/cigq-<RUN>/app/-/jobs/<job:4>/play",
+                              "title": "Run",
+                              "confirmationMessage": null
+                            }
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:4>",
+                                "name": "deploy",
+                                "status": "CANCELED"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Build/<job:4>",
+                          "name": "deploy",
+                          "status": "CANCELED"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "jobs": {
+                "count": 5,
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:5>",
+                    "name": "lint",
+                    "status": "PENDING",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:4>",
+                    "name": "deploy",
+                    "status": "CANCELED",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:2>",
+                    "name": "lint",
+                    "status": "FAILED",
+                    "retried": true
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:3>",
+                    "name": "unit",
+                    "status": "SUCCESS",
+                    "retried": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:1>",
+                    "name": "build",
+                    "status": "SUCCESS",
+                    "retried": false
+                  }
+                ]
+              },
+              "retriedJobs": {
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:2>",
+                    "name": "lint",
+                    "status": "FAILED"
+                  }
+                ]
+              },
+              "manualJobs": {
+                "nodes": [
+                  {
+                    "name": "deploy"
+                  }
+                ]
+              },
+              "job": {
+                "id": "gid://gitlab/Ci::Build/<job:1>",
+                "name": "build"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "cancel pipeline",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "pipelineCancel": {
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "retry pipeline",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "pipelineRetry": {
+            "pipeline": {
+              "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>",
+              "status": "RUNNING"
+            },
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "artifacts",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "job": {
+              "artifacts": {
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::JobArtifact/<Ci::JobArtifact:1>",
+                    "fileType": "METADATA"
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::JobArtifact/<Ci::JobArtifact:2>",
+                    "fileType": "ARCHIVE"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "destroy metadata",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "artifactDestroy": {
+            "artifact": null,
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "destroy artifacts",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "jobArtifactsDestroy": {
+            "job": {
+              "id": "gid://gitlab/Ci::Build/<job:1>"
+            },
+            "destroyedArtifactsCount": 1,
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "jobs at the end",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "\"jobs\" field can be requested only for 1 Project(s) at a time.",
+            "locations": [
+              {
+                "line": 15,
+                "column": 11
+              }
+            ],
+            "path": [
+              "project",
+              "failed"
+            ]
+          },
+          {
+            "message": "\"jobs\" field can be requested only for 1 Project(s) at a time.",
+            "locations": [
+              {
+                "line": 16,
+                "column": 11
+              }
+            ],
+            "path": [
+              "project",
+              "withArtifacts"
+            ]
+          }
+        ],
+        "data": {
+          "project": {
+            "pipelineCounts": {
+              "all": 1,
+              "finished": 0,
+              "pending": 0,
+              "running": 1
+            },
+            "pipelines": {
+              "count": 1,
+              "nodes": [
+                {
+                  "iid": "1",
+                  "status": "RUNNING"
+                }
+              ]
+            },
+            "jobs": {
+              "count": 6,
+              "nodes": [
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:6>",
+                  "name": "lint",
+                  "status": "PENDING",
+                  "kind": "BUILD",
+                  "active": true,
+                  "allowFailure": true,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:6>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": true,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": null,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": null,
+                  "erasedAt": null,
+                  "exitCode": null,
+                  "failureMessage": null,
+                  "finishedAt": null,
+                  "manualJob": false,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:6>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 10.125903608,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": false,
+                  "retryPath": null,
+                  "retryable": false,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": null,
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:6>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "running"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": null,
+                  "detailedStatus": {
+                    "id": "pending-<job:6>-<job:6>",
+                    "name": "PENDING",
+                    "label": "pending",
+                    "text": "Pending",
+                    "group": "pending",
+                    "icon": "status_pending",
+                    "tooltip": "pending",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:6>",
+                    "favicon": "/assets/ci_favicons/favicon_status_pending-5bdf338420e5221ca24353b6bff1c9367189588750632e9a871b7af09ff6a2ae.png",
+                    "deploymentDetailsPath": null,
+                    "action": {
+                      "id": "Ci::BuildPresenter-pending-<job:6>",
+                      "buttonTitle": "Cancel this job",
+                      "icon": "cancel",
+                      "method": "post",
+                      "path": "/cigq-<RUN>/app/-/jobs/<job:6>/cancel",
+                      "title": "Cancel",
+                      "confirmationMessage": null
+                    }
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": null,
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:5>",
+                  "name": "lint",
+                  "status": "CANCELED",
+                  "kind": "BUILD",
+                  "active": false,
+                  "allowFailure": true,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:5>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": false,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": null,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": null,
+                  "erasedAt": null,
+                  "exitCode": null,
+                  "failureMessage": null,
+                  "finishedAt": "<TIME>",
+                  "manualJob": false,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:5>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 9.848595,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": true,
+                  "retryPath": null,
+                  "retryable": false,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": null,
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:5>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "running"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": null,
+                  "detailedStatus": {
+                    "id": "canceled-<job:5>-<job:5>",
+                    "name": "CANCELED",
+                    "label": "canceled",
+                    "text": "Canceled",
+                    "group": "canceled",
+                    "icon": "status_canceled",
+                    "tooltip": "canceled (retried)",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:5>",
+                    "favicon": "/assets/ci_favicons/favicon_status_canceled-ca35321a6cda9943ebdf6631c8057ffd54064f3ba20cfe0ebc4b0b992041c430.png",
+                    "deploymentDetailsPath": null,
+                    "action": null
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": null,
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:4>",
+                  "name": "deploy",
+                  "status": "CANCELED",
+                  "kind": "BUILD",
+                  "active": false,
+                  "allowFailure": true,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:4>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": false,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": null,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": null,
+                  "erasedAt": null,
+                  "exitCode": null,
+                  "failureMessage": null,
+                  "finishedAt": "<TIME>",
+                  "manualJob": true,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:4>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 9.074155,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": true,
+                  "retryPath": null,
+                  "retryable": false,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": null,
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:4>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:3>",
+                    "name": "deploy",
+                    "status": "success"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": null,
+                  "detailedStatus": {
+                    "id": "canceled-<job:4>-<job:4>",
+                    "name": "CANCELED",
+                    "label": "canceled",
+                    "text": "Canceled",
+                    "group": "canceled",
+                    "icon": "status_canceled",
+                    "tooltip": "canceled (retried)",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:4>",
+                    "favicon": "/assets/ci_favicons/favicon_status_canceled-ca35321a6cda9943ebdf6631c8057ffd54064f3ba20cfe0ebc4b0b992041c430.png",
+                    "deploymentDetailsPath": null,
+                    "action": null
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": null,
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:2>",
+                  "name": "lint",
+                  "status": "FAILED",
+                  "kind": "BUILD",
+                  "active": false,
+                  "allowFailure": true,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:2>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": false,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": null,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": 31,
+                  "erasedAt": null,
+                  "exitCode": 1,
+                  "failureMessage": null,
+                  "finishedAt": "<TIME>",
+                  "manualJob": false,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:2>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 12.933014,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": true,
+                  "retryPath": null,
+                  "retryable": false,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": "<TIME>",
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:2>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "running"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": {
+                    "id": "gid://gitlab/Ci::Runner/<Ci::Runner:1>",
+                    "description": "labrat-fake-runner"
+                  },
+                  "detailedStatus": {
+                    "id": "failed-<job:2>-<job:2>",
+                    "name": "FAILED",
+                    "label": "failed (allowed to fail)",
+                    "text": "Failed",
+                    "group": "failed-with-warnings",
+                    "icon": "status_warning",
+                    "tooltip": "Failed - (script failure) (allowed to fail) (retried)",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:2>",
+                    "favicon": "/assets/ci_favicons/favicon_status_failed-41304d7f7e3828808b0c26771f0309e55296819a9beea3ea9fbf6689d9857c12.png",
+                    "deploymentDetailsPath": null,
+                    "action": null
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": null,
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:3>",
+                  "name": "unit",
+                  "status": "SUCCESS",
+                  "kind": "BUILD",
+                  "active": false,
+                  "allowFailure": false,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:3>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": false,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": 90.5,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": 33,
+                  "erasedAt": null,
+                  "exitCode": null,
+                  "failureMessage": null,
+                  "finishedAt": "<TIME>",
+                  "manualJob": false,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:3>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 5.008629,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": false,
+                  "retryPath": "/cigq-<RUN>/app/-/jobs/<job:3>/retry",
+                  "retryable": true,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": "<TIME>",
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:3>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "running"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": {
+                    "id": "gid://gitlab/Ci::Runner/<Ci::Runner:1>",
+                    "description": "labrat-fake-runner"
+                  },
+                  "detailedStatus": {
+                    "id": "success-<job:3>-<job:3>",
+                    "name": "SUCCESS",
+                    "label": "passed",
+                    "text": "Passed",
+                    "group": "success",
+                    "icon": "status_success",
+                    "tooltip": "passed",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:3>",
+                    "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                    "deploymentDetailsPath": null,
+                    "action": {
+                      "id": "Ci::BuildPresenter-success-<job:3>",
+                      "buttonTitle": "Run this job again",
+                      "icon": "retry",
+                      "method": "post",
+                      "path": "/cigq-<RUN>/app/-/jobs/<job:3>/retry",
+                      "title": "Run again",
+                      "confirmationMessage": null
+                    }
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": {
+                    "htmlSummary": "<span>Coverage: 90.50%<br/></span>"
+                  },
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:1>",
+                  "name": "build",
+                  "status": "SUCCESS",
+                  "kind": "BUILD",
+                  "active": false,
+                  "allowFailure": false,
+                  "browseArtifactsPath": "/cigq-<RUN>/app/-/jobs/<job:1>/artifacts/browse",
+                  "canPlayJob": false,
+                  "cancelable": false,
+                  "commitPath": "/cigq-<RUN>/app/-/commit/<SHA1>",
+                  "coverage": null,
+                  "createdAt": "<TIME>",
+                  "createdByTag": false,
+                  "duration": 25,
+                  "erasedAt": null,
+                  "exitCode": null,
+                  "failureMessage": null,
+                  "finishedAt": "<TIME>",
+                  "manualJob": false,
+                  "playPath": "/cigq-<RUN>/app/-/jobs/<job:1>/play",
+                  "playable": false,
+                  "queuedAt": "<TIME>",
+                  "queuedDuration": 7.353947,
+                  "refName": "main",
+                  "refPath": "/cigq-<RUN>/app/-/commits/main",
+                  "retried": false,
+                  "retryPath": "/cigq-<RUN>/app/-/jobs/<job:1>/retry",
+                  "retryable": true,
+                  "scheduled": false,
+                  "scheduledAt": null,
+                  "schedulingType": "stage",
+                  "shortSha": "<SHA1:short>",
+                  "source": "push",
+                  "startedAt": "<TIME>",
+                  "stuck": false,
+                  "tags": [],
+                  "triggered": false,
+                  "webPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                  "stage": {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:1>",
+                    "name": "build",
+                    "status": "success"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  },
+                  "runner": {
+                    "id": "gid://gitlab/Ci::Runner/<Ci::Runner:1>",
+                    "description": "labrat-fake-runner"
+                  },
+                  "detailedStatus": {
+                    "id": "success-<job:1>-<job:1>",
+                    "name": "SUCCESS",
+                    "label": "passed",
+                    "text": "Passed",
+                    "group": "success",
+                    "icon": "status_success",
+                    "tooltip": "passed",
+                    "hasDetails": true,
+                    "detailsPath": "/cigq-<RUN>/app/-/jobs/<job:1>",
+                    "favicon": "/assets/ci_favicons/favicon_status_success-8451333011eee8ce9f2ab25dc487fe24a8758c694827a582f17f42b0a90446a2.png",
+                    "deploymentDetailsPath": null,
+                    "action": {
+                      "id": "Ci::BuildPresenter-success-<job:1>",
+                      "buttonTitle": "Run this job again",
+                      "icon": "retry",
+                      "method": "post",
+                      "path": "/cigq-<RUN>/app/-/jobs/<job:1>/retry",
+                      "title": "Run again",
+                      "confirmationMessage": null
+                    }
+                  },
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": {
+                    "htmlSummary": "<span>line 1<br/></span><span class=\"term-fg-green\">green</span><span> line 2<br/>line 3<br/></span>"
+                  },
+                  "userPermissions": {
+                    "cancelBuild": true,
+                    "readBuild": true,
+                    "readJobArtifacts": true,
+                    "updateBuild": true
+                  }
+                }
+              ]
+            },
+            "failed": null,
+            "withArtifacts": null
+          }
+        }
+      }
+    },
+    {
+      "label": "destroy pipeline",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "pipelineDestroy": {
+            "errors": []
+          }
+        }
+      }
+    },
+    {
+      "label": "no pipelines",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "pipelines": {
+              "count": 0
+            },
+            "pipelineCounts": {
+              "all": 0
+            },
+            "jobs": {
+              "count": 0
+            }
+          }
+        }
+      }
+    }
+  ],
+  "times": [
+    0,
+    237,
+    8251,
+    17642,
+    37638,
+    37875,
+    97537,
+    97840,
+    98254,
+    98482,
+    107589,
+    117875,
+    127486,
+    127551,
+    127842,
+    137513,
+    147662,
+    147704,
+    147747,
+    147802,
+    148114,
+    157716
+  ],
+  "done_times": [
+    237,
+    2486,
+    8676,
+    18513,
+    37875,
+    38003,
+    97840,
+    98119,
+    98316,
+    98620,
+    107666,
+    118258,
+    127551,
+    127842,
+    127956,
+    137882,
+    147704,
+    147747,
+    147802,
+    148114,
+    148288,
+    157772
+  ],
+  "ci_times": [
+    18513,
+    27665,
+    38003,
+    43928,
+    49669,
+    57667,
+    77664,
+    83332,
+    89024
+  ],
+  "ci_picks": [],
+  "started_at": 1795775397551
+}

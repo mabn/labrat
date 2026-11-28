@@ -2,6 +2,7 @@
 
 mod analysis;
 pub mod approvals;
+pub mod ci;
 mod did_you_mean;
 pub mod exec;
 pub mod merge_trains;

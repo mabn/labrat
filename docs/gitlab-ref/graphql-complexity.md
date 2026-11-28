@@ -262,6 +262,18 @@ Subtypes of `UserType`: same as User plus `mergeRequestInteraction` (1 + child).
 | downstream, warningMessages, errorMessages, manualVariables | plain conns 1 | |
 | userPermissions (`updatePipeline`, `cancelPipeline`) | permission: G 2 each | permission_types/ci/pipeline.rb:10-11 |
 
+### CI stages, groups, jobs and statuses (`types/ci/*.rb`)
+Recorded in the `ci_complexity` scenario (CE):
+| field | cost |
+|---|---|
+| `Project.pipeline` | `child + 1` without arguments; `child - 8` with `id`, `iid` or `sha`, **floored at 0** (recorded: `pipeline(iid:) { id status }` adds nothing) |
+| `Project.jobs` | R-conn (ProjectJobsResolver, no sort) |
+| `Project.job`, `Project.pipelineCounts`, `Pipeline.job`, `Pipeline.jobArtifacts` | 1 + child |
+| `CiStage.groups`, `CiStage.jobs`, `CiGroup.jobs`, `CiJob.artifacts` | plain conns: 1 + child |
+| `DetailedStatus.action`, `DetailedStatus.label` | G (2 + child) |
+| `CiJob.canPlayJob` | G (2) |
+| `JobPermissions.updateBuild`, `cancelBuild` | G (2 each) |
+
 ### Commit (`types/repositories/commit_type.rb`)
 title, fullTitle, signature, signatureHtml, diffs: G (2): lines 26, 29, 50, 55, 79. `pipelines`: R-conn with G via ResolvesPipelines (+1, +2 sha/ref): :87. `titleHtml`, `fullTitleHtml`, `descriptionHtml`: C=5 (:92-94).
 

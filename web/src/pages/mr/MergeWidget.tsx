@@ -8,6 +8,7 @@ import { Icon } from '../../components/Icon';
 import { useSession } from '../../session';
 import { EeBadge, useEdition } from '../../edition';
 import { mrBase, useMrRefresh } from './data';
+import { RandomPipelineButton } from '../project/Pipelines';
 
 const BLOCKED: Record<string, string> = {
   draft_status: 'Merge blocked: Select Mark as ready to remove it from Draft status.',
@@ -540,12 +541,29 @@ export function MergeWidget({ project, mr, approvals }: { project: Project; mr: 
   });
   return (
     <div className="widget">
-      {mr.head_pipeline && (
+      {mr.head_pipeline ? (
         <Section icon={<CiStatus pipeline={mr.head_pipeline} />}>
-          <div>
-            Pipeline <strong>#{mr.head_pipeline.id}</strong> {mr.head_pipeline.status} for <code>{mr.head_pipeline.sha.slice(0, 8)}</code>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span>
+              Pipeline{' '}
+              <Link to={`/${project.path_with_namespace}/-/pipelines/${mr.head_pipeline.id}`}>
+                <strong>#{mr.head_pipeline.id}</strong>
+              </Link>{' '}
+              {mr.head_pipeline.status} for <code>{mr.head_pipeline.sha.slice(0, 8)}</code>
+            </span>
+            {mr.state === 'opened' && user && <RandomPipelineButton project={project} mr={mr} className="btn btn-sm btn-tertiary" />}
           </div>
         </Section>
+      ) : (
+        mr.state === 'opened' &&
+        user && (
+          <Section icon={<StatusDot kind="neutral" icon="pipeline" />}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <span className="subtle">No pipeline for this merge request.</span>
+              <RandomPipelineButton project={project} mr={mr} className="btn btn-sm btn-tertiary" />
+            </div>
+          </Section>
+        )
       )}
       <ApprovalSection project={project} mr={mr} approvals={approvals} />
       {ee && <PolicySection project={project} mr={mr} />}

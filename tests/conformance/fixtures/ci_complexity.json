@@ -1,0 +1,2274 @@
+{
+  "scenario": "ci_complexity",
+  "base": "http://localhost:8929",
+  "ssh_port": 2424,
+  "run": "r763094",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/cicx-<RUN>",
+        "name": "cicx-<RUN>",
+        "path": "cicx-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "cicx-<RUN>",
+        "full_path": "cicx-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "cicx-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "cicx-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/cicx-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/cicx-<RUN>/app.git",
+        "web_url": "<BASE>/cicx-<RUN>/app",
+        "readme_url": "<BASE>/cicx-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "cicx-<RUN>",
+          "path": "cicx-<RUN>",
+          "kind": "group",
+          "full_path": "cicx-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/cicx-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null
+      }
+    },
+    {
+      "label": "developer",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "dave-<RUN>",
+        "public_email": null,
+        "name": "Dave",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/dave-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "dave-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "dave-<RUN>@example.com",
+        "preferred_language": "en",
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        }
+      }
+    },
+    {
+      "label": "developer token",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-27",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "developer member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<member:1>",
+        "username": "dave-<RUN>",
+        "public_email": null,
+        "name": "Dave",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/dave-<RUN>",
+        "access_level": 30,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null
+      }
+    },
+    {
+      "label": "ci config",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Set CI",
+        "message": "Set CI",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/cicx-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 11,
+          "deletions": 0,
+          "total": 11
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "pipeline by iid as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 4,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>",
+              "status": "RUNNING"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline by sha as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 4,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>",
+              "status": "RUNNING"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "latest pipeline as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 7,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>",
+              "status": "RUNNING"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline status as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 13,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "detailedStatus": {
+                "id": "running-<Ci::Pipeline:1>-<Ci::Pipeline:1>",
+                "name": "RUNNING",
+                "label": "running",
+                "icon": "status_running",
+                "tooltip": "running",
+                "hasDetails": true,
+                "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>",
+                "action": null
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline scalars as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 15,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "active": true,
+              "complete": false,
+              "cancelable": true,
+              "retryable": false,
+              "duration": null,
+              "queuedDuration": 9.0,
+              "coverage": null,
+              "warnings": false,
+              "hasManualActions": false,
+              "totalJobs": 3,
+              "failedJobsCount": 0,
+              "path": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>",
+              "refPath": "refs/heads/main",
+              "latest": true,
+              "refText": "In <a class=\"ref-container gl-link\" href=\"/cicx-<RUN>/app/-/commits/main\">main</a>",
+              "beforeSha": "<SHA2>"
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "stages as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 40,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "stages": {
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:1>",
+                    "name": "build",
+                    "status": "success",
+                    "detailedStatus": {
+                      "id": "success-<Ci::Stage:1>-<Ci::Stage:1>",
+                      "name": "SUCCESS",
+                      "label": "passed",
+                      "icon": "status_success",
+                      "tooltip": "passed",
+                      "hasDetails": true,
+                      "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#build",
+                      "action": null
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:2>",
+                    "name": "test",
+                    "status": "pending",
+                    "detailedStatus": {
+                      "id": "pending-<Ci::Stage:2>-<Ci::Stage:2>",
+                      "name": "PENDING",
+                      "label": "pending",
+                      "icon": "status_pending",
+                      "tooltip": "pending",
+                      "hasDetails": true,
+                      "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#test",
+                      "action": null
+                    }
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Stage/<Ci::Stage:3>",
+                    "name": "deploy",
+                    "status": "created",
+                    "detailedStatus": {
+                      "id": "created-<Ci::Stage:3>-<Ci::Stage:3>",
+                      "name": "CREATED",
+                      "label": "created",
+                      "icon": "status_created",
+                      "tooltip": "created",
+                      "hasDetails": true,
+                      "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#deploy",
+                      "action": null
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "stages first 2 as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 4,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "stages": {
+                "nodes": [
+                  {
+                    "name": "build"
+                  },
+                  {
+                    "name": "test"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "groups as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 88,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "stages": {
+                "nodes": [
+                  {
+                    "name": "build",
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:1>-build",
+                          "name": "build",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "success-<job:1>-<Ci::Stage:1>-build",
+                            "name": "SUCCESS",
+                            "label": "passed",
+                            "icon": "status_success",
+                            "tooltip": "passed",
+                            "hasDetails": true,
+                            "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:1>",
+                            "action": null
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:1>",
+                                "name": "build",
+                                "detailedStatus": {
+                                  "id": "success-<job:1>-<job:1>",
+                                  "name": "SUCCESS",
+                                  "label": "passed",
+                                  "icon": "status_success",
+                                  "tooltip": "passed",
+                                  "hasDetails": true,
+                                  "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:1>",
+                                  "action": null
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "test",
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:2>-test",
+                          "name": "test",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "pending-<job:2>-<Ci::Stage:2>-test",
+                            "name": "PENDING",
+                            "label": "pending",
+                            "icon": "status_pending",
+                            "tooltip": "pending",
+                            "hasDetails": true,
+                            "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:2>",
+                            "action": null
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:2>",
+                                "name": "test",
+                                "detailedStatus": {
+                                  "id": "pending-<job:2>-<job:2>",
+                                  "name": "PENDING",
+                                  "label": "pending",
+                                  "icon": "status_pending",
+                                  "tooltip": "pending",
+                                  "hasDetails": true,
+                                  "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:2>",
+                                  "action": null
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "name": "deploy",
+                    "groups": {
+                      "nodes": [
+                        {
+                          "id": "gid://gitlab/Ci::Group/<Ci::Group:3>-deploy",
+                          "name": "deploy",
+                          "size": 1,
+                          "detailedStatus": {
+                            "id": "created-<job:3>-<Ci::Stage:3>-deploy",
+                            "name": "CREATED",
+                            "label": "created",
+                            "icon": "status_created",
+                            "tooltip": "created",
+                            "hasDetails": true,
+                            "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:3>",
+                            "action": null
+                          },
+                          "jobs": {
+                            "nodes": [
+                              {
+                                "id": "gid://gitlab/Ci::Build/<job:3>",
+                                "name": "deploy",
+                                "detailedStatus": {
+                                  "id": "created-<job:3>-<job:3>",
+                                  "name": "CREATED",
+                                  "label": "created",
+                                  "icon": "status_created",
+                                  "tooltip": "created",
+                                  "hasDetails": true,
+                                  "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:3>",
+                                  "action": null
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "stage jobs as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 8,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "stages": {
+                "nodes": [
+                  {
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "name": "build",
+                          "status": "SUCCESS"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "name": "test",
+                          "status": "PENDING"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "jobs": {
+                      "nodes": [
+                        {
+                          "name": "deploy",
+                          "status": "CREATED"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline jobs as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 14,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "jobs": {
+                "count": 3,
+                "nodes": [
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:3>",
+                    "name": "deploy",
+                    "status": "CREATED",
+                    "canPlayJob": false,
+                    "playable": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:2>",
+                    "name": "test",
+                    "status": "PENDING",
+                    "canPlayJob": false,
+                    "playable": false
+                  },
+                  {
+                    "id": "gid://gitlab/Ci::Build/<job:1>",
+                    "name": "build",
+                    "status": "SUCCESS",
+                    "canPlayJob": false,
+                    "playable": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline jobs filtered as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 4,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "jobs": {
+                "nodes": [
+                  {
+                    "name": "build"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline job as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 4,
+            "limit": 250
+          },
+          "project": {
+            "pipeline": {
+              "job": {
+                "id": "gid://gitlab/Ci::Build/<job:1>",
+                "name": "build",
+                "stage": {
+                  "name": "build"
+                }
+              },
+              "jobArtifacts": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipelines with stages as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 18,
+            "limit": 250
+          },
+          "project": {
+            "pipelines": {
+              "nodes": [
+                {
+                  "iid": "1",
+                  "status": "RUNNING",
+                  "stages": {
+                    "nodes": [
+                      {
+                        "name": "build",
+                        "status": "success"
+                      },
+                      {
+                        "name": "test",
+                        "status": "pending"
+                      },
+                      {
+                        "name": "deploy",
+                        "status": "created"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "project jobs as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 58,
+            "limit": 250
+          },
+          "project": {
+            "jobs": {
+              "count": 2,
+              "nodes": [
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:2>",
+                  "name": "test",
+                  "status": "PENDING",
+                  "duration": null,
+                  "detailedStatus": {
+                    "id": "pending-<job:2>-<job:2>",
+                    "name": "PENDING",
+                    "label": "pending",
+                    "icon": "status_pending",
+                    "tooltip": "pending",
+                    "hasDetails": true,
+                    "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:2>",
+                    "action": null
+                  }
+                },
+                {
+                  "id": "gid://gitlab/Ci::Build/<job:1>",
+                  "name": "build",
+                  "status": "SUCCESS",
+                  "duration": 9,
+                  "detailedStatus": {
+                    "id": "success-<job:1>-<job:1>",
+                    "name": "SUCCESS",
+                    "label": "passed",
+                    "icon": "status_success",
+                    "tooltip": "passed",
+                    "hasDetails": true,
+                    "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:1>",
+                    "action": null
+                  }
+                }
+              ],
+              "pageInfo": {
+                "hasNextPage": false,
+                "endCursor": {
+                  "cursor": {
+                    "id": "<cursor:1>"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "project jobs first 10 as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 18,
+            "limit": 250
+          },
+          "project": {
+            "jobs": {
+              "nodes": [
+                {
+                  "name": "build",
+                  "artifacts": {
+                    "nodes": []
+                  },
+                  "trace": null,
+                  "runner": {
+                    "id": "gid://gitlab/Ci::Runner/<Ci::Runner:1>"
+                  },
+                  "pipeline": {
+                    "id": "gid://gitlab/Ci::Pipeline/<Ci::Pipeline:1>"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "project job as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 16,
+            "limit": 250
+          },
+          "project": {
+            "job": {
+              "id": "gid://gitlab/Ci::Build/<job:1>",
+              "name": "build",
+              "status": "SUCCESS",
+              "canPlayJob": false,
+              "userPermissions": {
+                "readBuild": true,
+                "updateBuild": false,
+                "cancelBuild": false
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline counts as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 9,
+            "limit": 250
+          },
+          "project": {
+            "pipelineCounts": {
+              "all": 1,
+              "running": 1,
+              "pending": 0,
+              "finished": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "pipeline counts by ref as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 6,
+            "limit": 250
+          },
+          "project": {
+            "pipelineCounts": {
+              "all": 1
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "over the limit as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 238,
+            "limit": 250
+          },
+          "project": {
+            "pipelines": {
+              "nodes": [
+                {
+                  "stages": {
+                    "nodes": [
+                      {
+                        "detailedStatus": {
+                          "id": "success-<Ci::Stage:1>-<Ci::Stage:1>",
+                          "name": "SUCCESS",
+                          "label": "passed",
+                          "icon": "status_success",
+                          "tooltip": "passed",
+                          "hasDetails": true,
+                          "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#build",
+                          "action": null
+                        },
+                        "groups": {
+                          "nodes": [
+                            {
+                              "detailedStatus": {
+                                "id": "success-<job:1>-<Ci::Stage:1>-build",
+                                "name": "SUCCESS",
+                                "label": "passed",
+                                "icon": "status_success",
+                                "tooltip": "passed",
+                                "hasDetails": true,
+                                "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:1>",
+                                "action": null
+                              },
+                              "jobs": {
+                                "nodes": [
+                                  {
+                                    "detailedStatus": {
+                                      "id": "success-<job:1>-<job:1>",
+                                      "name": "SUCCESS",
+                                      "label": "passed",
+                                      "icon": "status_success",
+                                      "tooltip": "passed",
+                                      "hasDetails": true,
+                                      "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:1>",
+                                      "action": null
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "detailedStatus": {
+                          "id": "pending-<Ci::Stage:2>-<Ci::Stage:2>",
+                          "name": "PENDING",
+                          "label": "pending",
+                          "icon": "status_pending",
+                          "tooltip": "pending",
+                          "hasDetails": true,
+                          "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#test",
+                          "action": null
+                        },
+                        "groups": {
+                          "nodes": [
+                            {
+                              "detailedStatus": {
+                                "id": "pending-<job:2>-<Ci::Stage:2>-test",
+                                "name": "PENDING",
+                                "label": "pending",
+                                "icon": "status_pending",
+                                "tooltip": "pending",
+                                "hasDetails": true,
+                                "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:2>",
+                                "action": null
+                              },
+                              "jobs": {
+                                "nodes": [
+                                  {
+                                    "detailedStatus": {
+                                      "id": "pending-<job:2>-<job:2>",
+                                      "name": "PENDING",
+                                      "label": "pending",
+                                      "icon": "status_pending",
+                                      "tooltip": "pending",
+                                      "hasDetails": true,
+                                      "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:2>",
+                                      "action": null
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "detailedStatus": {
+                          "id": "created-<Ci::Stage:3>-<Ci::Stage:3>",
+                          "name": "CREATED",
+                          "label": "created",
+                          "icon": "status_created",
+                          "tooltip": "created",
+                          "hasDetails": true,
+                          "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#deploy",
+                          "action": null
+                        },
+                        "groups": {
+                          "nodes": [
+                            {
+                              "detailedStatus": {
+                                "id": "created-<job:3>-<Ci::Stage:3>-deploy",
+                                "name": "CREATED",
+                                "label": "created",
+                                "icon": "status_created",
+                                "tooltip": "created",
+                                "hasDetails": true,
+                                "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:3>",
+                                "action": null
+                              },
+                              "jobs": {
+                                "nodes": [
+                                  {
+                                    "detailedStatus": {
+                                      "id": "created-<job:3>-<job:3>",
+                                      "name": "CREATED",
+                                      "label": "created",
+                                      "icon": "status_created",
+                                      "tooltip": "created",
+                                      "hasDetails": true,
+                                      "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:3>",
+                                      "action": null
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "over the limit as admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 238,
+            "limit": 300
+          },
+          "project": {
+            "pipelines": {
+              "nodes": [
+                {
+                  "stages": {
+                    "nodes": [
+                      {
+                        "detailedStatus": {
+                          "id": "success-<Ci::Stage:1>-<Ci::Stage:1>",
+                          "name": "SUCCESS",
+                          "label": "passed",
+                          "icon": "status_success",
+                          "tooltip": "passed",
+                          "hasDetails": true,
+                          "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#build",
+                          "action": null
+                        },
+                        "groups": {
+                          "nodes": [
+                            {
+                              "detailedStatus": {
+                                "id": "success-<job:1>-<Ci::Stage:1>-build",
+                                "name": "SUCCESS",
+                                "label": "passed",
+                                "icon": "status_success",
+                                "tooltip": "passed",
+                                "hasDetails": true,
+                                "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:1>",
+                                "action": {
+                                  "id": "Ci::BuildPresenter-success-<job:1>",
+                                  "path": "/cicx-<RUN>/app/-/jobs/<job:1>/retry",
+                                  "title": "Run again",
+                                  "buttonTitle": "Run this job again",
+                                  "method": "post",
+                                  "icon": "retry"
+                                }
+                              },
+                              "jobs": {
+                                "nodes": [
+                                  {
+                                    "detailedStatus": {
+                                      "id": "success-<job:1>-<job:1>",
+                                      "name": "SUCCESS",
+                                      "label": "passed",
+                                      "icon": "status_success",
+                                      "tooltip": "passed",
+                                      "hasDetails": true,
+                                      "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:1>",
+                                      "action": {
+                                        "id": "Ci::BuildPresenter-success-<job:1>",
+                                        "path": "/cicx-<RUN>/app/-/jobs/<job:1>/retry",
+                                        "title": "Run again",
+                                        "buttonTitle": "Run this job again",
+                                        "method": "post",
+                                        "icon": "retry"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "detailedStatus": {
+                          "id": "pending-<Ci::Stage:2>-<Ci::Stage:2>",
+                          "name": "PENDING",
+                          "label": "pending",
+                          "icon": "status_pending",
+                          "tooltip": "pending",
+                          "hasDetails": true,
+                          "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#test",
+                          "action": null
+                        },
+                        "groups": {
+                          "nodes": [
+                            {
+                              "detailedStatus": {
+                                "id": "pending-<job:2>-<Ci::Stage:2>-test",
+                                "name": "PENDING",
+                                "label": "pending",
+                                "icon": "status_pending",
+                                "tooltip": "pending",
+                                "hasDetails": true,
+                                "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:2>",
+                                "action": {
+                                  "id": "Ci::BuildPresenter-pending-<job:2>",
+                                  "path": "/cicx-<RUN>/app/-/jobs/<job:2>/cancel",
+                                  "title": "Cancel",
+                                  "buttonTitle": "Cancel this job",
+                                  "method": "post",
+                                  "icon": "cancel"
+                                }
+                              },
+                              "jobs": {
+                                "nodes": [
+                                  {
+                                    "detailedStatus": {
+                                      "id": "pending-<job:2>-<job:2>",
+                                      "name": "PENDING",
+                                      "label": "pending",
+                                      "icon": "status_pending",
+                                      "tooltip": "pending",
+                                      "hasDetails": true,
+                                      "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:2>",
+                                      "action": {
+                                        "id": "Ci::BuildPresenter-pending-<job:2>",
+                                        "path": "/cicx-<RUN>/app/-/jobs/<job:2>/cancel",
+                                        "title": "Cancel",
+                                        "buttonTitle": "Cancel this job",
+                                        "method": "post",
+                                        "icon": "cancel"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "detailedStatus": {
+                          "id": "created-<Ci::Stage:3>-<Ci::Stage:3>",
+                          "name": "CREATED",
+                          "label": "created",
+                          "icon": "status_created",
+                          "tooltip": "created",
+                          "hasDetails": true,
+                          "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#deploy",
+                          "action": null
+                        },
+                        "groups": {
+                          "nodes": [
+                            {
+                              "detailedStatus": {
+                                "id": "created-<job:3>-<Ci::Stage:3>-deploy",
+                                "name": "CREATED",
+                                "label": "created",
+                                "icon": "status_created",
+                                "tooltip": "created",
+                                "hasDetails": true,
+                                "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:3>",
+                                "action": {
+                                  "id": "Ci::BuildPresenter-created-<job:3>",
+                                  "path": "/cicx-<RUN>/app/-/jobs/<job:3>/cancel",
+                                  "title": "Cancel",
+                                  "buttonTitle": "Cancel this job",
+                                  "method": "post",
+                                  "icon": "cancel"
+                                }
+                              },
+                              "jobs": {
+                                "nodes": [
+                                  {
+                                    "detailedStatus": {
+                                      "id": "created-<job:3>-<job:3>",
+                                      "name": "CREATED",
+                                      "label": "created",
+                                      "icon": "status_created",
+                                      "tooltip": "created",
+                                      "hasDetails": true,
+                                      "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:3>",
+                                      "action": {
+                                        "id": "Ci::BuildPresenter-created-<job:3>",
+                                        "path": "/cicx-<RUN>/app/-/jobs/<job:3>/cancel",
+                                        "title": "Cancel",
+                                        "buttonTitle": "Cancel this job",
+                                        "method": "post",
+                                        "icon": "cancel"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "really over the limit as developer",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "Query has complexity of 272, which exceeds max complexity of 250"
+          }
+        ]
+      }
+    },
+    {
+      "label": "really over the limit as admin",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "queryComplexity": {
+            "score": 272,
+            "limit": 300
+          },
+          "project": {
+            "pipelines": {
+              "nodes": [
+                {
+                  "detailedStatus": {
+                    "id": "running-<Ci::Pipeline:1>-<Ci::Pipeline:1>",
+                    "name": "RUNNING",
+                    "label": "running",
+                    "icon": "status_running",
+                    "tooltip": "running",
+                    "hasDetails": true,
+                    "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>",
+                    "action": null
+                  },
+                  "stages": {
+                    "nodes": [
+                      {
+                        "detailedStatus": {
+                          "id": "success-<Ci::Stage:1>-<Ci::Stage:1>",
+                          "name": "SUCCESS",
+                          "label": "passed",
+                          "icon": "status_success",
+                          "tooltip": "passed",
+                          "hasDetails": true,
+                          "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#build",
+                          "action": null
+                        },
+                        "groups": {
+                          "nodes": [
+                            {
+                              "detailedStatus": {
+                                "id": "success-<job:1>-<Ci::Stage:1>-build",
+                                "name": "SUCCESS",
+                                "label": "passed",
+                                "icon": "status_success",
+                                "tooltip": "passed",
+                                "hasDetails": true,
+                                "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:1>",
+                                "action": {
+                                  "id": "Ci::BuildPresenter-success-<job:1>",
+                                  "path": "/cicx-<RUN>/app/-/jobs/<job:1>/retry",
+                                  "title": "Run again",
+                                  "buttonTitle": "Run this job again",
+                                  "method": "post",
+                                  "icon": "retry"
+                                }
+                              },
+                              "jobs": {
+                                "nodes": [
+                                  {
+                                    "detailedStatus": {
+                                      "id": "success-<job:1>-<job:1>",
+                                      "name": "SUCCESS",
+                                      "label": "passed",
+                                      "icon": "status_success",
+                                      "tooltip": "passed",
+                                      "hasDetails": true,
+                                      "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:1>",
+                                      "action": {
+                                        "id": "Ci::BuildPresenter-success-<job:1>",
+                                        "path": "/cicx-<RUN>/app/-/jobs/<job:1>/retry",
+                                        "title": "Run again",
+                                        "buttonTitle": "Run this job again",
+                                        "method": "post",
+                                        "icon": "retry"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "detailedStatus": {
+                          "id": "pending-<Ci::Stage:2>-<Ci::Stage:2>",
+                          "name": "PENDING",
+                          "label": "pending",
+                          "icon": "status_pending",
+                          "tooltip": "pending",
+                          "hasDetails": true,
+                          "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#test",
+                          "action": null
+                        },
+                        "groups": {
+                          "nodes": [
+                            {
+                              "detailedStatus": {
+                                "id": "pending-<job:2>-<Ci::Stage:2>-test",
+                                "name": "PENDING",
+                                "label": "pending",
+                                "icon": "status_pending",
+                                "tooltip": "pending",
+                                "hasDetails": true,
+                                "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:2>",
+                                "action": {
+                                  "id": "Ci::BuildPresenter-pending-<job:2>",
+                                  "path": "/cicx-<RUN>/app/-/jobs/<job:2>/cancel",
+                                  "title": "Cancel",
+                                  "buttonTitle": "Cancel this job",
+                                  "method": "post",
+                                  "icon": "cancel"
+                                }
+                              },
+                              "jobs": {
+                                "nodes": [
+                                  {
+                                    "detailedStatus": {
+                                      "id": "pending-<job:2>-<job:2>",
+                                      "name": "PENDING",
+                                      "label": "pending",
+                                      "icon": "status_pending",
+                                      "tooltip": "pending",
+                                      "hasDetails": true,
+                                      "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:2>",
+                                      "action": {
+                                        "id": "Ci::BuildPresenter-pending-<job:2>",
+                                        "path": "/cicx-<RUN>/app/-/jobs/<job:2>/cancel",
+                                        "title": "Cancel",
+                                        "buttonTitle": "Cancel this job",
+                                        "method": "post",
+                                        "icon": "cancel"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "detailedStatus": {
+                          "id": "created-<Ci::Stage:3>-<Ci::Stage:3>",
+                          "name": "CREATED",
+                          "label": "created",
+                          "icon": "status_created",
+                          "tooltip": "created",
+                          "hasDetails": true,
+                          "detailsPath": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>#deploy",
+                          "action": null
+                        },
+                        "groups": {
+                          "nodes": [
+                            {
+                              "detailedStatus": {
+                                "id": "created-<job:3>-<Ci::Stage:3>-deploy",
+                                "name": "CREATED",
+                                "label": "created",
+                                "icon": "status_created",
+                                "tooltip": "created",
+                                "hasDetails": true,
+                                "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:3>",
+                                "action": {
+                                  "id": "Ci::BuildPresenter-created-<job:3>",
+                                  "path": "/cicx-<RUN>/app/-/jobs/<job:3>/cancel",
+                                  "title": "Cancel",
+                                  "buttonTitle": "Cancel this job",
+                                  "method": "post",
+                                  "icon": "cancel"
+                                }
+                              },
+                              "jobs": {
+                                "nodes": [
+                                  {
+                                    "detailedStatus": {
+                                      "id": "created-<job:3>-<job:3>",
+                                      "name": "CREATED",
+                                      "label": "created",
+                                      "icon": "status_created",
+                                      "tooltip": "created",
+                                      "hasDetails": true,
+                                      "detailsPath": "/cicx-<RUN>/app/-/jobs/<job:3>",
+                                      "action": {
+                                        "id": "Ci::BuildPresenter-created-<job:3>",
+                                        "path": "/cicx-<RUN>/app/-/jobs/<job:3>/cancel",
+                                        "title": "Cancel",
+                                        "buttonTitle": "Cancel this job",
+                                        "method": "post",
+                                        "icon": "cancel"
+                                      }
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "developer retries on main",
+      "request": "POST /projects/<project:1>/jobs/<job:1>/retry",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "developer cancels on main",
+      "request": "POST /projects/<project:1>/jobs/<job:2>/cancel",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "developer plays on main",
+      "request": "POST /projects/<project:1>/jobs/<job:3>/play",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "developer retries the pipeline",
+      "request": "POST /projects/<project:1>/pipelines/<pipeline:1>/retry",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "developer cancels the pipeline",
+      "request": "POST /projects/<project:1>/pipelines/<pipeline:1>/cancel",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "developer jobRetry on main",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 35
+              }
+            ],
+            "path": [
+              "jobRetry"
+            ]
+          }
+        ],
+        "data": {
+          "jobRetry": null
+        }
+      }
+    },
+    {
+      "label": "developer pipelineCancel on main",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "errors": [
+          {
+            "message": "The resource that you are attempting to access does not exist or you don't have permission to perform this action",
+            "locations": [
+              {
+                "line": 1,
+                "column": 32
+              }
+            ],
+            "path": [
+              "pipelineCancel"
+            ]
+          }
+        ],
+        "data": {
+          "pipelineCancel": null
+        }
+      }
+    },
+    {
+      "label": "developer permissions on main",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "pipeline": {
+              "userPermissions": {
+                "updatePipeline": false,
+                "cancelPipeline": false,
+                "destroyPipeline": false
+              },
+              "jobs": {
+                "nodes": [
+                  {
+                    "name": "deploy",
+                    "canPlayJob": false,
+                    "userPermissions": {
+                      "updateBuild": false,
+                      "cancelBuild": false
+                    }
+                  },
+                  {
+                    "name": "test",
+                    "canPlayJob": false,
+                    "userPermissions": {
+                      "updateBuild": false,
+                      "cancelBuild": false
+                    }
+                  },
+                  {
+                    "name": "build",
+                    "canPlayJob": false,
+                    "userPermissions": {
+                      "updateBuild": false,
+                      "cancelBuild": false
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "admin cancels the pipeline",
+      "request": "POST /projects/<project:1>/pipelines/<pipeline:1>/cancel",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<pipeline:1>",
+        "iid": 1,
+        "project_id": "<project:1>",
+        "sha": "<SHA1>",
+        "ref": "main",
+        "status": "running",
+        "source": "push",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "web_url": "<BASE>/cicx-<RUN>/app/-/pipelines/<pipeline:1>",
+        "before_sha": "<SHA2>",
+        "tag": false,
+        "yaml_errors": null,
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "started_at": "<TIME>",
+        "finished_at": null,
+        "committed_at": null,
+        "duration": null,
+        "queued_duration": "<QUEUED>",
+        "coverage": null,
+        "detailed_status": {
+          "icon": "status_running",
+          "text": "Running",
+          "label": "running",
+          "group": "running",
+          "tooltip": "running",
+          "has_details": false,
+          "details_path": "/cicx-<RUN>/app/-/pipelines/<pipeline:1>",
+          "illustration": null,
+          "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png"
+        },
+        "archived": false
+      }
+    },
+    {
+      "label": "feature config",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA1>"
+        ],
+        "title": "Set CI",
+        "message": "Set CI",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/cicx-<RUN>/app/-/commit/<SHA3>",
+        "stats": {
+          "additions": 3,
+          "deletions": 10,
+          "total": 13
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "developer permissions on feature",
+      "request": "POST /api/graphql",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "project": {
+            "pipeline": {
+              "userPermissions": {
+                "updatePipeline": true,
+                "cancelPipeline": true
+              },
+              "jobs": {
+                "nodes": [
+                  {
+                    "name": "lint",
+                    "canPlayJob": false,
+                    "userPermissions": {
+                      "updateBuild": true,
+                      "cancelBuild": true
+                    },
+                    "detailedStatus": {
+                      "action": {
+                        "title": "Cancel"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "label": "developer cancels on feature",
+      "request": "POST /projects/<project:1>/jobs/<job:4>/cancel",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<job:4>",
+        "status": "canceled",
+        "stage": "test",
+        "name": "lint",
+        "ref": "feature",
+        "tag": false,
+        "coverage": null,
+        "allow_failure": false,
+        "created_at": "<TIME>",
+        "started_at": null,
+        "finished_at": "<TIME>",
+        "erased_at": null,
+        "duration": null,
+        "queued_duration": "<QUEUED>",
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude",
+          "created_at": "<TIME>",
+          "bio": "",
+          "location": "",
+          "linkedin": "",
+          "twitter": "",
+          "discord": "",
+          "website_url": "",
+          "github": "",
+          "job_title": "",
+          "pronouns": null,
+          "organization": "",
+          "bot": false,
+          "work_information": null,
+          "followers": 0,
+          "following": 0,
+          "local_time": null
+        },
+        "commit": {
+          "id": "<SHA3>",
+          "short_id": "<SHA3:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA1>"
+          ],
+          "title": "Set CI",
+          "message": "Set CI",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/cicx-<RUN>/app/-/commit/<SHA3>"
+        },
+        "pipeline": {
+          "id": "<job.pipeline:1>",
+          "iid": 2,
+          "project_id": "<project:1>",
+          "sha": "<SHA3>",
+          "ref": "feature",
+          "status": "pending",
+          "source": "push",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/cicx-<RUN>/app/-/pipelines/<pipeline:2>"
+        },
+        "web_url": "<BASE>/cicx-<RUN>/app/-/jobs/<job:4>",
+        "project": {
+          "ci_job_token_scope_enabled": false
+        },
+        "artifacts": [],
+        "runner": null,
+        "runner_manager": null,
+        "artifacts_expire_at": null,
+        "archived": false,
+        "tag_list": []
+      }
+    },
+    {
+      "label": "developer retries the feature pipeline",
+      "request": "POST /projects/<project:1>/pipelines/<pipeline:2>/retry",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<pipeline:2>",
+        "iid": 2,
+        "project_id": "<project:1>",
+        "sha": "<SHA3>",
+        "ref": "feature",
+        "status": "running",
+        "source": "push",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "web_url": "<BASE>/cicx-<RUN>/app/-/pipelines/<pipeline:2>",
+        "before_sha": "<SHA4>",
+        "tag": false,
+        "yaml_errors": null,
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "started_at": null,
+        "finished_at": null,
+        "committed_at": null,
+        "duration": null,
+        "queued_duration": "<QUEUED>",
+        "coverage": null,
+        "detailed_status": {
+          "icon": "status_running",
+          "text": "Running",
+          "label": "running",
+          "group": "running",
+          "tooltip": "running",
+          "has_details": false,
+          "details_path": "/cicx-<RUN>/app/-/pipelines/<pipeline:2>",
+          "illustration": null,
+          "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png"
+        },
+        "archived": false
+      }
+    },
+    {
+      "label": "admin cancels the feature pipeline",
+      "request": "POST /projects/<project:1>/pipelines/<pipeline:2>/cancel",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<pipeline:2>",
+        "iid": 2,
+        "project_id": "<project:1>",
+        "sha": "<SHA3>",
+        "ref": "feature",
+        "status": "running",
+        "source": "push",
+        "created_at": "<TIME>",
+        "updated_at": "<TIME>",
+        "web_url": "<BASE>/cicx-<RUN>/app/-/pipelines/<pipeline:2>",
+        "before_sha": "<SHA4>",
+        "tag": false,
+        "yaml_errors": null,
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "started_at": null,
+        "finished_at": null,
+        "committed_at": null,
+        "duration": null,
+        "queued_duration": "<QUEUED>",
+        "coverage": null,
+        "detailed_status": {
+          "icon": "status_running",
+          "text": "Running",
+          "label": "running",
+          "group": "running",
+          "tooltip": "running",
+          "has_details": false,
+          "details_path": "/cicx-<RUN>/app/-/pipelines/<pipeline:2>",
+          "illustration": null,
+          "favicon": "/assets/ci_favicons/favicon_status_running-9c635b2419a8e1ec991c993061b89cc5aefc0743bb238ecd0c381e7741a70e8c.png"
+        },
+        "archived": false
+      }
+    }
+  ],
+  "times": [
+    0,
+    216,
+    3141,
+    4700,
+    4747,
+    11679,
+    42447,
+    42530,
+    42584,
+    42638,
+    42732,
+    42837,
+    42922,
+    42999,
+    43136,
+    43251,
+    43323,
+    43378,
+    43450,
+    43499,
+    43589,
+    43666,
+    43724,
+    43770,
+    43814,
+    43933,
+    44075,
+    44105,
+    44582,
+    44644,
+    44694,
+    44757,
+    44809,
+    44853,
+    44929,
+    44978,
+    45058,
+    51868,
+    61928,
+    62027,
+    71649,
+    81709
+  ],
+  "done_times": [
+    216,
+    3141,
+    4700,
+    4747,
+    4869,
+    12028,
+    42530,
+    42584,
+    42638,
+    42732,
+    42837,
+    42922,
+    42999,
+    43136,
+    43251,
+    43323,
+    43378,
+    43450,
+    43499,
+    43589,
+    43666,
+    43724,
+    43770,
+    43814,
+    43933,
+    44075,
+    44105,
+    44247,
+    44644,
+    44694,
+    44757,
+    44809,
+    44853,
+    44929,
+    44978,
+    45058,
+    45205,
+    52194,
+    62027,
+    62162,
+    71951,
+    81811
+  ],
+  "ci_times": [
+    21620,
+    31645
+  ],
+  "ci_picks": [],
+  "started_at": 1795782988895
+}

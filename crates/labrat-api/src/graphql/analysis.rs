@@ -49,6 +49,9 @@ enum Extra {
     Plus10,
     /// `Projects::SnippetsResolver`: multiplier 0.05 (0 with `iid`/`iids`).
     Snippets,
+    /// `Ci::ProjectPipelineResolver`: no resolver complexity without arguments, and `1 - 10`
+    /// with any of `id`, `iid` or `sha`.
+    ProjectPipeline,
 }
 
 fn res(conn: bool, sort_default: bool, gitaly: bool) -> Cost {
@@ -97,8 +100,11 @@ fn cost(parent: &str, field: &str) -> Cost {
         (t, "authoredMergeRequests" | "assignedMergeRequests" | "reviewRequestedMergeRequests" | "assigneeOrReviewerMergeRequests") if user_like(t) => res(true, true, false),
         (t, "todos" | "groups" | "starredProjects" | "contributedProjects" | "snippets") if user_like(t) => res(true, false, false),
         ("UserMergeRequestInteraction", "canMerge") => Plain(2),
+        ("Project", "pipeline") => Resolver(Res { gitaly: true, extra: Extra::ProjectPipeline, ..Default::default() }),
+        ("Project", "jobs") => res(true, false, false),
         ("Pipeline", "beforeSha" | "commit" | "latest" | "refText") => Plain(2),
         ("Pipeline", "stages" | "jobs") => res(true, false, false),
+        ("DetailedStatus", "action" | "label") | ("CiJob" | "CiJobInterface", "canPlayJob") | ("JobPermissions", "updateBuild" | "cancelBuild") => Plain(2),
         ("PipelinePermissions", "updatePipeline" | "cancelPipeline") => Plain(2),
         ("Commit", "title" | "fullTitle" | "signature" | "signatureHtml" | "diffs") => Plain(2),
         ("Commit", "titleHtml" | "fullTitleHtml" | "descriptionHtml") => Const(5),
@@ -225,6 +231,11 @@ impl Ctx<'_> {
         match cost(parent, f.name.node.as_str()) {
             Cost::Plain(b) => b + child,
             Cost::Const(n) => n + child,
+            Cost::Resolver(r) if r.extra == Extra::ProjectPipeline => {
+                let rc = if ["id", "iid", "sha"].iter().any(|a| self.arg(f, a).is_some()) { -9 } else { 0 };
+                // A negative cost counts as 0 (recorded: `pipeline(iid:) { id }` adds nothing).
+                (child + rc + 1).max(0)
+            }
             Cost::Resolver(r) => {
                 let mut rc = 1;
                 if r.sort_default || self.arg(f, "sort").is_some() {

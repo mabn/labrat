@@ -10,6 +10,7 @@ pub mod repo;
 pub mod schema;
 pub mod services;
 pub mod time;
+pub mod zip;
 
 pub use db::Db;
 pub use error::{Error, Result};

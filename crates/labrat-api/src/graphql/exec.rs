@@ -111,6 +111,8 @@ pub struct Ctx<'a> {
     doc: &'a ExecutableDocument,
     vars: Map<String, Value>,
     errors: RefCell<Vec<Value>>,
+    /// How often limited fields were resolved in this query (`Limit::FieldCallCount`).
+    pub calls: RefCell<std::collections::HashMap<&'static str, usize>>,
 }
 
 impl Ctx<'_> {
@@ -236,8 +238,9 @@ impl<'a> Ctx<'a> {
         e.insert("message".into(), json!(msg));
         // graphql-ruby reports most execution errors (invalid nulls, for one) with a column
         // counted from the start of the document; a resolver's `ResourceNotAvailable` gets the
-        // column within its line (recorded on EE 18.11 with multi-line mutations).
-        let loc = if msg == super::resolvers::RESOURCE_UNAVAILABLE {
+        // column within its line (recorded on EE 18.11 with multi-line mutations), as does a
+        // field call limit (CE 18.11).
+        let loc = if msg == super::resolvers::RESOURCE_UNAVAILABLE || msg.ends_with("can be requested only for 1 Project(s) at a time.") {
             json!({"line": pos.line, "column": pos.column})
         } else {
             location(pos)
@@ -413,7 +416,7 @@ pub fn run(
     root: &dyn Object,
 ) -> Value {
     let schema: &'static Schema = super::schema::schema();
-    let mut cx = Ctx { c, req, schema, doc, vars: Map::new(), errors: RefCell::new(vec![]) };
+    let mut cx = Ctx { c, req, schema, doc, vars: Map::new(), errors: RefCell::new(vec![]), calls: RefCell::new(Default::default()) };
     let mut vars = Map::new();
     for vd in &op.node.variable_definitions {
         let name = vd.node.name.node.to_string();

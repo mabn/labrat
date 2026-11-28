@@ -641,7 +641,57 @@ CREATE TABLE commit_statuses (
     finished_at INTEGER,
     -- A CI job (`Ci::Build`) of a fake CI pipeline rather than an external status.
     build INTEGER NOT NULL DEFAULT 0,
-    stage TEXT
+    stage TEXT,
+    -- CI jobs: their stage's position, `when`, and what the runner reported.
+    stage_idx INTEGER NOT NULL DEFAULT 0,
+    job_when TEXT NOT NULL DEFAULT 'on_success',
+    allow_failure INTEGER NOT NULL DEFAULT 0,
+    failure_reason TEXT,
+    exit_code INTEGER,
+    tag_list TEXT NOT NULL DEFAULT '[]',
+    -- The job log; erasing a job clears it.
+    trace BLOB,
+    erased_at INTEGER,
+    erased_by_id INTEGER,
+    -- The fake runner, once it picked the job up.
+    runner_id INTEGER,
+    artifacts_expire_at INTEGER,
+    -- A manual job's `manual_confirmation`: what playing (or retrying) it asks first.
+    manual_confirmation TEXT
+);
+
+-- The status of each CI ref (`ci_refs`): a branch, or an MR's source branch for its MR
+-- pipelines. It moves as the ref's latest finished pipeline succeeds or fails.
+CREATE TABLE ci_refs (
+    project_id INTEGER NOT NULL REFERENCES projects (id) ON DELETE CASCADE,
+    ref TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'unknown',
+    PRIMARY KEY (project_id, ref)
+);
+
+-- A pipeline's stages (`ci_stages`), with their position and composite status.
+CREATE TABLE ci_stages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    pipeline_id INTEGER NOT NULL REFERENCES ci_pipelines (id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL,
+    name TEXT NOT NULL,
+    position INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'created'
+);
+
+-- Job artifacts (`ci_job_artifacts`): the archive, its metadata and reports, kept in full.
+CREATE TABLE ci_job_artifacts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    job_id INTEGER NOT NULL REFERENCES commit_statuses (id) ON DELETE CASCADE,
+    project_id INTEGER NOT NULL,
+    file_type TEXT NOT NULL,
+    -- None for an archived trace.
+    file_format TEXT,
+    filename TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    data BLOB NOT NULL,
+    expire_at INTEGER,
+    created_at INTEGER NOT NULL
 );
 
 -- labrat's fake CI per project (set with `PUT /-/labrat/projects/:id/ci`): the jobs each

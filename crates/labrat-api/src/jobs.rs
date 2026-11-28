@@ -74,7 +74,9 @@ async fn worker(app: Arc<App>) {
         match job {
             Some(job) => run_claimed(&app, job).await,
             None => match app.db.read(jobs::next_due_in) {
-                Ok(Some(ms)) => tokio::time::sleep(Duration::from_millis(ms.max(1) as u64)).await,
+                // Wake up often: jobs queued meanwhile (and a moved clock) shouldn't wait for a
+                // job scheduled far ahead.
+                Ok(Some(ms)) => tokio::time::sleep(Duration::from_millis(ms.clamp(1, 50) as u64)).await,
                 _ => return,
             },
         }

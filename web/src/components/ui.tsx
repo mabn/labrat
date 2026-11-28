@@ -182,20 +182,34 @@ const ciMap: Record<string, [string, string]> = {
   pending: ['warning', 'history'],
   created: ['neutral', 'history'],
   canceled: ['neutral', 'close'],
+  canceling: ['neutral', 'close'],
   skipped: ['neutral', 'chevronRight'],
   manual: ['neutral', 'settings'],
 };
+
+/** A CI status (of a pipeline, stage or job) as GitLab's round icon. */
+export function StatusIcon({ status, label }: { status: string; label?: boolean }) {
+  const [cls, icon] = ciMap[status] ?? ['neutral', 'pipeline'];
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }} title={status}>
+      <span className={`status-icon ${cls}`} style={{ width: 16, height: 16 }}>
+        <Icon name={icon} size={10} />
+      </span>
+      {label && <span style={{ color: 'var(--text)' }}>{status}</span>}
+    </span>
+  );
+}
 
 export function CiStatus({ pipeline, label }: { pipeline: Pipeline | null | undefined; label?: boolean }) {
   if (!pipeline) return null;
   const [cls, icon] = ciMap[pipeline.status] ?? ['neutral', 'pipeline'];
   return (
-    <a href={localPath(pipeline.web_url)} className="ci-icon" title={`Pipeline: ${pipeline.status}`} onClick={(e) => e.preventDefault()}>
+    <Link to={localPath(pipeline.web_url)} className="ci-icon" title={`Pipeline: ${pipeline.status}`}>
       <span className={`status-icon ${cls}`} style={{ width: 16, height: 16 }}>
         <Icon name={icon} size={10} />
       </span>
       {label && <span style={{ color: 'var(--text)' }}>{pipeline.status}</span>}
-    </a>
+    </Link>
   );
 }
 
