@@ -117,8 +117,13 @@ pub fn due_or_running(c: &Connection) -> Result<i64> {
     Ok(c.query_row("SELECT count(*) FROM jobs WHERE running = 1 OR run_at <= ?1", [time::now()], |r| r.get(0))?)
 }
 
+/// Jobs GitLab schedules for later (Sidekiq's scheduled set, which isn't waited for): they
+/// count as pending only once due.
+const SCHEDULED_KINDS: &str = "'ci_archive_trace'";
+
+/// Jobs still to run: everything queued, except scheduled jobs that aren't due yet.
 pub fn pending(c: &Connection) -> Result<i64> {
-    Ok(c.query_row("SELECT count(*) FROM jobs", [], |r| r.get(0))?)
+    Ok(c.query_row(&format!("SELECT count(*) FROM jobs WHERE kind NOT IN ({SCHEDULED_KINDS}) OR running = 1 OR run_at <= ?1"), [time::now()], |r| r.get(0))?)
 }
 
 /// Runs one job. Unknown kinds are dropped.
@@ -163,7 +168,9 @@ pub fn run(c: &Connection, config: &Config, job: &Job) -> Result<()> {
         },
         "mr_create_pipeline" => crate::services::fake_ci::create_mr_pipeline(c, config, id("merge_request_id"), id("user_id")),
         "fake_ci_enqueue" => crate::services::fake_ci::enqueue(c, config, id("pipeline_id")),
-        "fake_ci_process" => crate::services::ci::recompute(c, config, id("pipeline_id")),
+        "fake_ci_process" if p["retried"] == true => crate::services::pipelines::process_retried(c, config, id("pipeline_id"), p["finished_at"].as_i64()),
+        "fake_ci_process" => crate::services::pipelines::process(c, config, id("pipeline_id")),
+        "ci_archive_trace" => crate::services::pipelines::archive_trace(c, id("job_id")),
         "fake_ci_run" => crate::services::fake_ci::auto_run(c, config, id("pipeline_id")),
         "fake_ci_finish" => crate::services::fake_ci::auto_finish(c, config, id("pipeline_id")),
         "cherry_pick_note" => {

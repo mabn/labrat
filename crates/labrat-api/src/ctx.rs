@@ -44,6 +44,28 @@ impl Req {
         }
     }
 
+    /// This request with `name` given as an array parameter in the query (`name[]=`), as Grape
+    /// coerces an `Array` parameter, so pagination links show it that way.
+    pub fn with_array_query(&self, name: &str) -> Req {
+        let mut r = self.with_params(self.params.clone());
+        r.path_params = self.path_params.clone();
+        let arr = format!("{name}[]");
+        r.query = url::form_urlencoded::Serializer::new(String::new())
+            .extend_pairs(url::form_urlencoded::parse(self.query.as_bytes()).map(|(k, v)| (if k == name { arr.clone() } else { k.into_owned() }, v.into_owned())))
+            .finish();
+        r
+    }
+
+    /// This request with its query values rewritten by `f(name, value)` (for pagination links).
+    pub fn with_query(&self, f: impl Fn(&str, &str) -> String) -> Req {
+        let mut r = self.with_params(self.params.clone());
+        r.path_params = self.path_params.clone();
+        r.query = url::form_urlencoded::Serializer::new(String::new())
+            .extend_pairs(url::form_urlencoded::parse(self.query.as_bytes()).map(|(k, v)| (k.to_string(), f(&k, &v))))
+            .finish();
+        r
+    }
+
     /// `check_unmodified_since!`: 412 when the resource changed after `If-Unmodified-Since`.
     pub fn check_unmodified_since(&self, last_modified_ms: i64) -> Result<(), ApiError> {
         let Some(h) = self.headers.get("if-unmodified-since").and_then(|v| v.to_str().ok()) else { return Ok(()) };

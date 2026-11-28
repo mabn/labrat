@@ -102,6 +102,7 @@ pub(crate) fn routes(app: Arc<App>) -> Router {
         .merge(routes::milestones::routes())
         .merge(routes::commit_notes::routes())
         .merge(routes::pipelines::routes())
+        .merge(routes::jobs::routes())
         .merge(routes::events::routes())
         .merge(routes::context_commits::routes())
         .merge(routes::search::routes())

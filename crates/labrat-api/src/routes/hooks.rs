@@ -458,8 +458,17 @@ fn test_data(c: &Connection, req: &Req, p: &Project, trigger: &str) -> Result<(S
             Ok(("emoji_hooks".into(), v))
         }
         "issues_events" | "confidential_issues_events" => Err(err("Ensure the project has issues.")),
-        "job_events" => Err(err("Ensure the project has CI jobs.")),
-        "pipeline_events" => Err(err("Ensure the project has CI pipelines.")),
+        // The newest job and pipeline.
+        "job_events" => {
+            let j = labrat_core::services::pipelines::Job::for_project(c, p.id).map_err(|e| e.to_string())?.into_iter().rev().find(|j| j.status != "created").ok_or_else(|| err("Ensure the project has CI jobs."))?;
+            let v = core_hooks::job_event_data(c, config, p, &j).map_err(|e| e.to_string())?;
+            Ok(("job_hooks".into(), v))
+        }
+        "pipeline_events" => {
+            let pl = labrat_core::services::ci::Pipeline::list(c, p.id).map_err(|e| e.to_string())?.into_iter().next().ok_or_else(|| err("Ensure the project has CI pipelines."))?;
+            let v = core_hooks::pipeline_payload(c, config, p, &pl).map_err(|e| e.to_string())?;
+            Ok(("pipeline_hooks".into(), v))
+        }
         "wiki_page_events" => Err(err("Ensure the wiki is enabled and has pages.")),
         "releases_events" => Err(err("Ensure the project has releases.")),
         "vulnerability_events" => Err(err("Ensure the project has vulnerabilities.")),

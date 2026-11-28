@@ -1,0 +1,1668 @@
+{
+  "scenario": "ci_artifacts",
+  "base": "http://localhost:8929",
+  "ssh_port": 2424,
+  "run": "ree6ef9",
+  "steps": [
+    {
+      "label": "group",
+      "request": "POST /groups",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<namespace:1>",
+        "web_url": "<BASE>/groups/ciar-<RUN>",
+        "name": "ciar-<RUN>",
+        "path": "ciar-<RUN>",
+        "description": null,
+        "visibility": "private",
+        "share_with_group_lock": false,
+        "require_two_factor_authentication": false,
+        "two_factor_grace_period": 48,
+        "project_creation_level": "developer",
+        "auto_devops_enabled": null,
+        "subgroup_creation_level": "maintainer",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "mentions_disabled": null,
+        "lfs_enabled": true,
+        "archived": false,
+        "math_rendering_limits_enabled": true,
+        "lock_math_rendering_limits_enabled": false,
+        "default_branch": null,
+        "default_branch_protection": 2,
+        "default_branch_protection_defaults": {
+          "allowed_to_push": [
+            {
+              "access_level": 40
+            }
+          ],
+          "allow_force_push": false,
+          "allowed_to_merge": [
+            {
+              "access_level": 40
+            }
+          ],
+          "developer_can_initial_push": false
+        },
+        "avatar_url": null,
+        "request_access_enabled": true,
+        "full_name": "ciar-<RUN>",
+        "full_path": "ciar-<RUN>",
+        "created_at": "<TIME>",
+        "parent_id": null,
+        "organization_id": "<other:organization_id:1>",
+        "shared_runners_setting": "enabled",
+        "max_artifacts_size": null,
+        "marked_for_deletion_on": null,
+        "shared_with_groups": [],
+        "prevent_sharing_groups_outside_hierarchy": false
+      }
+    },
+    {
+      "label": "project",
+      "request": "POST /projects",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<project:1>",
+        "description": null,
+        "name": "app",
+        "name_with_namespace": "ciar-<RUN> / app",
+        "path": "app",
+        "path_with_namespace": "ciar-<RUN>/app",
+        "created_at": "<TIME>",
+        "default_branch": "main",
+        "tag_list": [],
+        "topics": [],
+        "ssh_url_to_repo": "<SSH>/ciar-<RUN>/app.git",
+        "http_url_to_repo": "<BASE>/ciar-<RUN>/app.git",
+        "web_url": "<BASE>/ciar-<RUN>/app",
+        "readme_url": "<BASE>/ciar-<RUN>/app/-/blob/main/README.md",
+        "forks_count": 0,
+        "avatar_url": null,
+        "star_count": 0,
+        "last_activity_at": "<TIME>",
+        "visibility": "private",
+        "namespace": {
+          "id": "<namespace:1>",
+          "name": "ciar-<RUN>",
+          "path": "ciar-<RUN>",
+          "kind": "group",
+          "full_path": "ciar-<RUN>",
+          "parent_id": null,
+          "avatar_url": null,
+          "web_url": "<BASE>/groups/ciar-<RUN>"
+        },
+        "repository_storage": "default",
+        "_links": {
+          "self": "<BASE>/api/v4/projects/<project:1>",
+          "issues": "<BASE>/api/v4/projects/<project:1>/issues",
+          "merge_requests": "<BASE>/api/v4/projects/<project:1>/merge_requests",
+          "repo_branches": "<BASE>/api/v4/projects/<project:1>/repository/branches",
+          "labels": "<BASE>/api/v4/projects/<project:1>/labels",
+          "events": "<BASE>/api/v4/projects/<project:1>/events",
+          "members": "<BASE>/api/v4/projects/<project:1>/members",
+          "cluster_agents": "<BASE>/api/v4/projects/<project:1>/cluster_agents"
+        },
+        "marked_for_deletion_at": null,
+        "marked_for_deletion_on": null,
+        "packages_enabled": true,
+        "empty_repo": false,
+        "archived": false,
+        "resolve_outdated_diff_discussions": false,
+        "container_expiration_policy": {
+          "cadence": "1d",
+          "enabled": false,
+          "keep_n": 10,
+          "older_than": "90d",
+          "name_regex": ".*",
+          "name_regex_keep": null,
+          "next_run_at": "<TIME>"
+        },
+        "repository_object_format": "sha1",
+        "issues_enabled": true,
+        "merge_requests_enabled": true,
+        "wiki_enabled": true,
+        "jobs_enabled": true,
+        "snippets_enabled": true,
+        "container_registry_enabled": true,
+        "service_desk_enabled": false,
+        "service_desk_address": null,
+        "can_create_merge_request_in": true,
+        "issues_access_level": "enabled",
+        "repository_access_level": "enabled",
+        "merge_requests_access_level": "enabled",
+        "forking_access_level": "enabled",
+        "wiki_access_level": "enabled",
+        "builds_access_level": "enabled",
+        "snippets_access_level": "enabled",
+        "pages_access_level": "private",
+        "analytics_access_level": "enabled",
+        "container_registry_access_level": "enabled",
+        "security_and_compliance_access_level": "private",
+        "releases_access_level": "enabled",
+        "environments_access_level": "enabled",
+        "feature_flags_access_level": "enabled",
+        "infrastructure_access_level": "enabled",
+        "monitor_access_level": "enabled",
+        "model_experiments_access_level": "enabled",
+        "model_registry_access_level": "enabled",
+        "package_registry_access_level": "enabled",
+        "emails_disabled": false,
+        "emails_enabled": true,
+        "show_diff_preview_in_email": true,
+        "shared_runners_enabled": true,
+        "lfs_enabled": true,
+        "creator_id": "<user:1>",
+        "import_url": null,
+        "import_type": null,
+        "import_status": "none",
+        "import_error": null,
+        "open_issues_count": 0,
+        "description_html": "",
+        "updated_at": "<TIME>",
+        "ci_default_git_depth": 20,
+        "ci_delete_pipelines_in_seconds": null,
+        "ci_forward_deployment_enabled": true,
+        "ci_forward_deployment_rollback_allowed": true,
+        "ci_job_token_scope_enabled": false,
+        "ci_separated_caches": true,
+        "ci_allow_fork_pipelines_to_run_in_parent_project": true,
+        "ci_id_token_sub_claim_components": [
+          "project_path",
+          "ref_type",
+          "ref"
+        ],
+        "build_git_strategy": "fetch",
+        "keep_latest_artifact": true,
+        "restrict_user_defined_variables": false,
+        "ci_pipeline_variables_minimum_override_role": "developer",
+        "runner_token_expiration_interval": null,
+        "group_runners_enabled": true,
+        "resource_group_default_process_mode": "unordered",
+        "auto_cancel_pending_pipelines": "enabled",
+        "build_timeout": 3600,
+        "auto_devops_enabled": true,
+        "auto_devops_deploy_strategy": "continuous",
+        "ci_push_repository_for_job_token_allowed": false,
+        "protect_merge_request_pipelines": true,
+        "ci_display_pipeline_variables": false,
+        "runners_token": "<RUNNERS_TOKEN>",
+        "ci_config_path": null,
+        "public_jobs": true,
+        "shared_with_groups": [],
+        "only_allow_merge_if_pipeline_succeeds": false,
+        "allow_merge_on_skipped_pipeline": null,
+        "request_access_enabled": true,
+        "only_allow_merge_if_all_discussions_are_resolved": false,
+        "remove_source_branch_after_merge": true,
+        "printing_merge_request_link_enabled": true,
+        "merge_method": "merge",
+        "squash_option": "default_off",
+        "enforce_auth_checks_on_uploads": true,
+        "suggestion_commit_message": null,
+        "merge_commit_template": null,
+        "squash_commit_template": null,
+        "issue_branch_template": null,
+        "warn_about_potentially_unwanted_characters": true,
+        "autoclose_referenced_issues": true,
+        "max_artifacts_size": null
+      }
+    },
+    {
+      "label": "guest",
+      "request": "POST /users",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "guest-<RUN>",
+        "public_email": null,
+        "name": "Guest",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/guest-<RUN>",
+        "created_at": "<TIME>",
+        "bio": "",
+        "location": "",
+        "linkedin": "",
+        "twitter": "",
+        "discord": "",
+        "website_url": "",
+        "github": "",
+        "job_title": "",
+        "pronouns": null,
+        "organization": "",
+        "bot": false,
+        "work_information": null,
+        "followers": 0,
+        "following": 0,
+        "is_followed": false,
+        "local_time": null,
+        "last_sign_in_at": null,
+        "confirmed_at": "<TIME>",
+        "last_activity_on": null,
+        "email": "guest-<RUN>@example.com",
+        "theme_id": "<other:theme_id:1>",
+        "color_scheme_id": "<other:color_scheme_id:1>",
+        "projects_limit": 100000,
+        "current_sign_in_at": null,
+        "identities": [],
+        "can_create_group": true,
+        "can_create_project": true,
+        "two_factor_enabled": false,
+        "external": false,
+        "private_profile": false,
+        "commit_email": "guest-<RUN>@example.com",
+        "preferred_language": "en",
+        "is_admin": false,
+        "note": null,
+        "namespace_id": "<namespace:2>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        }
+      }
+    },
+    {
+      "label": "guest token",
+      "request": "POST /users/<user:2>/personal_access_tokens",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<token:1>",
+        "name": "t",
+        "revoked": false,
+        "created_at": "<TIME>",
+        "description": null,
+        "scopes": [
+          "api"
+        ],
+        "user_id": "<user:2>",
+        "last_used_at": null,
+        "active": true,
+        "granular": false,
+        "expires_at": "2027-11-27",
+        "token": "<TOKEN>"
+      }
+    },
+    {
+      "label": "guest member",
+      "request": "POST /projects/<project:1>/members",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<user:2>",
+        "username": "guest-<RUN>",
+        "public_email": null,
+        "name": "Guest",
+        "state": "active",
+        "locked": false,
+        "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+        "web_url": "<BASE>/guest-<RUN>",
+        "access_level": 10,
+        "created_at": "<TIME>",
+        "created_by": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude"
+        },
+        "expires_at": null
+      }
+    },
+    {
+      "label": "ci config",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA1>",
+        "short_id": "<SHA1:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA2>"
+        ],
+        "title": "Set CI",
+        "message": "Set CI",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/ciar-<RUN>/app/-/commit/<SHA1>",
+        "stats": {
+          "additions": 7,
+          "deletions": 0,
+          "total": 7
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "no artifacts yet",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not Found"
+      }
+    },
+    {
+      "label": "running job artifacts",
+      "request": "GET /projects/<project:1>/jobs/<job:1>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<job:1>",
+        "status": "running",
+        "stage": "build",
+        "name": "build",
+        "ref": "main",
+        "tag": false,
+        "coverage": null,
+        "allow_failure": false,
+        "created_at": "<TIME>",
+        "started_at": "<TIME>",
+        "finished_at": null,
+        "erased_at": null,
+        "duration": 19.958380797,
+        "queued_duration": "<QUEUED>",
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude",
+          "created_at": "<TIME>",
+          "bio": "",
+          "location": "",
+          "linkedin": "",
+          "twitter": "",
+          "discord": "",
+          "website_url": "",
+          "github": "",
+          "job_title": "",
+          "pronouns": null,
+          "organization": "",
+          "bot": false,
+          "work_information": null,
+          "followers": 0,
+          "following": 0,
+          "local_time": null
+        },
+        "commit": {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA2>"
+          ],
+          "title": "Set CI",
+          "message": "Set CI",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ciar-<RUN>/app/-/commit/<SHA1>"
+        },
+        "pipeline": {
+          "id": "<job.pipeline:1>",
+          "iid": 1,
+          "project_id": "<project:1>",
+          "sha": "<SHA1>",
+          "ref": "main",
+          "status": "running",
+          "source": "push",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/ciar-<RUN>/app/-/pipelines/<pipeline:1>"
+        },
+        "web_url": "<BASE>/ciar-<RUN>/app/-/jobs/<job:1>",
+        "project": {
+          "ci_job_token_scope_enabled": false
+        },
+        "artifacts_file": {
+          "filename": "artifacts.zip",
+          "size": 343
+        },
+        "artifacts": [
+          {
+            "file_type": "archive",
+            "size": 343,
+            "filename": "artifacts.zip",
+            "file_format": "zip"
+          },
+          {
+            "file_type": "metadata",
+            "size": "<SIZE>",
+            "filename": "metadata.gz",
+            "file_format": "gzip"
+          }
+        ],
+        "runner": {
+          "id": "<job.runner:1>",
+          "description": "labrat-fake-runner",
+          "ip_address": null,
+          "active": true,
+          "paused": false,
+          "is_shared": true,
+          "runner_type": "instance_type",
+          "name": null,
+          "online": true,
+          "created_by": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "status": "online",
+          "job_execution_status": "active"
+        },
+        "runner_manager": {
+          "id": "<job.runner_manager:1>",
+          "system_id": "<legacy>",
+          "version": "18.11.0",
+          "revision": "fake",
+          "platform": "linux",
+          "architecture": "amd64",
+          "created_at": "<TIME>",
+          "contacted_at": "<TIME>",
+          "ip_address": "<IP>",
+          "status": "online",
+          "job_execution_status": "active"
+        },
+        "artifacts_expire_at": "<TIME>",
+        "archived": false,
+        "tag_list": []
+      }
+    },
+    {
+      "label": "job with artifacts",
+      "request": "GET /projects/<project:1>/jobs/<job:1>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<job:1>",
+        "status": "success",
+        "stage": "build",
+        "name": "build",
+        "ref": "main",
+        "tag": false,
+        "coverage": null,
+        "allow_failure": false,
+        "created_at": "<TIME>",
+        "started_at": "<TIME>",
+        "finished_at": "<TIME>",
+        "erased_at": null,
+        "duration": 20.05563,
+        "queued_duration": "<QUEUED>",
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude",
+          "created_at": "<TIME>",
+          "bio": "",
+          "location": "",
+          "linkedin": "",
+          "twitter": "",
+          "discord": "",
+          "website_url": "",
+          "github": "",
+          "job_title": "",
+          "pronouns": null,
+          "organization": "",
+          "bot": false,
+          "work_information": null,
+          "followers": 0,
+          "following": 0,
+          "local_time": null
+        },
+        "commit": {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA2>"
+          ],
+          "title": "Set CI",
+          "message": "Set CI",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ciar-<RUN>/app/-/commit/<SHA1>"
+        },
+        "pipeline": {
+          "id": "<job.pipeline:1>",
+          "iid": 1,
+          "project_id": "<project:1>",
+          "sha": "<SHA1>",
+          "ref": "main",
+          "status": "running",
+          "source": "push",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/ciar-<RUN>/app/-/pipelines/<pipeline:1>"
+        },
+        "web_url": "<BASE>/ciar-<RUN>/app/-/jobs/<job:1>",
+        "project": {
+          "ci_job_token_scope_enabled": false
+        },
+        "artifacts_file": {
+          "filename": "artifacts.zip",
+          "size": 343
+        },
+        "artifacts": [
+          {
+            "file_type": "archive",
+            "size": 343,
+            "filename": "artifacts.zip",
+            "file_format": "zip"
+          },
+          {
+            "file_type": "metadata",
+            "size": "<SIZE>",
+            "filename": "metadata.gz",
+            "file_format": "gzip"
+          }
+        ],
+        "runner": {
+          "id": "<job.runner:1>",
+          "description": "labrat-fake-runner",
+          "ip_address": null,
+          "active": true,
+          "paused": false,
+          "is_shared": true,
+          "runner_type": "instance_type",
+          "name": null,
+          "online": true,
+          "created_by": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "runner_manager": {
+          "id": "<job.runner_manager:1>",
+          "system_id": "<legacy>",
+          "version": "18.11.0",
+          "revision": "fake",
+          "platform": "linux",
+          "architecture": "amd64",
+          "created_at": "<TIME>",
+          "contacted_at": "<TIME>",
+          "ip_address": "<IP>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "artifacts_expire_at": "<TIME>",
+        "archived": false,
+        "tag_list": []
+      }
+    },
+    {
+      "label": "archive",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/octet-stream"
+      },
+      "body": "PK\u0003\u0004\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000Q ��\u0007\u0000\u0000\u0000\u0007\u0000\u0000\u0000\f\u0000\u0000\u0000dist/app.txtapp v1\nPK\u0003\u0004\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000�>�I\u0006\u0000\u0000\u0000\u0006\u0000\u0000\u0000\u0013\u0000\u0000\u0000dist/docs/readme.md# App\nPK\u0003\u0004\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000\"�xI\u0004\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0007\u0000\u0000\u0000top.txttop\nPK\u0001\u0002\u001e\u0003\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000Q ��\u0007\u0000\u0000\u0000\u0007\u0000\u0000\u0000\f\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��\u0000\u0000\u0000\u0000dist/app.txtPK\u0001\u0002\u001e\u0003\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000�>�I\u0006\u0000\u0000\u0000\u0006\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��1\u0000\u0000\u0000dist/docs/readme.mdPK\u0001\u0002\u001e\u0003\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000\"�xI\u0004\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0007\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��h\u0000\u0000\u0000top.txtPK\u0005\u0006\u0000\u0000\u0000\u0000\u0003\u0000\u0003\u0000�\u0000\u0000\u0000�\u0000\u0000\u0000\u0000\u0000"
+    },
+    {
+      "label": "guest archive",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts",
+      "status": 200,
+      "headers": {
+        "content-type": "application/octet-stream"
+      },
+      "body": "PK\u0003\u0004\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000Q ��\u0007\u0000\u0000\u0000\u0007\u0000\u0000\u0000\f\u0000\u0000\u0000dist/app.txtapp v1\nPK\u0003\u0004\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000�>�I\u0006\u0000\u0000\u0000\u0006\u0000\u0000\u0000\u0013\u0000\u0000\u0000dist/docs/readme.md# App\nPK\u0003\u0004\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000\"�xI\u0004\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0007\u0000\u0000\u0000top.txttop\nPK\u0001\u0002\u001e\u0003\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000Q ��\u0007\u0000\u0000\u0000\u0007\u0000\u0000\u0000\f\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��\u0000\u0000\u0000\u0000dist/app.txtPK\u0001\u0002\u001e\u0003\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000�>�I\u0006\u0000\u0000\u0000\u0006\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��1\u0000\u0000\u0000dist/docs/readme.mdPK\u0001\u0002\u001e\u0003\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000\"�xI\u0004\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0007\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��h\u0000\u0000\u0000top.txtPK\u0005\u0006\u0000\u0000\u0000\u0000\u0003\u0000\u0003\u0000�\u0000\u0000\u0000�\u0000\u0000\u0000\u0000\u0000"
+    },
+    {
+      "label": "one file",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts/dist/app.txt",
+      "status": 200,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "body": "app v1\n"
+    },
+    {
+      "label": "nested file",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts/dist/docs/readme.md",
+      "status": 200,
+      "headers": {
+        "content-type": "application/octet-stream"
+      },
+      "body": "# App\n"
+    },
+    {
+      "label": "missing file",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts/dist/nope.txt",
+      "status": 404,
+      "headers": {
+        "content-type": "text/plain; charset=utf-8"
+      },
+      "body": "404 page not found\n"
+    },
+    {
+      "label": "tree",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts/tree",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/jobs/<job:1>/artifacts/tree?id=<project:1>&job_id=<job:1>&page=1&path=&per_page=20&recursive=false>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/jobs/<job:1>/artifacts/tree?id=<project:1>&job_id=<job:1>&page=1&path=&per_page=20&recursive=false>; rel=\"last\""
+      },
+      "body": [
+        {
+          "name": "dist",
+          "path": "dist/",
+          "type": "directory",
+          "mode": null
+        },
+        {
+          "name": "top.txt",
+          "path": "top.txt",
+          "type": "file",
+          "size": 4,
+          "mode": "000644"
+        }
+      ]
+    },
+    {
+      "label": "tree dist",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts/tree",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/jobs/<job:1>/artifacts/tree?id=<project:1>&job_id=<job:1>&page=1&path=dist&per_page=20&recursive=false>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/jobs/<job:1>/artifacts/tree?id=<project:1>&job_id=<job:1>&page=1&path=dist&per_page=20&recursive=false>; rel=\"last\""
+      },
+      "body": [
+        {
+          "name": "docs",
+          "path": "dist/docs/",
+          "type": "directory",
+          "mode": null
+        },
+        {
+          "name": "app.txt",
+          "path": "dist/app.txt",
+          "type": "file",
+          "size": 7,
+          "mode": "000644"
+        }
+      ]
+    },
+    {
+      "label": "tree recursive",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts/tree",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json",
+        "x-total": "2",
+        "x-total-pages": "1",
+        "x-page": "1",
+        "x-per-page": "20",
+        "x-next-page": "",
+        "x-prev-page": "",
+        "link": "<<BASE>/api/v4/projects/<project:1>/jobs/<job:1>/artifacts/tree?id=<project:1>&job_id=<job:1>&page=1&path=&per_page=20&recursive=true>; rel=\"first\", <<BASE>/api/v4/projects/<project:1>/jobs/<job:1>/artifacts/tree?id=<project:1>&job_id=<job:1>&page=1&path=&per_page=20&recursive=true>; rel=\"last\""
+      },
+      "body": [
+        {
+          "name": "dist",
+          "path": "dist/",
+          "type": "directory",
+          "mode": null
+        },
+        {
+          "name": "top.txt",
+          "path": "top.txt",
+          "type": "file",
+          "size": 4,
+          "mode": "000644"
+        }
+      ]
+    },
+    {
+      "label": "tree missing path",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts/tree",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Path Not Found"
+      }
+    },
+    {
+      "label": "by ref before success",
+      "request": "GET /projects/<project:1>/jobs/artifacts/main/download",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not found"
+      }
+    },
+    {
+      "label": "check has none",
+      "request": "GET /projects/<project:1>/jobs/<job:2>/artifacts",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not Found"
+      }
+    },
+    {
+      "label": "check tree",
+      "request": "GET /projects/<project:1>/jobs/<job:2>/artifacts/tree",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Artifacts Not Found"
+      }
+    },
+    {
+      "label": "by ref",
+      "request": "GET /projects/<project:1>/jobs/artifacts/main/download",
+      "status": 200,
+      "headers": {
+        "content-type": "application/octet-stream"
+      },
+      "body": "PK\u0003\u0004\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000Q ��\u0007\u0000\u0000\u0000\u0007\u0000\u0000\u0000\f\u0000\u0000\u0000dist/app.txtapp v1\nPK\u0003\u0004\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000�>�I\u0006\u0000\u0000\u0000\u0006\u0000\u0000\u0000\u0013\u0000\u0000\u0000dist/docs/readme.md# App\nPK\u0003\u0004\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000\"�xI\u0004\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0007\u0000\u0000\u0000top.txttop\nPK\u0001\u0002\u001e\u0003\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000Q ��\u0007\u0000\u0000\u0000\u0007\u0000\u0000\u0000\f\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��\u0000\u0000\u0000\u0000dist/app.txtPK\u0001\u0002\u001e\u0003\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000�>�I\u0006\u0000\u0000\u0000\u0006\u0000\u0000\u0000\u0013\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��1\u0000\u0000\u0000dist/docs/readme.mdPK\u0001\u0002\u001e\u0003\u0014\u0000\u0000\b\u0000\u0000\u0000\u0000!\u0000\"�xI\u0004\u0000\u0000\u0000\u0004\u0000\u0000\u0000\u0007\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000��h\u0000\u0000\u0000top.txtPK\u0005\u0006\u0000\u0000\u0000\u0000\u0003\u0000\u0003\u0000�\u0000\u0000\u0000�\u0000\u0000\u0000\u0000\u0000"
+    },
+    {
+      "label": "raw by ref",
+      "request": "GET /projects/<project:1>/jobs/artifacts/main/raw/dist/app.txt",
+      "status": 200,
+      "headers": {
+        "content-type": "application/octet-stream"
+      },
+      "body": "app v1\n"
+    },
+    {
+      "label": "by ref no artifacts",
+      "request": "GET /projects/<project:1>/jobs/artifacts/main/download",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not found"
+      }
+    },
+    {
+      "label": "by ref unknown job",
+      "request": "GET /projects/<project:1>/jobs/artifacts/main/download",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not found"
+      }
+    },
+    {
+      "label": "by ref unknown ref",
+      "request": "GET /projects/<project:1>/jobs/artifacts/nope/download",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not found"
+      }
+    },
+    {
+      "label": "by ref without job",
+      "request": "GET /projects/<project:1>/jobs/artifacts/main/download",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "error": "job is missing"
+      }
+    },
+    {
+      "label": "guest cannot keep",
+      "request": "POST /projects/<project:1>/jobs/<job:1>/artifacts/keep",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "keep",
+      "request": "POST /projects/<project:1>/jobs/<job:1>/artifacts/keep",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<job:1>",
+        "status": "success",
+        "stage": "build",
+        "name": "build",
+        "ref": "main",
+        "tag": false,
+        "coverage": null,
+        "allow_failure": false,
+        "created_at": "<TIME>",
+        "started_at": "<TIME>",
+        "finished_at": "<TIME>",
+        "erased_at": null,
+        "duration": 20.05563,
+        "queued_duration": "<QUEUED>",
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude",
+          "created_at": "<TIME>",
+          "bio": "",
+          "location": "",
+          "linkedin": "",
+          "twitter": "",
+          "discord": "",
+          "website_url": "",
+          "github": "",
+          "job_title": "",
+          "pronouns": null,
+          "organization": "",
+          "bot": false,
+          "work_information": null,
+          "followers": 0,
+          "following": 0,
+          "local_time": null
+        },
+        "commit": {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA2>"
+          ],
+          "title": "Set CI",
+          "message": "Set CI",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ciar-<RUN>/app/-/commit/<SHA1>"
+        },
+        "pipeline": {
+          "id": "<job.pipeline:1>",
+          "iid": 1,
+          "project_id": "<project:1>",
+          "sha": "<SHA1>",
+          "ref": "main",
+          "status": "success",
+          "source": "push",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/ciar-<RUN>/app/-/pipelines/<pipeline:1>"
+        },
+        "web_url": "<BASE>/ciar-<RUN>/app/-/jobs/<job:1>",
+        "project": {
+          "ci_job_token_scope_enabled": false
+        },
+        "artifacts_file": {
+          "filename": "artifacts.zip",
+          "size": 343
+        },
+        "artifacts": [
+          {
+            "file_type": "archive",
+            "size": 343,
+            "filename": "artifacts.zip",
+            "file_format": "zip"
+          },
+          {
+            "file_type": "metadata",
+            "size": "<SIZE>",
+            "filename": "metadata.gz",
+            "file_format": "gzip"
+          }
+        ],
+        "runner": {
+          "id": "<job.runner:1>",
+          "description": "labrat-fake-runner",
+          "ip_address": null,
+          "active": true,
+          "paused": false,
+          "is_shared": true,
+          "runner_type": "instance_type",
+          "name": null,
+          "online": true,
+          "created_by": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "runner_manager": {
+          "id": "<job.runner_manager:1>",
+          "system_id": "<legacy>",
+          "version": "18.11.0",
+          "revision": "fake",
+          "platform": "linux",
+          "architecture": "amd64",
+          "created_at": "<TIME>",
+          "contacted_at": "<TIME>",
+          "ip_address": "<IP>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "artifacts_expire_at": null,
+        "archived": false,
+        "tag_list": []
+      }
+    },
+    {
+      "label": "keep without artifacts",
+      "request": "POST /projects/<project:1>/jobs/<job:2>/artifacts/keep",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 #<Ci::Build:<ADDR>> Not Found"
+      }
+    },
+    {
+      "label": "ci config 2",
+      "request": "POST /projects/<project:1>/repository/commits",
+      "status": 201,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<SHA3>",
+        "short_id": "<SHA3:short>",
+        "created_at": "<TIME>",
+        "parent_ids": [
+          "<SHA1>"
+        ],
+        "title": "Set CI",
+        "message": "Set CI",
+        "author_name": "Claude",
+        "author_email": "claude@gitlab.unhood.org",
+        "authored_date": "<TIME>",
+        "committer_name": "Claude",
+        "committer_email": "claude@gitlab.unhood.org",
+        "committed_date": "<TIME>",
+        "trailers": {},
+        "extended_trailers": {},
+        "web_url": "<BASE>/ciar-<RUN>/app/-/commit/<SHA3>",
+        "stats": {
+          "additions": 1,
+          "deletions": 0,
+          "total": 1
+        },
+        "status": null,
+        "project_id": "<project:1>",
+        "last_pipeline": null
+      }
+    },
+    {
+      "label": "raw by ref latest",
+      "request": "GET /projects/<project:1>/jobs/artifacts/main/raw/dist/app.txt",
+      "status": 200,
+      "headers": {
+        "content-type": "application/octet-stream"
+      },
+      "body": "app v2\n"
+    },
+    {
+      "label": "second build",
+      "request": "GET /projects/<project:1>/jobs/<job:3>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<job:3>",
+        "status": "success",
+        "stage": "build",
+        "name": "build",
+        "ref": "main",
+        "tag": false,
+        "coverage": null,
+        "allow_failure": false,
+        "created_at": "<TIME>",
+        "started_at": "<TIME>",
+        "finished_at": "<TIME>",
+        "erased_at": null,
+        "duration": 19.996089,
+        "queued_duration": "<QUEUED>",
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude",
+          "created_at": "<TIME>",
+          "bio": "",
+          "location": "",
+          "linkedin": "",
+          "twitter": "",
+          "discord": "",
+          "website_url": "",
+          "github": "",
+          "job_title": "",
+          "pronouns": null,
+          "organization": "",
+          "bot": false,
+          "work_information": null,
+          "followers": 0,
+          "following": 0,
+          "local_time": null
+        },
+        "commit": {
+          "id": "<SHA3>",
+          "short_id": "<SHA3:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA1>"
+          ],
+          "title": "Set CI",
+          "message": "Set CI",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ciar-<RUN>/app/-/commit/<SHA3>"
+        },
+        "pipeline": {
+          "id": "<job.pipeline:2>",
+          "iid": 2,
+          "project_id": "<project:1>",
+          "sha": "<SHA3>",
+          "ref": "main",
+          "status": "success",
+          "source": "push",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/ciar-<RUN>/app/-/pipelines/<pipeline:2>"
+        },
+        "web_url": "<BASE>/ciar-<RUN>/app/-/jobs/<job:3>",
+        "project": {
+          "ci_job_token_scope_enabled": false
+        },
+        "artifacts_file": {
+          "filename": "artifacts.zip",
+          "size": 129
+        },
+        "artifacts": [
+          {
+            "file_type": "archive",
+            "size": 129,
+            "filename": "artifacts.zip",
+            "file_format": "zip"
+          },
+          {
+            "file_type": "metadata",
+            "size": "<SIZE>",
+            "filename": "metadata.gz",
+            "file_format": "gzip"
+          }
+        ],
+        "runner": {
+          "id": "<job.runner:1>",
+          "description": "labrat-fake-runner",
+          "ip_address": null,
+          "active": true,
+          "paused": false,
+          "is_shared": true,
+          "runner_type": "instance_type",
+          "name": null,
+          "online": true,
+          "created_by": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "runner_manager": {
+          "id": "<job.runner_manager:1>",
+          "system_id": "<legacy>",
+          "version": "18.11.0",
+          "revision": "fake",
+          "platform": "linux",
+          "architecture": "amd64",
+          "created_at": "<TIME>",
+          "contacted_at": "<TIME>",
+          "ip_address": "<IP>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "artifacts_expire_at": "<TIME>",
+        "archived": false,
+        "tag_list": []
+      }
+    },
+    {
+      "label": "guest cannot delete",
+      "request": "DELETE /projects/<project:1>/jobs/<job:1>/artifacts",
+      "status": 403,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "403 Forbidden"
+      }
+    },
+    {
+      "label": "delete artifacts",
+      "request": "DELETE /projects/<project:1>/jobs/<job:1>/artifacts",
+      "status": 204,
+      "headers": {},
+      "body": null
+    },
+    {
+      "label": "deleted",
+      "request": "GET /projects/<project:1>/jobs/<job:1>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<job:1>",
+        "status": "success",
+        "stage": "build",
+        "name": "build",
+        "ref": "main",
+        "tag": false,
+        "coverage": null,
+        "allow_failure": false,
+        "created_at": "<TIME>",
+        "started_at": "<TIME>",
+        "finished_at": "<TIME>",
+        "erased_at": null,
+        "duration": 20.05563,
+        "queued_duration": "<QUEUED>",
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude",
+          "created_at": "<TIME>",
+          "bio": "",
+          "location": "",
+          "linkedin": "",
+          "twitter": "",
+          "discord": "",
+          "website_url": "",
+          "github": "",
+          "job_title": "",
+          "pronouns": null,
+          "organization": "",
+          "bot": false,
+          "work_information": null,
+          "followers": 0,
+          "following": 0,
+          "local_time": null
+        },
+        "commit": {
+          "id": "<SHA1>",
+          "short_id": "<SHA1:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA2>"
+          ],
+          "title": "Set CI",
+          "message": "Set CI",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ciar-<RUN>/app/-/commit/<SHA1>"
+        },
+        "pipeline": {
+          "id": "<job.pipeline:1>",
+          "iid": 1,
+          "project_id": "<project:1>",
+          "sha": "<SHA1>",
+          "ref": "main",
+          "status": "success",
+          "source": "push",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/ciar-<RUN>/app/-/pipelines/<pipeline:1>"
+        },
+        "web_url": "<BASE>/ciar-<RUN>/app/-/jobs/<job:1>",
+        "project": {
+          "ci_job_token_scope_enabled": false
+        },
+        "artifacts": [],
+        "runner": {
+          "id": "<job.runner:1>",
+          "description": "labrat-fake-runner",
+          "ip_address": null,
+          "active": true,
+          "paused": false,
+          "is_shared": true,
+          "runner_type": "instance_type",
+          "name": null,
+          "online": true,
+          "created_by": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "runner_manager": {
+          "id": "<job.runner_manager:1>",
+          "system_id": "<legacy>",
+          "version": "18.11.0",
+          "revision": "fake",
+          "platform": "linux",
+          "architecture": "amd64",
+          "created_at": "<TIME>",
+          "contacted_at": "<TIME>",
+          "ip_address": "<IP>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "artifacts_expire_at": null,
+        "archived": false,
+        "tag_list": []
+      }
+    },
+    {
+      "label": "deleted archive",
+      "request": "GET /projects/<project:1>/jobs/<job:1>/artifacts",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "404 Not Found"
+      }
+    },
+    {
+      "label": "delete project artifacts",
+      "request": "DELETE /projects/<project:1>/artifacts",
+      "status": 202,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "message": "202 Accepted"
+      }
+    },
+    {
+      "label": "second build after",
+      "request": "GET /projects/<project:1>/jobs/<job:3>",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "body": {
+        "id": "<job:3>",
+        "status": "success",
+        "stage": "build",
+        "name": "build",
+        "ref": "main",
+        "tag": false,
+        "coverage": null,
+        "allow_failure": false,
+        "created_at": "<TIME>",
+        "started_at": "<TIME>",
+        "finished_at": "<TIME>",
+        "erased_at": null,
+        "duration": 19.996089,
+        "queued_duration": "<QUEUED>",
+        "user": {
+          "id": "<user:1>",
+          "username": "claude",
+          "public_email": null,
+          "name": "Claude",
+          "state": "active",
+          "locked": false,
+          "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+          "web_url": "<BASE>/claude",
+          "created_at": "<TIME>",
+          "bio": "",
+          "location": "",
+          "linkedin": "",
+          "twitter": "",
+          "discord": "",
+          "website_url": "",
+          "github": "",
+          "job_title": "",
+          "pronouns": null,
+          "organization": "",
+          "bot": false,
+          "work_information": null,
+          "followers": 0,
+          "following": 0,
+          "local_time": null
+        },
+        "commit": {
+          "id": "<SHA3>",
+          "short_id": "<SHA3:short>",
+          "created_at": "<TIME>",
+          "parent_ids": [
+            "<SHA1>"
+          ],
+          "title": "Set CI",
+          "message": "Set CI",
+          "author_name": "Claude",
+          "author_email": "claude@gitlab.unhood.org",
+          "authored_date": "<TIME>",
+          "committer_name": "Claude",
+          "committer_email": "claude@gitlab.unhood.org",
+          "committed_date": "<TIME>",
+          "trailers": {},
+          "extended_trailers": {},
+          "web_url": "<BASE>/ciar-<RUN>/app/-/commit/<SHA3>"
+        },
+        "pipeline": {
+          "id": "<job.pipeline:2>",
+          "iid": 2,
+          "project_id": "<project:1>",
+          "sha": "<SHA3>",
+          "ref": "main",
+          "status": "success",
+          "source": "push",
+          "created_at": "<TIME>",
+          "updated_at": "<TIME>",
+          "web_url": "<BASE>/ciar-<RUN>/app/-/pipelines/<pipeline:2>"
+        },
+        "web_url": "<BASE>/ciar-<RUN>/app/-/jobs/<job:3>",
+        "project": {
+          "ci_job_token_scope_enabled": false
+        },
+        "artifacts_file": {
+          "filename": "artifacts.zip",
+          "size": 129
+        },
+        "artifacts": [
+          {
+            "file_type": "archive",
+            "size": 129,
+            "filename": "artifacts.zip",
+            "file_format": "zip"
+          },
+          {
+            "file_type": "metadata",
+            "size": "<SIZE>",
+            "filename": "metadata.gz",
+            "file_format": "gzip"
+          }
+        ],
+        "runner": {
+          "id": "<job.runner:1>",
+          "description": "labrat-fake-runner",
+          "ip_address": null,
+          "active": true,
+          "paused": false,
+          "is_shared": true,
+          "runner_type": "instance_type",
+          "name": null,
+          "online": true,
+          "created_by": {
+            "id": "<user:1>",
+            "username": "claude",
+            "public_email": null,
+            "name": "Claude",
+            "state": "active",
+            "locked": false,
+            "avatar_url": "https://www.gravatar.com/avatar/<HASH>?s=80&d=identicon",
+            "web_url": "<BASE>/claude"
+          },
+          "created_at": "<TIME>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "runner_manager": {
+          "id": "<job.runner_manager:1>",
+          "system_id": "<legacy>",
+          "version": "18.11.0",
+          "revision": "fake",
+          "platform": "linux",
+          "architecture": "amd64",
+          "created_at": "<TIME>",
+          "contacted_at": "<TIME>",
+          "ip_address": "<IP>",
+          "status": "online",
+          "job_execution_status": "idle"
+        },
+        "artifacts_expire_at": "<TIME>",
+        "archived": false,
+        "tag_list": []
+      }
+    }
+  ],
+  "times": [
+    0,
+    224,
+    10060,
+    10744,
+    10786,
+    11017,
+    20177,
+    40195,
+    50036,
+    50166,
+    50227,
+    50324,
+    50394,
+    50474,
+    50548,
+    50643,
+    50707,
+    50771,
+    50831,
+    51026,
+    51081,
+    80040,
+    80104,
+    80174,
+    80247,
+    80295,
+    80337,
+    80351,
+    80400,
+    80514,
+    80685,
+    140417,
+    140478,
+    140565,
+    140604,
+    140715,
+    140840,
+    140891,
+    150315
+  ],
+  "done_times": [
+    224,
+    2391,
+    10744,
+    10786,
+    10895,
+    11372,
+    20215,
+    40274,
+    50166,
+    50227,
+    50324,
+    50394,
+    50474,
+    50548,
+    50643,
+    50707,
+    50771,
+    50831,
+    50882,
+    51081,
+    51133,
+    80104,
+    80174,
+    80247,
+    80295,
+    80337,
+    80351,
+    80400,
+    80514,
+    80566,
+    81005,
+    140478,
+    140565,
+    140604,
+    140715,
+    140840,
+    140891,
+    140959,
+    150424
+  ],
+  "ci_times": [
+    20215,
+    30205,
+    40274,
+    51133,
+    70192,
+    90276,
+    100285,
+    110268,
+    120283,
+    130371
+  ],
+  "ci_picks": [],
+  "started_at": 1795773243511
+}

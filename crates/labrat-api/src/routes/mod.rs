@@ -9,6 +9,7 @@ pub mod groups;
 pub mod hooks;
 pub mod labels;
 pub mod milestones;
+pub mod jobs;
 pub mod pipelines;
 pub mod members;
 pub mod merge_requests;

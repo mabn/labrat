@@ -6,6 +6,7 @@ pub mod protected_tags;
 pub mod user_counts;
 pub mod ci;
 pub mod fake_ci;
+pub mod pipelines;
 pub mod merge_trains;
 pub mod mr_blocks;
 pub mod comments;

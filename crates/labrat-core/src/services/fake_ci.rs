@@ -202,7 +202,9 @@ pub fn create(c: &Connection, config: &Config, p: &Project, user: &User, sha: &s
              VALUES (?1, ?2, ?3, ?4, ?5, 'created', ?6, ?7, ?7, 1, 'test')",
             params![pid, p.id, name, r#ref, sha, user.id, now],
         )?;
+        crate::services::pipelines::job_hook(c, config, c.last_insert_rowid())?;
     }
+    crate::services::pipelines::sync_stages(c, pid)?;
     ci::recompute(c, config, pid)?;
     // The jobs are queued a moment later, as GitLab's pipeline processing does.
     jobs::enqueue(c, "fake_ci_enqueue", json!({"pipeline_id": pid}))?;
@@ -213,10 +215,10 @@ pub fn create(c: &Connection, config: &Config, p: &Project, user: &User, sha: &s
 /// takes them.
 pub fn enqueue(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()> {
     let Some(pl) = Pipeline::find(c, pipeline_id)? else { return Ok(()) };
-    let now = time::now();
     for id in job_ids(c, pipeline_id, &["created"])? {
-        c.execute("UPDATE commit_statuses SET status = 'pending', queued_at = ?1, updated_at = ?1 WHERE id = ?2", params![now, id])?;
+        set_job(c, config, id, "pending")?;
     }
+    crate::services::pipelines::sync_stages(c, pipeline_id)?;
     ci::recompute(c, config, pipeline_id)?;
     if self::config(c, pl.project_id)?.is_some_and(|f| f.mode == "auto") {
         jobs::enqueue(c, "fake_ci_run", json!({"pipeline_id": pipeline_id}))?;
@@ -231,19 +233,8 @@ fn job_ids(c: &Connection, pipeline_id: i64, status: &[&str]) -> Result<Vec<i64>
     Ok(rows.into_iter().filter(|(_, s)| status.contains(&s.as_str())).map(|(id, _)| id).collect())
 }
 
-fn set_job(c: &Connection, id: i64, status: &str) -> Result<()> {
-    let now = time::now();
-    match status {
-        "running" => c.execute(
-            "UPDATE commit_statuses SET status = 'running', started_at = ?1, updated_at = ?1 WHERE id = ?2",
-            params![now, id],
-        )?,
-        s => c.execute(
-            "UPDATE commit_statuses SET status = ?1, finished_at = ?2, updated_at = ?2 WHERE id = ?3",
-            params![s, now, id],
-        )?,
-    };
-    Ok(())
+fn set_job(c: &Connection, config: &Config, id: i64, status: &str) -> Result<()> {
+    crate::services::pipelines::transition(c, config, id, status)
 }
 
 /// The fake runner picks up the project's pending jobs: they start running. Returns the
@@ -257,7 +248,7 @@ pub fn pick(c: &Connection, config: &Config, project_id: i64, r#ref: Option<&str
     let rows: Vec<(i64, i64, String)> = st.query_map(params![project_id, r#ref], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?.collect::<rusqlite::Result<_>>()?;
     let mut pipelines = vec![];
     for (id, pl, _) in &rows {
-        set_job(c, *id, "running")?;
+        set_job(c, config, *id, "running")?;
         if !pipelines.contains(pl) {
             pipelines.push(*pl);
         }
@@ -285,10 +276,10 @@ pub fn finish(c: &Connection, config: &Config, project_id: i64, r#ref: &str, sta
             continue;
         }
         if s == "pending" {
-            set_job(c, id, "running")?;
+            set_job(c, config, id, "running")?;
         }
         // A job being canceled ends canceled, whatever the runner reports.
-        set_job(c, id, if s == "canceling" { "canceled" } else { status })?;
+        set_job(c, config, id, if s == "canceling" { "canceled" } else { status })?;
         n += 1;
         if !pipelines.contains(&pl) {
             pipelines.push(pl);
@@ -304,7 +295,7 @@ pub fn finish(c: &Connection, config: &Config, project_id: i64, r#ref: &str, sta
 /// running become `canceling` until the runner reports back (`ci/finish`, or the auto runner).
 pub fn cancel_pipeline(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()> {
     for id in job_ids(c, pipeline_id, &["created", "pending"])? {
-        set_job(c, id, "canceled")?;
+        set_job(c, config, id, "canceled")?;
     }
     for id in job_ids(c, pipeline_id, &["running"])? {
         c.execute("UPDATE commit_statuses SET status = 'canceling', updated_at = ?1 WHERE id = ?2", params![time::now(), id])?;
@@ -318,21 +309,9 @@ pub fn cancel_pipeline(c: &Connection, config: &Config, pipeline_id: i64) -> Res
 /// `started_at` stays. Returns whether any job was retried.
 pub fn retry_pipeline(c: &Connection, config: &Config, pipeline_id: i64, user: &User) -> Result<bool> {
     let Some(pl) = Pipeline::find(c, pipeline_id)? else { return Ok(false) };
-    let ids = job_ids(c, pipeline_id, &["failed", "canceled"])?;
-    if ids.is_empty() {
+    if !crate::services::pipelines::retry_pipeline(c, config, pipeline_id, user)? {
         return Ok(false);
     }
-    let now = time::now();
-    for id in ids {
-        c.execute("UPDATE commit_statuses SET retried = 1, updated_at = ?1 WHERE id = ?2", params![now, id])?;
-        c.execute(
-            "INSERT INTO commit_statuses (pipeline_id, project_id, name, ref, sha, status, user_id, created_at, updated_at, queued_at, build, stage)
-             SELECT pipeline_id, project_id, name, ref, sha, 'pending', ?1, ?2, ?2, ?2, 1, stage FROM commit_statuses WHERE id = ?3",
-            params![user.id, now, id],
-        )?;
-    }
-    c.execute("UPDATE ci_pipelines SET finished_at = NULL WHERE id = ?1", [pipeline_id])?;
-    ci::recompute(c, config, pipeline_id)?;
     if self::config(c, pl.project_id)?.is_some_and(|f| f.mode == "auto") {
         jobs::enqueue(c, "fake_ci_run", json!({"pipeline_id": pipeline_id}))?;
     }
@@ -348,7 +327,7 @@ pub fn auto_run(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()>
         return Ok(());
     }
     for id in &ids {
-        set_job(c, *id, "running")?;
+        set_job(c, config, *id, "running")?;
     }
     process_later(c, config, pipeline_id)?;
     jobs::enqueue_after(c, "fake_ci_finish", json!({"pipeline_id": pipeline_id}), cfg.duration_ms)
@@ -361,11 +340,11 @@ pub fn auto_finish(c: &Connection, config: &Config, pipeline_id: i64) -> Result<
     let r#ref = pl.ref_.clone().unwrap_or_default();
     let status = cfg.overrides.get(&r#ref).and_then(Value::as_str).unwrap_or(&cfg.status).to_string();
     for id in job_ids(c, pipeline_id, &["canceling"])? {
-        set_job(c, id, "canceled")?;
+        set_job(c, config, id, "canceled")?;
     }
     let ids = job_ids(c, pipeline_id, &["running"])?;
     for id in &ids {
-        set_job(c, *id, &status)?;
+        set_job(c, config, *id, &status)?;
     }
     process_later(c, config, pipeline_id)
 }

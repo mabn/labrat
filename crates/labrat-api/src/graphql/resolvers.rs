@@ -273,7 +273,7 @@ pub fn id_cursor(id: i64) -> Value {
 
 pub struct Query;
 
-fn readable_project(cx: &Ctx, p: Project) -> FResult<Option<(Project, ProjectPerms)>> {
+pub(crate) fn readable_project(cx: &Ctx, p: Project) -> FResult<Option<(Project, ProjectPerms)>> {
     let perms = ProjectPerms::load(cx.c, cx.user(), &p)?;
     Ok(if perms.read_project() { Some((p, perms)) } else { None })
 }
@@ -806,8 +806,8 @@ impl Object for NamespaceObj {
 }
 
 pub struct ProjectObj {
-    p: Project,
-    perms: ProjectPerms,
+    pub(crate) p: Project,
+    pub(crate) perms: ProjectPerms,
 }
 
 impl Object for ProjectObj {
@@ -1049,8 +1049,22 @@ impl Object for ProjectObj {
                     Some(r) => Some(labrat_core::services::ci::refs_for_filter(cx.c, p, &r, args.str("source").as_deref())?),
                     None => None,
                 };
+                let user_id = match args.str("username") {
+                    Some(u) => Some(User::find_by_username(cx.c, &u)?.map(|u| u.id).unwrap_or(-1)),
+                    None => None,
+                };
+                let scope = args.str("scope").map(|s| s.to_lowercase());
                 let items = list
                     .into_iter()
+                    .filter(|pl| match scope.as_deref() {
+                        Some("running") => pl.status == "running",
+                        Some("pending") => pl.status == "pending",
+                        Some("finished") => matches!(pl.status.as_str(), "success" | "failed" | "canceled" | "skipped"),
+                        Some("tags") => pl.tag,
+                        Some("branches") => !pl.tag,
+                        _ => true,
+                    })
+                    .filter(|pl| user_id.is_none_or(|u| pl.user_id == Some(u)))
                     .filter(|pl| args.str("status").is_none_or(|st| st.eq_ignore_ascii_case(&pl.status)))
                     .filter(|pl| refs.as_ref().is_none_or(|rs| pl.ref_.as_ref().is_some_and(|r| rs.contains(r))))
                     .filter(|pl| args.str("sha").is_none_or(|h| pl.sha == h))
@@ -1059,6 +1073,9 @@ impl Object for ProjectObj {
                     .collect();
                 Out::obj(Conn::with_max("PipelineConnection", items, args, 100)?)
             }
+            "jobs" => super::ci::project_jobs(cx, p, args)?,
+            "job" => super::ci::project_job(cx, p, args)?,
+            "pipelineCounts" => super::ci::pipeline_counts(cx, p, args)?,
             "pipeline" => {
                 let list = labrat_core::services::ci::Pipeline::list(cx.c, p.id)?;
                 let id = args.str("id").and_then(|g| g.rsplit('/').next().and_then(|x| x.parse::<i64>().ok()));
@@ -1942,63 +1959,23 @@ impl Object for PipelineObj {
     fn resolve(&self, cx: &Ctx, field: &str, _args: &Args) -> FResult<Out> {
         let (p, pl) = (&self.p, &self.pl);
         let path = format!("/{}/-/pipelines/{}", p.full_path, pl.id);
-        let (icon, text, label, group) = match pl.status.as_str() {
-            "pending" => ("status_pending", "Pending", "pending", "pending"),
-            "running" => ("status_running", "Running", "running", "running"),
-            "success" => ("status_success", "Passed", "passed", "success"),
-            "failed" => ("status_failed", "Failed", "failed", "failed"),
-            "canceled" => ("status_canceled", "Canceled", "canceled", "canceled"),
-            "skipped" => ("status_skipped", "Skipped", "skipped", "skipped"),
-            _ => ("status_created", "Created", "created", "created"),
-        };
+        let builds = labrat_core::services::pipelines::Job::for_pipeline(cx.c, pl.id, false)?;
         Ok(match field {
-            // Commit statuses are the jobs of an external pipeline, in one `external` stage.
-            "jobs" | "job" | "stages" => {
-                let mut st = cx.c.prepare("SELECT id FROM commit_statuses WHERE pipeline_id = ?1 AND retried = 0 ORDER BY id")?;
-                let ids: Vec<i64> = st.query_map([pl.id], |r| r.get(0))?.collect::<rusqlite::Result<_>>()?;
-                let jobs: Vec<labrat_core::services::ci::Status> = ids.into_iter().filter_map(|id| labrat_core::services::ci::Status::find(cx.c, id).ok().flatten()).collect();
-                let job_obj = |j: &labrat_core::services::ci::Status| {
-                    JsonObj::new("CiJob", json!({
-                        "id": format!("gid://gitlab/GenericCommitStatus/{}", j.id),
-                        "name": j.name,
-                        "status": j.status.to_uppercase(),
-                        "allowFailure": false,
-                    }))
-                };
-                match field {
-                    "job" => {
-                        let want = _args.str("name");
-                        match jobs.iter().find(|j| want.as_deref().is_none_or(|w| w == j.name)) {
-                            Some(j) => Out::obj(job_obj(j)),
-                            None => Out::Null,
-                        }
-                    }
-                    "jobs" => {
-                        let items: Vec<Shared> = jobs.iter().map(|j| Shared(Rc::new(job_obj(j)))).collect();
-                        Out::obj(Conn::new("CiJobConnection", positions(items), _args)?)
-                    }
-                    _ => {
-                        let items: Vec<Shared> = if jobs.is_empty() {
-                            vec![]
-                        } else {
-                            vec![Shared(Rc::new(JsonObj::new("CiStage", json!({"name": "external", "status": pl.status.to_lowercase()}))))]
-                        };
-                        Out::obj(Conn::new("CiStageConnection", positions(items), _args)?)
-                    }
-                }
-            }
+            // CI jobs are in their stages, and commit statuses in the `external` stage.
+            "jobs" => super::ci::pipeline_jobs(cx, p, pl, _args)?,
+            "job" => super::ci::pipeline_job(cx, p, pl, _args)?,
+            "stages" => super::ci::pipeline_stages(cx, p, pl, _args)?,
             "testReportSummary" => Out::obj(TestSummaryObj),
             "warningMessages" | "manualVariables" => {
                 let conn = if field == "warningMessages" { "PipelineMessageConnection" } else { "PipelineManualVariableConnection" };
                 Out::obj(Conn::new(conn, positions(Vec::<Shared>::new()), _args)?)
             }
-            "jobArtifacts" => Out::List(vec![]),
             "sourceJob" | "testSuite" => Out::Null,
             "id" => Out::val(format!("gid://gitlab/Ci::Pipeline/{}", pl.id)),
             "iid" => Out::val(pl.iid.to_string()),
             "status" => Out::val(pl.status.to_uppercase()),
             "sha" => Out::val(pl.sha.clone()),
-            "beforeSha" => Out::val("0000000000000000000000000000000000000000"),
+            "beforeSha" => Out::val(pl.before_sha.clone().unwrap_or_else(|| "0000000000000000000000000000000000000000".into())),
             "ref" => Out::val(pl.ref_.clone()),
             "refPath" => Out::val(pl.ref_.as_ref().map(|r| format!("refs/{}/{r}", if pl.tag { "tags" } else { "heads" }))),
             "path" => Out::val(path.clone()),
@@ -2014,7 +1991,7 @@ impl Object for PipelineObj {
             "finishedAt" => Out::val(opt_time(pl.finished_at)),
             "committedAt" => Out::Null,
             "yamlErrors" => Out::val(false),
-            "warnings" => Out::val(false),
+            "warnings" => Out::val(labrat_core::services::pipelines::has_warnings(&builds)),
             // `latest?`: the pipeline is for the ref's current head.
             "latest" => Out::val(match pl.ref_.as_deref() {
                 Some(r) => {
@@ -2037,18 +2014,26 @@ impl Object for PipelineObj {
                 Some((p, perms)) => Out::obj(ProjectObj { p, perms }),
                 None => Out::Null,
             },
+            "coverage" => {
+                let cov: Vec<f64> = builds.iter().filter_map(|j| j.coverage).collect();
+                if cov.is_empty() { Out::Null } else { Out::val(cov.iter().sum::<f64>() / cov.len() as f64) }
+            }
             // External pipelines aren't merge request pipelines.
-            "mergeRequest" | "failureReason" | "coverage" | "upstream" | "downstream" | "pipelineSchedule" => Out::Null,
+            "mergeRequest" | "failureReason" | "upstream" | "downstream" | "pipelineSchedule" => Out::Null,
             // No upstream pipeline: an empty path rather than null.
             "triggeredByPath" => Out::val(""),
+            "cancelable" => Out::val(labrat_core::services::pipelines::pipeline_cancelable(pl)),
+            "retryable" => Out::val(builds.iter().any(|j| matches!(j.status.as_str(), "failed" | "canceled"))),
+            // `manual_actions`: manual jobs that are waiting or completed, skipped ones included.
+            "hasManualActions" => Out::val(builds.iter().any(|j| j.is_manual() && !j.retried && matches!(j.status.as_str(), "manual" | "success" | "failed" | "canceled" | "skipped"))),
             // Commit statuses can be neither retried nor cancelled through GitLab.
-            "cancelable" | "retryable" | "stuck" | "child" | "hasManualActions" | "hasScheduledActions" | "usesNeeds" => Out::val(false),
+            "stuck" | "child" | "hasScheduledActions" | "usesNeeds" => Out::val(false),
             // Commit statuses have no CI configuration.
             "mergeRequestEventType" | "yamlErrorMessages" => Out::Null,
             "trigger" => Out::val(false),
             "configSource" => Out::val("UNKNOWN_SOURCE"),
             "failedJobsCount" => {
-                let n: i64 = cx.c.query_row("SELECT count(*) FROM commit_statuses WHERE pipeline_id = ?1 AND status = 'failed'", [pl.id], |r| r.get(0))?;
+                let n: i64 = cx.c.query_row("SELECT count(*) FROM commit_statuses WHERE pipeline_id = ?1 AND status = 'failed' AND retried = 0", [pl.id], |r| r.get(0))?;
                 Out::val(n)
             }
             "totalJobs" => {
@@ -2077,8 +2062,14 @@ impl Object for PipelineObj {
                     }));
                 }
                 if mrs.is_empty() {
-                    let r = pl.ref_.clone().unwrap_or_default();
-                    Out::val(format!("For <a class=\"ref-container gl-link\" href=\"/{}/-/commits/{r}\">{r}</a>", p.full_path))
+                    // A link to the ref, or its plain name once it's gone.
+                    let Some(r) = pl.ref_.clone() else { return Ok(Out::Null) };
+                    let git_ref = format!("refs/{}/{r}", if pl.tag { "tags" } else { "heads" });
+                    if labrat_core::repo::repo(cx.c, p).ref_oid(&git_ref)?.is_some() {
+                        Out::val(format!("In <a class=\"ref-container gl-link\" href=\"/{}/-/commits/{r}\">{r}</a>", p.full_path))
+                    } else {
+                        Out::val(format!("In <span class=\"ref-name\">{r}</span>"))
+                    }
                 } else {
                     let links: Vec<String> = mrs
                         .iter()
@@ -2090,28 +2081,20 @@ impl Object for PipelineObj {
             }
             "userPermissions" => {
                 let perms = ProjectPerms::load(cx.c, cx.user(), p)?;
-                let dev = cx.user().is_some() && perms.developer();
+                // A protected ref limits updating and cancelling (`Ci::PipelinePolicy`).
+                let dev = match cx.user() {
+                    Some(u) => labrat_core::services::pipelines::can_update(cx.c, u, p, pl)?,
+                    None => false,
+                };
                 let admin = cx.user().is_some_and(|u| u.admin) || perms.admin_project();
                 Out::obj(JsonObj::new("PipelinePermissions", json!({"updatePipeline": dev, "cancelPipeline": dev, "destroyPipeline": perms.level >= 50 || admin, "adminPipeline": admin})))
             }
             "user" => Out::opt(pl.user_id.map(|i| User::find(cx.c, i)).transpose()?.flatten().map(|u| UserObj::new("UserCore", u))),
-            "detailedStatus" => Out::obj(JsonObj::new(
-                "DetailedStatus",
-                json!({
-                    "id": format!("{}-{}", pl.status, pl.id),
-                    "name": pl.status.to_uppercase(),
-                    "label": label,
-                    "text": text,
-                    "group": group,
-                    "icon": icon,
-                    "tooltip": label,
-                    "hasDetails": true,
-                    "detailsPath": path,
-                    "favicon": format!("/assets/ci_favicons/favicon_{icon}-{}.png", crate::routes::pipelines::favicon_digest(icon)),
-                    "action": null,
-                    "deploymentDetailsPath": null,
-                }),
-            )),
+            "detailedStatus" => {
+                let read = cx.user().is_some_and(|u| u.admin) || ProjectPerms::load(cx.c, cx.user(), p)?.read_project();
+                Out::obj(super::ci::StatusObj::new(super::ci::pipeline_status(cx.c, p, pl, read)?, pl.id.to_string()))
+            }
+            "jobArtifacts" => super::ci::pipeline_artifacts(cx, p, &builds)?,
             _ => return Err(not_implemented("Pipeline", field)),
         })
     }
@@ -3346,6 +3329,9 @@ impl Object for Mutation {
     }
     fn resolve(&self, cx: &Ctx, field: &str, args: &Args) -> FResult<Out> {
         let input = Args(args.get("input").and_then(Value::as_object).cloned().unwrap_or_default());
+        if let Some(out) = super::ci::mutation(cx, field, &input)? {
+            return Ok(out);
+        }
         let pl = match field {
             "mergeRequestUpdateApprovalRule" | "branchRuleApprovalProjectRuleCreate" | "approvalProjectRuleUpdate" | "approvalProjectRuleDelete" => {
                 // EE names these payload types after the mutation, lowercase first letter included.

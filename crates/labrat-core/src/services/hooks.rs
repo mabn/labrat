@@ -778,14 +778,24 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
     if !has_hooks(c, p, "pipeline_events")? {
         return Ok(None);
     }
+    pipeline_payload(c, config, p, pl).map(Some)
+}
+
+/// The pipeline hook payload (`Gitlab::DataBuilder::Pipeline`).
+pub fn pipeline_payload(c: &Connection, config: &Config, p: &Project, pl: &crate::services::ci::Pipeline) -> Result<Value> {
     let r = repo::repo(c, p);
     let user = pl.user_id.map(|id| User::find(c, id)).transpose()?.flatten();
     let commit = match Oid::from_hex(&pl.sha) {
         Ok(o) if r.exists(&o)? => commit_attrs(config, p, &r, &o, false)?,
         _ => Value::Null,
     };
+    let warnings = pl.status == "success" && crate::services::pipelines::has_warnings(&crate::services::pipelines::Job::for_pipeline(c, pl.id, false)?);
+    // The detailed status's label.
     let label = match pl.status.as_str() {
+        "success" if warnings => "passed with warnings",
         "success" => "passed",
+        "manual" => "waiting for manual action",
+        "waiting_for_resource" => "waiting for resource",
         other => other,
     };
     // MR pipelines (detached, merged results, merge train) report the source branch as `ref`
@@ -813,14 +823,7 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
     let jobs: i64 = c.query_row("SELECT count(*) FROM commit_statuses WHERE pipeline_id = ?1 AND build = 0", [pl.id], |r| r.get(0))?;
     let builds = build_attrs(c, pl)?;
     let stages = if !builds.is_empty() {
-        let mut st: Vec<String> = vec![];
-        for b in &builds {
-            if let Some(x) = b["stage"].as_str()
-                && !st.iter().any(|s| s == x)
-            {
-                st.push(x.to_string());
-            }
-        }
+        let st: Vec<String> = crate::services::pipelines::Stage::for_pipeline(c, pl.id)?.into_iter().map(|s| s.name).collect();
         json!(st)
     } else if jobs > 0 {
         json!(["external"])
@@ -865,7 +868,7 @@ pub fn pipeline_event_data(c: &Connection, config: &Config, p: &Project, pl: &cr
         "commit": commit,
         "builds": builds,
     });
-    Ok(Some(data))
+    Ok(data)
 }
 
 /// The runner labrat's fake CI jobs run on, as pipeline hooks show it.
@@ -873,69 +876,43 @@ fn fake_runner_attrs() -> Value {
     json!({"id": 1, "description": "labrat-fake-runner", "runner_type": "instance_type", "active": true, "is_shared": true, "tags": []})
 }
 
-/// The status of the pipeline's CI ref (its branch; the source branch for MR pipelines): set
-/// as each fake CI pipeline of the ref finishes, `unknown` before any did. On the EE
+/// The status of the pipeline's CI ref (its branch; the source branch for MR pipelines), as
+/// `ci::update_ci_ref` keeps it: `unknown` before any of its pipelines finished. On the EE
 /// reference a merge train pipeline reported the source branch's earlier `success` while it
 /// was still pending.
-fn ci_ref_status(c: &Connection, pl: &crate::services::ci::Pipeline, branch: Option<&str>) -> Result<&'static str> {
-    let mut status = "unknown";
-    let mut all = crate::services::ci::Pipeline::list(c, pl.project_id)?;
-    all.reverse();
-    for other in all.iter().filter(|o| o.id <= pl.id && matches!(o.status.as_str(), "success" | "failed")) {
-        let has_builds: bool = c.query_row("SELECT EXISTS(SELECT 1 FROM commit_statuses WHERE pipeline_id = ?1 AND build = 1)", [other.id], |r| r.get(0))?;
-        if !has_builds {
-            continue;
-        }
-        let other_branch = match other.merge_request_id {
-            Some(id) => crate::services::merge_requests::MergeRequest::find(c, id)?.map(|m| m.source_branch),
-            None => other.ref_.clone(),
-        };
-        if other_branch.as_deref() != branch {
-            continue;
-        }
-        status = match (other.status.as_str(), status) {
-            ("success", "failed" | "broken" | "still_failing") => "fixed",
-            ("success", _) => "success",
-            ("failed", "success" | "fixed") => "broken",
-            ("failed", "failed" | "broken" | "still_failing") => "still_failing",
-            _ => "failed",
-        };
-    }
-    Ok(status)
+fn ci_ref_status(c: &Connection, pl: &crate::services::ci::Pipeline, branch: Option<&str>) -> Result<String> {
+    let Some(b) = branch else { return Ok("unknown".into()) };
+    Ok(c.query_row("SELECT status FROM ci_refs WHERE project_id = ?1 AND ref = ?2", params![pl.project_id, b], |r| r.get(0))
+        .optional()?
+        .unwrap_or_else(|| "unknown".into()))
 }
 
-/// `builds` of a pipeline hook: the fake CI jobs, newest first.
+/// `builds` of a pipeline hook: the pipeline's latest jobs, newest first.
 fn build_attrs(c: &Connection, pl: &crate::services::ci::Pipeline) -> Result<Vec<Value>> {
-    let mut st = c.prepare(
-        "SELECT id, name, stage, status, user_id, created_at, queued_at, started_at, finished_at FROM commit_statuses
-         WHERE pipeline_id = ?1 AND build = 1 AND retried = 0 ORDER BY id DESC",
-    )?;
-    #[allow(clippy::type_complexity)]
-    let rows: Vec<(i64, String, Option<String>, String, Option<i64>, i64, Option<i64>, Option<i64>, Option<i64>)> = st
-        .query_map([pl.id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?, r.get(3)?, r.get(4)?, r.get(5)?, r.get(6)?, r.get(7)?, r.get(8)?)))?
-        .collect::<rusqlite::Result<_>>()?;
+    let mut jobs = crate::services::pipelines::Job::for_pipeline(c, pl.id, false)?;
+    jobs.reverse();
     let mut out = vec![];
-    for (id, name, stage, status, user_id, created, queued, started, finished) in rows {
-        let user = user_id.map(|u| User::find(c, u)).transpose()?.flatten();
-        let secs = |ms: i64| ms as f64 / 1000.0;
+    for j in jobs {
+        let user = j.user_id.map(|u| User::find(c, u)).transpose()?.flatten();
+        let archive = crate::services::pipelines::Artifact::for_job(c, j.id)?.into_iter().find(|a| a.file_type == "archive");
         out.push(json!({
-            "id": id,
-            "stage": stage.unwrap_or_else(|| "test".into()),
-            "name": name,
-            "status": status,
-            "created_at": ar_time(created),
-            "started_at": opt_ar_time(started),
-            "finished_at": opt_ar_time(finished),
+            "id": j.id,
+            "stage": j.stage,
+            "name": j.name,
+            "status": j.status,
+            "created_at": ar_time(j.created_at),
+            "started_at": opt_ar_time(j.started_at),
+            "finished_at": opt_ar_time(j.finished_at),
             // A running job reports the time it has run so far.
-            "duration": started.map(|s| secs(finished.unwrap_or_else(time::now) - s)),
-            "queued_duration": started.map(|s| secs(s - queued.unwrap_or(created))),
-            "failure_reason": if status == "failed" { json!("script_failure") } else { Value::Null },
-            "when": "on_success",
-            "manual": false,
-            "allow_failure": false,
+            "duration": j.duration(),
+            "queued_duration": j.queued_duration(),
+            "failure_reason": if j.status == "failed" { json!(j.failure_reason.clone().unwrap_or_else(|| "unknown_failure".into())) } else { Value::Null },
+            "when": j.when,
+            "manual": j.is_manual(),
+            "allow_failure": j.allow_failure,
             "user": user.as_ref().map(user_attrs),
-            "runner": if started.is_some() { fake_runner_attrs() } else { Value::Null },
-            "artifacts_file": {"filename": null, "size": null},
+            "runner": if j.runner_id.is_some() { fake_runner_attrs() } else { Value::Null },
+            "artifacts_file": {"filename": archive.as_ref().map(|a| a.filename.clone()), "size": archive.as_ref().map(|a| a.size)},
             "environment": null,
         }));
     }
@@ -1164,4 +1141,102 @@ pub fn repository_update(c: &Connection, config: &Config, p: &Project, user: &Us
         enqueue(c, &h, "system_hooks", &data)?;
     }
     Ok(())
+}
+
+/// Job hooks (`Gitlab::DataBuilder::Build`), for CI jobs.
+pub fn job_event(c: &Connection, config: &Config, p: &Project, j: &crate::services::pipelines::Job) -> Result<()> {
+    if !has_hooks(c, p, "job_events")? {
+        return Ok(());
+    }
+    let data = job_event_data(c, config, p, j)?;
+    fire(c, p, "job_events", "job_hooks", &data, None)
+}
+
+/// The job hook payload for `j` as it is now.
+pub fn job_event_data(c: &Connection, config: &Config, p: &Project, j: &crate::services::pipelines::Job) -> Result<Value> {
+    let pl = crate::services::ci::Pipeline::find(c, j.pipeline_id)?.ok_or(crate::Error::not_found("Pipeline"))?;
+    let r = repo::repo(c, p);
+    let commit = Oid::from_hex(&j.sha).ok().and_then(|o| r.commit(&o).ok());
+    let (message, author_name, author_email) = match &commit {
+        Some(cm) => (json!(cm.message), json!(cm.author.name), json!(cm.author.email)),
+        None => (Value::Null, Value::Null, Value::Null),
+    };
+    let author: Option<String> = match &commit {
+        Some(cm) => c
+            .query_row(
+                "SELECT username FROM users WHERE lower(email) = lower(?1) OR lower(commit_email) = lower(?1)",
+                [&cm.author.email],
+                |r| r.get(0),
+            )
+            .optional()?,
+        None => None,
+    };
+    let author_url = match (&author, &commit) {
+        (Some(u), _) => json!(config.url(&format!("/{u}"))),
+        (None, Some(cm)) => json!(format!("mailto:{}", cm.author.email)),
+        _ => Value::Null,
+    };
+    let user = j.user_id.map(|id| User::find(c, id)).transpose()?.flatten();
+    let iso = |t: Option<i64>| t.map(|t| json!(time::iso_secs(t))).unwrap_or(Value::Null);
+    let project = {
+        let mut pa = project_attrs(c, config, p)?;
+        if let Some(o) = pa.as_object_mut() {
+            for k in ["homepage", "url", "ssh_url", "http_url"] {
+                o.shift_remove(k);
+            }
+        }
+        pa
+    };
+    let runner = match j.runner_id {
+        Some(_) => fake_runner_attrs(),
+        None => Value::Null,
+    };
+    let retries = j.retries_count(c)?;
+    Ok(json!({
+        "object_kind": "build",
+        "ref": j.ref_,
+        "tag": pl.tag,
+        "before_sha": pl.before_sha.clone().unwrap_or_else(|| Oid::ZERO.hex()),
+        "sha": j.sha,
+        "retries_count": retries,
+        "build_id": j.id,
+        "build_name": j.name,
+        "build_stage": j.stage,
+        "build_status": j.status,
+        "build_created_at": ar_time(j.created_at),
+        "build_started_at": opt_ar_time(j.started_at),
+        "build_finished_at": opt_ar_time(j.finished_at),
+        "build_created_at_iso": iso(Some(j.created_at)),
+        "build_started_at_iso": iso(j.started_at),
+        "build_finished_at_iso": iso(j.finished_at),
+        "build_duration": j.duration(),
+        "build_queued_duration": j.queued_duration(),
+        "build_allow_failure": j.allow_failure,
+        // A job's failure reason is set once it is queued: none in the hook for its creation,
+        // unless it is a retry (a later attempt's creation hook has `unknown_failure`).
+        "build_failure_reason": if j.status == "created" && retries == 0 { Value::Null } else { json!(j.failure_reason.clone().unwrap_or_else(|| "unknown_failure".into())) },
+        "pipeline_id": pl.id,
+        "runner": runner,
+        "project_id": p.id,
+        "project_name": p.full_name,
+        "user": user.as_ref().map(user_attrs),
+        "commit": {
+            "id": pl.id,
+            "name": pl.name,
+            "sha": pl.sha,
+            "message": message,
+            "author_name": author_name,
+            "author_email": author_email,
+            "author_url": author_url,
+            "status": pl.status,
+            "duration": pl.duration,
+            "started_at": opt_ar_time(pl.started_at),
+            "finished_at": opt_ar_time(pl.finished_at),
+            "started_at_iso": iso(pl.started_at),
+            "finished_at_iso": iso(pl.finished_at),
+        },
+        "repository": repository_attrs(c, config, p, true)?,
+        "project": project,
+        "environment": null,
+    }))
 }

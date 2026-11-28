@@ -113,9 +113,10 @@ pub struct Status {
     pub created_at: i64,
     pub started_at: Option<i64>,
     pub finished_at: Option<i64>,
+    pub allow_failure: bool,
 }
 
-const STATUS_COLS: &str = "id, pipeline_id, name, ref, sha, status, target_url, description, coverage, user_id, retried, created_at, started_at, finished_at";
+const STATUS_COLS: &str = "id, pipeline_id, name, ref, sha, status, target_url, description, coverage, user_id, retried, created_at, started_at, finished_at, allow_failure";
 
 fn status_row(r: &Row) -> rusqlite::Result<Status> {
     Ok(Status {
@@ -133,6 +134,7 @@ fn status_row(r: &Row) -> rusqlite::Result<Status> {
         created_at: r.get(11)?,
         started_at: r.get(12)?,
         finished_at: r.get(13)?,
+        allow_failure: r.get(14)?,
     })
 }
 
@@ -209,8 +211,8 @@ pub fn post_status(c: &Connection, config: &Config, p: &Project, user: &User, sh
         Some(s) => (s.id, s.status.clone()),
         None => {
             c.execute(
-                "INSERT INTO commit_statuses (pipeline_id, project_id, name, ref, sha, status, user_id, created_at, updated_at)
-                 VALUES (?1, ?2, ?3, ?4, ?5, 'created', ?6, ?7, ?7)",
+                "INSERT INTO commit_statuses (pipeline_id, project_id, name, ref, sha, status, user_id, created_at, updated_at, stage, stage_idx)
+                 VALUES (?1, ?2, ?3, ?4, ?5, 'created', ?6, ?7, ?7, 'external', 1000000)",
                 params![pipeline.id, p.id, name, ref_, sha, user.id, now],
             )?;
             (c.last_insert_rowid(), "created".to_string())
@@ -280,6 +282,9 @@ pub fn post_status(c: &Connection, config: &Config, p: &Project, user: &User, sh
             params![pipeline.id, name, job_id],
         )?;
     }
+    // Commit statuses are in the pipeline's `external` stage, after all others
+    // (`GenericCommitStatus::EXTERNAL_STAGE_IDX`).
+    crate::services::pipelines::sync_stages(c, pipeline.id)?;
     recompute(c, config, pipeline.id)?;
     Status::find(c, job_id)?.ok_or(Error::not_found("Commit Status"))
 }
@@ -486,53 +491,29 @@ pub fn update_head_pipeline(c: &Connection, p: &Project, mr: &MergeRequest) -> R
     Ok(())
 }
 
-/// `Gitlab::Ci::Status::Composite` over the latest jobs.
-fn composite(statuses: &[String]) -> &'static str {
-    let set: std::collections::BTreeSet<&str> = statuses.iter().map(String::as_str).collect();
-    let subset = |allowed: &[&str]| set.iter().all(|s| allowed.contains(s));
-    if set.is_empty() {
-        return "success";
-    }
-    // Jobs a runner still has to acknowledge as canceled.
-    if set.contains("canceling") {
-        return "canceling";
-    }
-    if subset(&["skipped"]) {
-        "skipped"
-    } else if subset(&["success", "skipped"]) {
-        "success"
-    } else if subset(&["created"]) {
-        "created"
-    } else if subset(&["canceled", "success", "skipped"]) {
-        "canceled"
-    } else if subset(&["pending", "created", "skipped"]) {
-        "pending"
-    } else if set.contains("running") || set.contains("pending") {
-        "running"
-    } else {
-        "failed"
-    }
-}
-
 /// `AtomicProcessingService`: recompute the pipeline status and apply transition side effects.
 pub fn recompute(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()> {
     let Some(pl) = Pipeline::find(c, pipeline_id)? else { return Ok(()) };
-    let statuses: Vec<String> = {
-        let mut st = c.prepare("SELECT status FROM commit_statuses WHERE pipeline_id = ?1 AND retried = 0")?;
-        st.query_map([pipeline_id], |r| r.get(0))?.collect::<rusqlite::Result<_>>()?
+    let statuses: Vec<(String, bool)> = {
+        let mut st = c.prepare("SELECT status, allow_failure FROM commit_statuses WHERE pipeline_id = ?1 AND retried = 0")?;
+        st.query_map([pipeline_id], |r| Ok((r.get(0)?, r.get(1)?)))?.collect::<rusqlite::Result<_>>()?
     };
-    let mut target = composite(&statuses).to_string();
-    // `enqueue` from a finished pipeline goes to `running`.
-    if target == "pending" && pl.is_complete() {
-        target = "running".into();
-    }
+    // `Ci::Pipeline#set_status`: the state machine's events.
+    let Some(target) = crate::services::pipelines::next_status(&pl.status, crate::services::pipelines::composite(&statuses).unwrap_or("success")) else {
+        return Ok(());
+    };
+    let target = target.to_string();
     if target == pl.status {
         return Ok(());
     }
     let now = time::now();
-    let started = if target == "running" && pl.started_at.is_none() { Some(now) } else { pl.started_at };
+    // `started_at ||= now` only on the way from a waiting state to `running`: a finished
+    // pipeline that runs again (a retry) keeps what it had, null if it never ran.
+    let from_waiting = matches!(pl.status.as_str(), "created" | "waiting_for_resource" | "preparing" | "pending");
+    let started = if target == "running" && from_waiting && pl.started_at.is_none() { Some(now) } else { pl.started_at };
     let finished = if matches!(target.as_str(), "success" | "failed" | "canceled") { Some(now) } else { pl.finished_at };
-    let duration = if matches!(target.as_str(), "success" | "failed" | "canceled") {
+    // `update_duration` on the way to a finished state or to `manual`.
+    let duration = if matches!(target.as_str(), "success" | "failed" | "canceled" | "manual") {
         // Fake CI pipelines last as long as their latest jobs ran (a retried pipeline counts
         // only the new jobs); external ones report 0.
         let mut st = c.prepare(
@@ -576,6 +557,9 @@ pub fn recompute(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()
     )?;
     let p = Project::find(c, pl.project_id)?.expect("project exists");
     let pl = Pipeline::find(c, pl.id)?.expect("exists");
+    if matches!(target.as_str(), "success" | "failed") {
+        update_ci_ref(c, &pl)?;
+    }
     // `PipelineMetricsWorker` on `-> running` and `-> success`.
     if target == "running" || target == "success" {
         let mut st = c.prepare("SELECT merge_request_id FROM merge_request_pipelines WHERE head_pipeline_id = ?1")?;
@@ -606,6 +590,48 @@ pub fn recompute(c: &Connection, config: &Config, pipeline_id: i64) -> Result<()
             }
         }
     }
+    Ok(())
+}
+
+/// The CI ref of a pipeline with jobs: its branch, or the MR's source branch.
+fn ci_ref_key(c: &Connection, pl: &Pipeline) -> Result<Option<String>> {
+    let builds: bool = c.query_row("SELECT EXISTS(SELECT 1 FROM commit_statuses WHERE pipeline_id = ?1 AND build = 1)", [pl.id], |r| r.get(0))?;
+    if !builds {
+        return Ok(None);
+    }
+    Ok(match pl.merge_request_id {
+        Some(id) => MergeRequest::find(c, id)?.map(|m| m.source_branch),
+        None => pl.ref_.clone(),
+    })
+}
+
+/// `Ci::Ref#update_status_by!`: a pipeline that succeeded or failed moves its ref's status
+/// when it is the ref's latest finished pipeline.
+fn update_ci_ref(c: &Connection, pl: &Pipeline) -> Result<()> {
+    let Some(key) = ci_ref_key(c, pl)? else { return Ok(()) };
+    for other in Pipeline::list(c, pl.project_id)? {
+        if other.id <= pl.id {
+            break;
+        }
+        if matches!(other.status.as_str(), "success" | "failed" | "canceled" | "skipped") && ci_ref_key(c, &other)?.as_deref() == Some(key.as_str()) {
+            return Ok(());
+        }
+    }
+    let cur: String = c
+        .query_row("SELECT status FROM ci_refs WHERE project_id = ?1 AND ref = ?2", params![pl.project_id, key], |r| r.get(0))
+        .optional()?
+        .unwrap_or_else(|| "unknown".into());
+    let next = match (pl.status.as_str(), cur.as_str()) {
+        ("success", "failed" | "broken" | "still_failing") => "fixed",
+        ("success", _) => "success",
+        ("failed", "success" | "fixed") => "broken",
+        ("failed", "failed" | "broken" | "still_failing") => "still_failing",
+        _ => "failed",
+    };
+    c.execute(
+        "INSERT INTO ci_refs (project_id, ref, status) VALUES (?1, ?2, ?3) ON CONFLICT (project_id, ref) DO UPDATE SET status = excluded.status",
+        params![pl.project_id, key, next],
+    )?;
     Ok(())
 }
 

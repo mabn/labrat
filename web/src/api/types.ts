@@ -179,6 +179,73 @@ export interface Pipeline {
   updated_at?: string;
 }
 
+export interface DetailedStatus {
+  icon: string;
+  text: string;
+  label: string;
+  group: string;
+  tooltip: string;
+  has_details: boolean;
+  details_path: string;
+}
+
+/** `GET /projects/:id/pipelines/:pipeline_id`. */
+export interface PipelineDetail extends Pipeline {
+  before_sha: string;
+  tag: boolean;
+  user: UserBasic | null;
+  started_at: string | null;
+  finished_at: string | null;
+  duration: number | null;
+  queued_duration: number | null;
+  coverage: string | null;
+  detailed_status: DetailedStatus;
+  name: string | null;
+}
+
+export interface JobArtifact {
+  file_type: string;
+  size: number;
+  filename: string;
+  file_format: string | null;
+}
+
+/** `GET /projects/:id/jobs/:job_id`. */
+export interface Job {
+  id: number;
+  status: string;
+  stage: string;
+  name: string;
+  ref: string;
+  tag: boolean;
+  coverage: number | null;
+  allow_failure: boolean;
+  created_at: string;
+  started_at: string | null;
+  finished_at: string | null;
+  erased_at: string | null;
+  duration: number | null;
+  queued_duration: number | null;
+  user: UserBasic | null;
+  commit: Commit | null;
+  pipeline: Pipeline;
+  failure_reason?: string;
+  web_url: string;
+  artifacts_file?: { filename: string; size: number };
+  artifacts: JobArtifact[];
+  runner: { id: number; description: string } | null;
+  artifacts_expire_at: string | null;
+  tag_list: string[];
+}
+
+export interface ArtifactEntry {
+  name: string;
+  path: string;
+  type: 'file' | 'directory';
+  size?: number;
+  mode: string | null;
+}
+
 export interface DiffRefs {
   base_sha: string;
   head_sha: string;

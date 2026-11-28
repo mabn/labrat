@@ -322,6 +322,78 @@ function PolicyResults() {
   );
 }
 
+const EXAMPLE_RUN = {
+  ref: 'main',
+  jobs: [
+    { name: 'build', stage: 'build', status: 'success', duration: 42, log: 'Building\nDone\n', artifacts: [{ file_type: 'archive', files: { 'dist/app.txt': 'app\n' }, expire_in: '1 week' }] },
+    { name: 'unit', stage: 'test', status: 'running', log: 'Running tests\n' },
+    { name: 'lint', stage: 'test', status: 'failed', allow_failure: true, log: 'lint: 2 problems\n' },
+    { name: 'deploy', stage: 'deploy', when: 'manual' },
+  ],
+};
+
+interface Run {
+  id: number;
+  iid: number;
+  ref: string;
+  status: string;
+  jobs: { id: number; name: string; stage: string; status: string; retried: boolean }[];
+}
+
+/** Pipeline runs through `/-/labrat/projects/:id/pipelines`. */
+function PipelineRuns() {
+  const { project } = useProject();
+  const qc = useQueryClient();
+  const toast = useToast();
+  const base = `/projects/${project.id}/pipelines`;
+  const runs = useQuery({ queryKey: ['labrat-runs', project.id], queryFn: () => labrat<Run[]>('GET', base), refetchInterval: 5000 });
+  const [text, setText] = useState(pretty(EXAMPLE_RUN));
+  const [target, setTarget] = useState<number | ''>('');
+  const send = useMutation({
+    mutationFn: (body: unknown) => (target ? labrat('PUT', `${base}/${target}`, body) : labrat('POST', base, body)),
+    onSuccess: () => {
+      toast(target ? 'Pipeline updated' : 'Pipeline created');
+      qc.invalidateQueries();
+    },
+  });
+  return (
+    <Section
+      title="Pipeline runs"
+      help={
+        <>
+          labrat runs no CI: describe a pipeline run, and GitLab&apos;s APIs report it like a real one. POST creates a run (<code>ref</code> or <code>merge_request_iid</code>,{' '}
+          <code>stages</code>, <code>jobs</code> with <code>status</code>, <code>duration</code>, <code>log</code>, <code>artifacts</code>…); PUT moves an existing run on, matching
+          jobs by name (<code>log_append</code> adds to a log). Jobs without a status are processed as GitLab would.
+        </>
+      }
+    >
+      <ErrorBox error={send.error || runs.error} />
+      <div className="row" style={{ marginBottom: 8, gap: 8 }}>
+        <label>
+          Send to{' '}
+          <select value={target} onChange={(e) => setTarget(e.target.value ? Number(e.target.value) : '')}>
+            <option value="">a new pipeline (POST)</option>
+            {(runs.data ?? []).map((r) => (
+              <option key={r.id} value={r.id}>
+                pipeline #{r.id} ({r.ref}, {r.status}) (PUT)
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <JsonEditor value={text} onChange={setText} rows={14} />
+      <div className="row" style={{ marginTop: 8 }}>
+        <button className="btn btn-confirm" disabled={send.isPending} onClick={() => send.mutate(parse(text))}>
+          {target ? 'Update pipeline' : 'Create pipeline'}
+        </button>
+        <Link className="btn" to={`/${project.path_with_namespace}/-/pipelines`}>
+          Pipelines
+        </Link>
+      </div>
+    </Section>
+  );
+}
+
 export function TestSetup() {
   useProjectCrumbs([{ label: 'Settings' }, { label: 'labrat test setup' }]);
   return (
@@ -332,6 +404,7 @@ export function TestSetup() {
       <p className="subtle">
         Things GitLab gets from CI and from files in the repository, set directly. These go through labrat's test endpoints under <code>/-/labrat/</code>, not GitLab's API.
       </p>
+      <PipelineRuns />
       <FakeCi />
       <CodeOwners />
       <ApprovalPolicies />

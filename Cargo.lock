@@ -1474,8 +1474,11 @@ name = "labrat-core"
 version = "0.2.0"
 dependencies = [
  "anyhow",
+ "base64 0.23.1",
  "chrono",
+ "crc32fast",
  "dissimilar",
+ "flate2",
  "hex",
  "labrat-git",
  "parking_lot 0.13.0",

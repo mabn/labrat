@@ -53,7 +53,7 @@ pub fn status_value(c: &Connection, req: &Req, s: &Status) -> Result<Value, ApiE
     m.insert("created_at".into(), json!(time::iso(s.created_at)));
     m.insert("started_at".into(), json!(s.started_at.map(time::iso)));
     m.insert("finished_at".into(), json!(s.finished_at.map(time::iso)));
-    m.insert("allow_failure".into(), json!(false));
+    m.insert("allow_failure".into(), json!(s.allow_failure));
     m.insert("coverage".into(), json!(s.coverage));
     m.insert("pipeline_id".into(), json!(s.pipeline_id));
     m.insert("author".into(), user_basic(c, req, s.user_id)?);
@@ -92,9 +92,16 @@ pub(crate) fn favicon_digest(icon: &str) -> &'static str {
     }
 }
 
+/// The favicon of a status icon (a warning shows the success one).
+pub(crate) fn favicon(icon: &str) -> String {
+    let f = if icon == "status_warning" { "status_success" } else { icon };
+    format!("/assets/ci_favicons/favicon_{f}-{}.png", favicon_digest(f))
+}
+
 /// `DetailedStatusEntity` for a pipeline status.
-fn detailed_status(p: &Project, pl: &Pipeline, has_details: bool) -> Value {
+fn detailed_status(p: &Project, pl: &Pipeline, has_details: bool, warnings: bool) -> Value {
     let (icon, text, label, group) = match pl.status.as_str() {
+        "success" if warnings => ("status_warning", "Warning", "passed with warnings", "success-with-warnings"),
         "pending" => ("status_pending", "Pending", "pending", "pending"),
         "running" => ("status_running", "Running", "running", "running"),
         "success" => ("status_success", "Passed", "passed", "success"),
@@ -102,18 +109,25 @@ fn detailed_status(p: &Project, pl: &Pipeline, has_details: bool) -> Value {
         "canceled" => ("status_canceled", "Canceled", "canceled", "canceled"),
         "canceling" => ("status_canceled", "Canceling", "canceling", "canceling"),
         "skipped" => ("status_skipped", "Skipped", "skipped", "skipped"),
+        // `Pipeline::Blocked` relabels the core `manual action` status.
+        "manual" => ("status_manual", "Blocked", "waiting for manual action", "manual"),
+        "scheduled" => ("status_scheduled", "Scheduled", "scheduled", "scheduled"),
+        "preparing" => ("status_preparing", "Preparing", "preparing", "preparing"),
+        "waiting_for_resource" => ("status_pending", "Waiting", "waiting for resource", "waiting-for-resource"),
         _ => ("status_created", "Created", "created", "created"),
     };
+    // The tooltip is the core status's label.
+    let tooltip = if pl.status == "manual" { "manual action" } else { label };
     json!({
         "icon": icon,
         "text": text,
         "label": label,
         "group": group,
-        "tooltip": label,
+        "tooltip": tooltip,
         "has_details": has_details,
         "details_path": format!("/{}/-/pipelines/{}", p.full_path, pl.id),
         "illustration": null,
-        "favicon": format!("/assets/ci_favicons/favicon_{icon}-{}.png", favicon_digest(icon)),
+        "favicon": favicon(icon),
     })
 }
 
@@ -152,7 +166,8 @@ pub fn pipeline_detailed_for(
     };
     m.insert("coverage".into(), json!(cov.map(|x| format!("{x:.2}"))));
     // The pipelines API builds the status without a user, so it reports no details page.
-    m.insert("detailed_status".into(), detailed_status(p, pl, with_user));
+    let warnings = labrat_core::services::pipelines::has_warnings(&labrat_core::services::pipelines::Job::for_pipeline(c, pl.id, false)?);
+    m.insert("detailed_status".into(), detailed_status(p, pl, with_user, warnings));
     m.insert("archived".into(), json!(false));
     Ok(m)
 }
@@ -224,11 +239,28 @@ async fn list_statuses(req: Req) -> ApiResult {
     })
 }
 
+/// `Ci::PipelinesFinder`: scopes, filters and ordering.
 async fn list_pipelines(req: Req) -> ApiResult {
-    let status = req.params.str("status");
-    let ref_ = req.params.str("ref");
-    let sha = req.params.str("sha");
-    let source = req.params.str("source");
+    const STATUSES: &[&str] = &["created", "waiting_for_resource", "preparing", "waiting_for_callback", "pending", "running", "success", "failed", "canceling", "canceled", "skipped", "manual", "scheduled"];
+    const SOURCES: &[&str] = &[
+        "unknown", "push", "web", "trigger", "schedule", "api", "external", "pipeline", "chat", "webide", "merge_request_event", "external_pull_request_event",
+        "parent_pipeline", "ondemand_dast_scan", "ondemand_dast_validation", "security_orchestration_policy", "container_registry_push", "duo_workflow",
+        "pipeline_execution_policy_schedule",
+    ];
+    let scope = req.params.one_of("scope", &["running", "pending", "finished", "branches", "tags"])?;
+    let status = req.params.one_of("status", STATUSES)?;
+    let order_by = req.params.one_of("order_by", &["id", "status", "ref", "updated_at", "user_id"])?.unwrap_or("id".into());
+    let asc = req.params.one_of("sort", &["asc", "desc"])?.as_deref() == Some("asc");
+    let source = req.params.one_of("source", SOURCES)?;
+    let ref_ = req.params.str("ref").filter(|r| !r.is_empty());
+    let sha = req.params.str("sha").filter(|r| !r.is_empty());
+    let username = req.params.str("username").filter(|r| !r.is_empty());
+    let name = req.params.str("name").filter(|r| !r.is_empty());
+    let yaml_errors = req.params.bool("yaml_errors")?;
+    let updated_before = req.params.time("updated_before")?;
+    let updated_after = req.params.time("updated_after")?;
+    let created_before = req.params.time("created_before")?;
+    let created_after = req.params.time("created_after")?;
     let app = req.app.clone();
     app.db.read(|c| {
         let (p, perms) = find::project(c, &req, req.path_param("id"))?;
@@ -236,8 +268,32 @@ async fn list_pipelines(req: Req) -> ApiResult {
             return Err(Error::forbidden().into());
         }
         let mut list = Pipeline::list(c, p.id)?;
+        match scope.as_deref() {
+            Some("running") => list.retain(|pl| pl.status == "running"),
+            Some("pending") => list.retain(|pl| pl.status == "pending"),
+            Some("finished") => list.retain(|pl| matches!(pl.status.as_str(), "success" | "failed" | "canceled" | "skipped")),
+            // The latest pipeline of each existing branch (or tag).
+            Some(s @ ("branches" | "tags")) => {
+                let r = labrat_core::repo::repo(c, &p);
+                let names: Vec<String> = if s == "branches" { r.branches()?.into_iter().map(|(n, _)| n).collect() } else { r.tags()?.into_iter().map(|(n, _)| n).collect() };
+                let mut seen: Vec<String> = vec![];
+                list.retain(|pl| {
+                    let Some(rf) = pl.ref_.clone() else { return false };
+                    if pl.tag != (s == "tags") || !names.contains(&rf) || seen.contains(&rf) {
+                        return false;
+                    }
+                    seen.push(rf);
+                    true
+                });
+            }
+            _ => {}
+        }
         let refs = match &ref_ {
             Some(r) => Some(labrat_core::services::ci::refs_for_filter(c, &p, r, source.as_deref())?),
+            None => None,
+        };
+        let user_id = match &username {
+            Some(u) => Some(labrat_core::model::User::find_by_username(c, u)?.map(|u| u.id).unwrap_or(-1)),
             None => None,
         };
         list.retain(|pl| {
@@ -245,16 +301,38 @@ async fn list_pipelines(req: Req) -> ApiResult {
                 && refs.as_ref().is_none_or(|rs| pl.ref_.as_ref().is_some_and(|r| rs.contains(r)))
                 && sha.as_ref().is_none_or(|x| &pl.sha == x)
                 && source.as_ref().is_none_or(|x| &pl.source == x)
+                && user_id.is_none_or(|u| pl.user_id == Some(u))
+                && name.as_ref().is_none_or(|n| pl.name.as_ref() == Some(n))
+                // labrat's pipelines have no YAML errors.
+                && yaml_errors != Some(true)
+                && updated_before.is_none_or(|t| pl.updated_at < t)
+                && updated_after.is_none_or(|t| pl.updated_at > t)
+                && created_before.is_none_or(|t| pl.created_at < t)
+                && created_after.is_none_or(|t| pl.created_at > t)
         });
-        // Newest first unless `sort=asc` (by id, the default `order_by`).
-        if req.params.str("sort").as_deref() == Some("asc") {
-            list.sort_by_key(|pl| pl.id);
-        } else {
-            list.sort_by_key(|pl| std::cmp::Reverse(pl.id));
-        }
+        // `order(order_by => sort)`. Ties come in the order of the index the reference's
+        // database used: oldest first by ref, newest first by user.
+        list.sort_by(|a, b| {
+            let o = match order_by.as_str() {
+                "status" => a.status.cmp(&b.status),
+                "ref" => a.ref_.cmp(&b.ref_),
+                "updated_at" => a.updated_at.cmp(&b.updated_at),
+                "user_id" => a.user_id.cmp(&b.user_id),
+                _ => a.id.cmp(&b.id),
+            };
+            let o = if asc { o } else { o.reverse() };
+            o.then(if order_by == "user_id" { b.id.cmp(&a.id) } else { a.id.cmp(&b.id) })
+        });
+        // Dates come back in links as Grape renders a `DateTime` (`+00:00`).
+        let req = req.with_query(|k, v| match k {
+            "updated_before" | "updated_after" | "created_before" | "created_after" => labrat_core::time::parse_time(v)
+                .map(|t| chrono::DateTime::from_timestamp_millis(t).unwrap_or_default().format("%Y-%m-%dT%H:%M:%S+00:00").to_string())
+                .unwrap_or_else(|| v.to_string()),
+            _ => v.to_string(),
+        });
         paginate(&req, list, &[("order_by", "id"), ("sort", "desc")], |pl| {
             let mut m = pipeline_basic(&req.app.config, &p, pl);
-            m.insert("name".into(), Value::Null);
+            m.insert("name".into(), json!(pl.name));
             Ok(Value::Object(m))
         })
     })
@@ -339,19 +417,19 @@ fn detailed_with_name(c: &Connection, req: &Req, p: &Project, pl: &Pipeline) -> 
     Ok(Value::Object(m))
 }
 
-/// The pipeline user's permission level on the project.
-fn level(c: &Connection, req: &Req, p: &Project) -> Result<(bool, bool), ApiError> {
+/// Whether the user may delete the project's pipelines (owners and admins).
+fn can_destroy(c: &Connection, req: &Req, p: &Project) -> Result<bool, ApiError> {
     let u = req.user()?;
     let perms = labrat_core::perms::ProjectPerms::load(c, Some(u), p)?;
-    Ok((perms.developer() || u.admin, perms.owner() || u.admin))
+    Ok(perms.owner() || u.admin)
 }
 
 /// Jobs are `Ci::Build`s only; commit statuses never show up.
 async fn pipeline_jobs(req: Req) -> ApiResult {
     let app = req.app.clone();
     app.db.read(|c| {
-        load_pipeline(c, &req)?;
-        paginate(&req, Vec::<Value>::new(), &[("include_retried", "false")], |v| Ok(v.clone()))
+        let (p, pl) = load_pipeline(c, &req)?;
+        crate::routes::jobs::pipeline_jobs(c, &req, &p, &pl)
     })
 }
 
@@ -407,7 +485,7 @@ async fn pipeline_metadata(req: Req) -> ApiResult {
     let app = req.app.clone();
     app.db.tx(|c| {
         let (p, pl) = load_pipeline(c, &req)?;
-        if !level(c, &req, &p)?.0 {
+        if !labrat_core::services::pipelines::can_update(c, req.user()?, &p, &pl)? {
             return Err(Error::forbidden().into());
         }
         req.params.require(&["name"])?;
@@ -417,24 +495,31 @@ async fn pipeline_metadata(req: Req) -> ApiResult {
     })
 }
 
-/// Commit statuses can't be cancelled or retried: both leave the pipeline as it is (and,
-/// unlike `show`, answer without `name`).
+/// Cancels the pipeline's CI jobs and commit statuses, unless it is finished or made of commit
+/// statuses alone. The pipeline is processed afterwards, so the answer (without `name`, unlike
+/// `show`) shows it as it was.
 async fn cancel_pipeline(req: Req) -> ApiResult {
     let app = req.app.clone();
-    app.db.tx(|c| {
+    let r = app.db.tx(|c| {
         let (p, pl) = load_pipeline(c, &req)?;
-        if !level(c, &req, &p)?.0 {
+        if !labrat_core::services::pipelines::can_update(c, req.user()?, &p, &pl)? {
             return Err(Error::forbidden().into());
         }
-        Ok(Resp::ok(Value::Object(pipeline_detailed(c, &req, &p, &pl)?)))
-    })
+        // A pipeline that isn't cancelable is left as it is, with no error.
+        if labrat_core::services::pipelines::pipeline_cancelable(&pl) {
+            labrat_core::services::pipelines::cancel_pipeline(c, &req.app.config, pl.id)?;
+        }
+        Ok::<_, ApiError>(Resp::ok(Value::Object(pipeline_detailed(c, &req, &p, &pl)?)))
+    })?;
+    crate::jobs::kick(&req.app);
+    Ok(r)
 }
 
 async fn retry_pipeline(req: Req) -> ApiResult {
     let app = req.app.clone();
     app.db.tx(|c| {
         let (p, pl) = load_pipeline(c, &req)?;
-        if !level(c, &req, &p)?.0 {
+        if !labrat_core::services::pipelines::can_update(c, req.user()?, &p, &pl)? {
             return Err(Error::forbidden().into());
         }
         // Only fake CI jobs can be retried; commit statuses stay as they are.
@@ -451,7 +536,7 @@ async fn delete_pipeline(req: Req) -> ApiResult {
     let app = req.app.clone();
     app.db.tx(|c| {
         let (p, pl) = load_pipeline(c, &req)?;
-        if !level(c, &req, &p)?.1 {
+        if !can_destroy(c, &req, &p)? {
             return Err(Error::forbidden().into());
         }
         let mrs = ci::all_merge_requests(c, &p, &pl)?;
